@@ -30,6 +30,7 @@ export const articleMetadataSchema = z.object({
   importance: importanceSchema,
   contentType: contentTypeSchema,
   sourceIds: z.array(stableIdSchema).default([]),
+  residenceStatusIds: z.array(stableIdSchema).default([]),
   relationships: z.array(articleRelationshipSchema).default([]),
   status: z.enum(["draft", "verified", "needs-review", "archived"]),
   createdAt: z.iso.date(),
@@ -42,10 +43,12 @@ export type ArticleMetadata = z.infer<typeof articleMetadataSchema>;
 export function validateArticleCollection(
   articles: readonly ArticleMetadata[],
   sources: readonly OfficialSource[],
+  residenceStatusIds: readonly string[] = [],
 ): void {
   const articleIds = new Set(articles.map((article) => article.id));
   const articleSlugs = new Set(articles.map((article) => article.slug));
   const sourceIds = new Set(sources.map((source) => source.id));
+  const knownResidenceStatusIds = new Set(residenceStatusIds);
 
   if (articleIds.size !== articles.length) {
     throw new Error("Article IDs must be unique.");
@@ -63,6 +66,14 @@ export function validateArticleCollection(
     for (const sourceId of article.sourceIds) {
       if (!sourceIds.has(sourceId)) {
         throw new Error(`Article \"${article.id}\" references unknown source \"${sourceId}\".`);
+      }
+    }
+
+    for (const residenceStatusId of article.residenceStatusIds) {
+      if (!knownResidenceStatusIds.has(residenceStatusId)) {
+        throw new Error(
+          `Article \"${article.id}\" references unknown residence status \"${residenceStatusId}\".`,
+        );
       }
     }
 

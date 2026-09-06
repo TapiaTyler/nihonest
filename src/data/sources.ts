@@ -10,6 +10,24 @@ export const sources = [
     language: "en",
     lastCheckedAt: "2026-09-05",
   }),
+  officialSourceSchema.parse({
+    id: "immigration-services-status-appendix",
+    organization: "Immigration Services Agency of Japan",
+    title: "Appendix: List of Status of Residence",
+    url: "https://www.moj.go.jp/isa/content/001425124.pdf",
+    authorityLevel: "national-government",
+    language: "en",
+    lastCheckedAt: "2026-09-05",
+  }),
+  officialSourceSchema.parse({
+    id: "mofa-work-long-term-stay",
+    organization: "Ministry of Foreign Affairs of Japan",
+    title: "Work or Long-term Stay",
+    url: "https://www.mofa.go.jp/j_info/visit/visa/long/",
+    authorityLevel: "national-government",
+    language: "en",
+    lastCheckedAt: "2026-09-05",
+  }),
 ] as const;
 
 export function getSourceById(id: string) {

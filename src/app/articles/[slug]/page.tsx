@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getAllArticles, getArticleById, getArticleBySlug } from "@/lib/content/articles";
 import { getSourceById } from "@/data/sources";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
+import { OfficialSourceList } from "@/components/content/official-source-list";
 
 export const dynamicParams = false;
 
@@ -107,28 +108,7 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           </section>
         )}
 
-        {articleSources.length > 0 && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="sources-heading">
-            <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-              Official sources
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {articleSources.map((source) => (
-                <li key={source.id}>
-                  <a
-                    href={source.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-                  >
-                    {source.title} — {source.organization}
-                    <span className="sr-only"> (opens in a new tab)</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        <OfficialSourceList sources={articleSources} />
       </div>
     </article>
   );

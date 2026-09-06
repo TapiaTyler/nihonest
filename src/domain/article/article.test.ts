@@ -14,6 +14,7 @@ const validArticle = articleMetadataSchema.parse({
   importance: "informational",
   contentType: "guide",
   sourceIds: [],
+  residenceStatusIds: [],
   relationships: [],
   status: "draft",
   createdAt: "2026-09-05",

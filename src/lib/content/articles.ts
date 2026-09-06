@@ -11,6 +11,7 @@ import {
   type ArticleMetadata,
 } from "@/domain/article/article";
 import { sources } from "@/data/sources";
+import { residenceStatuses } from "@/data/residence-statuses";
 
 export type ArticleRecord = Readonly<{
   metadata: ArticleMetadata;
@@ -31,6 +32,7 @@ const articles: readonly ArticleRecord[] = [
 validateArticleCollection(
   articles.map((article) => article.metadata),
   sources,
+  residenceStatuses.map((status) => status.id),
 );
 
 export function getAllArticles(): readonly ArticleRecord[] {
