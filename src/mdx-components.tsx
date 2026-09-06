@@ -10,6 +10,11 @@ const components = {
   p: ({ children }) => <p className="mt-4 leading-8 text-slate-700">{children}</p>,
   ul: ({ children }) => <ul className="mt-4 list-disc space-y-2 pl-6 text-slate-700">{children}</ul>,
   ol: ({ children }) => <ol className="mt-4 list-decimal space-y-2 pl-6 text-slate-700">{children}</ol>,
+  blockquote: ({ children }) => (
+    <blockquote className="mt-6 rounded-r-xl border-l-4 border-teal-600 bg-teal-50 px-5 py-1 text-slate-800">
+      {children}
+    </blockquote>
+  ),
   a: ({ children, href }) => (
     <a
       href={href}

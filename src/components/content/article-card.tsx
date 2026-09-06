@@ -17,7 +17,9 @@ export function ArticleCard({ article }: ArticleCardProps) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
-        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">Draft sample</span>
+        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
+          {article.status === "verified" ? "Reviewed" : "Editorial review"}
+        </span>
         <span className="text-teal-700">{topicLabels.join(" · ")}</span>
       </div>
       <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">

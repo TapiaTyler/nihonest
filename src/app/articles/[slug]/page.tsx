@@ -65,7 +65,9 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
         </Link>
         <header className="mt-8 border-b border-slate-200 pb-8">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">Draft sample</span>
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
+              {metadata.status === "verified" ? "Reviewed" : "Editorial review"}
+            </span>
             {metadata.topicIds.map((topicId) => (
               <span key={topicId} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">
                 {labelFor(topicId, topics)}

@@ -32,7 +32,7 @@ export default function Home() {
             href="/explore"
             className="mt-8 inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
           >
-            Explore sample guides
+            Explore student guides
           </Link>
         </div>
 
@@ -42,7 +42,7 @@ export default function Home() {
             Built public first.
           </h2>
           <p className="mt-4 leading-7 text-teal-100/80">
-            A small set of draft guides now demonstrates the content foundation. Glossary and broader discovery tools remain planned for later phases.
+            A complete student-arrival collection now covers planning, immigration, arrival documents, essential registrations, and settling into daily life.
           </p>
         </aside>
       </section>

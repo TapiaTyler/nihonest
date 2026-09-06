@@ -4,7 +4,7 @@ import { getAllArticles } from "@/lib/content/articles";
 
 export const metadata: Metadata = {
   title: "Explore | Nihonest",
-  description: "Explore draft sample guides built on Nihonest's structured content foundation.",
+  description: "Follow practical, sourced guidance for an international student's move to Japan.",
 };
 
 export default function ExplorePage() {
@@ -15,10 +15,10 @@ export default function ExplorePage() {
       <header className="max-w-3xl">
         <p className="eyebrow">Explore</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-          A foundation for practical guidance.
+          Your student journey to Japan.
         </h1>
         <p className="mt-6 text-lg leading-8 text-slate-600">
-          These limited draft samples demonstrate Nihonest&apos;s structured article system. They are not complete guidance.
+          Follow the journey from choosing a school and preparing immigration documents through arrival, registration, housing, phone service, banking, and student life.
         </p>
       </header>
       <div className="mt-12 grid gap-6 md:grid-cols-2">

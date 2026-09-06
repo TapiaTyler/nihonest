@@ -8,14 +8,14 @@ test("loads the Nihonest homepage", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 });
 
-test("browses from Explore to a draft article", async ({ page }) => {
+test("browses from Explore to a student journey article", async ({ page }) => {
   await page.goto("/explore");
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "A foundation for practical guidance.",
+    "Your student journey to Japan.",
   );
-  await page.getByRole("link", { name: "Finding official information" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Finding official information");
+  await page.getByRole("link", { name: "Planning your studies in Japan" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Planning your studies in Japan");
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
 });
 
