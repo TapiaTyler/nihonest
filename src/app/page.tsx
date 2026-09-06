@@ -47,7 +47,7 @@ export default function Home() {
             Built public first.
           </h2>
           <p className="mt-4 leading-7 text-teal-100/80">
-            A complete student-arrival collection now covers planning, immigration, arrival documents, essential registrations, and settling into daily life.
+            The knowledgebase now maps study, work, business, family, designated-activity, and short-stay routes alongside shared arrival guidance.
           </p>
         </aside>
       </section>

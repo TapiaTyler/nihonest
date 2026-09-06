@@ -5,13 +5,12 @@ import type {
   ResidenceStatus,
   ResidenceStatusCategory,
 } from "@/domain/residence-status/residence-status";
+import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { ResidenceStatusCard } from "./residence-status-card";
 
 const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
-  { id: "all", label: "All samples" },
-  { id: "work", label: "Work" },
-  { id: "study", label: "Study" },
-  { id: "family", label: "Family" },
+  { id: "all", label: "All statuses" },
+  ...RESIDENCE_STATUS_CATEGORY_IDS.map((id) => ({ id, label: residenceStatusCategoryLabels[id] })),
 ];
 
 type ResidenceStatusExplorerProps = Readonly<{
@@ -41,7 +40,7 @@ export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusEx
       </div>
 
       <p className="mt-5 text-sm text-slate-500" aria-live="polite">
-        Showing {visibleStatuses.length} of {residenceStatuses.length} sample statuses
+        Showing {visibleStatuses.length} of {residenceStatuses.length} draft statuses
       </p>
 
       <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">

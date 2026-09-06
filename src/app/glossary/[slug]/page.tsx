@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OfficialSourceList } from "@/components/content/official-source-list";
+import { BackToGlossaryLink } from "@/components/navigation/back-to-glossary-link";
 import { getSourceById } from "@/data/sources";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getArticleById } from "@/lib/content/articles";
@@ -44,9 +45,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
   return (
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        <Link href="/glossary" className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-          ← Back to Glossary
-        </Link>
+        <BackToGlossaryLink />
         <header className="mt-8 border-b border-slate-200 pb-8">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
             {term.topicIds.map((topicId) => (

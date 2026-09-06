@@ -1,4 +1,5 @@
 import { japaneseTermSchema } from "@/domain/glossary/glossary";
+import { glossaryAdditions } from "@/data/glossary-additions";
 
 export const glossaryTerms = [
   japaneseTermSchema.parse({
@@ -109,4 +110,5 @@ export const glossaryTerms = [
     relatedArticleIds: ["working-part-time-on-student-status"], relatedTermIds: ["zairyu-shikaku", "zairyu-card"],
     sourceIds: ["study-in-japan-part-time", "isa-new-entrant-guidance"], searchTerms: ["work permission", "part time work permit", "permission outside status", "shikakugai katsudo kyoka"], status: "needs-review",
   }),
+  ...glossaryAdditions,
 ] as const;

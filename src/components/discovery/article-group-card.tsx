@@ -1,13 +1,13 @@
 import Link from "next/link";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 
-export function ArticleGroupCard({ group }: Readonly<{ group: ArticleGroup }>) {
+export function ArticleGroupCard({ group, returnTo }: Readonly<{ group: ArticleGroup; returnTo?: string }>) {
   const articleLabel = group.articleIds.length === 1 ? "guide" : "guides";
 
   return (
     <article className="h-full">
       <Link
-        href={`/explore/${group.id}`}
+        href={returnTo ? { pathname: `/explore/${group.id}`, query: { returnTo } } : `/explore/${group.id}`}
         aria-label={`Explore ${group.title}`}
         className="group flex h-full cursor-pointer flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >

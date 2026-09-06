@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 
-export function GlossaryCard({ term }: Readonly<{ term: JapaneseTerm }>) {
+export function GlossaryCard({ term, returnTo }: Readonly<{ term: JapaneseTerm; returnTo?: string }>) {
   return (
     <article className="h-full">
       <Link
-        href={`/glossary/${term.slug}`}
+        href={returnTo ? { pathname: `/glossary/${term.slug}`, query: { returnTo } } : `/glossary/${term.slug}`}
         aria-label={term.englishName}
         className="group flex h-full cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >

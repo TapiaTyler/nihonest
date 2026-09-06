@@ -154,9 +154,15 @@ export function searchKnowledgebase(
     return score >= 0 ? [{ kind: "glossary" as const, term, score }] : [];
   });
 
+  const kindOrder: Record<KnowledgebaseSearchResult["kind"], number> = {
+    group: 0,
+    article: 1,
+    glossary: 2,
+  };
+
   return [...groupResults, ...articleResults, ...glossaryResults].sort(
-    (left, right) => right.score - left.score ||
-      resultTitle(left).localeCompare(resultTitle(right)),
+    (left, right) => kindOrder[left.kind] - kindOrder[right.kind] ||
+      resultTitle(left).localeCompare(resultTitle(right), "en", { sensitivity: "base" }),
   );
 }
 

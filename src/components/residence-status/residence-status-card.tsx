@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
+import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 
 type ResidenceStatusCardProps = Readonly<{
   residenceStatus: ResidenceStatus;
@@ -15,10 +16,13 @@ export function ResidenceStatusCard({ residenceStatus }: ResidenceStatusCardProp
       >
         <div className="flex items-start justify-between gap-4">
           <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
-            Draft sample
+            Draft
           </span>
-          <span lang="ja" className="text-lg font-medium text-slate-500">
-            {residenceStatus.japaneseName}
+          <span className="text-right text-slate-500">
+            <span lang="ja" className="block text-lg font-medium">{residenceStatus.japaneseName}</span>
+            <span className="mt-1 block text-xs">
+              <span lang="ja">{residenceStatus.japaneseKana}</span> · {residenceStatus.romaji}
+            </span>
           </span>
         </div>
         <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
@@ -26,9 +30,9 @@ export function ResidenceStatusCard({ residenceStatus }: ResidenceStatusCardProp
         </h2>
         <p className="mt-4 flex-1 leading-7 text-slate-600">{residenceStatus.summary}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
-          <p className="capitalize text-slate-500">Category: {residenceStatus.category}</p>
+          <p className="text-slate-500">Category: {residenceStatusCategoryLabels[residenceStatus.category]}</p>
           <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
-            View status details →
+            View status and related guidance →
           </span>
         </div>
       </Link>

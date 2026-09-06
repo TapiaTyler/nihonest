@@ -342,6 +342,8 @@ Japanese fields are protected content for future translation purposes.
 
 The Phase 4 implementation keeps glossary records in validated structured data, links them bidirectionally with article metadata, and exposes normalization-based local search through a platform-independent module. Search normalization uses Unicode compatibility normalization and diacritic folding so readers can find terms using Japanese, kana, English, or romaji with or without macrons. Phase 5 may compose this module into broader knowledgebase search without coupling glossary records to the web UI.
 
+Article pages surface their linked vocabulary after the guide body, where it supports review without delaying access to the primary guidance, and enhance glossary links with a shared pronunciation disclosure. Hover and keyboard focus reveal the disclosure on fine-pointer devices; on coarse-pointer devices the first tap reveals it and a second tap follows the glossary link. Residence-status records reference the same glossary entities and expose Japanese, kana, and romaji without duplicating separate definitions.
+
 ---
 
 # 10. Source Domain
@@ -439,14 +441,19 @@ ArticleGroup {
 
 GuidedJourney {
   id
+  groupId
+  introduction
   steps: Array<{
     articleId
-    applicability // all students, Student status, Temporary Visitor, or registered resident
+    applicability // controlled route IDs
+    role // core, choose-one, or conditional
   }>
 }
 ```
 
-An article belongs to a reusable subject group independently of whether it appears in one or more journeys. For example, address registration belongs to Arrival essentials while the student journey references it as an ordered step. Journey-step applicability supports route-aware onboarding and prevents visitor-only, Student-status, and resident-registration procedures from being presented as universal. Do not duplicate or relabel shared guidance for each audience.
+An article belongs to a reusable subject group independently of whether it appears in one or more journeys. An article may belong to more than one group when it is genuinely foundational. Journey-step applicability supports route-aware onboarding and prevents visitor-only, work-status, family, Student-status, and resident-registration procedures from being presented as universal. Step roles distinguish sequential work from a set of alternative routes and from conditional follow-up. Do not duplicate or relabel shared guidance for each audience.
+
+The pre-Phase 6 catalog uses purpose-based browse groups rather than reproducing MOFA's administrative visa menu as one flat list. Canonical residence-status records remain separate from visa and program articles: for example, Digital Nomad, working holiday, and J-Find articles all reference the single Designated Activities status, while visa-versus-status guidance explains the legal distinction. This preserves a stable personalization key without hiding the program-specific guidance users search for.
 
 ---
 
@@ -473,7 +480,13 @@ search(query, filters)
 
 Future dedicated providers might include specialized search engines, but no vendor should be selected now.
 
-The Phase 5 implementation builds this boundary as a platform-independent local search module over validated article metadata and glossary records. The Explore UI composes query matching with journey-stage, topic, audience, geographic-scope, content-type, importance, and residence-status filters. With no active query or filter, it renders only the reusable article groups; dedicated group routes reveal their articles, while a separate journey route preserves ordered, applicability-aware student guidance. This keeps discovery independent of the presentation hierarchy and leaves a clear replacement point if a dedicated full-text index becomes necessary.
+The Phase 5 implementation builds this boundary as a platform-independent local search module over validated group, article, and glossary metadata. The Explore UI composes query matching with journey-stage, topic, audience, geographic-scope, content-type, importance, and residence-status filters. With no active query or filter, it renders only the reusable article groups; dedicated group routes reveal their articles, while separate journey routes preserve ordered, applicability-aware guidance. This keeps discovery independent of the presentation hierarchy and leaves a clear replacement point if a dedicated full-text index becomes necessary.
+
+Active search results use a predictable type hierarchy: matching content groups first, individual guides second, and glossary terms third, with alphabetical order inside each section. The UI renders these as separate labeled regions and generates jump links only for non-empty result types. Residence-status detail pages resolve their related article IDs back to the applicable content groups and guided journeys so the structured status directory does not become a dead end.
+
+Explore search and filter values are serialized into the query string. Result links carry that Explore URL as a constrained return target, allowing browser Back and the explicit Back to Explore control to restore the user's discovery state.
+
+Glossary query and topic state follow the same URL-backed return pattern. Term links carry a constrained Glossary return target, with session-scoped fallback state preserving the search when readers continue through related terms or guides before returning.
 
 Search should eventually support:
 

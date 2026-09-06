@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { TopicId } from "@/domain/taxonomy/taxonomy";
 import { topics } from "@/domain/taxonomy/taxonomy";
@@ -8,20 +8,69 @@ import { searchGlossary } from "@/lib/search/glossary-search";
 import { GlossaryCard } from "./glossary-card";
 
 type TopicFilter = "all" | TopicId;
+type GlossaryFilters = Readonly<{ query: string; topicId: TopicFilter }>;
+
+const defaultGlossaryFilters: GlossaryFilters = { query: "", topicId: "all" };
+const glossaryReturnStorageKey = "nihonest:glossary-return";
+
+function filtersFromSearch(search: string): GlossaryFilters {
+  const params = new URLSearchParams(search);
+  const requestedTopic = params.get("topic");
+  return {
+    query: params.get("q") ?? "",
+    topicId: requestedTopic && topics.some(({ id }) => id === requestedTopic)
+      ? requestedTopic as TopicId
+      : "all",
+  };
+}
+
+function searchForFilters({ query, topicId }: GlossaryFilters) {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (topicId !== "all") params.set("topic", topicId);
+  return params.toString();
+}
 
 export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseTerm[] }>) {
   const searchId = useId();
-  const [query, setQuery] = useState("");
-  const [topicId, setTopicId] = useState<TopicFilter>("all");
+  const [filters, setFilters] = useState<GlossaryFilters>(defaultGlossaryFilters);
+  const filtersRef = useRef<GlossaryFilters>(defaultGlossaryFilters);
+  const { query, topicId } = filters;
   const availableTopics = topics.filter((topic) =>
     terms.some((term) => term.topicIds.includes(topic.id)),
   );
   const visibleTerms = searchGlossary(terms, { query, topicId });
   const hasFilters = Boolean(query.trim()) || topicId !== "all";
+  const filterSearch = searchForFilters(filters);
+  const returnTo = filterSearch ? `/glossary?${filterSearch}` : "/glossary";
+
+  useEffect(() => {
+    function restoreFromUrl() {
+      const restoredFilters = filtersFromSearch(window.location.search);
+      filtersRef.current = restoredFilters;
+      setFilters(restoredFilters);
+      sessionStorage.setItem(glossaryReturnStorageKey, window.location.pathname + window.location.search);
+    }
+    restoreFromUrl();
+    window.addEventListener("popstate", restoreFromUrl);
+    return () => window.removeEventListener("popstate", restoreFromUrl);
+  }, []);
+
+  function updateFilters(update: Partial<GlossaryFilters>) {
+    const next = { ...filtersRef.current, ...update };
+    filtersRef.current = next;
+    setFilters(next);
+    const search = searchForFilters(next);
+    const href = search ? `/glossary?${search}` : "/glossary";
+    window.history.replaceState(null, "", href);
+    sessionStorage.setItem(glossaryReturnStorageKey, href);
+  }
 
   function clearFilters() {
-    setQuery("");
-    setTopicId("all");
+    filtersRef.current = defaultGlossaryFilters;
+    setFilters(defaultGlossaryFilters);
+    window.history.replaceState(null, "", "/glossary");
+    sessionStorage.setItem(glossaryReturnStorageKey, "/glossary");
   }
 
   return (
@@ -38,7 +87,7 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
             id={searchId}
             type="search"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => updateFilters({ query: event.target.value })}
             aria-describedby={`${searchId}-hint`}
             placeholder="Example: 住民票, juminhyo, residence certificate"
             className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
@@ -60,7 +109,7 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
               key={topic.id}
               type="button"
               aria-pressed={topicId === topic.id}
-              onClick={() => setTopicId(topic.id)}
+              onClick={() => updateFilters({ topicId: topic.id })}
               className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:border-teal-800 aria-pressed:bg-teal-800 aria-pressed:text-white"
             >
               {topic.label}
@@ -75,7 +124,13 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
 
       {visibleTerms.length > 0 ? (
         <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {visibleTerms.map((term) => <GlossaryCard key={term.id} term={term} />)}
+          {visibleTerms.map((term) => (
+            <GlossaryCard
+              key={term.id}
+              term={term}
+              returnTo={hasFilters ? returnTo : undefined}
+            />
+          ))}
         </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">

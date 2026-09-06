@@ -171,6 +171,30 @@ feat: add knowledgebase search and filters
 
 ---
 
+# Pre-Phase 6 — Journey and Visa Content Expansion
+
+Status: Complete at draft level
+
+Objectives:
+
+- expand the visa and residence catalog before onboarding depends on it;
+- distinguish visas, statuses of residence, and named Designated Activities programs;
+- organize detailed routes into purpose-based Explore groups;
+- add canonical records for the complete high-level residence-status list;
+- map reusable journeys for students, professional workers, founders, skilled and sector workers, family members, culture or training participants, and working-holiday participants;
+- distinguish core, choose-one, and conditional journey steps;
+- retain draft labeling until high-stakes articles receive the planned research and editorial review pass.
+
+The detailed research, geographic expansion, and review-ready content pass remains planned for Phase 13.
+
+Suggested Git checkpoint:
+
+```text
+content: expand draft visa catalog and mapped journeys
+```
+
+---
+
 # Phase 6 — Anonymous Personalization
 
 Objectives:
@@ -312,12 +336,17 @@ feat: add opt-in reminder notifications
 Objectives:
 
 - select translation provider based on current quality/cost;
+- evaluate Japanese text-to-speech quality, licensing, latency, and cost independently, even if the translation provider also offers speech generation;
 - preserve canonical English;
 - protect Japanese term structures;
 - translate eligible prose;
 - cache generated translations;
 - display machine-translation notice;
-- gracefully fall back to English.
+- gracefully fall back to English;
+- add an accessible pronunciation-audio control to individual glossary-term pages;
+- never autoplay pronunciation, expose clear play/pause/replay state, and retain kana and romaji as the non-audio fallback;
+- cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
+- add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product.
 
 Suggested checkpoint:
 
@@ -348,7 +377,7 @@ feat: add source review tracking
 
 ---
 
-# Phase 13 — Geographic Expansion
+# Phase 13 — Geographic and Editorial Expansion
 
 Objectives:
 
@@ -356,14 +385,19 @@ Objectives:
 - distinguish national vs local guidance;
 - support selected municipalities;
 - provide official local links;
-- validate architecture before expanding coverage.
+- validate architecture before expanding coverage;
+- deeply research the draft visa and residence-status catalog against current primary sources;
+- expand route-specific requirements, evidence, exceptions, transition rules, and practical guidance;
+- audit every article, including content already marked ready for editorial review, so one or more relevant Japanese terms are introduced naturally in the article body rather than appearing only in the Key Japanese terminology section;
+- verify that each article's linked glossary terms are actually taught in context alongside their English equivalents, removing or replacing terms that cannot be usefully integrated into the passage;
+- move articles from draft to editorial review only after their important claims and source mappings have been checked.
 
 Do not attempt every municipality simultaneously.
 
 Suggested checkpoint:
 
 ```text
-feat: add municipality-specific guidance
+content: research visa guidance and add municipality coverage
 ```
 
 ---

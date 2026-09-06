@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useId, useMemo, useRef, useState } from "react";
 import { ArticleCard } from "@/components/content/article-card";
 import { GlossaryCard } from "@/components/glossary/glossary-card";
 import { ArticleGroupCard } from "./article-group-card";
@@ -17,6 +17,46 @@ const contentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
 const importanceLabels: Record<(typeof IMPORTANCE_IDS)[number], string> = {
   informational: "Informational", recommended: "Recommended", important: "Important", critical: "Critical",
 };
+const exploreReturnStorageKey = "nihonest:explore-return";
+
+const filterParamKeys: Record<keyof KnowledgebaseSearchFilters, string> = {
+  query: "q",
+  kind: "kind",
+  journeyStageId: "stage",
+  topicId: "topic",
+  audienceId: "audience",
+  geographicScopeId: "scope",
+  contentType: "content",
+  importance: "importance",
+  residenceStatusId: "status",
+};
+
+function filtersFromSearch(search: string, residenceStatuses: readonly ResidenceStatus[]): KnowledgebaseSearchFilters {
+  const params = new URLSearchParams(search);
+  const accepted = <Value extends string>(value: string | null, values: readonly Value[]): Value | "all" =>
+    value && values.includes(value as Value) ? value as Value : "all";
+
+  return {
+    query: params.get("q") ?? "",
+    kind: accepted(params.get("kind"), ["all", "group", "article", "glossary"] as const),
+    journeyStageId: accepted(params.get("stage"), ["all", ...journeyStages.map(({ id }) => id)]),
+    topicId: accepted(params.get("topic"), ["all", ...topics.map(({ id }) => id)]),
+    audienceId: accepted(params.get("audience"), ["all", ...audiences.map(({ id }) => id)]),
+    geographicScopeId: accepted(params.get("scope"), ["all", ...geographicScopes.map(({ id }) => id)]),
+    contentType: accepted(params.get("content"), ["all", ...CONTENT_TYPE_IDS]),
+    importance: accepted(params.get("importance"), ["all", ...IMPORTANCE_IDS]),
+    residenceStatusId: accepted(params.get("status"), ["all", ...residenceStatuses.map(({ id }) => id)]),
+  };
+}
+
+function searchForFilters(filters: KnowledgebaseSearchFilters) {
+  const params = new URLSearchParams();
+  for (const [key, paramKey] of Object.entries(filterParamKeys) as [keyof KnowledgebaseSearchFilters, string][]) {
+    const value = filters[key];
+    if (value && value !== "all") params.set(paramKey, value);
+  }
+  return params.toString();
+}
 
 export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }: Readonly<{
   groups: readonly ArticleGroup[];
@@ -26,15 +66,41 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
 }>) {
   const searchId = useId();
   const [filters, setFilters] = useState<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
+  const filtersRef = useRef<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
   const isSearching = hasActiveKnowledgebaseSearch(filters);
   const results = useMemo(() => searchKnowledgebase(groups, articles, terms, filters), [articles, filters, groups, terms]);
+  const groupResults = results.flatMap((result) => result.kind === "group" ? [result.group] : []);
+  const articleResults = results.flatMap((result) => result.kind === "article" ? [result.article] : []);
+  const glossaryResults = results.flatMap((result) => result.kind === "glossary" ? [result.term] : []);
+  const filterSearch = searchForFilters(filters);
+  const returnTo = filterSearch ? `/explore?${filterSearch}` : "/explore";
+
+  useEffect(() => {
+    function restoreFromUrl() {
+      const restoredFilters = filtersFromSearch(window.location.search, residenceStatuses);
+      filtersRef.current = restoredFilters;
+      setFilters(restoredFilters);
+      sessionStorage.setItem(exploreReturnStorageKey, window.location.pathname + window.location.search);
+    }
+    restoreFromUrl();
+    window.addEventListener("popstate", restoreFromUrl);
+    return () => window.removeEventListener("popstate", restoreFromUrl);
+  }, [residenceStatuses]);
 
   function updateFilter<Key extends keyof KnowledgebaseSearchFilters>(key: Key, value: KnowledgebaseSearchFilters[Key]) {
-    setFilters((current) => ({ ...current, [key]: value }));
+    const next = { ...filtersRef.current, [key]: value };
+    filtersRef.current = next;
+    setFilters(next);
+    const search = searchForFilters(next);
+    window.history.replaceState(null, "", search ? `/explore?${search}` : "/explore");
+    sessionStorage.setItem(exploreReturnStorageKey, search ? `/explore?${search}` : "/explore");
   }
 
   function clearSearch() {
+    filtersRef.current = defaultKnowledgebaseSearchFilters;
     setFilters(defaultKnowledgebaseSearchFilters);
+    window.history.replaceState(null, "", "/explore");
+    sessionStorage.setItem(exploreReturnStorageKey, "/explore");
   }
 
   return (
@@ -84,12 +150,29 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
             <p className="text-sm text-slate-500" aria-live="polite">{results.length} {results.length === 1 ? "result" : "results"}</p>
           </div>
           {results.length > 0 ? (
-            <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {results.map((result) => {
-                if (result.kind === "group") return <ArticleGroupCard key={`group-${result.group.id}`} group={result.group} />;
-                if (result.kind === "article") return <ArticleCard key={`article-${result.article.id}`} article={result.article} />;
-                return <GlossaryCard key={`glossary-${result.term.id}`} term={result.term} />;
-              })}
+            <div className="mt-7">
+              <nav aria-label="Jump to result type" className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <span className="mr-1 text-sm font-semibold text-slate-700">Jump to:</span>
+                {groupResults.length > 0 && <ResultJumpLink href="#result-groups" label="Groups" count={groupResults.length} />}
+                {articleResults.length > 0 && <ResultJumpLink href="#result-guides" label="Guides" count={articleResults.length} />}
+                {glossaryResults.length > 0 && <ResultJumpLink href="#result-terms" label="Glossary terms" count={glossaryResults.length} />}
+              </nav>
+
+              {groupResults.length > 0 && (
+                <ResultSection id="result-groups" title="Content groups" count={groupResults.length}>
+                  {groupResults.map((group) => <ArticleGroupCard key={group.id} group={group} returnTo={returnTo} />)}
+                </ResultSection>
+              )}
+              {articleResults.length > 0 && (
+                <ResultSection id="result-guides" title="Guides" count={articleResults.length}>
+                  {articleResults.map((article) => <ArticleCard key={article.id} article={article} returnTo={returnTo} />)}
+                </ResultSection>
+              )}
+              {glossaryResults.length > 0 && (
+                <ResultSection id="result-terms" title="Glossary terms" count={glossaryResults.length}>
+                  {glossaryResults.map((term) => <GlossaryCard key={term.id} term={term} />)}
+                </ResultSection>
+              )}
             </div>
           ) : (
             <div className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
@@ -110,6 +193,27 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
         </section>
       )}
     </div>
+  );
+}
+
+function ResultJumpLink({ href, label, count }: Readonly<{ href: string; label: string; count: number }>) {
+  return (
+    <a href={href} className="inline-flex min-h-11 items-center rounded-full border border-teal-200 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+      {label} ({count})
+    </a>
+  );
+}
+
+function ResultSection({ id, title, count, children }: Readonly<{ id: string; title: string; count: number; children: ReactNode }>) {
+  const headingId = `${id}-heading`;
+  return (
+    <section id={id} aria-labelledby={headingId} className="scroll-mt-6 border-b border-slate-200 py-10 last:border-b-0 last:pb-0">
+      <div className="flex items-end justify-between gap-4">
+        <h3 id={headingId} className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h3>
+        <span className="text-sm text-slate-500">{count} {count === 1 ? "match" : "matches"}</span>
+      </div>
+      <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">{children}</div>
+    </section>
   );
 }
 

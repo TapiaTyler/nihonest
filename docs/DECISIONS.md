@@ -674,6 +674,8 @@ The default Explore page presents high-level content groups. Users select a grou
 
 Search on Explore indexes the complete knowledgebase independently of that browsing hierarchy and can return direct links to individual articles from any group.
 
+Active results are presented as content groups, guides, then glossary terms, alphabetized within each type. Conditional jump links expose only result types present in the current query and filter state.
+
 Groups and guided journeys are separate structured records. Groups organize canonical subject matter; journeys hold ordered references and may reuse articles from several groups.
 
 The homepage primary CTA becomes the entrance to optional journey-stage onboarding in Phase 6; it does not permanently belong to a single content group.
@@ -686,7 +688,7 @@ Group-first browsing keeps a growing library understandable, while global articl
 
 ## ADR-043 — Journey steps carry route applicability
 
-**Status:** Accepted
+**Status:** Superseded by ADR-044
 
 ### Decision
 
@@ -695,6 +697,24 @@ Guided-journey steps reference canonical articles and declare controlled applica
 ### Reason
 
 Academic labels such as “short-term study” do not determine immigration status. A Temporary Visitor, a Student-status holder, and a registered mid- to long-term resident encounter different document, municipal, work, banking, and insurance procedures. Structured applicability keeps the sequence reusable for Phase 6 onboarding without copying shared articles.
+
+---
+
+## ADR-044 — Visa discovery uses canonical statuses, purpose groups, and typed journey steps
+
+**Status:** Accepted
+
+### Decision
+
+Canonical residence-status records are separate from visa and program articles. Purpose-based Explore groups may reuse foundational articles and may present multiple named programs that share one residence status, such as Designated Activities.
+
+Guided journeys reference a related group and use controlled applicability IDs. Each step is also classified as core, choose-one, or conditional so an ordered journey does not imply that users should complete every alternative visa route.
+
+Unresearched expansion articles use the `draft` status and display a Draft label. Previously researched articles awaiting final editorial verification retain `needs-review` and display Editorial review.
+
+### Reason
+
+MOFA visa categories, legal statuses of residence, and user goals are related but not interchangeable. Keeping them separate supports accurate filtering and future personalization while purpose groups remain understandable to people who do not know the legal category they need. Typed steps provide Phase 6 with enough structure to personalize a journey without duplicating shared arrival guidance.
 
 ---
 

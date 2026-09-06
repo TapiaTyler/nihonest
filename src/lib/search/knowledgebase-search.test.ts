@@ -42,7 +42,7 @@ describe("knowledgebase search", () => {
       query: "juminhyo",
     });
 
-    expect(articleResults.map(({ kind }) => kind)).toEqual(["article", "group"]);
+    expect(articleResults.map(({ kind }) => kind)).toEqual(["group", "article", "glossary"]);
     expect(glossaryResults[0]?.kind).toBe("glossary");
   });
 
@@ -78,5 +78,36 @@ describe("knowledgebase search", () => {
   it("recognizes either a query or filter as active discovery", () => {
     expect(hasActiveKnowledgebaseSearch(defaultKnowledgebaseSearchFilters)).toBe(false);
     expect(hasActiveKnowledgebaseSearch({ ...defaultKnowledgebaseSearchFilters, kind: "glossary" })).toBe(true);
+  });
+
+  it("orders groups, articles, and glossary terms by type and then title", () => {
+    const secondArticle = articleMetadataSchema.parse({
+      ...bankArticle,
+      id: "another-bank-guide",
+      slug: "another-bank-guide",
+      title: "Another bank guide",
+    });
+    const secondGroup = articleGroupSchema.parse({
+      id: "banking-basics",
+      title: "Banking basics",
+      description: "Bank account guidance.",
+      articleIds: [secondArticle.id],
+    });
+
+    const results = searchKnowledgebase(
+      [secondGroup, arrivalGroup],
+      [bankArticle, secondArticle],
+      glossaryTerms,
+      { ...defaultKnowledgebaseSearchFilters, query: "bank" },
+    );
+
+    expect(results.map((result) => result.kind)).toEqual(["group", "group", "article", "article", "glossary"]);
+    expect(results.map((result) => result.kind === "group" ? result.group.title : result.kind === "article" ? result.article.title : result.term.englishName)).toEqual([
+      "Arrival essentials",
+      "Banking basics",
+      "Another bank guide",
+      "Opening a bank account",
+      "Ordinary Deposit Account",
+    ]);
   });
 });

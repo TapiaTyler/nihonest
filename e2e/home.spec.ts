@@ -16,7 +16,7 @@ test("browses a content group and opens one of its guides", async ({ page }) => 
   );
   await expect(page.getByRole("link", { name: "Explore Study in Japan" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Explore Arrival essentials" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Explore Visas and residence" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore Professional work" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Opening a bank account after moving to Japan" })).toHaveCount(0);
 
   await page.getByRole("link", { name: "Explore Arrival essentials" }).click();
@@ -32,10 +32,27 @@ test("searches articles across groups without opening a group first", async ({ p
   await page.goto("/explore");
 
   await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("Start-up Visa");
-  await expect(page.getByRole("link", { name: "Explore Visas and residence" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore Business and high-skill" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Groups \(/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Guides \(/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Glossary terms \(/ })).toHaveCount(0);
+  await page.getByRole("link", { name: /^Groups \(/ }).click();
+  await expect(page).toHaveURL(/#result-groups$/);
   await page.getByRole("link", { name: "Japan's Start-up Visa pathway" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Japan's Start-up Visa pathway");
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
+  await page.getByRole("link", { name: "Back to Explore" }).click();
+  await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("Start-up Visa");
+});
+
+test("opens an expanded work group and its mapped journey", async ({ page }) => {
+  await page.goto("/explore/professional-work");
+
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Professional work");
+  await expect(page.getByRole("link", { name: "Engineer/Specialist in Humanities/International Services work status" })).toBeVisible();
+  await page.getByRole("link", { name: "Open professional worker journey" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Professional worker journey");
+  await expect(page.getByText("Choose the relevant route").first()).toBeVisible();
 });
 
 test("searches glossary terms from Explore", async ({ page }) => {
@@ -64,7 +81,7 @@ test("opens the route-aware student journey from the homepage", async ({ page })
 
   await page.getByRole("link", { name: "Start the student journey" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Student journey");
-  await expect(page.getByText("Student status only").first()).toBeVisible();
+  await expect(page.getByText("Student status").first()).toBeVisible();
   await expect(page.getByText("Resident registration required").first()).toBeVisible();
   await page.getByRole("link", { name: "Short-term study in Japan as a Temporary Visitor" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -77,7 +94,7 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
   await page.goto("/glossary");
 
   await page.getByRole("searchbox", { name: "Search Japanese or English" }).fill("juminhyo");
-  await expect(page.getByText("Showing 1 of 12 terms")).toBeVisible();
+  await expect(page.getByText("Showing 1 of 58 terms")).toBeVisible();
   const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
   const glossaryCta = glossaryCard.getByText("View term and context →");
   await expect(glossaryCta).toHaveCSS("cursor", "pointer");
@@ -85,22 +102,37 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("住民票");
   await expect(page.locator("p").filter({ hasText: "じゅうみんひょう · jūminhyō" })).toBeVisible();
+  await page.getByRole("link", { name: "Back to Glossary" }).click();
+  await expect(page.getByRole("searchbox", { name: "Search Japanese or English" })).toHaveValue(
+    "juminhyo",
+  );
+  await expect(page.getByText("Showing 1 of 58 terms")).toBeVisible();
+  await page.getByRole("link", { name: "Certificate of Residence" }).click();
   await page.getByRole("link", { name: "Registering your address after arrival" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Registering your address after arrival");
-  await expect(page.getByRole("heading", { name: "Japanese terms in this guide" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Key Japanese terminology" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Report where you live" })).toBeVisible();
+  const articleHeadings = await page.locator("h2").allTextContents();
+  expect(articleHeadings.indexOf("Report where you live")).toBeLessThan(
+    articleHeadings.indexOf("Key Japanese terminology"),
+  );
 });
 
 test("filters and opens a residence status", async ({ page }) => {
   await page.goto("/residence-statuses");
 
-  await page.getByRole("button", { name: "Study" }).click();
-  await expect(page.getByText("Showing 1 of 3 sample statuses")).toBeVisible();
+  await page.getByRole("button", { name: "Study, culture, and training" }).click();
+  await expect(page.getByText("Showing 3 of 29 draft statuses")).toBeVisible();
   const statusCard = page.getByRole("article").filter({ hasText: "Student" });
-  const statusCta = statusCard.getByText("View status details →");
+  const statusCta = statusCard.getByText("View status and related guidance →");
   await expect(statusCta).toHaveCSS("cursor", "pointer");
   await statusCta.click();
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Student");
+  await expect(page.getByRole("paragraph").filter({ hasText: /^りゅうがく · ryūgaku$/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "留学" })).toHaveAttribute("href", "/glossary/ryugaku");
   await expect(page.getByRole("heading", { name: "What to verify" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Study in Japan →" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Student journey →" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
 });

@@ -1,4 +1,6 @@
 import type { MDXComponents } from "mdx/types";
+import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
+import { getGlossaryTermBySlug } from "@/lib/content/glossary";
 
 const components = {
   h2: ({ children }) => (
@@ -15,14 +17,20 @@ const components = {
       {children}
     </blockquote>
   ),
-  a: ({ children, href }) => (
-    <a
-      href={href}
-      className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-    >
-      {children}
-    </a>
-  ),
+  a: ({ children, href }) => {
+    const glossarySlug = href?.match(/^\/glossary\/([a-z0-9-]+)$/)?.[1];
+    const glossaryTerm = glossarySlug ? getGlossaryTermBySlug(glossarySlug) : undefined;
+    if (glossaryTerm) return <InlineGlossaryTerm term={glossaryTerm}>{children}</InlineGlossaryTerm>;
+
+    return (
+      <a
+        href={href}
+        className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+      >
+        {children}
+      </a>
+    );
+  },
   strong: ({ children }) => <strong className="font-semibold text-slate-950">{children}</strong>,
 } satisfies MDXComponents;
 

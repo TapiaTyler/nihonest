@@ -19,6 +19,38 @@ import DependentVisa, { metadata as dependentVisa } from "../../../content/artic
 import Startup, { metadata as startup } from "../../../content/articles/startup-visa.mdx";
 import Diplomatic, { metadata as diplomatic } from "../../../content/articles/diplomatic-visa.mdx";
 import Official, { metadata as official } from "../../../content/articles/official-visa.mdx";
+import VisaAndStatusOfResidenceExplained, { metadata as visaAndStatusOfResidenceExplainedMetadata } from "../../../content/articles/visa-and-status-of-residence-explained.mdx";
+import ChoosingAWorkStatusAndCoe, { metadata as choosingAWorkStatusAndCoeMetadata } from "../../../content/articles/choosing-a-work-status-and-coe.mdx";
+import PreparingForLongTermEntryToJapan, { metadata as preparingForLongTermEntryToJapanMetadata } from "../../../content/articles/preparing-for-long-term-entry-to-japan.mdx";
+import ProfessorStatus, { metadata as professorStatusMetadata } from "../../../content/articles/professor-status.mdx";
+import ArtistStatus, { metadata as artistStatusMetadata } from "../../../content/articles/artist-status.mdx";
+import ReligiousActivitiesStatus, { metadata as religiousActivitiesStatusMetadata } from "../../../content/articles/religious-activities-status.mdx";
+import JournalistStatus, { metadata as journalistStatusMetadata } from "../../../content/articles/journalist-status.mdx";
+import LegalAccountingServicesStatus, { metadata as legalAccountingServicesStatusMetadata } from "../../../content/articles/legal-accounting-services-status.mdx";
+import MedicalServicesStatus, { metadata as medicalServicesStatusMetadata } from "../../../content/articles/medical-services-status.mdx";
+import ResearcherStatus, { metadata as researcherStatusMetadata } from "../../../content/articles/researcher-status.mdx";
+import InstructorStatus, { metadata as instructorStatusMetadata } from "../../../content/articles/instructor-status.mdx";
+import EngineerSpecialistHumanitiesInternationalServicesStatus, { metadata as engineerSpecialistHumanitiesInternationalServicesStatusMetadata } from "../../../content/articles/engineer-specialist-humanities-international-services-status.mdx";
+import IntraCompanyTransfereeStatus, { metadata as intraCompanyTransfereeStatusMetadata } from "../../../content/articles/intra-company-transferee-status.mdx";
+import NursingCareStatus, { metadata as nursingCareStatusMetadata } from "../../../content/articles/nursing-care-status.mdx";
+import HighlySkilledProfessionalStatus, { metadata as highlySkilledProfessionalStatusMetadata } from "../../../content/articles/highly-skilled-professional-status.mdx";
+import BusinessManagerStatus, { metadata as businessManagerStatusMetadata } from "../../../content/articles/business-manager-status.mdx";
+import EntertainerStatus, { metadata as entertainerStatusMetadata } from "../../../content/articles/entertainer-status.mdx";
+import SkilledLaborStatus, { metadata as skilledLaborStatusMetadata } from "../../../content/articles/skilled-labor-status.mdx";
+import SpecifiedSkilledWorkerStatus, { metadata as specifiedSkilledWorkerStatusMetadata } from "../../../content/articles/specified-skilled-worker-status.mdx";
+import TechnicalInternTrainingStatus, { metadata as technicalInternTrainingStatusMetadata } from "../../../content/articles/technical-intern-training-status.mdx";
+import SpouseOrChildOfJapaneseNational, { metadata as spouseOrChildOfJapaneseNationalMetadata } from "../../../content/articles/spouse-or-child-of-japanese-national.mdx";
+import SpouseOrChildOfPermanentResident, { metadata as spouseOrChildOfPermanentResidentMetadata } from "../../../content/articles/spouse-or-child-of-permanent-resident.mdx";
+import LongTermResidentStatus, { metadata as longTermResidentStatusMetadata } from "../../../content/articles/long-term-resident-status.mdx";
+import PermanentResidenceInJapan, { metadata as permanentResidenceInJapanMetadata } from "../../../content/articles/permanent-residence-in-japan.mdx";
+import DesignatedActivitiesStatus, { metadata as designatedActivitiesStatusMetadata } from "../../../content/articles/designated-activities-status.mdx";
+import WorkingHolidayInJapan, { metadata as workingHolidayInJapanMetadata } from "../../../content/articles/working-holiday-in-japan.mdx";
+import LongStaySightseeingDesignatedActivities, { metadata as longStaySightseeingDesignatedActivitiesMetadata } from "../../../content/articles/long-stay-sightseeing-designated-activities.mdx";
+import FutureCreationJFind, { metadata as futureCreationJFindMetadata } from "../../../content/articles/future-creation-j-find.mdx";
+import DigitalNomadDesignatedActivities, { metadata as digitalNomadDesignatedActivitiesMetadata } from "../../../content/articles/digital-nomad-designated-activities.mdx";
+import ContinuedJobHuntingAfterStudy, { metadata as continuedJobHuntingAfterStudyMetadata } from "../../../content/articles/continued-job-hunting-after-study.mdx";
+import TemporaryVisitorAndShortStay, { metadata as temporaryVisitorAndShortStayMetadata } from "../../../content/articles/temporary-visitor-and-short-stay.mdx";
+import MedicalStayVisa, { metadata as medicalStayVisaMetadata } from "../../../content/articles/medical-stay-visa.mdx";
 import {
   articleMetadataSchema,
   validateArticleCollection,
@@ -26,6 +58,7 @@ import {
 } from "@/domain/article/article";
 import { sources } from "@/data/sources";
 import { residenceStatuses } from "@/data/residence-statuses";
+import { validateResidenceStatusCollection } from "@/domain/residence-status/residence-status";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { validateDiscoveryModel } from "@/domain/discovery/discovery";
 import { glossaryTerms } from "@/data/glossary";
@@ -42,6 +75,38 @@ const entries = [
   [housing, Housing], [phone, Phone], [banking, Banking], [school, School], [work, Work],
   [culturalActivities, CulturalActivities], [training, Training], [dependentVisa, DependentVisa],
   [startup, Startup], [diplomatic, Diplomatic], [official, Official],
+  [visaAndStatusOfResidenceExplainedMetadata, VisaAndStatusOfResidenceExplained],
+  [choosingAWorkStatusAndCoeMetadata, ChoosingAWorkStatusAndCoe],
+  [preparingForLongTermEntryToJapanMetadata, PreparingForLongTermEntryToJapan],
+  [professorStatusMetadata, ProfessorStatus],
+  [artistStatusMetadata, ArtistStatus],
+  [religiousActivitiesStatusMetadata, ReligiousActivitiesStatus],
+  [journalistStatusMetadata, JournalistStatus],
+  [legalAccountingServicesStatusMetadata, LegalAccountingServicesStatus],
+  [medicalServicesStatusMetadata, MedicalServicesStatus],
+  [researcherStatusMetadata, ResearcherStatus],
+  [instructorStatusMetadata, InstructorStatus],
+  [engineerSpecialistHumanitiesInternationalServicesStatusMetadata, EngineerSpecialistHumanitiesInternationalServicesStatus],
+  [intraCompanyTransfereeStatusMetadata, IntraCompanyTransfereeStatus],
+  [nursingCareStatusMetadata, NursingCareStatus],
+  [highlySkilledProfessionalStatusMetadata, HighlySkilledProfessionalStatus],
+  [businessManagerStatusMetadata, BusinessManagerStatus],
+  [entertainerStatusMetadata, EntertainerStatus],
+  [skilledLaborStatusMetadata, SkilledLaborStatus],
+  [specifiedSkilledWorkerStatusMetadata, SpecifiedSkilledWorkerStatus],
+  [technicalInternTrainingStatusMetadata, TechnicalInternTrainingStatus],
+  [spouseOrChildOfJapaneseNationalMetadata, SpouseOrChildOfJapaneseNational],
+  [spouseOrChildOfPermanentResidentMetadata, SpouseOrChildOfPermanentResident],
+  [longTermResidentStatusMetadata, LongTermResidentStatus],
+  [permanentResidenceInJapanMetadata, PermanentResidenceInJapan],
+  [designatedActivitiesStatusMetadata, DesignatedActivitiesStatus],
+  [workingHolidayInJapanMetadata, WorkingHolidayInJapan],
+  [longStaySightseeingDesignatedActivitiesMetadata, LongStaySightseeingDesignatedActivities],
+  [futureCreationJFindMetadata, FutureCreationJFind],
+  [digitalNomadDesignatedActivitiesMetadata, DigitalNomadDesignatedActivities],
+  [continuedJobHuntingAfterStudyMetadata, ContinuedJobHuntingAfterStudy],
+  [temporaryVisitorAndShortStayMetadata, TemporaryVisitorAndShortStay],
+  [medicalStayVisaMetadata, MedicalStayVisa],
 ] as const;
 
 const articles: readonly ArticleRecord[] = entries.map(([metadata, Content]) => ({
@@ -49,6 +114,12 @@ const articles: readonly ArticleRecord[] = entries.map(([metadata, Content]) => 
   Content,
 }));
 
+validateResidenceStatusCollection(
+  residenceStatuses,
+  sources,
+  articles.map(({ metadata }) => metadata.id),
+  glossaryTerms.map(({ id }) => id),
+);
 validateArticleCollection(
   articles.map((article) => article.metadata),
   sources,
@@ -90,6 +161,11 @@ export function getArticleGroupById(groupId: string) {
   return articleGroups.find(({ id }) => id === groupId);
 }
 
+export function getArticleGroupsByArticleIds(articleIds: readonly string[]) {
+  const requestedIds = new Set(articleIds);
+  return articleGroups.filter((group) => group.articleIds.some((articleId) => requestedIds.has(articleId)));
+}
+
 export function getArticlesByJourney(journeyId: string) {
   const journey = guidedJourneys.find(({ id }) => id === journeyId);
   return journey ? resolveArticleIds(journey.steps.map(({ articleId }) => articleId)) : [];
@@ -97,6 +173,15 @@ export function getArticlesByJourney(journeyId: string) {
 
 export function getGuidedJourneyById(journeyId: string) {
   return guidedJourneys.find(({ id }) => id === journeyId);
+}
+
+export function getJourneysByGroup(groupId: string) {
+  return guidedJourneys.filter((journey) => journey.groupId === groupId);
+}
+
+export function getGuidedJourneysByArticleIds(articleIds: readonly string[]) {
+  const requestedIds = new Set(articleIds);
+  return guidedJourneys.filter((journey) => journey.steps.some(({ articleId }) => requestedIds.has(articleId)));
 }
 
 export function getJourneySteps(journeyId: string) {

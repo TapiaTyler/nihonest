@@ -10,6 +10,9 @@ const validStatus = residenceStatusSchema.parse({
   slug: "sample-status",
   englishName: "Sample status",
   japaneseName: "サンプル",
+  japaneseKana: "さんぷる",
+  romaji: "sanpuru",
+  glossaryTermId: "sample-status",
   category: "study",
   summary: "A sample record used to test the domain model.",
   purpose: "Testing validation.",
@@ -41,6 +44,8 @@ describe("residence status domain", () => {
       validateResidenceStatusCollection(
         [{ ...validStatus, sourceIds: ["missing-source"] }],
         [validSource],
+        [],
+        ["sample-status"],
       ),
     ).toThrow('references unknown source "missing-source"');
   });

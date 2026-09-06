@@ -41,6 +41,13 @@ export const articleMetadataSchema = z.object({
 
 export type ArticleMetadata = z.infer<typeof articleMetadataSchema>;
 
+export const articleStatusLabels: Record<ArticleMetadata["status"], string> = {
+  draft: "Draft",
+  verified: "Reviewed",
+  "needs-review": "Editorial review",
+  archived: "Archived",
+};
+
 export function validateArticleCollection(
   articles: readonly ArticleMetadata[],
   sources: readonly OfficialSource[],

@@ -28,5 +28,26 @@ describe("ArticleCard", () => {
       `/articles/${article.slug}`,
     );
     expect(screen.getByText("Read guide →")).toBeInTheDocument();
+    expect(screen.getByText("Editorial review")).toBeInTheDocument();
+  });
+
+  it("labels unresearched content as draft", () => {
+    const article = articleMetadataSchema.parse({
+      id: "draft-guide",
+      slug: "draft-guide",
+      title: "Draft guide",
+      description: "A deliberately unreviewed draft guide.",
+      journeyStageIds: ["planning"],
+      topicIds: ["immigration"],
+      geographicScopes: ["national"],
+      importance: "important",
+      contentType: "guide",
+      status: "draft",
+      createdAt: "2026-09-06",
+      updatedAt: "2026-09-06",
+    });
+
+    render(<ArticleCard article={article} />);
+    expect(screen.getByText("Draft")).toBeInTheDocument();
   });
 });

@@ -20,7 +20,7 @@ export const japaneseTermSchema = z.object({
   relatedTermIds: z.array(stableIdSchema).default([]),
   sourceIds: z.array(stableIdSchema).default([]),
   searchTerms: z.array(z.string().min(1)).default([]),
-  status: z.enum(["verified", "needs-review"]),
+  status: z.enum(["draft", "verified", "needs-review"]),
   lastReviewedAt: z.iso.date().optional(),
 });
 

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllArticles, getArticleById, getArticleBySlug } from "@/lib/content/articles";
-import { getSourceById } from "@/data/sources";
-import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
+import { ArticleTerminology } from "@/components/content/article-terminology";
 import { OfficialSourceList } from "@/components/content/official-source-list";
+import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
+import { articleStatusLabels, type ArticleMetadata } from "@/domain/article/article";
+import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
+import { getSourceById } from "@/data/sources";
+import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
 import { getGlossaryTermById } from "@/lib/content/glossary";
 
 export const dynamicParams = false;
@@ -58,20 +61,33 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
     const term = getGlossaryTermById(termId);
     return term ? [term] : [];
   });
+  const relatedGroups = getArticleGroupsByArticleIds([metadata.id]);
+  const relatedJourneys = getGuidedJourneysByArticleIds([metadata.id]);
+  const continueGuides = new Map<string, { article: ArticleMetadata; label: string }>(
+    relatedArticles.map(({ relationship, article: relatedArticle }) => [
+      relatedArticle.id,
+      { article: relatedArticle, label: relationshipLabels[relationship.type] },
+    ]),
+  );
+
+  for (const journey of relatedJourneys) {
+    const currentIndex = journey.steps.findIndex(({ articleId }) => articleId === metadata.id);
+    const nextStep = journey.steps[currentIndex + 1];
+    if (!nextStep) continue;
+    const nextArticle = getArticleById(nextStep.articleId)?.metadata;
+    if (nextArticle && !continueGuides.has(nextArticle.id)) {
+      continueGuides.set(nextArticle.id, { article: nextArticle, label: `Next in ${journey.title}` });
+    }
+  }
 
   return (
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        <Link
-          href="/explore"
-          className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
-        >
-          ← Back to Explore
-        </Link>
+        <BackToExploreLink />
         <header className="mt-8 border-b border-slate-200 pb-8">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
-              {metadata.status === "verified" ? "Reviewed" : "Editorial review"}
+              {articleStatusLabels[metadata.status]}
             </span>
             {metadata.topicIds.map((topicId) => (
               <span key={topicId} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">
@@ -92,47 +108,52 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           <Content />
         </div>
 
-        {relatedArticles.length > 0 && (
+        <div className="mt-12">
+          <ArticleTerminology terms={glossaryTerms} />
+        </div>
+
+        {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
             <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
               Continue exploring
             </h2>
-            <ul className="mt-4 space-y-3">
-              {relatedArticles.map(({ relationship, article: relatedArticle }) => (
-                <li key={`${relationship.type}-${relatedArticle.id}`}>
-                  <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-                    {relationshipLabels[relationship.type]}:
-                  </span>
+            <p className="mt-3 leading-7 text-slate-600">Continue with an ordered journey, browse the wider subject, or move to the next connected guide.</p>
+            {(relatedJourneys.length > 0 || relatedGroups.length > 0) && (
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {relatedJourneys.map((journey) => (
                   <Link
-                    href={`/articles/${relatedArticle.slug}`}
-                    className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    key={`journey-${journey.id}`}
+                    href={`/explore/journeys/${journey.id}`}
+                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
-                    {relatedArticle.title}
+                    <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Guided journey</span>
+                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{journey.title} →</span>
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {glossaryTerms.length > 0 && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="glossary-heading">
-            <h2 id="glossary-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-              Japanese terms in this guide
-            </h2>
-            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-              {glossaryTerms.map((term) => (
-                <li key={term.id}>
+                ))}
+                {relatedGroups.map((group) => (
                   <Link
-                    href={`/glossary/${term.slug}`}
-                    className="block rounded-xl border border-slate-200 bg-white p-4 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    key={`group-${group.id}`}
+                    href={`/explore/${group.id}`}
+                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
-                    <span lang="ja" className="block text-lg font-semibold text-slate-950">{term.japanese}</span>
-                    <span className="mt-1 block text-sm text-slate-600">{term.englishName}</span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Content group</span>
+                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{group.title} →</span>
                   </Link>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            )}
+            {continueGuides.size > 0 && (
+              <ul className="mt-6 space-y-3">
+                {[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
+                  <li key={relatedArticle.id}>
+                    <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500">{label}:</span>
+                    <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                      {relatedArticle.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
 

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { articleGroupSchema } from "@/domain/discovery/discovery";
 import { glossaryTerms } from "@/data/glossary";
@@ -41,6 +41,11 @@ function renderDiscovery() {
 }
 
 describe("ExploreDiscovery", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", "/explore");
+    sessionStorage.clear();
+  });
+
   it("shows groups at a glance before a search is active", () => {
     renderDiscovery();
 
@@ -54,6 +59,12 @@ describe("ExploreDiscovery", () => {
 
     expect(screen.getByRole("link", { name: "Opening a bank account" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Groups (1)" })).toHaveAttribute("href", "#result-groups");
+    expect(screen.getByRole("link", { name: "Guides (1)" })).toHaveAttribute("href", "#result-guides");
+    expect(screen.getByRole("link", { name: "Glossary terms (1)" })).toHaveAttribute("href", "#result-terms");
+    expect(screen.getByRole("heading", { name: "Content groups" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Guides" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Glossary terms" })).toBeInTheDocument();
   });
 
   it("can limit results to matching groups", () => {
@@ -70,6 +81,19 @@ describe("ExploreDiscovery", () => {
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "juminhyo" } });
 
     expect(screen.getByRole("link", { name: "Certificate of Residence" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Glossary terms (1)" })).toHaveAttribute("href", "#result-terms");
+    expect(screen.queryByRole("link", { name: /Groups \(/ })).not.toBeInTheDocument();
+  });
+
+  it("persists active discovery state in result links", () => {
+    renderDiscovery();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "bank account" } });
+
+    expect(window.location.search).toBe("?q=bank+account");
+    expect(screen.getByRole("link", { name: "Opening a bank account" })).toHaveAttribute(
+      "href",
+      "/articles/opening-bank-account?returnTo=%2Fexplore%3Fq%3Dbank%2Baccount",
+    );
   });
 
   it("combines structured filters and provides zero-result recovery", () => {
@@ -77,6 +101,7 @@ describe("ExploreDiscovery", () => {
     fireEvent.click(screen.getByRole("button", { name: "Guides" }));
     fireEvent.change(screen.getByRole("combobox", { name: "Topic" }), { target: { value: "healthcare" } });
 
+    expect(window.location.search).toBe("?kind=article&topic=healthcare");
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Browse all groups" }));
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();

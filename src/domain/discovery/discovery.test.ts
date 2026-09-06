@@ -10,10 +10,12 @@ describe("discovery model", () => {
     const journeys = [
       guidedJourneySchema.parse({
         id: "student",
+        groupId: "study",
         title: "Student",
         description: "Student journey",
+        introduction: "Choose the relevant study route.",
         steps: [
-          { articleId: "school", applicability: ["all-students"] },
+          { articleId: "school", applicability: ["all-routes"] },
           { articleId: "address", applicability: ["registered-resident"] },
         ],
       }),
@@ -25,15 +27,18 @@ describe("discovery model", () => {
   it("rejects duplicate articles in a journey", () => {
     const journey = guidedJourneySchema.parse({
       id: "student",
+      groupId: "study",
       title: "Student",
       description: "Student journey",
+      introduction: "Choose the relevant study route.",
       steps: [
-        { articleId: "school", applicability: ["all-students"] },
+        { articleId: "school", applicability: ["all-routes"] },
         { articleId: "school", applicability: ["student-status"] },
       ],
     });
 
-    expect(() => validateDiscoveryModel([], [journey], ["school"])).toThrow("contains duplicate articles");
+    const group = articleGroupSchema.parse({ id: "study", title: "Study", description: "Study guidance", articleIds: ["school"] });
+    expect(() => validateDiscoveryModel([group], [journey], ["school"])).toThrow("contains duplicate articles");
   });
 
   it("rejects unknown article references", () => {
