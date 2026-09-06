@@ -146,7 +146,11 @@ feat: add searchable Japanese glossary
 
 Objectives:
 
+- replace the flat Explore article listing with a group-first discovery page;
+- present high-level content groups before showing their individual articles;
+- add a dedicated group view that lists the articles within a selected group;
 - implement article search;
+- allow search on the Explore page to return individual articles across every group without requiring the user to open a group first;
 - combine search with structured filtering;
 - support taxonomy filters;
 - integrate glossary discovery;
@@ -168,6 +172,7 @@ feat: add knowledgebase search and filters
 Objectives:
 
 - optional journey-stage onboarding;
+- make the homepage primary CTA the entrance to that optional onboarding;
 - store journey stage locally;
 - remember onboarding state;
 - allow preference changes;

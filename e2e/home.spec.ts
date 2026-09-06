@@ -8,14 +8,28 @@ test("loads the Nihonest homepage", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 });
 
-test("browses from Explore to a student journey article", async ({ page }) => {
+test("distinguishes and opens the short-term student route", async ({ page }) => {
   await page.goto("/explore");
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Your student journey to Japan.",
+    "Practical guidance for moving to Japan.",
   );
-  await page.getByRole("link", { name: "Planning your studies in Japan" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Planning your studies in Japan");
+  await expect(page.getByText("Student status only").first()).toBeVisible();
+  await expect(page.getByText("Resident registration required").first()).toBeVisible();
+  await page.getByRole("link", { name: "Short-term study in Japan as a Temporary Visitor" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Short-term study in Japan as a Temporary Visitor",
+  );
+  await expect(page.getByText(/90 days is the maximum/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
+});
+
+test("groups and opens visa guidance", async ({ page }) => {
+  await page.goto("/explore");
+
+  await expect(page.getByRole("heading", { name: "Visa and residence guidance" })).toBeVisible();
+  await page.getByRole("link", { name: "Japan's Start-up Visa pathway" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Japan's Start-up Visa pathway");
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
 });
 

@@ -664,6 +664,40 @@ If implementation conflicts with an accepted architectural decision, the conflic
 
 ---
 
+## ADR-042 — Explore is group-first while search remains article-level
+
+**Status:** Accepted
+
+### Decision
+
+The default Explore page presents high-level content groups. Users select a group to browse its articles on a focused group view.
+
+Search on Explore indexes the complete knowledgebase independently of that browsing hierarchy and can return direct links to individual articles from any group.
+
+Groups and guided journeys are separate structured records. Groups organize canonical subject matter; journeys hold ordered references and may reuse articles from several groups.
+
+The homepage primary CTA becomes the entrance to optional journey-stage onboarding in Phase 6; it does not permanently belong to a single content group.
+
+### Reason
+
+Group-first browsing keeps a growing library understandable, while global article-level search serves users who already know what they need. Separating the homepage CTA from a specific group leaves room for optional personalized discovery without gating public content.
+
+---
+
+## ADR-043 — Journey steps carry route applicability
+
+**Status:** Accepted
+
+### Decision
+
+Guided-journey steps reference canonical articles and declare controlled applicability: all students, Student status, Temporary Visitor, or registered resident. Articles also state their route scope in prose where a mistaken assumption could cause harm.
+
+### Reason
+
+Academic labels such as “short-term study” do not determine immigration status. A Temporary Visitor, a Student-status holder, and a registered mid- to long-term resident encounter different document, municipal, work, banking, and insurance procedures. Structured applicability keeps the sequence reusable for Phase 6 onboarding without copying shared articles.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

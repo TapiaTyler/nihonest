@@ -29,10 +29,10 @@ export default function Home() {
             Nihonest is becoming a calm, practical knowledgebase for people preparing to move to Japan and those already building a life there.
           </p>
           <Link
-            href="/explore"
+            href="/explore#student-journey-heading"
             className="mt-8 inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
           >
-            Explore student guides
+            Start the student journey
           </Link>
         </div>
 

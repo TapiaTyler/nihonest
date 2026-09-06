@@ -427,11 +427,32 @@ residenceStatusIds
 
 Relationship logic should be modeled separately from article prose.
 
+Browsing groups and guided journeys are also separate domain relationships:
+
+```ts
+ArticleGroup {
+  id
+  articleIds
+}
+
+GuidedJourney {
+  id
+  steps: Array<{
+    articleId
+    applicability // all students, Student status, Temporary Visitor, or registered resident
+  }>
+}
+```
+
+An article belongs to a reusable subject group independently of whether it appears in one or more journeys. For example, address registration belongs to Arrival essentials while the student journey references it as an ordered step. Journey-step applicability supports route-aware onboarding and prevents visitor-only, Student-status, and resident-registration procedures from being presented as universal. Do not duplicate or relabel shared guidance for each audience.
+
 ---
 
 # 14. Search Architecture
 
 Initial search should remain lightweight.
+
+The Explore information architecture should be group-first when no query is active: users see high-level content groups and open a group to browse its articles. Search is independent of that presentation hierarchy. A query from Explore must search the underlying article and glossary index across all groups and may return individual article results directly, even when those articles are not displayed on the default Explore landing page.
 
 Potential initial sources:
 
@@ -483,6 +504,8 @@ Possible later additions:
 - local checklist progress.
 
 Local storage access should be abstracted behind a small persistence interface rather than directly scattered throughout components.
+
+The homepage primary CTA should become the entry point to optional journey-stage onboarding when Phase 6 is implemented. Before that phase, it may link to the current student journey as an intentional temporary destination.
 
 ---
 

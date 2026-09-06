@@ -78,13 +78,17 @@ export const residenceStatuses = [
       "Confirm individual circumstances with the Immigration Services Agency or a qualified professional.",
     ],
     sourceIds: ["immigration-services-status-appendix", "mofa-work-long-term-stay"],
-    relatedArticleIds: [],
+    relatedArticleIds: ["dependent-family-stay-visa"],
     lastReviewedAt: "2026-09-05",
     status: "draft",
   }),
 ] as const;
 
-validateResidenceStatusCollection(residenceStatuses, sources, ["planning-your-studies-in-japan", "working-part-time-on-student-status"]);
+validateResidenceStatusCollection(residenceStatuses, sources, [
+  "planning-your-studies-in-japan",
+  "working-part-time-on-student-status",
+  "dependent-family-stay-visa",
+]);
 
 export function getResidenceStatusBySlug(slug: string) {
   return residenceStatuses.find((status) => status.slug === slug);

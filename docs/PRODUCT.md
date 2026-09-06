@@ -504,6 +504,10 @@ It should surface:
 
 # 15. Search and Discovery
 
+The default Explore experience should present high-level content groups rather than a flat list of every article. Selecting a group opens a focused view of the articles belonging to it.
+
+Search remains available from Explore and operates across the complete knowledgebase. Search results may reveal and link directly to individual articles from any group without requiring the user to browse into that group first.
+
 Search should eventually combine:
 
 - full-text matching;
