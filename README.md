@@ -27,7 +27,7 @@ Future accounts exist for features such as synchronization, saved content, progr
 
 Nihonest has completed its web and structured-content foundation phases.
 
-The repository now contains a Next.js application shell, a validated MDX article system, controlled taxonomy, structured official sources, a first-class residence-status domain, and a sourced student-arrival journey covering planning through early settlement. Broader content and domain features remain intentionally phased.
+The repository now contains a Next.js application shell, a validated MDX article system, controlled taxonomy, structured official sources, a first-class residence-status domain, route-aware student and arrival guidance, and a searchable Japanese administrative glossary linked to relevant articles. Broader discovery and personalization features remain intentionally phased.
 
 ## Planned Web Stack
 

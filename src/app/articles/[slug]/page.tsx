@@ -5,6 +5,7 @@ import { getAllArticles, getArticleById, getArticleBySlug } from "@/lib/content/
 import { getSourceById } from "@/data/sources";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { OfficialSourceList } from "@/components/content/official-source-list";
+import { getGlossaryTermById } from "@/lib/content/glossary";
 
 export const dynamicParams = false;
 
@@ -52,6 +53,10 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
   const relatedArticles = metadata.relationships.flatMap((relationship) => {
     const relatedArticle = getArticleById(relationship.articleId);
     return relatedArticle ? [{ relationship, article: relatedArticle.metadata }] : [];
+  });
+  const glossaryTerms = metadata.termIds.flatMap((termId) => {
+    const term = getGlossaryTermById(termId);
+    return term ? [term] : [];
   });
 
   return (
@@ -103,6 +108,27 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
                     className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
                     {relatedArticle.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {glossaryTerms.length > 0 && (
+          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="glossary-heading">
+            <h2 id="glossary-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
+              Japanese terms in this guide
+            </h2>
+            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+              {glossaryTerms.map((term) => (
+                <li key={term.id}>
+                  <Link
+                    href={`/glossary/${term.slug}`}
+                    className="block rounded-xl border border-slate-200 bg-white p-4 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                  >
+                    <span lang="ja" className="block text-lg font-semibold text-slate-950">{term.japanese}</span>
+                    <span className="mt-1 block text-sm text-slate-600">{term.englishName}</span>
                   </Link>
                 </li>
               ))}

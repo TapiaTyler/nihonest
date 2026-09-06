@@ -340,6 +340,8 @@ Not every term requires kanji.
 
 Japanese fields are protected content for future translation purposes.
 
+The Phase 4 implementation keeps glossary records in validated structured data, links them bidirectionally with article metadata, and exposes normalization-based local search through a platform-independent module. Search normalization uses Unicode compatibility normalization and diacritic folding so readers can find terms using Japanese, kana, English, or romaji with or without macrons. Phase 5 may compose this module into broader knowledgebase search without coupling glossary records to the web UI.
+
 ---
 
 # 10. Source Domain

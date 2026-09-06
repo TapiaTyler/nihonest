@@ -28,6 +28,8 @@ import { sources } from "@/data/sources";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { validateDiscoveryModel } from "@/domain/discovery/discovery";
+import { glossaryTerms } from "@/data/glossary";
+import { validateGlossaryCollection } from "@/domain/glossary/glossary";
 
 export type ArticleRecord = Readonly<{
   metadata: ArticleMetadata;
@@ -51,6 +53,12 @@ validateArticleCollection(
   articles.map((article) => article.metadata),
   sources,
   residenceStatuses.map((status) => status.id),
+  glossaryTerms.map((term) => term.id),
+);
+validateGlossaryCollection(
+  glossaryTerms,
+  sources,
+  articles.map(({ metadata }) => metadata.id),
 );
 validateDiscoveryModel(
   articleGroups,

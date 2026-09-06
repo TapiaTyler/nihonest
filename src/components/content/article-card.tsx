@@ -15,25 +15,29 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const stageLabels = labelsFor(article.journeyStageIds, journeyStages);
 
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
-        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
-          {article.status === "verified" ? "Reviewed" : "Editorial review"}
-        </span>
-        <span className="text-teal-700">{topicLabels.join(" · ")}</span>
-      </div>
-      <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">
-        <Link
-          href={`/articles/${article.slug}`}
-          className="rounded-sm hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
-        >
+    <article className="h-full">
+      <Link
+        href={`/articles/${article.slug}`}
+        aria-label={article.title}
+        className="group flex h-full cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
+      >
+        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+          <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
+            {article.status === "verified" ? "Reviewed" : "Editorial review"}
+          </span>
+          <span className="text-teal-700">{topicLabels.join(" · ")}</span>
+        </div>
+        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
           {article.title}
-        </Link>
-      </h2>
-      <p className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
-      <p className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-500">
-        Relevant to: {stageLabels.join(", ")}
-      </p>
+        </h2>
+        <p className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
+          <p className="text-slate-500">Relevant to: {stageLabels.join(", ")}</p>
+          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
+            Read guide →
+          </span>
+        </div>
+      </Link>
     </article>
   );
 }

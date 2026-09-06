@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const destinations = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
+  { href: "/glossary", label: "Glossary" },
   { href: "/residence-statuses", label: "Statuses" },
 ] as const;
 
@@ -47,17 +48,6 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
-            <li className="hidden sm:block">
-              <span
-                className="inline-flex min-h-11 cursor-default items-center gap-2 rounded-full px-3 text-sm text-slate-500"
-                title="Coming soon"
-              >
-                Glossary
-                <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
-                  Soon
-                </span>
-              </span>
-            </li>
           </ul>
         </nav>
       </div>

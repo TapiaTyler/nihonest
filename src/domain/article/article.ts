@@ -30,6 +30,7 @@ export const articleMetadataSchema = z.object({
   importance: importanceSchema,
   contentType: contentTypeSchema,
   sourceIds: z.array(stableIdSchema).default([]),
+  termIds: z.array(stableIdSchema).default([]),
   residenceStatusIds: z.array(stableIdSchema).default([]),
   relationships: z.array(articleRelationshipSchema).default([]),
   status: z.enum(["draft", "verified", "needs-review", "archived"]),
@@ -44,11 +45,13 @@ export function validateArticleCollection(
   articles: readonly ArticleMetadata[],
   sources: readonly OfficialSource[],
   residenceStatusIds: readonly string[] = [],
+  glossaryTermIds: readonly string[] = [],
 ): void {
   const articleIds = new Set(articles.map((article) => article.id));
   const articleSlugs = new Set(articles.map((article) => article.slug));
   const sourceIds = new Set(sources.map((source) => source.id));
   const knownResidenceStatusIds = new Set(residenceStatusIds);
+  const knownGlossaryTermIds = new Set(glossaryTermIds);
 
   if (articleIds.size !== articles.length) {
     throw new Error("Article IDs must be unique.");
@@ -74,6 +77,12 @@ export function validateArticleCollection(
         throw new Error(
           `Article \"${article.id}\" references unknown residence status \"${residenceStatusId}\".`,
         );
+      }
+    }
+
+    for (const termId of article.termIds) {
+      if (!knownGlossaryTermIds.has(termId)) {
+        throw new Error(`Article \"${article.id}\" references unknown glossary term \"${termId}\".`);
       }
     }
 

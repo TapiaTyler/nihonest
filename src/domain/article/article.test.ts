@@ -53,4 +53,10 @@ describe("article metadata", () => {
       ),
     ).toThrow('references unknown article "missing-article"');
   });
+
+  it("rejects unknown glossary term references", () => {
+    expect(() =>
+      validateArticleCollection([{ ...validArticle, termIds: ["missing-term"] }], [], [], []),
+    ).toThrow('references unknown glossary term "missing-term"');
+  });
 });

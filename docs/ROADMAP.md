@@ -124,6 +124,8 @@ feat: add residence status domain model
 
 # Phase 4 — Glossary
 
+Status: Complete
+
 Objectives:
 
 - establish structured glossary entries;

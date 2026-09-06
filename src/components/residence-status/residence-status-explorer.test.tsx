@@ -16,5 +16,6 @@ describe("ResidenceStatusExplorer", () => {
       }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("Showing 1 of 3 sample statuses")).toBeInTheDocument();
+    expect(screen.getByText("View status details →")).toBeInTheDocument();
   });
 });
