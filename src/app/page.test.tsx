@@ -1,7 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import Home from "./page";
 import { SiteHeader } from "@/components/site-header";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
 
 describe("Nihonest foundation", () => {
   it("renders the product name and tagline", () => {
@@ -16,12 +20,13 @@ describe("Nihonest foundation", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Find your place in Japan." })).toBeInTheDocument();
   });
 
-  it("provides an accessible primary navigation without active future links", () => {
+  it("provides accessible primary navigation and labels future destinations", () => {
     render(<SiteHeader />);
 
     const navigation = screen.getByRole("navigation", { name: "Primary navigation" });
     expect(within(navigation).getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
-    expect(within(navigation).queryByRole("link", { name: /Explore/i })).not.toBeInTheDocument();
-    expect(within(navigation).getByText("Explore")).toHaveAttribute("title", "Coming soon");
+    expect(within(navigation).getByRole("link", { name: "Explore" })).toHaveAttribute("href", "/explore");
+    expect(within(navigation).queryByRole("link", { name: /Glossary/i })).not.toBeInTheDocument();
+    expect(within(navigation).getByText("Glossary")).toHaveAttribute("title", "Coming soon");
   });
 });

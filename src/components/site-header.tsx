@@ -1,8 +1,16 @@
-import Link from "next/link";
+"use client";
 
-const upcomingDestinations = ["Explore", "Glossary"];
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const destinations = [
+  { href: "/", label: "Home" },
+  { href: "/explore", label: "Explore" },
+] as const;
 
 export function SiteHeader() {
+  const pathname = usePathname();
+
   return (
     <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur">
       <div className="page-shell flex min-h-20 items-center justify-between gap-6">
@@ -15,28 +23,28 @@ export function SiteHeader() {
 
         <nav aria-label="Primary navigation">
           <ul className="flex items-center gap-1 sm:gap-3">
-            <li>
-              <Link
-                href="/"
-                aria-current="page"
-                className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:px-4"
-              >
-                Home
-              </Link>
-            </li>
-            {upcomingDestinations.map((destination) => (
-              <li key={destination} className="hidden sm:block">
-                <span
-                  className="inline-flex min-h-11 cursor-default items-center gap-2 rounded-full px-3 text-sm text-slate-500"
-                  title="Coming soon"
+            {destinations.map((destination) => (
+              <li key={destination.href}>
+                <Link
+                  href={destination.href}
+                  aria-current={pathname === destination.href ? "page" : undefined}
+                  className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:px-4"
                 >
-                  {destination}
-                  <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
-                    Soon
-                  </span>
-                </span>
+                  {destination.label}
+                </Link>
               </li>
             ))}
+            <li className="hidden sm:block">
+              <span
+                className="inline-flex min-h-11 cursor-default items-center gap-2 rounded-full px-3 text-sm text-slate-500"
+                title="Coming soon"
+              >
+                Glossary
+                <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">
+                  Soon
+                </span>
+              </span>
+            </li>
           </ul>
         </nav>
       </div>

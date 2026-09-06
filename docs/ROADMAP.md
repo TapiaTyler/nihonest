@@ -14,7 +14,7 @@ The presence of a feature in this roadmap does not authorize implementation duri
 
 # Phase 0 — Product Foundation
 
-Status: Current
+Status: Complete
 
 Objectives:
 
@@ -41,6 +41,8 @@ Planning documentation is committed and pushed before application scaffolding be
 ---
 
 # Phase 1 — Web Foundation
+
+Status: Complete
 
 Objectives:
 
@@ -71,6 +73,8 @@ chore: scaffold Next.js web application
 ---
 
 # Phase 2 — Structured Content Foundation
+
+Status: Complete
 
 Objectives:
 

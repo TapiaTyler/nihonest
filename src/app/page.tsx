@@ -28,6 +28,12 @@ export default function Home() {
           <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
             Nihonest is becoming a calm, practical knowledgebase for people preparing to move to Japan and those already building a life there.
           </p>
+          <Link
+            href="/explore"
+            className="mt-8 inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
+          >
+            Explore sample guides
+          </Link>
         </div>
 
         <aside className="rounded-3xl border border-teal-900/10 bg-teal-950 p-7 text-teal-50 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.55)] sm:p-9" aria-labelledby="foundation-status">
@@ -36,7 +42,7 @@ export default function Home() {
             Built public first.
           </h2>
           <p className="mt-4 leading-7 text-teal-100/80">
-            Explore and Glossary are being prepared for later phases. This first release establishes an accessible, reliable home for them.
+            A small set of draft guides now demonstrates the content foundation. Glossary and broader discovery tools remain planned for later phases.
           </p>
         </aside>
       </section>
@@ -61,3 +67,4 @@ export default function Home() {
     </>
   );
 }
+import Link from "next/link";

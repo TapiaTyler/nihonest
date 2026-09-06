@@ -25,9 +25,9 @@ Future accounts exist for features such as synchronization, saved content, progr
 
 ## Project Status
 
-Nihonest is currently in the product-foundation stage.
+Nihonest has completed its web and structured-content foundation phases.
 
-The repository is intentionally documentation-first before application scaffolding begins.
+The repository now contains a Next.js application shell, a validated MDX article system, controlled taxonomy, structured official sources, and a small set of clearly marked draft sample articles. Broader content and domain features remain intentionally phased.
 
 ## Planned Web Stack
 
