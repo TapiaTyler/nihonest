@@ -146,6 +146,8 @@ feat: add searchable Japanese glossary
 
 # Phase 5 — Search and Discovery
 
+Status: Complete
+
 Objectives:
 
 - replace the flat Explore article listing with a group-first discovery page;

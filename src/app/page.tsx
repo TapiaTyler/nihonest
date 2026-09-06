@@ -1,15 +1,20 @@
+import Link from "next/link";
+
 const principles = [
   {
+    label: "Clarity",
     title: "Understand what matters",
     description:
       "Clear explanations will help connect official processes, practical steps, and the terms you will encounter.",
   },
   {
+    label: "Sources",
     title: "Follow reliable sources",
     description:
       "Important guidance will point back to the authorities responsible for the rules and procedures.",
   },
   {
+    label: "Access",
     title: "Use it without an account",
     description:
       "The public knowledgebase will remain freely accessible. Personal features will always be optional.",
@@ -29,7 +34,7 @@ export default function Home() {
             Nihonest is becoming a calm, practical knowledgebase for people preparing to move to Japan and those already building a life there.
           </p>
           <Link
-            href="/explore#student-journey-heading"
+            href="/explore/journeys/student-moving-to-japan"
             className="mt-8 inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
           >
             Start the student journey
@@ -54,9 +59,9 @@ export default function Home() {
             Useful information, presented with care.
           </h2>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {principles.map((principle, index) => (
+            {principles.map((principle) => (
               <article key={principle.title} className="rounded-2xl border border-slate-200 bg-stone-50 p-6">
-                <p className="text-sm font-semibold text-teal-700">0{index + 1}</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700">{principle.label}</p>
                 <h3 className="mt-4 text-xl font-semibold tracking-tight text-slate-950">{principle.title}</h3>
                 <p className="mt-3 leading-7 text-slate-600">{principle.description}</p>
               </article>
@@ -67,4 +72,3 @@ export default function Home() {
     </>
   );
 }
-import Link from "next/link";

@@ -473,6 +473,8 @@ search(query, filters)
 
 Future dedicated providers might include specialized search engines, but no vendor should be selected now.
 
+The Phase 5 implementation builds this boundary as a platform-independent local search module over validated article metadata and glossary records. The Explore UI composes query matching with journey-stage, topic, audience, geographic-scope, content-type, importance, and residence-status filters. With no active query or filter, it renders only the reusable article groups; dedicated group routes reveal their articles, while a separate journey route preserves ordered, applicability-aware student guidance. This keeps discovery independent of the presentation hierarchy and leaves a clear replacement point if a dedicated full-text index becomes necessary.
+
 Search should eventually support:
 
 - full text;

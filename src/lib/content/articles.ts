@@ -82,9 +82,21 @@ export function getArticlesByGroup(groupId: string) {
   return group ? resolveArticleIds(group.articleIds) : [];
 }
 
+export function getAllArticleGroups() {
+  return articleGroups;
+}
+
+export function getArticleGroupById(groupId: string) {
+  return articleGroups.find(({ id }) => id === groupId);
+}
+
 export function getArticlesByJourney(journeyId: string) {
   const journey = guidedJourneys.find(({ id }) => id === journeyId);
   return journey ? resolveArticleIds(journey.steps.map(({ articleId }) => articleId)) : [];
+}
+
+export function getGuidedJourneyById(journeyId: string) {
+  return guidedJourneys.find(({ id }) => id === journeyId);
 }
 
 export function getJourneySteps(journeyId: string) {

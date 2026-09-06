@@ -8,34 +8,69 @@ test("loads the Nihonest homepage", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 });
 
-test("distinguishes and opens the short-term student route", async ({ page }) => {
+test("browses a content group and opens one of its guides", async ({ page }) => {
   await page.goto("/explore");
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Practical guidance for moving to Japan.",
+    "Find the guidance that fits your situation.",
   );
+  await expect(page.getByRole("link", { name: "Explore Study in Japan" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore Arrival essentials" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore Visas and residence" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Opening a bank account after moving to Japan" })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Explore Arrival essentials" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Arrival essentials");
+  await page.getByRole("link", { name: "Opening a bank account after moving to Japan" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Opening a bank account after moving to Japan",
+  );
+  await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
+});
+
+test("searches articles across groups without opening a group first", async ({ page }) => {
+  await page.goto("/explore");
+
+  await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("Start-up Visa");
+  await expect(page.getByRole("link", { name: "Explore Visas and residence" })).toBeVisible();
+  await page.getByRole("link", { name: "Japan's Start-up Visa pathway" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Japan's Start-up Visa pathway");
+  await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
+});
+
+test("searches glossary terms from Explore", async ({ page }) => {
+  await page.goto("/explore");
+
+  await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("juminhyo");
+  const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
+  await expect(glossaryCard).toBeVisible();
+  await glossaryCard.getByText("View term and context →").click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("住民票");
+});
+
+test("combines filters and recovers from no results", async ({ page }) => {
+  await page.goto("/explore");
+
+  await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("bank account");
+  await page.getByText("More filters").click();
+  await page.getByRole("combobox", { name: "Topic" }).selectOption("healthcare");
+  await expect(page.getByRole("heading", { name: "No matching guidance found" })).toBeVisible();
+  await page.getByRole("button", { name: "Browse all groups" }).click();
+  await expect(page.getByRole("link", { name: "Explore Arrival essentials" })).toBeVisible();
+});
+
+test("opens the route-aware student journey from the homepage", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("link", { name: "Start the student journey" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Student journey");
   await expect(page.getByText("Student status only").first()).toBeVisible();
   await expect(page.getByText("Resident registration required").first()).toBeVisible();
-  const articleCard = page.getByRole("article").filter({
-    hasText: "Short-term study in Japan as a Temporary Visitor",
-  });
-  const articleCta = articleCard.getByText("Read guide →");
-  await expect(articleCta).toHaveCSS("cursor", "pointer");
-  await articleCta.click();
+  await page.getByRole("link", { name: "Short-term study in Japan as a Temporary Visitor" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Short-term study in Japan as a Temporary Visitor",
   );
   await expect(page.getByText(/90 days is the maximum/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
-});
-
-test("groups and opens visa guidance", async ({ page }) => {
-  await page.goto("/explore");
-
-  await expect(page.getByRole("heading", { name: "Visa and residence guidance" })).toBeVisible();
-  await page.getByRole("link", { name: "Japan's Start-up Visa pathway" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Japan's Start-up Visa pathway");
-  await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
 });
 
 test("searches the glossary and follows a term to its guide", async ({ page }) => {
