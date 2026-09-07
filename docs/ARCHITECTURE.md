@@ -991,17 +991,26 @@ If editorial scale later makes a CMS useful, it should be evaluated based on act
 
 # 39. Deployment
 
-Initial production deployment is expected to use Railway through the connected GitHub repository.
+Initial production deployment is expected to use Railway through the connected GitHub repository, but public deployment is deferred until the post-Phase 13 hosted-integration gate.
 
-Do not configure production deployment until:
+Phases 7–13 should remain local-first. A hosted integration environment is justified only when the already-implemented feature set needs validation of one or more capabilities that local execution cannot faithfully provide:
+
+- cross-network account and data synchronization;
+- production authentication origins or OAuth callbacks;
+- scheduled email delivery;
+- production secret management and shared translation/TTS caching;
+- continuously scheduled source monitoring; or
+- native-client access to the shared backend.
+
+The hosted gate must begin in a restricted staging mode. Do not make the site public until:
 
 ```text
 npm run build
 ```
 
-passes locally.
+passes locally, applicable automated tests pass, migrations and authorization policies are reviewed, rollback and backup procedures exist, cost limits are understood, and the major Phase 13 editorial pass is complete.
 
-Backend/database deployment should not be provisioned until needed.
+Local Supabase or replaceable service boundaries should be used where practical before this gate. Production backend/database, email, translation, monitoring, and public web resources should not be provisioned merely because they appear in the architecture.
 
 ---
 

@@ -512,8 +512,11 @@ Search should eventually combine:
 
 - full-text matching;
 - glossary lookup;
+- structured frequently asked questions written in ordinary user language;
 - controlled taxonomy;
 - structured filters.
+
+FAQ entries should act as reviewed discovery bridges rather than duplicate articles. A question may contain a concise orientation and searchable alternative wording, then link directly to the relevant canonical articles, groups, journeys, glossary terms, or residence statuses. High-stakes generated questions or answer summaries remain drafts until reviewed, and the linked sourced guidance remains authoritative.
 
 Potential filters include:
 

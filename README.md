@@ -135,18 +135,23 @@ refactor: separate persistence from journey UI
 5. Add searchable glossary.
 6. Add search and filters.
 7. Add anonymous journey personalization.
-8. Refine and deploy the public web MVP.
-9. Add cloud accounts and synchronized functionality later.
+8. Refine the public web MVP and add structured FAQ discovery locally.
+9. Add cloud-backed and automated functionality behind local/provider boundaries.
+10. Complete the major geographic and editorial expansion.
+11. Perform hosted integration and deploy the public web application.
 
 See `docs/ROADMAP.md` for the complete long-term plan.
 
 ## Deployment
 
-The initial web application is expected to deploy through Railway after the project:
+The initial public web application is expected to deploy through Railway only after the post-Phase 13 hosted-integration gate. Before production infrastructure is provisioned, the project must:
 
-- runs locally;
-- passes tests;
-- successfully completes a production build.
+- run locally;
+- pass tests;
+- successfully complete a production build;
+- have the cloud, reminder, translation, and monitoring features selected for launch implemented behind reviewed boundaries;
+- complete the planned major editorial pass; and
+- pass hosted security, privacy, rollback, and cost-control checks in a restricted integration environment.
 
 Do not provision cloud infrastructure solely because it is mentioned in the long-term architecture.
 

@@ -253,11 +253,11 @@ Objectives:
 - improve source visibility;
 - add appropriate testing;
 - audit existing non-obvious application logic against the ongoing engineering documentation standard and add durable explanatory comments where needed;
-- deploy public web version.
-
-Deployment:
-
-- Railway after local production build passes.
+- establish a structured FAQ model whose questions use ordinary user language and point to relevant articles, content groups, journeys, glossary terms, or residence statuses without duplicating their canonical guidance;
+- integrate FAQs into knowledgebase search as a distinct result type, with concise contextual links rather than full article cards where that produces a clearer answer path;
+- when an Explore text query returns no results, offer a clear CTA to search the FAQ catalog; carry the entered query into the FAQ search and run it immediately when technically possible, while omitting unrelated Explore-only filters that the FAQ search cannot interpret;
+- keep generated FAQ candidates in draft until their wording, applicability, and linked guidance have been reviewed;
+- complete local production-readiness checks without creating a continuously deployed public environment.
 
 Suggested Git checkpoints may include:
 
@@ -269,15 +269,13 @@ feat: improve public knowledgebase experience
 test: add critical public flow coverage
 ```
 
-```text
-chore: prepare web application for deployment
-```
-
 ---
 
 # Phase 8 — Cloud Persistence and Accounts
 
 Deferred until public experience is solid.
+
+Develop against local or otherwise non-production infrastructure first. Do not provision the production Supabase project, production OAuth callbacks, or continuously hosted web application solely to begin this phase; final hosted integration belongs to the post-Phase 13 deployment gate.
 
 Objectives:
 
@@ -291,6 +289,7 @@ Objectives:
 - authorization/RLS;
 - optional user profile;
 - account deletion;
+- account data export in a portable, understandable format, including the user-owned data covered by deletion and retention policies;
 - anonymous-to-account migration.
 
 Accounts must remain optional for public content.
@@ -313,11 +312,14 @@ Objectives:
 
 - saved articles;
 - saved glossary terms;
+- richer glossary study and review tools built on saved terms, including review state and synchronized progress without turning Nihonest into a general language-learning platform;
 - personalized roadmap;
 - checklist definitions;
 - user progress;
 - cross-device synchronization;
 - recommendation rules separated from taxonomy.
+
+Implement and test synchronization contracts locally during this phase. Cross-network and production-environment validation remains part of the hosted integration gate.
 
 Suggested checkpoints:
 
@@ -344,6 +346,8 @@ Objectives:
 
 Select an email provider only at this phase.
 
+Models, scheduling rules, preferences, and provider boundaries can be implemented locally. Actual scheduled delivery requires remotely reachable execution and provider credentials, so production delivery must remain disabled until the hosted integration gate.
+
 Suggested checkpoint:
 
 ```text
@@ -361,6 +365,7 @@ Objectives:
 - preserve canonical English;
 - protect Japanese term structures;
 - translate eligible prose;
+- expand supported content and interface languages through the protected translation architecture, prioritizing languages according to demonstrated user need and verified provider quality;
 - cache generated translations;
 - display machine-translation notice;
 - gracefully fall back to English;
@@ -369,6 +374,8 @@ Objectives:
 - cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
 - add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product.
 - translate semantic document-image annotations, captions, and example-field guidance while keeping the underlying reference image independent from any one interface language.
+
+Provider integration may be developed locally with protected credentials. Production secret management, shared caching, quotas, and failure behavior are validated at the hosted integration gate.
 
 Suggested checkpoint:
 
@@ -386,10 +393,14 @@ Objectives:
 - source check dates;
 - identify changed sources;
 - flag dependent content;
+- provide intelligent source-change assistance that summarizes detected differences, identifies potentially affected claims, and proposes review targets without automatically rewriting or publishing high-stakes guidance;
 - editorial review queue;
+- add focused contributor and editor workflows for assignment, review, revision notes, approval, and publication state while deferring a general-purpose CMS or external contributor portal until justified;
 - revision/change notes.
 
 Do not automatically republish high-stakes information solely from machine-generated changes.
+
+Local/manual checks can establish the workflow, but continuous scheduled monitoring requires hosted execution and is activated only at the hosted integration gate.
 
 Suggested checkpoint:
 
@@ -409,6 +420,8 @@ Objectives:
 - provide official local links;
 - validate architecture before expanding coverage;
 - deeply research the draft visa and residence-status catalog against current primary sources;
+- expand residence-status exploration using the reviewed canonical records, clearer category and activity comparisons, and links into relevant journeys and guidance;
+- implement the educational “Can I do this?” rule cross-reference over reviewed activity, status, outside-permission, professional-licensing, employment, and tax relationships, with explicit uncertainty and authority checks rather than individualized eligibility conclusions;
 - document the granted period or available periods of stay for every visa and status route, clearly distinguishing a visa's entry validity from the period of stay granted at landing;
 - explain renewal eligibility and practical limitations for every renewable route, including maximum periods where applicable, non-renewable or program-limited categories, timing, evidence, and circumstances that commonly require a change of status instead;
 - map the broadest defensible set of applicable occupations and job titles to every work status using current official activity definitions and occupational examples—for example, explicitly covering software developers and software engineers under Engineer / Specialist in Humanities / International Services—while warning that job title alone never determines eligibility;
@@ -423,6 +436,7 @@ Objectives:
 - provide clearly fictional or safely redacted completion examples for commonly encountered forms, explain what belongs in each field, and never expose real identity-document data;
 - audit every article, including content already marked ready for editorial review, so one or more relevant Japanese terms are introduced naturally in the article body rather than appearing only in the Key Japanese terminology section;
 - verify that each article's linked glossary terms are actually taught in context alongside their English equivalents, removing or replacing terms that cannot be usefully integrated into the passage;
+- expand the FAQ catalog from reviewed user-language questions, validate each question's applicability and answer links, and ensure high-stakes questions lead to current sourced guidance rather than unsupported generated answers;
 - move articles from draft to editorial review only after their important claims and source mappings have been checked.
 
 Do not attempt every municipality simultaneously.
@@ -431,6 +445,36 @@ Suggested checkpoint:
 
 ```text
 content: research visa guidance and add municipality coverage
+```
+
+---
+
+# Post-Phase 13 — Hosted Integration and Public Deployment Gate
+
+This is the first planned continuously hosted application environment and public web launch. It occurs only after the features that need hosted validation and the major editorial pass have already been implemented locally.
+
+Objectives:
+
+- provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;
+- configure production authentication origins, passwordless email, and approved OAuth callbacks;
+- deploy the web application to Railway from the intended production branch only after local tests and the production build pass;
+- validate account migration, cloud synchronization, and cross-device behavior against the hosted environment;
+- activate and verify opt-in email reminders and scheduled jobs without enabling unsolicited communication;
+- configure production translation/TTS secrets, caching, quotas, and graceful fallback if those features remain approved;
+- activate source-change monitoring schedules and editorial alerts without automated publication;
+- complete security, privacy, accessibility, observability, rollback, cost-limit, and deployment-frequency checks;
+- keep draft and review-state content visibly labeled and prevent incomplete administrative tools from becoming public accidentally.
+
+The hosted environment may use a restricted staging mode during this gate. Public availability is the final step, not a prerequisite for implementing earlier phases.
+
+Suggested checkpoints:
+
+```text
+chore: configure hosted integration environment
+```
+
+```text
+chore: deploy public web application
 ```
 
 ---
@@ -467,6 +511,7 @@ Potential objectives:
 - offline glossary;
 - offline roadmap/checklist;
 - emergency information;
+- improved offline emergency guidance with clearly dated cached content, essential official contacts, stale-content warnings, and deliberate update behavior;
 - native sharing;
 - polished mobile interaction.
 
@@ -495,16 +540,8 @@ These should remain visible but have no implementation commitment:
 - CMS;
 - analytics provider;
 - broad municipality coverage;
-- account data export;
-- richer glossary study/review tools;
 - additional reminder channels;
-- improved offline emergency features;
-- intelligent source-change assistance;
-- additional residence-status exploration;
-- "Can I do this?" rule cross-reference;
-- expanded language support;
 - product analytics;
-- possible contributor/editor workflows.
 
 ---
 

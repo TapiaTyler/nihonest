@@ -765,6 +765,54 @@ A flat list cannot distinguish route alternatives from sequential work. It cause
 
 ---
 
+## ADR-047 — Public deployment follows the major editorial and hosted-integration gate
+
+**Status:** Accepted
+
+### Decision
+
+Phase 7 establishes local production readiness but does not deploy a continuously hosted public site. Phases 8–12 implement cloud persistence, synchronization, reminders, translation, and monitoring against local infrastructure or replaceable provider boundaries where practical. After Phase 13, a dedicated hosted-integration gate provisions production resources, validates the capabilities that genuinely require a reachable or scheduled environment, and makes the web application public only as its final step.
+
+A restricted staging environment may be created during that gate. Production infrastructure must not be kept active merely to mirror every development push or expose unfinished branches.
+
+### Reason
+
+Responsive UI, search, content modeling, local persistence, editorial work, and most provider abstractions can be built and tested without a public deployment. Cloud synchronization needs a reachable backend; reminders and continuous source monitoring need scheduled execution; and production authentication needs real origins and callbacks. Grouping those validations into one late gate avoids ongoing hosting consumption and deployment churn without pretending the server-dependent features are complete before they are exercised in their real environment.
+
+### Consequences
+
+- Railway public deployment moves from Phase 7 to after Phase 13;
+- production Supabase, OAuth, email, translation/TTS, and monitoring resources are provisioned only when required by the hosted gate;
+- local completion remains the default for earlier implementation phases;
+- server-dependent behavior receives hosted end-to-end validation before public launch; and
+- public deployment uses the intended production branch rather than requiring routine branch switching throughout development.
+
+---
+
+## ADR-048 — FAQs are structured discovery bridges, not duplicate canonical answers
+
+**Status:** Accepted
+
+### Decision
+
+Add structured frequently asked questions to the knowledgebase. Each FAQ uses ordinary question language, supports legitimate alternative phrasings for search, and maps to stable IDs for relevant articles, content groups, guided journeys, glossary terms, or residence statuses. The UI may provide a short reviewed orientation followed by compact contextual links; it should not reproduce whole article cards or maintain a second copy of substantive guidance.
+
+Generated questions and high-stakes summaries begin as drafts. Canonical articles and their official sources remain authoritative, and Phase 13 expands and reviews the FAQ catalog alongside the content it references.
+
+### Reason
+
+People often search by a practical question whose wording does not appear in an official title or article summary. A structured FAQ layer adds those user-language retrieval paths and can connect one question to several appropriate resources without weakening the controlled taxonomy or requiring a dedicated search vendor.
+
+### Consequences
+
+- FAQ entries require stable IDs, review state, searchable wording, and validated target relationships;
+- FAQ results become a distinct search type without changing the meaning of article, group, glossary, or journey records;
+- link validation prevents questions from silently pointing to removed content;
+- generated text alone is not evidence for immigration, tax, legal, healthcare, or administrative answers; and
+- answer detail stays in canonical sourced content so corrections do not need to be made in multiple places.
+
+---
+
 # Future ADRs
 
 Append new decisions using:
