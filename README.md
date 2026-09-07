@@ -25,9 +25,9 @@ Future accounts exist for features such as synchronization, saved content, progr
 
 ## Project Status
 
-Nihonest has completed its local public-web MVP, structured-content, discovery, and anonymous-personalization foundation phases.
+Nihonest has completed its local public-web MVP, structured-content, discovery, anonymous-personalization, and optional-account foundation phases.
 
-The repository now contains a Next.js application shell, 58 validated MDX articles, controlled taxonomy, structured official sources, 29 canonical residence-status records, route-aware guidance, a searchable 67-term Japanese administrative glossary, and 20 draft FAQs mapped to canonical guidance. Explore presents 11 purpose-based groups while integrated search and structured filters can reveal groups, FAQs, individual guides, and glossary terms across the knowledgebase. A dedicated FAQ search accepts ordinary question language, and an unsuccessful Explore query can carry its wording directly into that search. Sixteen mapped journeys use shared phases, explicit route branches, and explained conditional tasks, including ongoing tax, side-work, status-maintenance, special-purpose visit, and departure paths. Selecting a route resolves one focused sequence; contextual article URLs preserve previous, next, and table-of-contents navigation without making unrelated alternatives sequential. Optional onboarding stores a validated stage plus an optional searchable journey and specific route locally, then personalizes a few Home and Explore starting points without requiring an account, hiding public content, or asserting eligibility. Article terminology links expose kana and romaji through hover, focus, or a touch-safe first tap, active Explore and Glossary discovery state persists in the URL, and official-source lists expose authority, language, and link-check context. Local production builds now generate public metadata, robots policy, and a sitemap without making the undeployed site indexable by default. Newly expanded visa, legal, tax, FAQ, and glossary coverage remains explicitly marked as draft pending the Phase 13 research and review pass.
+The repository now contains a Next.js application shell, 58 validated MDX articles, controlled taxonomy, structured official sources, 29 canonical residence-status records, route-aware guidance, a searchable 67-term Japanese administrative glossary, and 20 draft FAQs mapped to canonical guidance. Explore presents 11 purpose-based groups while integrated search and structured filters can reveal groups, FAQs, individual guides, and glossary terms across the knowledgebase. A dedicated FAQ search accepts ordinary question language, and an unsuccessful Explore query can carry its wording directly into that search. Sixteen mapped journeys use shared phases, explicit route branches, and explained conditional tasks, including ongoing tax, side-work, status-maintenance, special-purpose visit, and departure paths. Selecting a route resolves one focused sequence; contextual article URLs preserve previous, next, and table-of-contents navigation without making unrelated alternatives sequential. Optional onboarding stores a validated stage plus an optional searchable journey and specific route locally, then personalizes a few Home and Explore starting points without requiring an account, hiding public content, or asserting eligibility. A local Supabase foundation adds optional passwordless accounts, cookie-backed sessions, owner-only preference synchronization, minimal profiles, explicit anonymous-state import, portable export, and account deletion without making public content private. Article terminology links expose kana and romaji through hover, focus, or a touch-safe first tap, active Explore and Glossary discovery state persists in the URL, and official-source lists expose authority, language, and link-check context. Local production builds generate public metadata, robots policy, and a sitemap without making the undeployed site indexable by default. Newly expanded visa, legal, tax, FAQ, and glossary coverage remains explicitly marked as draft pending the Phase 13 research and review pass.
 
 ## Planned Web Stack
 
@@ -44,15 +44,26 @@ The repository now contains a Next.js application shell, 58 validated MDX articl
 
 Potential UI components may use shadcn/ui where appropriate.
 
+## Local Account Development
+
+Phase 8 uses the Supabase CLI and Docker Desktop; it does not require a hosted Supabase project. Node.js 22 or newer is recommended for the current Supabase SDK.
+
+1. Start Docker Desktop.
+2. Run `npm run supabase:start`.
+3. Run `npm run supabase:status` and copy the local API URL, publishable key, and secret/service-role key into `.env.local` using `.env.example` as the template.
+4. Start or restart `npm run dev` so Next.js reads the environment values.
+5. Open `/account`. Local passwordless emails appear in Mailpit at `http://127.0.0.1:54324`.
+
+Use one web hostname consistently during sign-in—do not switch between `localhost` and `127.0.0.1`—because browser session cookies are host-scoped. Useful database checks are `npm run supabase:reset`, `npm run supabase:lint`, and `npm run supabase:test`. Stop only the project containers with `npm run supabase:stop`. Google and Apple controls stay hidden until their provider credentials and callbacks are deliberately configured.
+
 ## Planned Future Services
 
 When required by later roadmap phases:
 
-- Supabase Auth
-- PostgreSQL
-- passwordless email authentication
-- Google authentication
-- Apple authentication
+- hosted Supabase Auth and PostgreSQL configuration;
+- production passwordless email delivery;
+- production Google authentication;
+- production Apple authentication where appropriate;
 - machine translation
 - email reminders
 - native push notifications

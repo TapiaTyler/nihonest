@@ -16,6 +16,7 @@
 # local environment files
 .env*
 !.env.example
+/supabase/.temp/
 
 # logs and system files
 npm-debug.log*

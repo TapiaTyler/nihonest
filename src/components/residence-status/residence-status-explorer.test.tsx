@@ -4,6 +4,28 @@ import { ResidenceStatusExplorer } from "./residence-status-explorer";
 import { residenceStatuses } from "@/data/residence-statuses";
 
 describe("ResidenceStatusExplorer", () => {
+  it("sorts category filters and status cards alphabetically", () => {
+    render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
+
+    const filters = screen.getByRole("group", { name: "Filter residence statuses by category" });
+    expect(Array.from(filters.querySelectorAll("button"), (button) => button.textContent)).toEqual([
+      "All statuses",
+      "Business and high-skill",
+      "Designated activities",
+      "Diplomatic and official",
+      "Family",
+      "Status-based residence",
+      "Study, culture, and training",
+      "Visitor",
+      "Work",
+    ]);
+
+    const statusNames = screen.getAllByRole("link")
+      .filter((link) => link.getAttribute("href")?.startsWith("/residence-statuses/"))
+      .map((link) => link.getAttribute("aria-label") ?? "");
+    expect(statusNames).toEqual([...statusNames].sort((left, right) => left.localeCompare(right)));
+  });
+
   it("filters draft records by category", () => {
     render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
 

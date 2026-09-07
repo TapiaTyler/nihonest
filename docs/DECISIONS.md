@@ -813,6 +813,32 @@ People often search by a practical question whose wording does not appear in an 
 
 ---
 
+## ADR-049 — Optional accounts synchronize only explicit, minimal personalization
+
+**Status:** Accepted
+
+### Decision
+
+Phase 8 uses a local Supabase stack to implement passwordless authentication, cookie-backed web sessions, an optional display name, and one owner-scoped preference record matching the existing anonymous-personalization schema. Public content remains usable without Supabase or an account. Google and Apple entry points are provider-ready but configuration-gated until hosted credentials and callback origins can be validated.
+
+On sign-in, an existing cloud preference is initially authoritative and may restore this browser's local preference. A new account does not silently upload anonymous state: the user explicitly chooses **Import this device's starting point**. Subsequent personalization changes update browser storage immediately and attempt to synchronize the same record to the signed-in account. A local change made during an initial cloud read is not overwritten.
+
+Authentication identity stays in Supabase Auth. Private application rows use `auth.users` foreign keys with cascading deletion and owner-only Row Level Security. Export returns authentication context plus all Phase 8 profile and preference rows in readable JSON. Confirmed deletion removes the authentication identity and therefore the dependent rows; it does not silently erase browser-local preferences.
+
+### Reason
+
+Accounts should provide continuity without turning access to public guidance into registration or collecting speculative personal data. Explicit first import avoids surprising users by uploading a device's anonymous choices, while deterministic cloud restoration and local-first subsequent writes keep behavior understandable. Local provider boundaries allow implementation now without provisioning production infrastructure before the hosted-integration gate.
+
+### Consequences
+
+- email used for authentication is not marketing consent;
+- no password database or duplicate profile email is created;
+- account UI reaches Supabase only through account-service modules;
+- Google, Apple, production email delivery, and cross-network behavior require hosted validation after Phase 13; and
+- later user-owned tables must add and test their own RLS policies before use.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

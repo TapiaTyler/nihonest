@@ -3,7 +3,9 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
 } from "react";
@@ -12,6 +14,10 @@ import {
   type AnonymousPreferences,
 } from "@/domain/personalization/preferences";
 import type { JourneyStageId } from "@/domain/taxonomy/taxonomy";
+import {
+  loadSignedInPreferences,
+  saveSignedInPreferences,
+} from "@/lib/accounts/client-account-service";
 import {
   getAnonymousPreferencesSnapshot,
   readAnonymousPreferences,
@@ -51,10 +57,25 @@ export function PersonalizationProvider({ children }: Readonly<{ children: React
   );
   const isReady = snapshot !== null;
 
+  useEffect(() => {
+    const localSnapshotAtStart = getAnonymousPreferencesSnapshot();
+    void loadSignedInPreferences().then((cloudPreferences) => {
+      // Do not replace a choice made while the cloud request was in flight.
+      if (cloudPreferences && getAnonymousPreferencesSnapshot() === localSnapshotAtStart) {
+        writeAnonymousPreferences(cloudPreferences);
+      }
+    });
+  }, []);
+
+  const persistPreferences = useCallback((nextPreferences: AnonymousPreferences) => {
+    writeAnonymousPreferences(nextPreferences);
+    void saveSignedInPreferences(nextPreferences);
+  }, []);
+
   const value = useMemo<PersonalizationContextValue>(() => ({
     preferences,
     isReady,
-    saveStartingPoint: ({ journeyStage, journeyId, routeId, focusedArticleId }) => writeAnonymousPreferences({
+    saveStartingPoint: ({ journeyStage, journeyId, routeId, focusedArticleId }) => persistPreferences({
       version: 2,
       journeyStage,
       journeyId,
@@ -62,15 +83,15 @@ export function PersonalizationProvider({ children }: Readonly<{ children: React
       focusedArticleId,
       onboardingCompleted: true,
     }),
-    saveJourneyRoute: ({ journeyId, routeId, focusedArticleId }) => writeAnonymousPreferences({
+    saveJourneyRoute: ({ journeyId, routeId, focusedArticleId }) => persistPreferences({
       ...preferences,
       version: 2,
       journeyId,
       routeId,
       focusedArticleId,
     }),
-    chooseGeneralExperience: () => writeAnonymousPreferences({ version: 2, onboardingCompleted: true }),
-  }), [isReady, preferences]);
+    chooseGeneralExperience: () => persistPreferences({ version: 2, onboardingCompleted: true }),
+  }), [isReady, persistPreferences, preferences]);
 
   return <PersonalizationContext.Provider value={value}>{children}</PersonalizationContext.Provider>;
 }

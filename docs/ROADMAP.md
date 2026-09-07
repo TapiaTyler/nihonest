@@ -276,7 +276,7 @@ test: add critical public flow coverage
 
 # Phase 8 — Cloud Persistence and Accounts
 
-Deferred until public experience is solid.
+**Local implementation complete; hosted-provider validation remains in the post-Phase 13 integration gate.**
 
 Develop against local or otherwise non-production infrastructure first. Do not provision the production Supabase project, production OAuth callbacks, or continuously hosted web application solely to begin this phase; final hosted integration belongs to the post-Phase 13 deployment gate.
 
@@ -296,6 +296,18 @@ Objectives:
 - anonymous-to-account migration.
 
 Accounts must remain optional for public content.
+
+Implemented locally:
+
+- Supabase CLI configuration and PostgreSQL migrations for minimal profiles and journey preferences;
+- passwordless email sign-in through local Mailpit, with provider-ready Google and Apple entry points kept behind explicit configuration flags;
+- validated cookie-backed sessions and explicit sign-out;
+- owner-only Row Level Security policies with database policy tests;
+- optional display name, understandable JSON export, and confirmed account deletion;
+- deterministic anonymous-to-account preference import and subsequent cross-device synchronization; and
+- public routes and guidance that remain available when Supabase is absent or the user is signed out.
+
+The hosted gate must still validate production email delivery, real OAuth origins/callbacks, cross-network synchronization, provider dashboards, key rotation, abuse controls, and production deletion/export behavior.
 
 Suggested eventual Git checkpoints:
 

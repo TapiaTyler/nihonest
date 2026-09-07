@@ -541,33 +541,33 @@ Onboarding first asks for one of the four controlled journey stages, then offers
 
 ---
 
-# 16. Future Authentication
+# 16. Optional Authentication
 
-Authentication is deferred.
+Phase 8 implements the account boundary locally with Supabase Auth. Public informational content does not depend on authentication, and an unavailable account backend must degrade to a clear setup message rather than block the knowledgebase.
 
-Planned provider direction:
+Supported provider direction:
 
 - passwordless email;
 - Google;
 - Apple.
 
-Planned backend direction:
+Backend:
 
 - Supabase Auth.
 
-Application UI should depend on application-level authentication state/interfaces rather than tightly coupling every component to Supabase SDK calls.
+Application UI depends on application-level account services rather than importing the Supabase SDK throughout presentation components. Passwordless email is exercised against local Mailpit. Google and Apple entry points are configuration-gated until credentials and callback origins are available; their production behavior remains part of the hosted-integration gate.
 
 ---
 
 # 17. Persistent Sessions
 
-Future authentication should provide a normal modern persistent-session experience.
+Web authentication uses Supabase SSR cookie storage and the Next.js request proxy to refresh sessions. Server authorization validates signed claims before using an account ID; reading an unverified session object alone is not an authorization decision.
 
 Users should not ordinarily reauthenticate every time the web application or native application launches.
 
 Sessions should be refreshed and validated securely according to current provider/platform guidance.
 
-Explicit logout should end the local signed-in experience.
+Explicit logout ends the local signed-in experience. Account deletion also invalidates the current session after deleting the provider identity.
 
 Security-sensitive events may also invalidate sessions.
 
@@ -583,15 +583,20 @@ Exact implementation should follow current Expo and authentication-provider guid
 
 ---
 
-# 19. Future User Database
+# 19. User Database
 
-Cloud persistence is expected to use PostgreSQL through Supabase.
-
-Potential application tables include:
+Cloud persistence uses PostgreSQL through Supabase. Phase 8 creates only:
 
 ```text
 profiles
 user_preferences
+```
+
+The remaining potential user-owned tables belong to later phases:
+
+Potential application tables include:
+
+```text
 saved_articles
 saved_terms
 checklist_progress
@@ -607,9 +612,7 @@ Authentication identity should remain managed by the authentication provider.
 
 # 20. Authorization
 
-When private cloud data is introduced, access controls must ensure users can access only records they are authorized to access.
-
-For Supabase/PostgreSQL, Row Level Security should be part of the design for user-owned tables.
+Private user tables enable Row Level Security. Authenticated clients receive explicit table privileges, while owner-scoped select, insert, update, and delete policies require `auth.uid()` to equal the row's `user_id`. Anonymous clients receive no access to either table. Database tests exercise policy shape and cross-user isolation.
 
 Public content permissions and private user permissions should be explicitly differentiated.
 
@@ -617,14 +620,11 @@ Public content permissions and private user permissions should be explicitly dif
 
 # 21. Minimal Profile
 
-The future user profile should contain only information needed for features.
+The Phase 8 profile contains only the authentication user ID and an optional display name. Email remains with the authentication provider and is not duplicated in `profiles`. The preference row stores only the existing optional journey-stage, journey, route, focused-guide, and onboarding-completion fields.
 
-Potential attributes:
+Potential later attributes, only when required by a reviewed feature, include:
 
 ```text
-auth user ID
-email via auth provider
-journey stage
 preferred language
 residence status category
 broad user situation
@@ -641,7 +641,7 @@ Sensitive identity-document data should not be collected.
 
 # 22. Anonymous-to-Registered Migration
 
-Local anonymous state should eventually be migratable into a user account.
+Browser-local personalization remains the immediate offline copy. When a user signs in, an existing cloud preference record becomes the initial account-authoritative value and is copied locally unless the user changed local state while the request was in flight. If the account has no preference record, local data stays local until the user explicitly chooses **Import this device's starting point**.
 
 Architecture should allow:
 
@@ -655,9 +655,7 @@ Migration/merge
 CloudState
 ```
 
-Conflicts should eventually have deterministic behavior.
-
-The detailed merge strategy is deferred.
+After that initial decision, personalization changes write locally first and synchronize the same validated record to the signed-in account. Users can explicitly import the current device again to replace the cloud copy. Searches, browsing history, and unrelated device-local data are never migrated.
 
 ---
 

@@ -10,7 +10,9 @@ import { ResidenceStatusCard } from "./residence-status-card";
 
 const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
   { id: "all", label: "All statuses" },
-  ...RESIDENCE_STATUS_CATEGORY_IDS.map((id) => ({ id, label: residenceStatusCategoryLabels[id] })),
+  ...RESIDENCE_STATUS_CATEGORY_IDS
+    .map((id) => ({ id, label: residenceStatusCategoryLabels[id] }))
+    .sort((left, right) => left.label.localeCompare(right.label)),
 ];
 
 type ResidenceStatusExplorerProps = Readonly<{
@@ -19,9 +21,9 @@ type ResidenceStatusExplorerProps = Readonly<{
 
 export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusExplorerProps) {
   const [activeFilter, setActiveFilter] = useState<"all" | ResidenceStatusCategory>("all");
-  const visibleStatuses = residenceStatuses.filter(
-    (status) => activeFilter === "all" || status.category === activeFilter,
-  );
+  const visibleStatuses = residenceStatuses
+    .filter((status) => activeFilter === "all" || status.category === activeFilter)
+    .sort((left, right) => left.englishName.localeCompare(right.englishName));
 
   return (
     <div className="mt-10">

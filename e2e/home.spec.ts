@@ -8,6 +8,15 @@ test("loads the Nihonest homepage", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
 });
 
+test("keeps accounts optional without blocking the public knowledgebase", async ({ page }) => {
+  await page.goto("/account");
+
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Keep useful preferences, not unnecessary personal data.");
+  await expect(page.getByText("Every public guide, journey, FAQ, status, and glossary entry remains available without signing in.")).toBeVisible();
+  await page.getByRole("link", { name: "Explore" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Find the guidance that fits your situation.");
+});
+
 test("browses a content group and opens one of its guides", async ({ page }) => {
   await page.goto("/explore");
 
