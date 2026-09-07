@@ -3,12 +3,24 @@ import type { ReactNode } from "react";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: siteUrl,
   title: "Nihonest — Find your place in Japan",
   description:
     "A public-first knowledgebase for people preparing to move to Japan or building a life there.",
+  applicationName: "Nihonest",
+  referrer: "origin-when-cross-origin",
+  keywords: ["Japan", "moving to Japan", "status of residence", "visa guidance", "Japanese glossary"],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Nihonest",
+    title: "Nihonest — Find your place in Japan",
+    description: "Practical, sourced guidance for moving to and building a life in Japan.",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

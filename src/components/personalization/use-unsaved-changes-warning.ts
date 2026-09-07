@@ -47,6 +47,7 @@ export function useUnsavedChangesWarning(hasUnsavedChanges: boolean) {
       }
       if (!shouldWarn() || window.confirm(warningMessage)) return;
 
+      // popstate has already moved backward; moving forward restores the onboarding page when the user cancels.
       restoringHistory = true;
       window.history.go(1);
     }

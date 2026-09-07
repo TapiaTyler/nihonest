@@ -467,12 +467,13 @@ The pre-Phase 6 catalog uses purpose-based browse groups rather than reproducing
 
 Initial search should remain lightweight.
 
-The Explore information architecture should be group-first when no query is active: users see high-level content groups and open a group to browse its articles. Search is independent of that presentation hierarchy. A query from Explore must search the underlying article and glossary index across all groups and may return individual article results directly, even when those articles are not displayed on the default Explore landing page.
+The Explore information architecture should be group-first when no query is active: users see high-level content groups and open a group to browse its articles. Search is independent of that presentation hierarchy. A query from Explore must search the underlying FAQ, article, and glossary indexes across all groups and may return individual results directly, even when those records are not displayed on the default Explore landing page.
 
 Potential initial sources:
 
 - static indexed content;
 - normalized article metadata;
+- structured FAQ questions and search terms;
 - glossary metadata;
 - structured filtering.
 
@@ -486,9 +487,13 @@ search(query, filters)
 
 Future dedicated providers might include specialized search engines, but no vendor should be selected now.
 
-The Phase 5 implementation builds this boundary as a platform-independent local search module over validated group, article, and glossary metadata. The Explore UI composes query matching with journey-stage, topic, audience, geographic-scope, content-type, importance, and residence-status filters. With no active query or filter, it renders only the reusable article groups; dedicated group routes reveal their articles, while separate journey routes preserve ordered, branch-aware guidance. This keeps discovery independent of the presentation hierarchy and leaves a clear replacement point if a dedicated full-text index becomes necessary.
+Multilingual display does not by itself create multilingual retrieval. Phase 11 should produce locale-specific search documents from translated discovery metadata while retaining canonical content IDs and language-independent taxonomy relationships. Explore, FAQ, Glossary, and onboarding search should query the selected locale first. A canonical-English translation of the query may be used only as a controlled fallback when localized retrieval produces no useful result; this boundary must expose privacy, latency, caching, quota, confidence, and failure behavior instead of hiding a provider call inside UI components.
 
-Active search results use a predictable type hierarchy: matching content groups first, individual guides second, and glossary terms third, with alphabetical order inside each section. The UI renders these as separate labeled regions and generates jump links only for non-empty result types. Residence-status detail pages resolve their related article IDs back to the applicable content groups and guided journeys so the structured status directory does not become a dead end.
+Search normalization and tokenization must be selected per supported language. The English whitespace-token strategy cannot be assumed for languages without the same word boundaries or morphology. Protected Japanese, kana, romaji, acronyms, and official names remain searchable alongside localized fields, and cross-search handoffs preserve both the locale and the original query.
+
+The local implementation builds this boundary as a platform-independent search module over validated group, FAQ, article, and glossary metadata. FAQ records use ordinary question language and stable relationships to canonical content rather than duplicating substantive guidance. The Explore UI composes query matching with journey-stage, topic, audience, geographic-scope, content-type, importance, and residence-status filters. FAQ results inherit applicable structured filters from their linked articles. With no active query or filter, Explore renders only the reusable article groups; dedicated group routes reveal their articles, while separate journey routes preserve ordered, branch-aware guidance. This keeps discovery independent of the presentation hierarchy and leaves a clear replacement point if a dedicated full-text index becomes necessary.
+
+Active search results use a predictable type hierarchy: matching content groups first, FAQs second, individual guides third, and glossary terms fourth, with alphabetical order inside each section. The UI renders these as separate labeled regions and generates jump links only for non-empty result types. FAQ results use compact contextual links instead of duplicating full content cards. When an Explore text query has no results, its FAQ recovery link carries the query but intentionally omits Explore-only filters. The reciprocal FAQ empty state carries the same wording into Explore's complete catalog search. Residence-status detail pages resolve their related article IDs back to the applicable content groups and guided journeys so the structured status directory does not become a dead end.
 
 Explore search and filter values are serialized into the query string. Result links carry that Explore URL as a constrained return target, allowing browser Back and the explicit Back to Explore control to restore the user's discovery state.
 
@@ -733,6 +738,8 @@ translateContent(content, locale)
 
 Provider selection is deferred.
 
+Translated search documents should be versioned against the canonical content revision and translation configuration so stale indexes can be invalidated with cached prose. Stable article, FAQ, glossary, group, journey, and taxonomy IDs must never be translated. Query translation is a retrieval fallback, not a source of canonical content and not permission to generate an answer independently of the reviewed guidance.
+
 ---
 
 # 26. Notification Architecture
@@ -862,6 +869,8 @@ Important public pages should support:
 - crawlable canonical English content.
 
 SEO should not compromise privacy.
+
+The local public-MVP implementation emits shared metadata, a sitemap covering stable public routes, and an environment-aware robots policy. `NEXT_PUBLIC_SITE_URL` is the explicit public-origin switch: without it, metadata may use a localhost fallback for local builds and robots must disallow indexing; a hosted environment must set the real canonical origin before indexing is enabled.
 
 ---
 

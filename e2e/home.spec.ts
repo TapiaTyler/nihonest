@@ -38,11 +38,34 @@ test("searches articles across groups without opening a group first", async ({ p
   await expect(page.getByRole("link", { name: /^Glossary terms \(/ })).toHaveCount(0);
   await page.getByRole("link", { name: /^Groups \(/ }).click();
   await expect(page).toHaveURL(/#result-groups$/);
-  await page.getByRole("link", { name: "Japan's Start-up Visa pathway" }).click();
+  await page.getByRole("link", { name: "Japan's Start-up Visa pathway", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Japan's Start-up Visa pathway");
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
   await page.getByRole("link", { name: "Back to Explore" }).click();
   await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("Start-up Visa");
+});
+
+test("carries an unsuccessful Explore query into FAQ search", async ({ page }) => {
+  await page.goto("/explore");
+  await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("software developer");
+  await page.getByText("More filters").click();
+  await page.getByRole("combobox", { name: "Topic" }).selectOption("healthcare");
+
+  await expect(page.getByRole("heading", { name: "No matching guidance found" })).toBeVisible();
+  await page.getByRole("link", { name: "Search FAQs for this question →" }).click();
+  await expect(page).toHaveURL(/\/faq\?q=software\+developer$/);
+  await expect(page.getByRole("searchbox", { name: "What would you like to understand?" })).toHaveValue("software developer");
+  await expect(page.getByRole("heading", { name: "Which Japanese work status is commonly relevant to software developers and software engineers?" })).toBeVisible();
+});
+
+test("carries an unsuccessful FAQ query into the complete Explore search", async ({ page }) => {
+  await page.goto("/faq?q=teacher");
+
+  await expect(page.getByRole("heading", { name: "No matching FAQ found" })).toBeVisible();
+  await page.getByRole("link", { name: "Search all guidance for this question →" }).click();
+  await expect(page).toHaveURL(/\/explore\?q=teacher$/);
+  await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("teacher");
+  await expect(page.getByRole("link", { name: "Instructor" })).toBeVisible();
 });
 
 test("resolves one professional route without treating alternatives as later steps", async ({ page }) => {

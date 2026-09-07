@@ -1,6 +1,7 @@
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
+import type { Faq } from "@/domain/faq/faq";
 import type {
   AudienceId,
   GeographicScopeId,
@@ -13,7 +14,7 @@ type AllOption = "all";
 
 export type KnowledgebaseSearchFilters = Readonly<{
   query: string;
-  kind: AllOption | "group" | "article" | "glossary";
+  kind: AllOption | "group" | "faq" | "article" | "glossary";
   journeyStageId: AllOption | JourneyStageId;
   topicId: AllOption | TopicId;
   audienceId: AllOption | AudienceId;
@@ -25,6 +26,7 @@ export type KnowledgebaseSearchFilters = Readonly<{
 
 export type KnowledgebaseSearchResult =
   | Readonly<{ kind: "group"; group: ArticleGroup; score: number }>
+  | Readonly<{ kind: "faq"; faq: Faq; score: number }>
   | Readonly<{ kind: "article"; article: ArticleMetadata; score: number }>
   | Readonly<{ kind: "glossary"; term: JapaneseTerm; score: number }>;
 
@@ -56,6 +58,7 @@ function queryScore(primary: string, values: readonly (string | undefined)[], qu
     .map(normalizeSearchText);
   const haystack = normalizedValues.join(" ");
   const compactHaystack = haystack.replaceAll(" ", "");
+  // Requiring every token keeps broad FAQ aliases useful without allowing one common word to flood mixed result types.
   const matches = tokens.every((token) =>
     haystack.includes(token) || compactHaystack.includes(token.replaceAll(" ", "")),
   );
@@ -106,6 +109,7 @@ export function searchKnowledgebase(
   articles: readonly ArticleMetadata[],
   terms: readonly JapaneseTerm[],
   filters: KnowledgebaseSearchFilters,
+  faqs: readonly Faq[] = [],
 ): readonly KnowledgebaseSearchResult[] {
   const groupResults: KnowledgebaseSearchResult[] = groups.flatMap((group) => {
     if (filters.kind !== "all" && filters.kind !== "group") return [];
@@ -144,6 +148,24 @@ export function searchKnowledgebase(
     return score >= 0 ? [{ kind: "article" as const, article, score }] : [];
   });
 
+  const faqResults: KnowledgebaseSearchResult[] = faqs.flatMap((faq) => {
+    if (filters.kind !== "all" && filters.kind !== "faq") return [];
+
+    // Structured filters are inherited from linked guides; FAQ metadata remains retrieval-oriented instead of duplicating article taxonomy.
+    const linkedArticles = articles.filter((article) => faq.relatedArticleIds.includes(article.id));
+    const hasStructuredFilter = filters.journeyStageId !== "all"
+      || filters.topicId !== "all"
+      || filters.audienceId !== "all"
+      || filters.geographicScopeId !== "all"
+      || filters.contentType !== "all"
+      || filters.importance !== "all"
+      || filters.residenceStatusId !== "all";
+    if (hasStructuredFilter && !linkedArticles.some((article) => articleMatchesStructuredFilters(article, filters))) return [];
+
+    const score = queryScore(faq.question, [faq.question, faq.summary, ...faq.searchTerms], filters.query);
+    return score >= 0 ? [{ kind: "faq" as const, faq, score }] : [];
+  });
+
   const glossaryResults: KnowledgebaseSearchResult[] = terms.flatMap((term) => {
     if (!glossaryTermMatchesFilters(term, filters)) return [];
     const score = queryScore(
@@ -156,11 +178,12 @@ export function searchKnowledgebase(
 
   const kindOrder: Record<KnowledgebaseSearchResult["kind"], number> = {
     group: 0,
-    article: 1,
-    glossary: 2,
+    faq: 1,
+    article: 2,
+    glossary: 3,
   };
 
-  return [...groupResults, ...articleResults, ...glossaryResults].sort(
+  return [...groupResults, ...faqResults, ...articleResults, ...glossaryResults].sort(
     (left, right) => kindOrder[left.kind] - kindOrder[right.kind] ||
       resultTitle(left).localeCompare(resultTitle(right), "en", { sensitivity: "base" }),
   );
@@ -168,6 +191,7 @@ export function searchKnowledgebase(
 
 function resultTitle(result: KnowledgebaseSearchResult) {
   if (result.kind === "group") return result.group.title;
+  if (result.kind === "faq") return result.faq.question;
   if (result.kind === "article") return result.article.title;
   return result.term.englishName;
 }

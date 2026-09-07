@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { articleGroupSchema } from "@/domain/discovery/discovery";
+import { faqSchema } from "@/domain/faq/faq";
 import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { ExploreDiscovery } from "./explore-discovery";
@@ -36,6 +37,21 @@ const laterAlphabeticalGroup = articleGroupSchema.parse({
   articleIds: [bankArticle.id],
 });
 
+const faqEntry = {
+  faq: faqSchema.parse({
+    id: "address-bank-loop",
+    slug: "address-bank-loop",
+    question: "How do I handle the address, apartment, and bank-account loop after arriving?",
+    summary: "Follow the linked arrival guidance.",
+    searchTerms: ["rent needs bank account"],
+    relatedArticleIds: [bankArticle.id],
+    status: "draft",
+    createdAt: "2026-09-06",
+    updatedAt: "2026-09-06",
+  }),
+  targets: [{ kind: "guide" as const, id: bankArticle.id, label: "Finding housing and moving in", href: "/articles/finding-housing-and-moving-in" }],
+};
+
 function renderDiscovery() {
   render(
     <ExploreDiscovery
@@ -43,6 +59,7 @@ function renderDiscovery() {
       articles={[bankArticle]}
       terms={glossaryTerms}
       residenceStatuses={residenceStatuses}
+      faqEntries={[faqEntry]}
     />,
   );
 }
@@ -91,6 +108,7 @@ describe("ExploreDiscovery", () => {
         articles={[bankArticle]}
         terms={glossaryTerms}
         residenceStatuses={residenceStatuses}
+        faqEntries={[faqEntry]}
       />,
     );
 
@@ -112,6 +130,27 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("heading", { name: "Content groups" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Guides" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Glossary terms" })).toBeInTheDocument();
+  });
+
+  it("returns FAQ questions and their compact canonical links", () => {
+    renderDiscovery();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "rent needs bank account" } });
+
+    expect(screen.getByRole("heading", { name: "How do I handle the address, apartment, and bank-account loop after arriving?" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "FAQs (1)" })).toHaveAttribute("href", "#result-faqs");
+    expect(screen.getByRole("link", { name: /Guide: Finding housing and moving in/ })).toBeInTheDocument();
+  });
+
+  it("hands an unsuccessful Explore query to FAQ search without carrying filters", () => {
+    renderDiscovery();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "software developer" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "Topic" }), { target: { value: "healthcare" } });
+
+    expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Search FAQs for this question →" })).toHaveAttribute(
+      "href",
+      "/faq?q=software+developer",
+    );
   });
 
   it("can limit results to matching groups", () => {

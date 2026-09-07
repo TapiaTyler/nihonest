@@ -4,6 +4,7 @@ import { StageRecommendations } from "@/components/personalization/stage-recomme
 import { residenceStatuses } from "@/data/residence-statuses";
 import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
+import { getAllFaqEntries } from "@/lib/content/faqs";
 
 export const metadata: Metadata = {
   title: "Explore | Nihonest",
@@ -30,6 +31,7 @@ export default function ExplorePage() {
         articles={articles}
         terms={getAllGlossaryTerms()}
         residenceStatuses={residenceStatuses}
+        faqEntries={getAllFaqEntries()}
       />
     </div>
   );

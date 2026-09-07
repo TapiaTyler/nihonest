@@ -357,9 +357,28 @@ residence certificate
 
 Do not create misleading synonyms merely to increase search matches.
 
+For translated search, locale-specific aliases should reflect wording people genuinely use in that language. Do not blindly machine-translate English keywords when the result is unnatural, ambiguous, or changes the legal or administrative meaning. Protected official names, Japanese, kana, romaji, and common acronyms should remain available alongside localized terms.
+
 ---
 
-## 18. Tone
+## 18. FAQ Quality
+
+FAQs are discovery bridges written in ordinary user language. They should help a reader recognize the right next resource without becoming a second, independently maintained version of an article.
+
+Each FAQ should:
+
+- ask one recognizable practical question;
+- include only a concise orientation that remains accurate across its linked resources;
+- link through stable relationships to the relevant canonical articles, groups, journeys, glossary terms, or residence statuses;
+- use alternative phrasings only when real users could reasonably ask the same question that way;
+- avoid implying eligibility, certainty, or individualized legal advice; and
+- remain a draft until its wording, applicability, and target relationships have been reviewed.
+
+High-stakes details belong in sourced canonical guidance. If answering a question requires qualifications, exceptions, dates, or thresholds, the FAQ should direct the reader to that guidance rather than compressing away the conditions.
+
+---
+
+## 19. Tone
 
 Content should be:
 
@@ -377,7 +396,7 @@ Avoid implying that normal administrative processes are inherently frightening o
 
 ---
 
-## 19. Audience Assumptions
+## 20. Audience Assumptions
 
 Do not assume users:
 
@@ -391,7 +410,7 @@ Explain unfamiliar concepts when needed.
 
 ---
 
-## 20. Dates
+## 21. Dates
 
 For rules, deadlines, or changing programs, prefer explicit dates when ambiguity could matter.
 
@@ -399,7 +418,7 @@ Review-sensitive information should carry a review date.
 
 ---
 
-## 21. External Links
+## 22. External Links
 
 Official links should be preferred where possible.
 
@@ -411,7 +430,7 @@ For cultural guidance or language-learning support where a government source is 
 
 ---
 
-## 22. Notifications About Changes
+## 23. Notifications About Changes
 
 Critical-update notifications should be:
 
@@ -426,7 +445,7 @@ Avoid panic-oriented messages.
 
 ---
 
-## 23. Editorial Rule for AI
+## 24. Editorial Rule for AI
 
 AI tools may assist with:
 
@@ -443,7 +462,7 @@ Important claims must be verified against appropriate sources before publication
 
 ---
 
-## 24. Content Integrity Principle
+## 25. Content Integrity Principle
 
 The goal is not to publish the greatest quantity of content.
 
@@ -451,7 +470,7 @@ The goal is to publish information that users can understand, trace, and appropr
 
 ---
 
-## 25. Journey and Conditional Guidance
+## 26. Journey and Conditional Guidance
 
 Canonical articles may participate in multiple journeys. Do not rewrite shared guidance to pretend it belongs exclusively to one audience or route.
 
@@ -468,7 +487,7 @@ Journey navigation is organizational guidance, not an eligibility assessment. Ar
 
 ---
 
-## 26. Document Images and Form Examples
+## 27. Document Images and Form Examples
 
 Images of important documents should be sourced, licensed, current, and safe to reproduce. Never expose real personal data.
 
@@ -484,7 +503,7 @@ Do not rely on color, arrows, hover, or the image alone to communicate required 
 
 ---
 
-## 27. Phase 13 Editorial Review Standard
+## 28. Phase 13 Editorial Review Standard
 
 An article may move from draft to editorial review only after its material claims have been checked against current appropriate sources and its structured metadata, terminology, relationships, and applicability have been reviewed together.
 

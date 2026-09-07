@@ -243,6 +243,8 @@ feat: persist anonymous journey preferences
 
 # Phase 7 — Public Web MVP Refinement
 
+Status: Complete locally at representative-content level
+
 Objectives:
 
 - complete responsive UX;
@@ -256,6 +258,7 @@ Objectives:
 - establish a structured FAQ model whose questions use ordinary user language and point to relevant articles, content groups, journeys, glossary terms, or residence statuses without duplicating their canonical guidance;
 - integrate FAQs into knowledgebase search as a distinct result type, with concise contextual links rather than full article cards where that produces a clearer answer path;
 - when an Explore text query returns no results, offer a clear CTA to search the FAQ catalog; carry the entered query into the FAQ search and run it immediately when technically possible, while omitting unrelated Explore-only filters that the FAQ search cannot interpret;
+- when an FAQ query returns no results, offer the reciprocal path into the complete Explore search and carry the same query so the reader does not have to re-enter it;
 - keep generated FAQ candidates in draft until their wording, applicability, and linked guidance have been reviewed;
 - complete local production-readiness checks without creating a continuously deployed public environment.
 
@@ -366,13 +369,21 @@ Objectives:
 - protect Japanese term structures;
 - translate eligible prose;
 - expand supported content and interface languages through the protected translation architecture, prioritizing languages according to demonstrated user need and verified provider quality;
+- build locale-specific search indexes from translated group titles, article titles and descriptions, article search terms, FAQ questions and summaries, FAQ aliases, glossary definitions, and onboarding discovery labels while retaining their stable canonical IDs;
+- keep structured filters and content relationships language-independent while localizing their user-facing labels;
+- apply language-aware query normalization, tokenization, and appropriate word-form handling rather than assuming every supported language uses English word boundaries;
+- preserve protected Japanese, kana, romaji, acronyms, and official names as searchable forms across locales;
+- use the selected-language index as the primary Explore, FAQ, Glossary, and onboarding search path, with canonical-English query translation only as a controlled zero-result or low-confidence fallback;
+- document and test the privacy, latency, caching, quota, ambiguity, and failure behavior of query translation, and fall back without blocking access to canonical English guidance;
+- preserve both locale and query when handing searches between Explore and FAQ;
+- add representative cross-language retrieval tests for translated phrases, common aliases, protected Japanese terminology, and English fallback behavior;
 - cache generated translations;
 - display machine-translation notice;
 - gracefully fall back to English;
 - add an accessible pronunciation-audio control to individual glossary-term pages;
 - never autoplay pronunciation, expose clear play/pause/replay state, and retain kana and romaji as the non-audio fallback;
 - cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
-- add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product.
+- add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product;
 - translate semantic document-image annotations, captions, and example-field guidance while keeping the underlying reference image independent from any one interface language.
 
 Provider integration may be developed locally with protected credentials. Production secret management, shared caching, quotas, and failure behavior are validated at the hosted integration gate.
@@ -425,6 +436,7 @@ Objectives:
 - document the granted period or available periods of stay for every visa and status route, clearly distinguishing a visa's entry validity from the period of stay granted at landing;
 - explain renewal eligibility and practical limitations for every renewable route, including maximum periods where applicable, non-renewable or program-limited categories, timing, evidence, and circumstances that commonly require a change of status instead;
 - map the broadest defensible set of applicable occupations and job titles to every work status using current official activity definitions and occupational examples—for example, explicitly covering software developers and software engineers under Engineer / Specialist in Humanities / International Services—while warning that job title alone never determines eligibility;
+- add validated `searchTerms` metadata to the article schema and populate each reviewed article with legitimate everyday wording, occupation names, abbreviations, official and informal names, and useful spelling or romanization variants; index these terms in Explore without treating them as visible claims or SEO keyword stuffing;
 - identify jobs or activities that sound similar but fall outside each work status, and explain when professional licensing, degree or experience requirements, employer duties, or a different status may control;
 - expand route-specific requirements, evidence, exceptions, transition rules, and practical guidance;
 - expand carefully sourced practical-law and compliance guidance, including acquiring or converting a driver's license and understanding rules for driving in Japan;
@@ -436,7 +448,7 @@ Objectives:
 - provide clearly fictional or safely redacted completion examples for commonly encountered forms, explain what belongs in each field, and never expose real identity-document data;
 - audit every article, including content already marked ready for editorial review, so one or more relevant Japanese terms are introduced naturally in the article body rather than appearing only in the Key Japanese terminology section;
 - verify that each article's linked glossary terms are actually taught in context alongside their English equivalents, removing or replacing terms that cannot be usefully integrated into the passage;
-- expand the FAQ catalog from reviewed user-language questions, validate each question's applicability and answer links, and ensure high-stakes questions lead to current sourced guidance rather than unsupported generated answers;
+- expand the FAQ catalog from reviewed user-language questions, audit common and zero-result search wording—including occupation variants such as teacher and teaching—validate each question's applicability and answer links, and ensure high-stakes questions lead to current sourced guidance rather than unsupported generated answers;
 - move articles from draft to editorial review only after their important claims and source mappings have been checked.
 
 Do not attempt every municipality simultaneously.

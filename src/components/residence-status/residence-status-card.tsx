@@ -8,19 +8,19 @@ type ResidenceStatusCardProps = Readonly<{
 
 export function ResidenceStatusCard({ residenceStatus }: ResidenceStatusCardProps) {
   return (
-    <article className="h-full">
+    <article className="h-full min-w-0">
       <Link
         href={`/residence-statuses/${residenceStatus.slug}`}
         aria-label={residenceStatus.englishName}
-        className="group flex h-full cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
+        className="group flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >
         <div className="flex items-start justify-between gap-4">
           <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
             Draft
           </span>
-          <span className="text-right text-slate-500">
-            <span lang="ja" className="block text-lg font-medium">{residenceStatus.japaneseName}</span>
-            <span className="mt-1 block text-xs">
+          <span className="min-w-0 text-right text-slate-500">
+            <span lang="ja" className="block break-words text-lg font-medium">{residenceStatus.japaneseName}</span>
+            <span className="mt-1 block break-words text-xs">
               <span lang="ja">{residenceStatus.japaneseKana}</span> · {residenceStatus.romaji}
             </span>
           </span>

@@ -74,6 +74,7 @@ export function getJourneyRouteForArticle(journey: GuidedJourney, articleId: str
 
 export function resolveJourneySteps(journey: GuidedJourney, routeId?: string): readonly ResolvedJourneyStep[] {
   const route = getJourneyRouteById(journey, routeId);
+  // Route choices replace one placeholder with one canonical guide; alternatives must never become sequential steps.
   return journey.phases.flatMap<ResolvedJourneyStep>((phase) => phase.steps.flatMap<ResolvedJourneyStep>((step) => {
     if (step.type === "route-choice") {
       return route ? [{ phaseId: phase.id, phaseTitle: phase.title, articleId: route.articleId, requiredness: "required" as const, isRouteSelection: true }] : [];

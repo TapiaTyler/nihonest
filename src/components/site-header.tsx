@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const destinations = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
+  { href: "/faq", label: "FAQ" },
   { href: "/glossary", label: "Glossary" },
   { href: "/residence-statuses", label: "Statuses" },
 ] as const;
@@ -35,8 +36,8 @@ export function SiteHeader() {
           Nihonest
         </Link>
 
-        <nav aria-label="Primary navigation" className="w-full sm:w-auto">
-          <ul className="flex items-center justify-between gap-1 sm:justify-start sm:gap-3">
+        <nav aria-label="Primary navigation" className="w-full overflow-x-auto sm:w-auto">
+          <ul className="flex min-w-max items-center justify-between gap-1 sm:justify-start sm:gap-3">
             {destinations.map((destination) => (
               <li key={destination.href}>
                 <Link

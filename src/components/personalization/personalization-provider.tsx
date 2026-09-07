@@ -39,6 +39,7 @@ type PersonalizationContextValue = Readonly<{
 const PersonalizationContext = createContext<PersonalizationContextValue | undefined>(undefined);
 
 export function PersonalizationProvider({ children }: Readonly<{ children: ReactNode }>) {
+  // useSyncExternalStore keeps same-tab custom events and cross-tab storage events on one hydration-safe subscription path.
   const snapshot = useSyncExternalStore(
     subscribeToAnonymousPreferences,
     getAnonymousPreferencesSnapshot,

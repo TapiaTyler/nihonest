@@ -102,7 +102,13 @@ describe("knowledgebase search", () => {
     );
 
     expect(results.map((result) => result.kind)).toEqual(["group", "group", "article", "article", "glossary"]);
-    expect(results.map((result) => result.kind === "group" ? result.group.title : result.kind === "article" ? result.article.title : result.term.englishName)).toEqual([
+    expect(results.map((result) => result.kind === "group"
+      ? result.group.title
+      : result.kind === "faq"
+        ? result.faq.question
+        : result.kind === "article"
+          ? result.article.title
+          : result.term.englishName)).toEqual([
       "Arrival essentials",
       "Banking basics",
       "Another bank guide",

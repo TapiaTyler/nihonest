@@ -43,7 +43,7 @@ export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusEx
         Showing {visibleStatuses.length} of {residenceStatuses.length} draft statuses
       </p>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-6 grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {visibleStatuses.map((residenceStatus) => (
           <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} />
         ))}

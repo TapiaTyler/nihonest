@@ -45,6 +45,7 @@ export function InlineGlossaryTerm({
 
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
     const usesTouchInteraction = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    // A first touch discloses pronunciation context; the second activates the same semantic link without a separate mobile-only control.
     if (usesTouchInteraction && !touchDisclosureShown.current) {
       event.preventDefault();
       touchDisclosureShown.current = true;
