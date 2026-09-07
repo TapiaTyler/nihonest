@@ -29,6 +29,13 @@ const group = articleGroupSchema.parse({
   articleIds: [bankArticle.id],
 });
 
+const laterAlphabeticalGroup = articleGroupSchema.parse({
+  id: "zoning-guidance",
+  title: "Zoning guidance",
+  description: "Example guidance that should sort after arrival guidance.",
+  articleIds: [bankArticle.id],
+});
+
 function renderDiscovery() {
   render(
     <ExploreDiscovery
@@ -51,6 +58,46 @@ describe("ExploreDiscovery", () => {
 
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Opening a bank account" })).not.toBeInTheDocument();
+  });
+
+  it("uses predictable filter ordering and groups residence statuses by category", () => {
+    renderDiscovery();
+
+    expect(Array.from(screen.getByRole("combobox", { name: "Topic" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
+      "All", "Banking", "Daily life", "Employment", "Healthcare", "Housing", "Immigration", "Language", "Municipal procedures", "Taxes", "Transportation",
+    ]);
+    expect(Array.from(screen.getByRole("combobox", { name: "Audience" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
+      "All", "Newcomer", "Student", "Employee", "Freelancer", "Business owner", "Spouse", "Dependent", "Parent",
+    ]);
+    expect(Array.from(screen.getByRole("combobox", { name: "Content type" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
+      "All", "Checklist", "Glossary", "Guide", "Official procedure", "Reference",
+    ]);
+
+    const residenceStatusSelect = screen.getByRole("combobox", { name: "Residence status" });
+    const categoryGroups = Array.from(residenceStatusSelect.querySelectorAll("optgroup"));
+    expect(categoryGroups.map((optionGroup) => optionGroup.label)).toEqual([
+      "Work", "Business and high-skill", "Study, culture, and training", "Family", "Designated activities", "Visitor", "Diplomatic and official", "Status-based residence",
+    ]);
+    for (const optionGroup of categoryGroups) {
+      const labels = Array.from(optionGroup.querySelectorAll("option"), (option) => option.textContent ?? "");
+      expect(labels).toEqual([...labels].sort((left, right) => left.localeCompare(right, "en", { sensitivity: "base" })));
+    }
+  });
+
+  it("alphabetizes the default content-group cards", () => {
+    render(
+      <ExploreDiscovery
+        groups={[laterAlphabeticalGroup, group]}
+        articles={[bankArticle]}
+        terms={glossaryTerms}
+        residenceStatuses={residenceStatuses}
+      />,
+    );
+
+    expect(screen.getAllByRole("link", { name: /^Explore / }).map((link) => link.getAttribute("aria-label"))).toEqual([
+      "Explore Arrival essentials",
+      "Explore Zoning guidance",
+    ]);
   });
 
   it("returns individual articles without opening a group", () => {

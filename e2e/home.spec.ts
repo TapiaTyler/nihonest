@@ -45,14 +45,26 @@ test("searches articles across groups without opening a group first", async ({ p
   await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("Start-up Visa");
 });
 
-test("opens an expanded work group and its mapped journey", async ({ page }) => {
-  await page.goto("/explore/professional-work");
+test("resolves one professional route without treating alternatives as later steps", async ({ page }) => {
+  await page.goto("/explore/journeys/professional-worker-moving-to-japan");
 
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Professional work");
-  await expect(page.getByRole("link", { name: "Engineer/Specialist in Humanities/International Services work status" })).toBeVisible();
-  await page.getByRole("link", { name: "Open professional worker journey" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Professional worker journey");
-  await expect(page.getByText("Choose the relevant route").first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Legal \/ Accounting Services/ })).toBeVisible();
+  await page.getByRole("link", { name: /Legal \/ Accounting Services/ }).click();
+  await expect(page).toHaveURL(/route=legal-accounting-services$/);
+  await expect(page.getByRole("link", { name: "Legal/Accounting Services work visa and status of residence" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Medical Services work visa and status of residence" })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Legal/Accounting Services work visa and status of residence" }).click();
+  const journeyContext = page.getByRole("region", { name: "Professional worker journey" });
+  const nextGuide = journeyContext.getByRole("link", { name: "Preparing for long-term entry to Japan →" });
+  await expect(nextGuide).toHaveAttribute("href", /journey=professional-worker-moving-to-japan&route=legal-accounting-services/);
+  await expect(journeyContext.getByText(/Medical Services/)).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Continue exploring" })).toBeVisible();
+
+  await page.goto("/articles/legal-accounting-services-status");
+  await expect(page.getByRole("region", { name: "Professional worker journey" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Continue exploring" })).toBeVisible();
 });
 
 test("searches glossary terms from Explore", async ({ page }) => {
@@ -76,25 +88,119 @@ test("combines filters and recovers from no results", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Explore Arrival essentials" })).toBeVisible();
 });
 
-test("opens the route-aware student journey from the homepage", async ({ page }) => {
+test("selects and remembers an anonymous journey stage", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByRole("link", { name: "Start the student journey" }).click();
+  await page.getByRole("link", { name: "Find my starting point" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Where are you in your Japan journey?",
+  );
+  await page.getByRole("radio", { name: /Recently arrived/ }).check();
+  await page.getByRole("button", { name: "Save my starting point" }).click();
+
+  await expect(page.getByRole("heading", { name: "Useful while recently arrived" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Documents you receive when entering Japan" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Explore guidance for recently arrived" })).toBeVisible();
+  await page.getByRole("link", { name: "Explore guidance for recently arrived" }).click();
+  await expect(page).toHaveURL(/\/explore\?stage=recently-arrived$/);
+  await page.getByText("More filters", { exact: true }).click();
+  await expect(page.getByRole("combobox", { name: "Journey stage" })).toHaveValue("recently-arrived");
+});
+
+test("warns before leaving onboarding with unsaved starting-point changes", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Find my starting point" }).click();
+  await page.getByRole("radio", { name: /Recently arrived/ }).check();
+
+  page.once("dialog", async (dialog) => {
+    expect(dialog.type()).toBe("confirm");
+    expect(dialog.message()).toContain("unsaved changes");
+    await dialog.dismiss();
+  });
+  await page.getByRole("link", { name: "Back to Home" }).click();
+  await expect(page).toHaveURL(/\/onboarding$/);
+
+  page.once("dialog", async (dialog) => dialog.accept());
+  await page.evaluate(() => window.history.back());
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("keeps personalization optional and remembers a skipped onboarding", async ({ page }) => {
+  await page.goto("/onboarding");
+
+  await page.getByRole("button", { name: "Skip and browse everything" }).click();
+  await expect(page).toHaveURL(/\/explore$/);
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "Find my starting point" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore all guidance" })).toHaveCount(0);
+});
+
+test("searches, saves, and clears a specific journey route", async ({ page }) => {
+  await page.goto("/onboarding");
+
+  await page.getByRole("radio", { name: /Planning/ }).check();
+  await page.getByRole("searchbox", { name: "Search journeys and routes" }).fill("Business Manager");
+  await expect(page.getByText("1 journey shown")).toBeVisible();
+  await page.getByRole("radio", { name: /Founder and highly skilled journey/ }).check();
+  const routeChoices = page.getByRole("group", { name: "3. Narrow the route, if you know it" });
+  await expect(routeChoices.getByRole("radio", { name: /Business Manager/ })).toBeChecked();
+  await page.getByRole("button", { name: "Save my starting point" }).click();
+
+  await expect(page.getByRole("link", { name: "Continue my journey" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Founder and highly skilled journey starting points" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Focused route: Business Manager visa and status of residence/ })).toBeVisible();
+  await page.reload();
+  await page.getByRole("link", { name: "Continue my journey" }).click();
+  await expect(page).toHaveURL(/route=business-manager$/);
+  await page.getByRole("link", { name: "Change route" }).click();
+  await page.getByRole("link", { name: /Choose this route Highly Skilled Professional/ }).click();
+  await expect(page).toHaveURL(/route=highly-skilled-professional$/);
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /Focused route: Highly Skilled Professional/ })).toBeVisible();
+
+  await page.getByRole("link", { name: "Adjust my starting point" }).first().click();
+  await page.getByRole("button", { name: "Remove personalization" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: "Find my starting point" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Explore all guidance" })).toHaveCount(0);
+});
+
+test("saves a specialized focused guide within its expanded journey", async ({ page }) => {
+  await page.goto("/onboarding");
+
+  await page.getByRole("radio", { name: /Planning/ }).check();
+  await page.getByRole("searchbox", { name: "Search journeys and routes" }).fill("Diplomatic visa");
+  await expect(page.getByText("1 journey shown")).toBeVisible();
+  await page.getByRole("button", { name: /Diplomatic visa/ }).click();
+  await page.getByRole("button", { name: "Save my starting point" }).click();
+
+  await expect(page.getByRole("link", { name: "Continue my journey" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Diplomatic and official assignment journey starting points" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Focused route: Diplomatic visa and Diplomat status/ })).toBeVisible();
+});
+
+test("opens the route-aware student journey", async ({ page }) => {
+  await page.goto("/explore/journeys/student-moving-to-japan");
+
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Student journey");
-  await expect(page.getByText("Student status").first()).toBeVisible();
-  await expect(page.getByText("Resident registration required").first()).toBeVisible();
+  await page.getByRole("link", { name: /Short-term study as a Temporary Visitor/ }).click();
+  await expect(page).toHaveURL(/route=temporary-visitor-study$/);
+  await expect(page.getByRole("link", { name: "Registering your address after arrival" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Student visa and Certificate of Eligibility" })).toHaveCount(0);
   await page.getByRole("link", { name: "Short-term study in Japan as a Temporary Visitor" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Short-term study in Japan as a Temporary Visitor",
   );
   await expect(page.getByText(/90 days is the maximum/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Student journey" })).toBeVisible();
 });
 
 test("searches the glossary and follows a term to its guide", async ({ page }) => {
   await page.goto("/glossary");
 
   await page.getByRole("searchbox", { name: "Search Japanese or English" }).fill("juminhyo");
-  await expect(page.getByText("Showing 1 of 58 terms")).toBeVisible();
+  await expect(page.getByText("Showing 1 of 67 terms")).toBeVisible();
   const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
   const glossaryCta = glossaryCard.getByText("View term and context →");
   await expect(glossaryCta).toHaveCSS("cursor", "pointer");
@@ -106,7 +212,7 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
   await expect(page.getByRole("searchbox", { name: "Search Japanese or English" })).toHaveValue(
     "juminhyo",
   );
-  await expect(page.getByText("Showing 1 of 58 terms")).toBeVisible();
+  await expect(page.getByText("Showing 1 of 67 terms")).toBeVisible();
   await page.getByRole("link", { name: "Certificate of Residence" }).click();
   await page.getByRole("link", { name: "Registering your address after arrival" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Registering your address after arrival");

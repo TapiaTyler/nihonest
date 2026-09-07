@@ -702,7 +702,7 @@ Academic labels such as “short-term study” do not determine immigration stat
 
 ## ADR-044 — Visa discovery uses canonical statuses, purpose groups, and typed journey steps
 
-**Status:** Accepted
+**Status:** Superseded by ADR-046
 
 ### Decision
 
@@ -715,6 +715,53 @@ Unresearched expansion articles use the `draft` status and display a Draft label
 ### Reason
 
 MOFA visa categories, legal statuses of residence, and user goals are related but not interchangeable. Keeping them separate supports accurate filtering and future personalization while purpose groups remain understandable to people who do not know the legal category they need. Typed steps provide Phase 6 with enough structure to personalize a journey without duplicating shared arrival guidance.
+
+---
+
+## ADR-045 — Journey-stage personalization remains broad and local
+
+**Status:** Accepted
+
+### Decision
+
+Phase 6 stores one optional journey stage, an optional guided-journey ID, an optional route ID, an optional focused-guide article ID, and onboarding-completion state in a validated, versioned browser-local record. Users can search the established journey model and full article catalog using journey language and the titles of visa, status, or program guides. Selecting a mapped route guide also selects its containing journey and route; a specialized guide may be saved without a journey when no mapped journey currently contains it.
+
+These preferences change a small set of starting-point recommendations on Home and Explore but do not hide public content, assert visa eligibility, or generate a legal checklist.
+
+Users may skip onboarding, change their stage, or remove personalization. Missing, invalid, inaccessible, or cleared browser storage yields the generic public experience.
+
+### Reason
+
+A stage plus optional stable content IDs provides useful route-aware navigation without requesting sensitive details. Keeping search and recommendation rules separate from taxonomy and presentation preserves a path to a future roadmap engine, while explicit limits prevent user-selected navigation preferences from being mistaken for individualized immigration guidance.
+
+---
+
+## ADR-046 — Journey templates resolve explicit route branches into contextual sequences
+
+**Status:** Accepted
+
+### Decision
+
+Guided journeys are modeled as ordered phases rather than flat article arrays. A journey may declare explicit route alternatives and exactly one route-choice position. Selecting a route inserts only that route's canonical article into the resolved sequence; unselected alternatives are not treated as earlier or later steps.
+
+Article steps are either required or conditional. Conditional steps carry a user-facing condition explaining when they may apply. Steps may also be limited to named routes so, for example, resident-registration procedures can remain outside a Temporary Visitor study path.
+
+Journey and route context are carried in article URLs. An article opened within a resolved journey displays a separate “Your journey” section with contextual previous and next guides plus the resolved table of contents. Direct article visits do not infer a journey. “Continue exploring” remains non-sequential discovery for related groups, journeys, and editorial article relationships; it must not derive a next guide from an article's position in every journey containing it.
+
+Browser-local personalization chooses an initial journey and route, but URL context is authoritative during traversal so Back, refresh, and shared links retain the same resolved path.
+
+### Reason
+
+A flat list cannot distinguish route alternatives from sequential work. It caused one professional status—such as Legal / Accounting Services—to identify the next unrelated status—such as Medical Services—as the next journey step. Explicit branches preserve shared preparation and arrival guidance without duplicating whole journeys, while URL-scoped traversal allows one canonical article to participate in multiple journeys with different legitimate neighbors.
+
+### Consequences
+
+- all journeys define named phases;
+- routed journeys define stable route IDs and one route-choice step;
+- route-specific and conditional steps are validated independently;
+- focused journey pages hide unselected alternatives;
+- article-level previous and next navigation exists only with valid journey context; and
+- adding a route or phase requires resolver and navigation tests, not edits to article prose.
 
 ---
 

@@ -8,32 +8,32 @@ export const JOURNEY_STAGE_IDS = [
 ] as const;
 
 export const TOPIC_IDS = [
-  "immigration",
-  "employment",
-  "taxes",
-  "housing",
-  "healthcare",
   "banking",
-  "municipal-procedures",
-  "transportation",
-  "language",
   "daily-life",
+  "employment",
+  "healthcare",
+  "housing",
+  "immigration",
+  "language",
+  "municipal-procedures",
+  "taxes",
+  "transportation",
 ] as const;
 
 export const AUDIENCE_IDS = [
-  "employee",
+  "newcomer",
   "student",
+  "employee",
+  "freelancer",
+  "business-owner",
   "spouse",
   "dependent",
   "parent",
-  "freelancer",
-  "business-owner",
-  "newcomer",
 ] as const;
 
 export const GEOGRAPHIC_SCOPE_IDS = ["national", "prefectural", "municipal"] as const;
 export const IMPORTANCE_IDS = ["informational", "recommended", "important", "critical"] as const;
-export const CONTENT_TYPE_IDS = ["guide", "reference", "checklist", "glossary", "official-procedure"] as const;
+export const CONTENT_TYPE_IDS = ["checklist", "glossary", "guide", "official-procedure", "reference"] as const;
 
 export const journeyStageIdSchema = z.enum(JOURNEY_STAGE_IDS);
 export const topicIdSchema = z.enum(TOPIC_IDS);

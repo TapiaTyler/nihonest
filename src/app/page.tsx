@@ -1,4 +1,6 @@
-import Link from "next/link";
+import { HomeHero } from "@/components/personalization/home-hero";
+import { StageRecommendations } from "@/components/personalization/stage-recommendations";
+import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/articles";
 
 const principles = [
   {
@@ -22,35 +24,13 @@ const principles = [
 ];
 
 export default function Home() {
+  const articles = getAllArticles().map(({ metadata }) => metadata);
+  const journeys = getAllGuidedJourneys();
+
   return (
     <>
-      <section className="page-shell grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-32">
-        <div className="max-w-3xl">
-          <p className="eyebrow">A clearer path through life in Japan</p>
-          <h1 className="mt-5 text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-7xl">
-            Find your place in Japan.
-          </h1>
-          <p className="mt-7 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
-            Nihonest is becoming a calm, practical knowledgebase for people preparing to move to Japan and those already building a life there.
-          </p>
-          <Link
-            href="/explore/journeys/student-moving-to-japan"
-            className="mt-8 inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
-          >
-            Start the student journey
-          </Link>
-        </div>
-
-        <aside className="rounded-3xl border border-teal-900/10 bg-teal-950 p-7 text-teal-50 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.55)] sm:p-9" aria-labelledby="foundation-status">
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-teal-200">Foundation in progress</p>
-          <h2 id="foundation-status" className="mt-4 text-2xl font-semibold tracking-tight text-white">
-            Built public first.
-          </h2>
-          <p className="mt-4 leading-7 text-teal-100/80">
-            The knowledgebase now maps study, work, business, family, designated-activity, and short-stay routes alongside shared arrival guidance.
-          </p>
-        </aside>
-      </section>
+      <HomeHero journeys={journeys} articles={articles} />
+      <StageRecommendations articles={articles} journeys={journeys} location="home" />
 
       <section className="border-y border-slate-200 bg-white" aria-labelledby="what-to-expect">
         <div className="page-shell py-16 sm:py-20">

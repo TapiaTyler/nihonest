@@ -51,6 +51,12 @@ import DigitalNomadDesignatedActivities, { metadata as digitalNomadDesignatedAct
 import ContinuedJobHuntingAfterStudy, { metadata as continuedJobHuntingAfterStudyMetadata } from "../../../content/articles/continued-job-hunting-after-study.mdx";
 import TemporaryVisitorAndShortStay, { metadata as temporaryVisitorAndShortStayMetadata } from "../../../content/articles/temporary-visitor-and-short-stay.mdx";
 import MedicalStayVisa, { metadata as medicalStayVisaMetadata } from "../../../content/articles/medical-stay-visa.mdx";
+import SideWorkAndFreelancingOnAWorkStatus, { metadata as sideWorkAndFreelancingOnAWorkStatusMetadata } from "../../../content/articles/side-work-and-freelancing-on-a-work-status.mdx";
+import NotifyingImmigrationAboutWorkContractChanges, { metadata as notifyingImmigrationAboutWorkContractChangesMetadata } from "../../../content/articles/notifying-immigration-about-work-contract-changes.mdx";
+import IncomeAndResidentTaxAfterMovingToJapan, { metadata as incomeAndResidentTaxAfterMovingToJapanMetadata } from "../../../content/articles/income-and-resident-tax-after-moving-to-japan.mdx";
+import FilingAJapaneseIncomeTaxReturn, { metadata as filingAJapaneseIncomeTaxReturnMetadata } from "../../../content/articles/filing-a-japanese-income-tax-return.mdx";
+import RenewingOrChangingYourStatusOfResidence, { metadata as renewingOrChangingYourStatusOfResidenceMetadata } from "../../../content/articles/renewing-or-changing-your-status-of-residence.mdx";
+import LeavingJapanAndClosingOutProcedures, { metadata as leavingJapanAndClosingOutProceduresMetadata } from "../../../content/articles/leaving-japan-and-closing-out-procedures.mdx";
 import {
   articleMetadataSchema,
   validateArticleCollection,
@@ -60,7 +66,7 @@ import { sources } from "@/data/sources";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { validateResidenceStatusCollection } from "@/domain/residence-status/residence-status";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
-import { validateDiscoveryModel } from "@/domain/discovery/discovery";
+import { getJourneyArticleIds, getJourneyRouteById, resolveJourneySteps, validateDiscoveryModel } from "@/domain/discovery/discovery";
 import { glossaryTerms } from "@/data/glossary";
 import { validateGlossaryCollection } from "@/domain/glossary/glossary";
 
@@ -107,6 +113,12 @@ const entries = [
   [continuedJobHuntingAfterStudyMetadata, ContinuedJobHuntingAfterStudy],
   [temporaryVisitorAndShortStayMetadata, TemporaryVisitorAndShortStay],
   [medicalStayVisaMetadata, MedicalStayVisa],
+  [sideWorkAndFreelancingOnAWorkStatusMetadata, SideWorkAndFreelancingOnAWorkStatus],
+  [notifyingImmigrationAboutWorkContractChangesMetadata, NotifyingImmigrationAboutWorkContractChanges],
+  [incomeAndResidentTaxAfterMovingToJapanMetadata, IncomeAndResidentTaxAfterMovingToJapan],
+  [filingAJapaneseIncomeTaxReturnMetadata, FilingAJapaneseIncomeTaxReturn],
+  [renewingOrChangingYourStatusOfResidenceMetadata, RenewingOrChangingYourStatusOfResidence],
+  [leavingJapanAndClosingOutProceduresMetadata, LeavingJapanAndClosingOutProcedures],
 ] as const;
 
 const articles: readonly ArticleRecord[] = entries.map(([metadata, Content]) => ({
@@ -168,11 +180,15 @@ export function getArticleGroupsByArticleIds(articleIds: readonly string[]) {
 
 export function getArticlesByJourney(journeyId: string) {
   const journey = guidedJourneys.find(({ id }) => id === journeyId);
-  return journey ? resolveArticleIds(journey.steps.map(({ articleId }) => articleId)) : [];
+  return journey ? resolveArticleIds(getJourneyArticleIds(journey)) : [];
 }
 
 export function getGuidedJourneyById(journeyId: string) {
   return guidedJourneys.find(({ id }) => id === journeyId);
+}
+
+export function getAllGuidedJourneys() {
+  return guidedJourneys;
 }
 
 export function getJourneysByGroup(groupId: string) {
@@ -181,17 +197,22 @@ export function getJourneysByGroup(groupId: string) {
 
 export function getGuidedJourneysByArticleIds(articleIds: readonly string[]) {
   const requestedIds = new Set(articleIds);
-  return guidedJourneys.filter((journey) => journey.steps.some(({ articleId }) => requestedIds.has(articleId)));
+  return guidedJourneys.filter((journey) => getJourneyArticleIds(journey).some((articleId) => requestedIds.has(articleId)));
 }
 
-export function getJourneySteps(journeyId: string) {
+export function getJourneySteps(journeyId: string, routeId?: string) {
   const journey = guidedJourneys.find(({ id }) => id === journeyId);
   if (!journey) return [];
 
-  return journey.steps.flatMap((step) => {
+  return resolveJourneySteps(journey, routeId).flatMap((step) => {
     const article = getArticleById(step.articleId);
     return article ? [{ step, article }] : [];
   });
+}
+
+export function getJourneyRoute(journeyId: string, routeId?: string) {
+  const journey = guidedJourneys.find(({ id }) => id === journeyId);
+  return journey ? getJourneyRouteById(journey, routeId) : undefined;
 }
 
 export function getArticleBySlug(slug: string): ArticleRecord | undefined {

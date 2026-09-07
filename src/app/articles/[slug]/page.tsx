@@ -8,7 +8,10 @@ import { articleStatusLabels, type ArticleMetadata } from "@/domain/article/arti
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getSourceById } from "@/data/sources";
 import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
+import { getJourneySteps } from "@/lib/content/articles";
 import { getGlossaryTermById } from "@/lib/content/glossary";
+import { getJourneyRouteById, getJourneyRouteForArticle } from "@/domain/discovery/discovery";
+import { articleJourneyHref, journeyHref } from "@/lib/navigation/journey-context";
 
 export const dynamicParams = false;
 
@@ -37,11 +40,12 @@ function labelFor(id: string, options: readonly { id: string; label: string }[])
 const relationshipLabels = {
   related: "Related guide",
   prerequisite: "Read first",
-  "next-step": "Next step",
+  "next-step": "Suggested follow-up",
 } as const;
 
-export default async function ArticlePage({ params }: PageProps<"/articles/[slug]">) {
+export default async function ArticlePage({ params, searchParams }: PageProps<"/articles/[slug]">) {
   const { slug } = await params;
+  const query = await searchParams;
   const article = getArticleBySlug(slug);
 
   if (!article) {
@@ -63,6 +67,18 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
   });
   const relatedGroups = getArticleGroupsByArticleIds([metadata.id]);
   const relatedJourneys = getGuidedJourneysByArticleIds([metadata.id]);
+  const requestedJourneyId = typeof query.journey === "string" ? query.journey : undefined;
+  const requestedRouteId = typeof query.route === "string" ? query.route : undefined;
+  const contextualJourney = relatedJourneys.find(({ id }) => id === requestedJourneyId);
+  const contextualRoute = contextualJourney ? getJourneyRouteById(contextualJourney, requestedRouteId) : undefined;
+  const contextualSteps = contextualJourney ? getJourneySteps(contextualJourney.id, contextualRoute?.id) : [];
+  const contextualIndex = contextualSteps.findIndex(({ article: contextualArticle }) => contextualArticle.metadata.id === metadata.id);
+  const journeyContext = contextualJourney && contextualIndex >= 0 ? {
+    journey: contextualJourney,
+    route: contextualRoute,
+    steps: contextualSteps,
+    index: contextualIndex,
+  } : undefined;
   const continueGuides = new Map<string, { article: ArticleMetadata; label: string }>(
     relatedArticles.map(({ relationship, article: relatedArticle }) => [
       relatedArticle.id,
@@ -70,20 +86,14 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
     ]),
   );
 
-  for (const journey of relatedJourneys) {
-    const currentIndex = journey.steps.findIndex(({ articleId }) => articleId === metadata.id);
-    const nextStep = journey.steps[currentIndex + 1];
-    if (!nextStep) continue;
-    const nextArticle = getArticleById(nextStep.articleId)?.metadata;
-    if (nextArticle && !continueGuides.has(nextArticle.id)) {
-      continueGuides.set(nextArticle.id, { article: nextArticle, label: `Next in ${journey.title}` });
-    }
-  }
-
   return (
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        <BackToExploreLink />
+        {journeyContext ? (
+          <Link href={journeyHref(journeyContext.journey.id, journeyContext.route?.id)} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+            ← Back to {journeyContext.journey.title}
+          </Link>
+        ) : <BackToExploreLink />}
         <header className="mt-8 border-b border-slate-200 pb-8">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
@@ -112,6 +122,48 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           <ArticleTerminology terms={glossaryTerms} />
         </div>
 
+        {journeyContext && (
+          <section className="mt-12 rounded-3xl border border-teal-200 bg-teal-50/60 p-5 sm:p-7" aria-labelledby="your-journey-heading">
+            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Your journey</p>
+            <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 id="your-journey-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{journeyContext.journey.title}</h2>
+                {journeyContext.route && <p className="mt-2 font-medium text-teal-900">{journeyContext.route.title} route</p>}
+              </div>
+              <Link href={journeyHref(journeyContext.journey.id, journeyContext.route?.id)} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-4 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">View journey outline</Link>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {journeyContext.steps[journeyContext.index - 1] ? (
+                <Link href={articleJourneyHref(journeyContext.steps[journeyContext.index - 1].article.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="group rounded-2xl border border-teal-200 bg-white p-5 hover:border-teal-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Previous</span>
+                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">← {journeyContext.steps[journeyContext.index - 1].article.metadata.title}</span>
+                </Link>
+              ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600">This is the first guide in your selected path.</div>}
+              {journeyContext.steps[journeyContext.index + 1] ? (
+                <Link href={articleJourneyHref(journeyContext.steps[journeyContext.index + 1].article.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="group rounded-2xl border border-teal-200 bg-white p-5 hover:border-teal-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Next</span>
+                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{journeyContext.steps[journeyContext.index + 1].article.metadata.title} →</span>
+                </Link>
+              ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600">This is the final guide in your selected path.</div>}
+            </div>
+            <details className="mt-5 rounded-2xl border border-teal-200 bg-white p-5">
+              <summary className="cursor-pointer font-semibold text-teal-900">Show this journey’s table of contents</summary>
+              <ol className="mt-4 space-y-3">
+                {journeyContext.steps.map(({ article: outlineArticle, step }, index) => (
+                  <li key={outlineArticle.metadata.id} className="flex gap-3 text-sm leading-6">
+                    <span className="shrink-0 font-semibold text-teal-700">{index + 1}.</span>
+                    {index === journeyContext.index ? (
+                      <span aria-current="step" className="font-semibold text-slate-950">{outlineArticle.metadata.title} <span className="text-teal-700">(current)</span></span>
+                    ) : (
+                      <Link href={articleJourneyHref(outlineArticle.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600">{outlineArticle.metadata.title}{step.requiredness === "conditional" ? ` — ${step.conditionLabel}` : ""}</Link>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </details>
+          </section>
+        )}
+
         {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
             <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
@@ -123,7 +175,7 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
                 {relatedJourneys.map((journey) => (
                   <Link
                     key={`journey-${journey.id}`}
-                    href={`/explore/journeys/${journey.id}`}
+                    href={journeyHref(journey.id, journeyContext?.journey.id === journey.id ? journeyContext.route?.id : getJourneyRouteForArticle(journey, metadata.id)?.id)}
                     className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Guided journey</span>

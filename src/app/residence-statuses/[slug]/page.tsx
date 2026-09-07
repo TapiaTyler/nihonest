@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
 import { getArticleById, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
+import { journeyHref } from "@/lib/navigation/journey-context";
 import { getResidenceStatusBySlug, residenceStatuses } from "@/data/residence-statuses";
 import { getSourceById } from "@/data/sources";
 import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
@@ -144,7 +145,12 @@ export default async function ResidenceStatusPage({
                 <ContextLink key={`group-${group.id}`} href={`/explore/${group.id}`} eyebrow="Content group" title={group.title} />
               ))}
               {relatedJourneys.map((journey) => (
-                <ContextLink key={`journey-${journey.id}`} href={`/explore/journeys/${journey.id}`} eyebrow="Guided journey" title={journey.title} />
+                <ContextLink
+                  key={`journey-${journey.id}`}
+                  href={journeyHref(journey.id, journey.routes.find(({ articleId }) => residenceStatus.relatedArticleIds.includes(articleId))?.id)}
+                  eyebrow="Guided journey"
+                  title={journey.title}
+                />
               ))}
             </div>
           </section>

@@ -90,6 +90,10 @@ Certificate of Residence
 
 Japanese terms should not be automatically replaced when surrounding prose is machine translated.
 
+When an article links a glossary term, introduce the Japanese term naturally in the article body alongside a clear English equivalent wherever it can genuinely help the reader. Do not list unrelated terms merely because they concern the same broad subject.
+
+Keep the consolidated Key Japanese terminology section after the main guidance so terminology supports rather than blocks the task explanation. Inline term interactions may expose kana and romaji, but the prose must remain understandable without hovering, tapping, opening a tooltip, or visiting the glossary.
+
 ---
 
 ## 6. Machine Translation
@@ -142,6 +146,26 @@ Prefer language that explains:
 
 ## 8. Residence-Status Content
 
+Clearly distinguish among:
+
+- an entry visa issued by a Japanese diplomatic mission;
+- landing permission and the period of stay granted at entry; and
+- the status of residence governing activities or position in Japan.
+
+Do not use “visa” as a casual substitute where that would obscure one of these distinctions.
+
+For each visa, status, or named program, research and explain where applicable:
+
+- available periods of stay and any separate visa-entry validity;
+- whether extension is possible, the practical and legal limits on renewal, and when a change of status may be required;
+- the authorized activity, relationship, or position;
+- representative occupations and job titles supported by current official definitions and examples;
+- adjacent occupations or duties that may fall elsewhere;
+- education, experience, remuneration, sponsoring-organization, licensing, program, or field-specific conditions; and
+- relevant transition, notification, and outside-activity-permission issues.
+
+Occupation lists should be as useful and comprehensive as authoritative sources permit, but must not imply that a job title alone establishes eligibility. Describe the actual duties that control classification. For example, coverage of Engineer / Specialist in Humanities / International Services should explicitly discuss software developers and software engineers rather than relying only on the generic word “engineering.”
+
 Do not label a user's proposed job or activity simply:
 
 ```text
@@ -163,6 +187,8 @@ Prefer:
 - possible outside-activity permission issues;
 - circumstances requiring verification;
 - official sources.
+
+Keep immigration authorization separate from employment-contract rules, professional licensing, tax treatment, social insurance, and local regulation. Permission or compliance in one area does not establish permission or compliance in the others.
 
 ---
 
@@ -244,6 +270,10 @@ Where appropriate, articles should help users answer:
 
 Not every article must mechanically contain every heading.
 
+For route-specific immigration articles, period of stay, extension or transition limits, covered activities, representative occupations, exclusions, and evidence should be easy to locate even when the precise heading structure varies.
+
+Journey order belongs to structured journey data rather than being hard-coded into canonical article prose. When an article is opened with valid journey context, previous and next steps must come from that resolved route. Generic “Continue exploring” links are non-sequential discovery and must not be presented as mandatory next steps.
+
 ---
 
 ## 14. Article Metadata
@@ -286,6 +316,10 @@ When appropriate, content should distinguish:
 Initial municipality coverage may intentionally be limited.
 
 Do not pretend to provide exhaustive municipality-specific instructions before that data exists.
+
+Shared resident procedures—such as address registration, My Number, public health insurance, and pension—should remain reusable guidance rather than being duplicated as though they belong only to a Student or work-status journey. Each article and conditional journey step must state the residence, age, coverage, municipal, or other facts controlling applicability.
+
+Temporary Visitor and other short-stay guidance must be kept distinct from procedures that depend on mid- or long-term residence. Student-oriented content must say whether it applies to short-term study as a visitor, study under Student status, or both.
 
 ---
 
@@ -373,6 +407,8 @@ The application should not imply that Nihonest controls or guarantees third-part
 
 Broken or changed official links should eventually feed into the review workflow.
 
+For cultural guidance or language-learning support where a government source is not the appropriate authority, use reputable cultural, educational, or Japanese-language organizations and identify the material as practice, interpretation, or learning support rather than law.
+
 ---
 
 ## 22. Notifications About Changes
@@ -412,3 +448,55 @@ Important claims must be verified against appropriate sources before publication
 The goal is not to publish the greatest quantity of content.
 
 The goal is to publish information that users can understand, trace, and appropriately trust.
+
+---
+
+## 25. Journey and Conditional Guidance
+
+Canonical articles may participate in multiple journeys. Do not rewrite shared guidance to pretend it belongs exclusively to one audience or route.
+
+Journey definitions should distinguish:
+
+- shared phases;
+- mutually exclusive route choices;
+- required steps; and
+- conditional steps with a concise explanation of when they may apply.
+
+Do not number a conditional item as though every user must complete it. Do not place alternative visas, statuses, or occupations one after another as apparent next steps after the user has selected a specific route.
+
+Journey navigation is organizational guidance, not an eligibility assessment. Articles must still explain what the user needs to verify with the responsible authority.
+
+---
+
+## 26. Document Images and Form Examples
+
+Images of important documents should be sourced, licensed, current, and safe to reproduce. Never expose real personal data.
+
+Annotated examples should:
+
+- explain important sections in accessible text outside the image;
+- provide English explanations that remain available to translation systems and assistive technology;
+- identify editions or dates when document layouts can change;
+- use clearly fictional or safely redacted data; and
+- distinguish an illustrative completion example from instructions issued by the responsible authority.
+
+Do not rely on color, arrows, hover, or the image alone to communicate required meaning.
+
+---
+
+## 27. Phase 13 Editorial Review Standard
+
+An article may move from draft to editorial review only after its material claims have been checked against current appropriate sources and its structured metadata, terminology, relationships, and applicability have been reviewed together.
+
+Phase 13 review should specifically check:
+
+- visa/status terminology and current program names;
+- periods of stay, renewal limits, transition paths, and important deadlines;
+- occupation and activity coverage, including commonly searched job titles and meaningful exclusions;
+- required evidence, financial thresholds, exceptions, and recent rule changes;
+- national versus local scope;
+- whether Japanese terms are actually introduced in context;
+- whether conditional steps explain their conditions; and
+- whether journey links remain route-relevant while Continue exploring remains non-sequential.
+
+Previously reviewed content is not exempt from this audit when the schema, journey model, terminology behavior, or governing source has changed.

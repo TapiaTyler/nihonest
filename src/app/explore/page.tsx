@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { ExploreDiscovery } from "@/components/discovery/explore-discovery";
+import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { residenceStatuses } from "@/data/residence-statuses";
-import { getAllArticles, getAllArticleGroups } from "@/lib/content/articles";
+import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 
 export const metadata: Metadata = {
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default function ExplorePage() {
+  const articles = getAllArticles().map(({ metadata }) => metadata);
+
   return (
     <div className="page-shell py-16 sm:py-24">
       <header className="max-w-3xl">
@@ -21,9 +24,10 @@ export default function ExplorePage() {
           Browse a high-level group or search the complete knowledgebase. Individual guides and Japanese terms remain public and link to the responsible authorities.
         </p>
       </header>
+      <StageRecommendations articles={articles} journeys={getAllGuidedJourneys()} location="explore" />
       <ExploreDiscovery
         groups={getAllArticleGroups()}
-        articles={getAllArticles().map(({ metadata }) => metadata)}
+        articles={articles}
         terms={getAllGlossaryTerms()}
         residenceStatuses={residenceStatuses}
       />

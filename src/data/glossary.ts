@@ -104,11 +104,11 @@ export const glossaryTerms = [
   japaneseTermSchema.parse({
     id: "shikakugai-katsudo-kyoka", slug: "shikakugai-katsudo-kyoka", japanese: "資格外活動許可", kana: "しかくがいかつどうきょか", romaji: "shikakugai katsudō kyoka", englishName: "Permission to Engage in Activity Outside the Status Scope",
     shortDefinition: "Immigration permission for specified income-producing activity outside the activity authorized by a person's status of residence.",
-    detailedExplanation: "Student status does not itself authorize paid work. A student must obtain applicable permission before beginning work and must remain within its conditions. Temporary Visitor status does not use this student part-time-work route.",
-    commonContext: "Often discussed by schools and employers before an international student starts a part-time job.",
+    detailedExplanation: "The permission applies when a person will conduct income-producing business or paid activity outside the scope of their current status. Its form and conditions depend on the resident and activity; the common Student permission must not be assumed for an employed professional.",
+    commonContext: "Often discussed before a student starts part-time work or a work-status holder accepts paid activity outside the current status scope.",
     topicIds: ["immigration", "employment"], journeyStageIds: ["recently-arrived", "living-in-japan"],
-    relatedArticleIds: ["working-part-time-on-student-status"], relatedTermIds: ["zairyu-shikaku", "zairyu-card"],
-    sourceIds: ["study-in-japan-part-time", "isa-new-entrant-guidance"], searchTerms: ["work permission", "part time work permit", "permission outside status", "shikakugai katsudo kyoka"], status: "needs-review",
+    relatedArticleIds: ["working-part-time-on-student-status", "side-work-and-freelancing-on-a-work-status"], relatedTermIds: ["zairyu-shikaku", "zairyu-card"],
+    sourceIds: ["study-in-japan-part-time", "isa-new-entrant-guidance", "isa-outside-activity-application", "isa-outside-activity-guidance"], searchTerms: ["work permission", "part time work permit", "permission outside status", "side work permission", "shikakugai katsudo kyoka"], status: "needs-review",
   }),
   ...glossaryAdditions,
 ] as const;

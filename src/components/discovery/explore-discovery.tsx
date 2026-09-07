@@ -8,6 +8,7 @@ import type { ArticleMetadata } from "@/domain/article/article";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
+import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { defaultKnowledgebaseSearchFilters, hasActiveKnowledgebaseSearch, searchKnowledgebase, type KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
 
@@ -72,6 +73,20 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
   const groupResults = results.flatMap((result) => result.kind === "group" ? [result.group] : []);
   const articleResults = results.flatMap((result) => result.kind === "article" ? [result.article] : []);
   const glossaryResults = results.flatMap((result) => result.kind === "glossary" ? [result.term] : []);
+  const defaultGroups = useMemo(
+    () => [...groups].sort((left, right) => left.title.localeCompare(right.title, "en", { sensitivity: "base" })),
+    [groups],
+  );
+  const residenceStatusOptionGroups = useMemo(
+    () => RESIDENCE_STATUS_CATEGORY_IDS.map((category) => ({
+      label: residenceStatusCategoryLabels[category],
+      options: residenceStatuses
+        .filter((status) => status.category === category)
+        .map(({ id, englishName }) => ({ id, label: englishName }))
+        .sort((left, right) => left.label.localeCompare(right.label, "en", { sensitivity: "base" })),
+    })).filter(({ options }) => options.length > 0),
+    [residenceStatuses],
+  );
   const filterSearch = searchForFilters(filters);
   const returnTo = filterSearch ? `/explore?${filterSearch}` : "/explore";
 
@@ -135,7 +150,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
             <FilterSelect label="Geographic scope" value={filters.geographicScopeId} onChange={(value) => updateFilter("geographicScopeId", value)} options={geographicScopes} />
             <FilterSelect label="Content type" value={filters.contentType} onChange={(value) => updateFilter("contentType", value)} options={CONTENT_TYPE_IDS.map((id) => ({ id, label: contentTypeLabels[id] }))} />
             <FilterSelect label="Importance" value={filters.importance} onChange={(value) => updateFilter("importance", value)} options={IMPORTANCE_IDS.map((id) => ({ id, label: importanceLabels[id] }))} />
-            <FilterSelect label="Residence status" value={filters.residenceStatusId} onChange={(value) => updateFilter("residenceStatusId", value)} options={residenceStatuses.map(({ id, englishName }) => ({ id, label: englishName }))} />
+            <FilterSelect label="Residence status" value={filters.residenceStatusId} onChange={(value) => updateFilter("residenceStatusId", value)} optionGroups={residenceStatusOptionGroups} />
           </div>
         </details>
       </section>
@@ -188,7 +203,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses }:
           <h2 id="content-groups-heading" className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Choose a place to begin</h2>
           <p className="mt-4 max-w-3xl leading-7 text-slate-600">Open a group to see its guides. Search above can take you directly to any individual article or glossary term.</p>
           <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {groups.map((group) => <ArticleGroupCard key={group.id} group={group} />)}
+            {defaultGroups.map((group) => <ArticleGroupCard key={group.id} group={group} />)}
           </div>
         </section>
       )}
@@ -217,11 +232,12 @@ function ResultSection({ id, title, count, children }: Readonly<{ id: string; ti
   );
 }
 
-function FilterSelect<OptionId extends string>({ label, value, onChange, options }: Readonly<{
+function FilterSelect<OptionId extends string>({ label, value, onChange, options = [], optionGroups = [] }: Readonly<{
   label: string;
   value: "all" | OptionId;
   onChange: (value: "all" | OptionId) => void;
-  options: readonly { id: OptionId; label: string }[];
+  options?: readonly { id: OptionId; label: string }[];
+  optionGroups?: readonly { label: string; options: readonly { id: OptionId; label: string }[] }[];
 }>) {
   const id = useId();
   return (
@@ -230,6 +246,11 @@ function FilterSelect<OptionId extends string>({ label, value, onChange, options
       <select id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 font-normal text-slate-800 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20">
         <option value="all">All</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+        {optionGroups.map((group) => (
+          <optgroup key={group.label} label={group.label}>
+            {group.options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+          </optgroup>
+        ))}
       </select>
     </label>
   );

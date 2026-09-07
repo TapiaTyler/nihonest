@@ -10,6 +10,20 @@ Items may move between phases as the project is tested and understood.
 
 The presence of a feature in this roadmap does not authorize implementation during an earlier phase.
 
+## Ongoing Engineering Documentation Standard
+
+Every newly created or substantially changed source file must be reviewed for the code documentation needed to make its behavior maintainable without relying on development-session context.
+
+- add concise module-level context when a file's responsibility or relationship to the wider system is not evident from its name and exports;
+- document non-obvious business rules, invariants, state transitions, lifecycle behavior, side effects, persistence formats, navigation contracts, and accessibility or safety constraints;
+- use TSDoc/JSDoc for shared APIs, hooks, domain utilities, and complex types when callers need information that TypeScript alone cannot express;
+- explain why a surprising implementation exists, not what plainly readable code does;
+- do not add comments that merely translate syntax, narrate simple markup, or duplicate names;
+- update or remove comments whenever behavior changes so documentation cannot silently become misleading;
+- treat review of appropriate comments as part of completing every newly generated file, while allowing straightforward declarative data and self-explanatory presentation components to remain uncluttered.
+
+Phase 7 should include an initial documentation audit of the existing higher-complexity areas, especially journey resolution, personalization state, browser storage and navigation safeguards, search state restoration, and content validation. Later phases must apply this standard as work is introduced rather than deferring all documentation to a cleanup pass.
+
 ---
 
 # Phase 0 — Product Foundation
@@ -181,8 +195,8 @@ Objectives:
 - distinguish visas, statuses of residence, and named Designated Activities programs;
 - organize detailed routes into purpose-based Explore groups;
 - add canonical records for the complete high-level residence-status list;
-- map reusable journeys for students, professional workers, founders, skilled and sector workers, family members, culture or training participants, and working-holiday participants;
-- distinguish core, choose-one, and conditional journey steps;
+- map reusable journeys for students, professional workers, founders, skilled and sector workers, family members, culture or training participants, special-purpose visitors, side workers, and established residents managing ongoing obligations;
+- distinguish shared phases, explicit route choices, required steps, and clearly explained conditional steps;
 - retain draft labeling until high-stakes articles receive the planned research and editorial review pass.
 
 The detailed research, geographic expansion, and review-ready content pass remains planned for Phase 13.
@@ -197,11 +211,17 @@ content: expand draft visa catalog and mapped journeys
 
 # Phase 6 — Anonymous Personalization
 
+Status: Complete
+
 Objectives:
 
 - optional journey-stage onboarding;
 - make the homepage primary CTA the entrance to that optional onboarding;
-- store journey stage locally;
+- let users select a broad stage, a guided journey, and an optional specific route within that journey;
+- resolve route choices into focused phased sequences rather than displaying alternatives as consecutive steps;
+- carry journey context through article URLs and provide contextual previous, next, and table-of-contents navigation;
+- search journey options using visa, residence-status, program, and goal language;
+- store the selected stage and optional journey/route locally;
 - remember onboarding state;
 - allow preference changes;
 - personalize selected homepage/discovery content;
@@ -232,6 +252,7 @@ Objectives:
 - expand representative content;
 - improve source visibility;
 - add appropriate testing;
+- audit existing non-obvious application logic against the ongoing engineering documentation standard and add durable explanatory comments where needed;
 - deploy public web version.
 
 Deployment:
@@ -347,6 +368,7 @@ Objectives:
 - never autoplay pronunciation, expose clear play/pause/replay state, and retain kana and romaji as the non-audio fallback;
 - cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
 - add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product.
+- translate semantic document-image annotations, captions, and example-field guidance while keeping the underlying reference image independent from any one interface language.
 
 Suggested checkpoint:
 
@@ -387,7 +409,18 @@ Objectives:
 - provide official local links;
 - validate architecture before expanding coverage;
 - deeply research the draft visa and residence-status catalog against current primary sources;
+- document the granted period or available periods of stay for every visa and status route, clearly distinguishing a visa's entry validity from the period of stay granted at landing;
+- explain renewal eligibility and practical limitations for every renewable route, including maximum periods where applicable, non-renewable or program-limited categories, timing, evidence, and circumstances that commonly require a change of status instead;
+- map the broadest defensible set of applicable occupations and job titles to every work status using current official activity definitions and occupational examples—for example, explicitly covering software developers and software engineers under Engineer / Specialist in Humanities / International Services—while warning that job title alone never determines eligibility;
+- identify jobs or activities that sound similar but fall outside each work status, and explain when professional licensing, degree or experience requirements, employer duties, or a different status may control;
 - expand route-specific requirements, evidence, exceptions, transition rules, and practical guidance;
+- expand carefully sourced practical-law and compliance guidance, including acquiring or converting a driver's license and understanding rules for driving in Japan;
+- build a practical tax curriculum covering tax residence, national income tax, resident tax, payroll withholding and year-end adjustment, final returns, side income and self-employment, tax treaties and foreign tax credits, consumption-tax and invoice-system questions, departure filings, and appointing a tax agent;
+- expand integration-focused legal guidance for the situations foreign residents regularly encounter: employment rights and workplace rules, social-insurance enrollment, leases and consumer contracts, traffic and bicycle rules, family and civil registration, waste and local ordinances, disaster preparedness, and access to qualified multilingual help;
+- clearly separate immigration permission, employer or contract restrictions, tax obligations, professional licensing, and local rules so that approval in one area is never presented as approval in all others;
+- add sourced cultural and daily-life guidance that clearly distinguishes law, official procedure, common practice, etiquette, and individual variation, using reputable cultural and Japanese-language learning organizations where government sources are not the right fit;
+- add accessible annotated examples of important documents to relevant articles and glossary entries, with structured English explanations of each section and translatable text outside the image itself;
+- provide clearly fictional or safely redacted completion examples for commonly encountered forms, explain what belongs in each field, and never expose real identity-document data;
 - audit every article, including content already marked ready for editorial review, so one or more relevant Japanese terms are introduced naturally in the article body rather than appearing only in the Key Japanese terminology section;
 - verify that each article's linked glossary terms are actually taught in context alongside their English equivalents, removing or replacing terms that cannot be usefully integrated into the passage;
 - move articles from draft to editorial review only after their important claims and source mappings have been checked.
