@@ -55,6 +55,26 @@ export type ChecklistProgress = z.infer<typeof checklistProgressSchema>;
 export type RoadmapRecommendationRule = z.infer<typeof roadmapRecommendationRuleSchema>;
 export type RoadmapContext = z.infer<typeof roadmapContextSchema>;
 
+export function createChecklistProgress(
+  checklistId: string,
+  state: ChecklistProgress["state"],
+  updatedAt: string,
+): ChecklistProgress {
+  return checklistProgressSchema.parse({
+    checklistId,
+    state,
+    updatedAt,
+    completedAt: state === "complete" ? updatedAt : undefined,
+  });
+}
+
+export function updateChecklistProgress(
+  records: readonly ChecklistProgress[],
+  nextRecord: ChecklistProgress,
+): readonly ChecklistProgress[] {
+  return [...records.filter(({ checklistId }) => checklistId !== nextRecord.checklistId), nextRecord];
+}
+
 function includesOrAppliesToAll(values: readonly string[] | undefined, value: string | undefined): boolean {
   return !values?.length || Boolean(value && values.includes(value));
 }
@@ -76,6 +96,13 @@ export type RoadmapItem = Readonly<{
   priority: number;
 }>;
 
+function applicabilitySpecificity(applicability: z.infer<typeof roadmapApplicabilitySchema>): number {
+  return (applicability.journeyStageIds?.length ? 1 : 0)
+    + (applicability.audienceIds?.length ? 2 : 0)
+    + (applicability.journeyIds?.length ? 4 : 0)
+    + (applicability.routeIds?.length ? 8 : 0);
+}
+
 export function validateRoadmapContracts(
   definitions: readonly ChecklistDefinition[],
   rules: readonly RoadmapRecommendationRule[],
@@ -91,6 +118,16 @@ export function validateRoadmapContracts(
   }
 }
 
+/** A chosen journey is a stronger boundary than broad stage discovery and must not inherit unrelated stage items. */
+export function selectRoadmapRules(
+  rules: readonly RoadmapRecommendationRule[],
+  context: RoadmapContext,
+): readonly RoadmapRecommendationRule[] {
+  return context.journeyId
+    ? rules.filter((rule) => rule.when.journeyIds?.includes(context.journeyId!))
+    : rules.filter((rule) => !rule.when.journeyIds?.length);
+}
+
 /** Resolution is deterministic and retains completed items so their public guidance remains reachable. */
 export function resolvePersonalizedRoadmap(
   definitions: readonly ChecklistDefinition[],
@@ -102,7 +139,7 @@ export function resolvePersonalizedRoadmap(
   const definitionsById = new Map(definitions.map((definition) => [definition.id, definition]));
   const progressById = new Map(progress.map((entry) => [entry.checklistId, entry]));
 
-  return rules.flatMap((rule) => {
+  const matchingItems = rules.flatMap((rule) => {
     const definition = definitionsById.get(rule.checklistId);
     if (!definition || !matchesRoadmapApplicability(rule.when, context) || !matchesRoadmapApplicability(definition.applicability, context)) return [];
     return [{
@@ -110,9 +147,26 @@ export function resolvePersonalizedRoadmap(
       progressState: progressById.get(definition.id)?.state ?? "not-started",
       reason: rule.reason,
       priority: rule.priority,
-    } satisfies RoadmapItem];
-  }).sort((left, right) => {
+      specificity: applicabilitySpecificity(rule.when),
+    }];
+  });
+
+  // A journey-specific rule should explain a shared item instead of duplicating its broader stage recommendation.
+  const uniqueItems = new Map<string, RoadmapItem & { specificity: number }>();
+  for (const item of matchingItems) {
+    const current = uniqueItems.get(item.definition.id);
+    if (!current || item.specificity > current.specificity || (item.specificity === current.specificity && item.priority < current.priority)) {
+      uniqueItems.set(item.definition.id, item);
+    }
+  }
+
+  return [...uniqueItems.values()].sort((left, right) => {
     const completionOrder = Number(left.progressState === "complete") - Number(right.progressState === "complete");
     return completionOrder || left.priority - right.priority || left.definition.title.localeCompare(right.definition.title);
-  });
+  }).map((item) => ({
+    definition: item.definition,
+    progressState: item.progressState,
+    reason: item.reason,
+    priority: item.priority,
+  }));
 }

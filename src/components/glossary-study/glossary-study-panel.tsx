@@ -108,13 +108,13 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
       <div className="mt-4 grid gap-4 rounded-2xl border border-teal-200 bg-white p-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-slate-900">
           Prompt side
-          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
+          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
             {Object.entries(promptModeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-slate-900">
           Jump to term
-          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
+          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
             {orderedTerms.map((term) => <option key={term.id} value={term.id}>{termPromptLabel(term, promptMode)}</option>)}
           </select>
         </label>
@@ -129,7 +129,7 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
               value={activeState}
               disabled={!isReady}
               onChange={(event) => setReviewState(activeTerm.id, event.target.value as keyof typeof stateLabels)}
-              className="min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-wait disabled:opacity-50"
+              className="app-select min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-wait disabled:opacity-50"
             >
               {Object.entries(stateLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>

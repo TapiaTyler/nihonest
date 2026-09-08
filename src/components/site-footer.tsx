@@ -15,13 +15,15 @@ export function SiteFooter() {
             <li><Link href="/explore" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Explore</Link></li>
             <li><Link href="/faq" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">FAQ</Link></li>
             <li><Link href="/glossary" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Glossary</Link></li>
-            <li><Link href="/statuses" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Statuses</Link></li>
+            <li><Link href="/residence-statuses" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Statuses</Link></li>
           </ul>
         </nav>
         <nav aria-label="Personal links">
           <h2 className="font-semibold text-white">Your journey</h2>
           <ul className="-mx-3 mt-1">
             <li><Link href="/onboarding" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Starting point</Link></li>
+            <li><Link href="/my-journey" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">My Journey</Link></li>
+            <li><Link href="/roadmap" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Roadmap</Link></li>
             <li><Link href="/saved" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Saved</Link></li>
             <li><Link href="/account" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Account</Link></li>
           </ul>

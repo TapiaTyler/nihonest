@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
 import { SavedContentProvider } from "@/components/saved-content/saved-content-provider";
 import { GlossaryStudyProvider } from "@/components/glossary-study/glossary-study-provider";
+import { ChecklistProgressProvider } from "@/components/roadmap/checklist-progress-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteUrl } from "@/lib/site-url";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <PersonalizationProvider>
           <SavedContentProvider>
             <GlossaryStudyProvider>
+              <ChecklistProgressProvider>
             <a className="skip-link" href="#main-content">
               Skip to main content
             </a>
@@ -40,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               {children}
             </main>
             <SiteFooter />
+              </ChecklistProgressProvider>
             </GlossaryStudyProvider>
           </SavedContentProvider>
         </PersonalizationProvider>

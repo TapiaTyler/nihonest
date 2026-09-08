@@ -27,10 +27,12 @@ export function OnboardingForm({
   journeys,
   groups,
   articles,
+  returnTo,
 }: Readonly<{
   journeys: readonly GuidedJourney[];
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
+  returnTo: "/" | "/roadmap" | "/my-journey";
 }>) {
   const router = useRouter();
   const searchId = useId();
@@ -95,13 +97,13 @@ export function OnboardingForm({
       routeId: selectedRouteId,
       focusedArticleId: selectedFocusedArticleId,
     });
-    router.push("/");
+    router.push(returnTo);
   }
 
   function clearOrSkip() {
     allowNavigation();
     chooseGeneralExperience();
-    router.push(preferences.journeyStage || preferences.journeyId ? "/" : "/explore");
+    router.push(returnTo !== "/" ? returnTo : preferences.journeyStage || preferences.journeyId ? "/" : "/explore");
   }
 
   return (

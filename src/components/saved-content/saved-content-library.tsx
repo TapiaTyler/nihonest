@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
@@ -17,6 +17,12 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
 }>) {
   const [studyOpen, setStudyOpen] = useState(false);
   const { isReady, records } = useSavedContent();
+
+  // Deep links from the Roadmap reveal the otherwise-collapsed review on arrival.
+  useEffect(() => {
+    if (window.location.hash === "#saved-glossary-review") setStudyOpen(true);
+  }, []);
+
   const visibleRecords = visibleSavedContent(records);
   const savedArticleIds = new Set(visibleRecords.filter(({ kind }) => kind === "article").map(({ contentId }) => contentId));
   const savedTermIds = new Set(visibleRecords.filter(({ kind }) => kind === "glossary-term").map(({ contentId }) => contentId));
@@ -24,6 +30,12 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
   const savedArticles = articles.filter(({ id }) => savedArticleIds.has(id)).sort((left, right) => left.title.localeCompare(right.title));
   const savedTerms = terms.filter(({ id }) => savedTermIds.has(id)).sort((left, right) => left.englishName.localeCompare(right.englishName));
   const savedStatuses = residenceStatuses.filter(({ id }) => savedStatusIds.has(id)).sort((left, right) => left.englishName.localeCompare(right.englishName));
+
+  // Saved records load after hydration, so repeat the anchor scroll once its target exists.
+  useEffect(() => {
+    if (!isReady || !studyOpen || window.location.hash !== "#saved-glossary-review") return;
+    document.getElementById("saved-glossary-review")?.scrollIntoView({ block: "start" });
+  }, [isReady, savedTerms.length, studyOpen]);
 
   if (!isReady) return <p className="mt-10 text-slate-600">Loading saved content…</p>;
   if (!savedArticles.length && !savedStatuses.length && !savedTerms.length) {
@@ -79,14 +91,14 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
       )}
 
       {savedTerms.length > 0 && (
-        <section aria-labelledby="saved-terms-heading">
+        <section id="saved-glossary-review" aria-labelledby="saved-terms-heading" className="scroll-mt-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Saved glossary terms</h2>
-            <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center rounded-full border border-teal-700 bg-white px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+            <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review-panel" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center rounded-full border border-teal-700 bg-white px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
               {studyOpen ? "Hide review" : "Review saved terms"}
             </button>
           </div>
-          {studyOpen && <div id="saved-glossary-review"><GlossaryStudyPanel terms={savedTerms} /></div>}
+          {studyOpen && <div id="saved-glossary-review-panel"><GlossaryStudyPanel terms={savedTerms} /></div>}
           <ul className="mt-5 space-y-3">
             {savedTerms.map((term) => (
               <li key={term.id} className="relative">

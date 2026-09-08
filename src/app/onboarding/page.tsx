@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   description: "Optionally choose your journey stage, a guided path, and a focused route for locally saved starting points.",
 };
 
-export default function OnboardingPage() {
+export default async function OnboardingPage({ searchParams }: PageProps<"/onboarding">) {
+  const query = await searchParams;
+  const returnTo = query.returnTo === "/roadmap" || query.returnTo === "/my-journey" ? query.returnTo : "/";
   const articles = getAllArticles().map(({ metadata }) => metadata);
 
   return (
     <div className="page-shell py-12 sm:py-20">
-      <Link href="/" className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-        ← Back to Home
+      <Link href={returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+        ← Back to {returnTo === "/roadmap" ? "Roadmap" : returnTo === "/my-journey" ? "My Journey" : "Home"}
       </Link>
       <header className="mt-8 max-w-3xl">
         <p className="eyebrow">Optional personalization</p>
@@ -29,6 +31,7 @@ export default function OnboardingPage() {
         journeys={getAllGuidedJourneys()}
         groups={getAllArticleGroups()}
         articles={articles}
+        returnTo={returnTo}
       />
     </div>
   );

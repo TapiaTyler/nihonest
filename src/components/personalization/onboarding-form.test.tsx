@@ -13,7 +13,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("OnboardingForm", () => {
-  function renderForm() {
+  function renderForm(returnTo: "/" | "/roadmap" | "/my-journey" = "/") {
     render(
       <PersonalizationProvider>
         <Link href="/home">Back home</Link>
@@ -21,6 +21,7 @@ describe("OnboardingForm", () => {
           journeys={guidedJourneys}
           groups={articleGroups}
           articles={[]}
+          returnTo={returnTo}
         />
       </PersonalizationProvider>,
     );
@@ -29,6 +30,15 @@ describe("OnboardingForm", () => {
   beforeEach(() => {
     localStorage.clear();
     push.mockClear();
+  });
+
+  it("returns to the roadmap after saving an adjustment made from there", () => {
+    renderForm("/roadmap");
+
+    fireEvent.click(screen.getByRole("radio", { name: /Recently arrived/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Save my starting point" }));
+
+    expect(push).toHaveBeenCalledWith("/roadmap");
   });
 
   it("saves the selected journey stage locally", () => {

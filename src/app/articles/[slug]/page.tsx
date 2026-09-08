@@ -90,7 +90,11 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   return (
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        {journeyContext ? (
+        {query.returnTo === "/roadmap" || query.returnTo === "/my-journey" ? (
+          <Link href={query.returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+            ← Back to {query.returnTo === "/roadmap" ? "Roadmap" : "My Journey"}
+          </Link>
+        ) : journeyContext ? (
           <Link href={journeyHref(journeyContext.journey.id, journeyContext.route?.id)} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
             ← Back to {journeyContext.journey.title}
           </Link>
