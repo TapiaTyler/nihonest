@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useEffect, useId, useMemo, useState } from "react";
 import { FaqResult } from "./faq-result";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
+import { FAQ_BROWSE_GROUP_IDS, faqBrowseGroupLabels } from "@/domain/faq/faq";
 import type { FaqEntry } from "@/lib/content/faqs";
 import { searchFaqs } from "@/lib/search/faq-search";
 
 export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[] }>) {
   const searchId = useId();
   const [query, setQuery] = useState("");
+  const hasQuery = Boolean(query.trim());
   const results = useMemo(() => {
     const matches = searchFaqs(entries.map(({ faq }) => faq), query);
     return matches.flatMap((faq) => {
@@ -16,6 +19,12 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
       return entry ? [entry] : [];
     });
   }, [entries, query]);
+  const browseGroups = FAQ_BROWSE_GROUP_IDS.flatMap((groupId) => {
+    const groupedEntries = results
+      .filter(({ faq }) => faq.primaryBrowseGroupId === groupId)
+      .sort((left, right) => left.faq.question.localeCompare(right.faq.question));
+    return groupedEntries.length > 0 ? [{ groupId, entries: groupedEntries }] : [];
+  });
 
   // URL-backed state makes cross-search handoffs, refresh, and browser Back reproduce the same question.
   useEffect(() => {
@@ -54,9 +63,30 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
           </div>
           <p className="text-sm text-slate-500" aria-live="polite">{results.length} {results.length === 1 ? "question" : "questions"}</p>
         </div>
-        {results.length > 0 ? (
+        {results.length > 0 && hasQuery ? (
           <div className="mt-7 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             {results.map((entry) => <FaqResult key={entry.faq.id} entry={entry} headingLevel={3} />)}
+          </div>
+        ) : results.length > 0 ? (
+          <div className="mt-7 space-y-4">
+            {browseGroups.map(({ groupId, entries: groupedEntries }) => (
+              <details key={groupId} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+                  <span>{faqBrowseGroupLabels[groupId]}</span>
+                  <span className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-slate-500">{groupedEntries.length} {groupedEntries.length === 1 ? "question" : "questions"}</span>
+                    <DisclosureChevron />
+                  </span>
+                </summary>
+                <div className="space-y-4 border-t border-slate-200 bg-slate-50 p-5">
+                  {groupedEntries.map((entry) => (
+                    <div key={entry.faq.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <FaqResult entry={entry} headingLevel={3} />
+                    </div>
+                  ))}
+                </div>
+              </details>
+            ))}
           </div>
         ) : (
           <div className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">

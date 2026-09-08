@@ -43,6 +43,7 @@ const faqEntry = {
     slug: "address-bank-loop",
     question: "How do I handle the address, apartment, and bank-account loop after arriving?",
     summary: "Follow the linked arrival guidance.",
+    primaryBrowseGroupId: "arrival-and-daily-life",
     searchTerms: ["rent needs bank account"],
     relatedArticleIds: [bankArticle.id],
     status: "draft",

@@ -333,8 +333,11 @@ Objectives:
 - user progress;
 - cross-device synchronization;
 - recommendation rules separated from taxonomy.
+- replace the overflow-only small-screen header with an accessible fixed mobile navigation menu; once it offers equivalent access, the footer navigation may be hidden on mobile to avoid repetition;
 
 Implement and test synchronization contracts locally during this phase. Cross-network and production-environment validation remains part of the hosted integration gate.
+
+Delivery requirement: once Phase 9 is complete, the Account page must explain the practical benefits of an optional account, including synchronized saved content, glossary review progress, checklist progress, and the personalized roadmap. It must state equally clearly that every public article remains available without registration. A compact landing-page prompt may repeat these benefits but must not displace the primary onboarding journey or imply that registration is required.
 
 Suggested checkpoints:
 
@@ -397,6 +400,7 @@ Objectives:
 - cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
 - add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product;
 - translate semantic document-image annotations, captions, and example-field guidance while keeping the underlying reference image independent from any one interface language.
+- sort translated lists by their visible labels using an `Intl.Collator` for the active locale, with locale-appropriate keys such as kana for Japanese glossary entries, canonical English fallback values, and preserved curated ordering where chronology or category priority matters more than alphabetization.
 
 Provider integration may be developed locally with protected credentials. Production secret management, shared caching, quotas, and failure behavior are validated at the hosted integration gate.
 

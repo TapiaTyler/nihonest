@@ -17,6 +17,10 @@ const term = japaneseTermSchema.parse({
   status: "needs-review",
 });
 
+it("uses the first curated topic as the default primary browse group", () => {
+  expect(term.primaryBrowseGroupId).toBe(term.topicIds[0]);
+});
+
 describe("glossary model", () => {
   it("validates known source and article relationships", () => {
     expect(() =>

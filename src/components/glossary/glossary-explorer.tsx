@@ -5,6 +5,7 @@ import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { TopicId } from "@/domain/taxonomy/taxonomy";
 import { topics } from "@/domain/taxonomy/taxonomy";
 import { searchGlossary } from "@/lib/search/glossary-search";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { GlossaryCard } from "./glossary-card";
 
 type TopicFilter = "all" | TopicId;
@@ -39,8 +40,13 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
   const availableTopics = topics.filter((topic) =>
     terms.some((term) => term.topicIds.includes(topic.id)),
   );
-  const visibleTerms = searchGlossary(terms, { query, topicId });
+  const visibleTerms = [...searchGlossary(terms, { query, topicId })]
+    .sort((left, right) => left.englishName.localeCompare(right.englishName));
   const hasFilters = Boolean(query.trim()) || topicId !== "all";
+  const browseGroups = availableTopics.flatMap((topic) => {
+    const groupedTerms = visibleTerms.filter((term) => term.primaryBrowseGroupId === topic.id);
+    return groupedTerms.length > 0 ? [{ topic, terms: groupedTerms }] : [];
+  });
   const filterSearch = searchForFilters(filters);
   const returnTo = filterSearch ? `/glossary?${filterSearch}` : "/glossary";
 
@@ -122,7 +128,7 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
         Showing {visibleTerms.length} of {terms.length} terms
       </p>
 
-      {visibleTerms.length > 0 ? (
+      {visibleTerms.length > 0 && hasFilters ? (
         <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {visibleTerms.map((term) => (
             <GlossaryCard
@@ -130,6 +136,23 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
               term={term}
               returnTo={hasFilters ? returnTo : undefined}
             />
+          ))}
+        </div>
+      ) : visibleTerms.length > 0 ? (
+        <div className="mt-6 space-y-4">
+          {browseGroups.map(({ topic, terms: groupedTerms }) => (
+            <details key={topic.id} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+                <span>{topic.label}</span>
+                <span className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-slate-500">{groupedTerms.length} {groupedTerms.length === 1 ? "term" : "terms"}</span>
+                  <DisclosureChevron />
+                </span>
+              </summary>
+              <div className="grid gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3">
+                {groupedTerms.map((term) => <GlossaryCard key={term.id} term={term} />)}
+              </div>
+            </details>
           ))}
         </div>
       ) : (

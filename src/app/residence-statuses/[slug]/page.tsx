@@ -9,6 +9,7 @@ import { getResidenceStatusBySlug, residenceStatuses } from "@/data/residence-st
 import { getSourceById } from "@/data/sources";
 import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { getGlossaryTermById } from "@/lib/content/glossary";
+import { SaveContentButton } from "@/components/saved-content/save-content-button";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "long",
@@ -39,8 +40,18 @@ export async function generateMetadata({
 
 export default async function ResidenceStatusPage({
   params,
+  searchParams,
 }: PageProps<"/residence-statuses/[slug]">) {
   const { slug } = await params;
+  const query = await searchParams;
+  const requestedReturnTo = typeof query.returnTo === "string" ? query.returnTo : undefined;
+  const returnTo = requestedReturnTo && (
+    requestedReturnTo === "/saved"
+    || requestedReturnTo === "/residence-statuses"
+    || requestedReturnTo.startsWith("/residence-statuses?")
+  )
+    ? requestedReturnTo
+    : "/residence-statuses";
   const residenceStatus = getResidenceStatusBySlug(slug);
 
   if (!residenceStatus) {
@@ -64,14 +75,15 @@ export default async function ResidenceStatusPage({
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
         <Link
-          href="/residence-statuses"
+          href={returnTo}
           className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
         >
-          ← Back to residence statuses
+          ← Back to {returnTo === "/saved" ? "Saved" : "residence statuses"}
         </Link>
 
-        <header className="mt-8 border-b border-slate-200 pb-8">
-          <div className="flex flex-wrap items-center gap-3">
+        <header className="relative mt-8 border-b border-slate-200 pb-8">
+          <div className="absolute right-0 top-0"><SaveContentButton kind="residence-status" contentId={residenceStatus.id} /></div>
+          <div className="flex flex-wrap items-center gap-3 pr-14">
             <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
               Draft
             </span>

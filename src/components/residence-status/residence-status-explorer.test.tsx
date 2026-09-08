@@ -4,8 +4,8 @@ import { ResidenceStatusExplorer } from "./residence-status-explorer";
 import { residenceStatuses } from "@/data/residence-statuses";
 
 describe("ResidenceStatusExplorer", () => {
-  it("sorts category filters and status cards alphabetically", () => {
-    render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
+  it("sorts category filters and places every status in one open category group", () => {
+    const { container } = render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
 
     const filters = screen.getByRole("group", { name: "Filter residence statuses by category" });
     expect(Array.from(filters.querySelectorAll("button"), (button) => button.textContent)).toEqual([
@@ -23,7 +23,9 @@ describe("ResidenceStatusExplorer", () => {
     const statusNames = screen.getAllByRole("link")
       .filter((link) => link.getAttribute("href")?.startsWith("/residence-statuses/"))
       .map((link) => link.getAttribute("aria-label") ?? "");
-    expect(statusNames).toEqual([...statusNames].sort((left, right) => left.localeCompare(right)));
+    expect(container.querySelectorAll("details[open]")).toHaveLength(8);
+    expect(statusNames).toHaveLength(residenceStatuses.length);
+    expect(new Set(statusNames).size).toBe(residenceStatuses.length);
   });
 
   it("filters draft records by category", () => {

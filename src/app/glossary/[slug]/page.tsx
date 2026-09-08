@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToGlossaryLink } from "@/components/navigation/back-to-glossary-link";
+import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { getSourceById } from "@/data/sources";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getArticleById } from "@/lib/content/articles";
@@ -46,8 +47,9 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
         <BackToGlossaryLink />
-        <header className="mt-8 border-b border-slate-200 pb-8">
-          <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
+        <header className="relative mt-8 border-b border-slate-200 pb-8">
+          <div className="absolute right-0 top-0"><SaveContentButton kind="glossary-term" contentId={term.id} /></div>
+          <div className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
             {term.topicIds.map((topicId) => (
               <span key={topicId} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">{labelFor(topicId, topics)}</span>
             ))}

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArticleTerminology } from "@/components/content/article-terminology";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
+import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { articleStatusLabels, type ArticleMetadata } from "@/domain/article/article";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getSourceById } from "@/data/sources";
@@ -94,8 +95,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
             ← Back to {journeyContext.journey.title}
           </Link>
         ) : <BackToExploreLink />}
-        <header className="mt-8 border-b border-slate-200 pb-8">
-          <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
+        <header className="relative mt-8 border-b border-slate-200 pb-8">
+          <div className="absolute right-0 top-0"><SaveContentButton kind="article" contentId={metadata.id} /></div>
+          <div className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
             <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
               {articleStatusLabels[metadata.status]}
             </span>

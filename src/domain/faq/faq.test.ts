@@ -6,6 +6,7 @@ const faq = faqSchema.parse({
   slug: "example-question",
   question: "What should I read?",
   summary: "Start with the related guide.",
+  primaryBrowseGroupId: "immigration-and-entry",
   relatedArticleIds: ["guide"],
   status: "draft",
   createdAt: "2026-09-06",

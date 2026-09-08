@@ -2,11 +2,33 @@ import { z } from "zod";
 
 const stableIdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
+export const FAQ_BROWSE_GROUP_IDS = [
+  "immigration-and-entry",
+  "study",
+  "arrival-and-daily-life",
+  "work-and-business",
+  "family-and-long-term-residence",
+  "ongoing-responsibilities",
+] as const;
+
+export const faqBrowseGroupIdSchema = z.enum(FAQ_BROWSE_GROUP_IDS);
+export type FaqBrowseGroupId = z.infer<typeof faqBrowseGroupIdSchema>;
+
+export const faqBrowseGroupLabels: Record<FaqBrowseGroupId, string> = {
+  "immigration-and-entry": "Immigration and entry",
+  study: "Study in Japan",
+  "arrival-and-daily-life": "Arrival and daily life",
+  "work-and-business": "Work and business",
+  "family-and-long-term-residence": "Family and long-term residence",
+  "ongoing-responsibilities": "Ongoing resident responsibilities",
+};
+
 export const faqSchema = z.object({
   id: stableIdSchema,
   slug: stableIdSchema,
   question: z.string().min(1),
   summary: z.string().min(1).max(320),
+  primaryBrowseGroupId: faqBrowseGroupIdSchema,
   searchTerms: z.array(z.string().min(1)).default([]),
   relatedArticleIds: z.array(stableIdSchema).default([]),
   relatedGroupIds: z.array(stableIdSchema).default([]),
@@ -28,6 +50,7 @@ export const faqSchema = z.object({
 });
 
 export type Faq = z.infer<typeof faqSchema>;
+export type FaqInput = z.input<typeof faqSchema>;
 
 export const faqStatusLabels: Record<Faq["status"], string> = {
   draft: "Draft",

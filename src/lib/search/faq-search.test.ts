@@ -7,6 +7,7 @@ const faq = faqSchema.parse({
   slug: "address-bank-loop",
   question: "How do I handle the address and bank-account loop?",
   summary: "Follow a practical arrival sequence.",
+  primaryBrowseGroupId: "arrival-and-daily-life",
   searchTerms: ["rent needs bank account"],
   relatedArticleIds: ["guide"],
   status: "draft",

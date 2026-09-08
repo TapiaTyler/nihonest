@@ -4,13 +4,16 @@ import { residenceStatusCategoryLabels } from "@/domain/residence-status/residen
 
 type ResidenceStatusCardProps = Readonly<{
   residenceStatus: ResidenceStatus;
+  returnTo?: string;
 }>;
 
-export function ResidenceStatusCard({ residenceStatus }: ResidenceStatusCardProps) {
+export function ResidenceStatusCard({ residenceStatus, returnTo }: ResidenceStatusCardProps) {
   return (
     <article className="h-full min-w-0">
       <Link
-        href={`/residence-statuses/${residenceStatus.slug}`}
+        href={returnTo
+          ? { pathname: `/residence-statuses/${residenceStatus.slug}`, query: { returnTo } }
+          : `/residence-statuses/${residenceStatus.slug}`}
         aria-label={residenceStatus.englishName}
         className="group flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >

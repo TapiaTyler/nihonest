@@ -19,6 +19,23 @@ describe("GlossaryExplorer", () => {
     expect(screen.getByText(`Showing 1 of ${glossaryTerms.length} terms`)).toBeInTheDocument();
   });
 
+  it("sorts visible terms by English name", () => {
+    render(<GlossaryExplorer terms={[glossaryTerms[2], glossaryTerms[0], glossaryTerms[1]]} />);
+
+    expect(screen.getAllByRole("link").map((link) => link.getAttribute("aria-label"))).toEqual([
+      "Period of Stay",
+      "Residence Card",
+      "Status of Residence",
+    ]);
+  });
+
+  it("places each unfiltered term in one open primary browse group", () => {
+    const { container } = render(<GlossaryExplorer terms={glossaryTerms} />);
+
+    expect(container.querySelectorAll("details[open]").length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Residence Card" })).toHaveLength(1);
+  });
+
   it("offers a useful recovery when nothing matches", () => {
     render(<GlossaryExplorer terms={glossaryTerms} />);
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "unrelated phrase" } });

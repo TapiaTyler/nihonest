@@ -657,11 +657,15 @@ CloudState
 
 After that initial decision, personalization changes write locally first and synchronize the same validated record to the signed-in account. Users can explicitly import the current device again to replace the cloud copy. Searches, browsing history, and unrelated device-local data are never migrated.
 
+Phase 9 saved-content records use stable content type and content ID pairs plus `saved` or `removed` state and an update timestamp. Retaining removal records prevents an older device copy from silently restoring an item. Saved articles and glossary terms share this application-level contract even if persistence later uses separate tables.
+
+Glossary study progress is intentionally limited to `new`, `learning`, and `reviewed`, with review count and timestamps. It supports a small review workflow for saved terms without introducing lessons, proficiency scoring, or a general spaced-repetition platform.
+
 ---
 
 # 23. Roadmap Engine
 
-The roadmap engine should be separate from taxonomy.
+The roadmap engine is separate from taxonomy and presentation. It resolves public checklist definitions against explicit recommendation rules, user context, and separately stored progress.
 
 Taxonomy answers:
 
@@ -671,7 +675,7 @@ Roadmap logic answers:
 
 **Given this user's situation and progress, what should be recommended next?**
 
-Future roadmap rules might operate on:
+Roadmap rules may operate on:
 
 - stage;
 - residence status;
@@ -681,6 +685,8 @@ Future roadmap rules might operate on:
 - location.
 
 Do not encode complex recommendation behavior directly inside UI components.
+
+Resolution is deterministic: applicable incomplete items come before completed items, then rule priority and checklist title determine order. Every result carries a user-facing reason. Completed items remain present so progress never removes access to the related public guidance.
 
 ---
 
@@ -705,6 +711,8 @@ UserChecklistProgress
 ```
 
 This avoids duplicating checklist definitions for every user.
+
+Phase 9 progress uses three states: `not-started`, `in-progress`, and `complete`. Completed progress requires a completion timestamp; other states must not carry one. Definitions contain applicability and related article IDs, while user progress contains only the definition ID, state, and timestamps.
 
 ---
 

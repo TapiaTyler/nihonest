@@ -15,6 +15,7 @@ export const japaneseTermSchema = z.object({
   detailedExplanation: z.string().min(1),
   commonContext: z.string().min(1),
   topicIds: z.array(topicIdSchema).min(1),
+  primaryBrowseGroupId: topicIdSchema.optional(),
   journeyStageIds: z.array(journeyStageIdSchema).default([]),
   relatedArticleIds: z.array(stableIdSchema).default([]),
   relatedTermIds: z.array(stableIdSchema).default([]),
@@ -22,7 +23,19 @@ export const japaneseTermSchema = z.object({
   searchTerms: z.array(z.string().min(1)).default([]),
   status: z.enum(["draft", "verified", "needs-review"]),
   lastReviewedAt: z.iso.date().optional(),
-});
+}).superRefine((term, context) => {
+  if (term.primaryBrowseGroupId && !term.topicIds.includes(term.primaryBrowseGroupId)) {
+    context.addIssue({
+      code: "custom",
+      path: ["primaryBrowseGroupId"],
+      message: "The primary browse group must also appear in topicIds.",
+    });
+  }
+}).transform((term) => ({
+  ...term,
+  // Existing terms adopt their first curated topic without requiring a bulk content rewrite.
+  primaryBrowseGroupId: term.primaryBrowseGroupId ?? term.topicIds[0]!,
+}));
 
 export type JapaneseTerm = z.infer<typeof japaneseTermSchema>;
 

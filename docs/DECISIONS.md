@@ -839,6 +839,34 @@ Accounts should provide continuity without turning access to public guidance int
 
 ---
 
+## ADR-050 — Phase 9 user state is local-first, timestamped, and separate from public definitions
+
+**Status:** Accepted
+
+### Decision
+
+Saved articles and glossary terms share a stable application-level record consisting of content kind, canonical content ID, `saved` or `removed` state, and update timestamp. Removal remains represented so an older device cannot silently resurrect content. Anonymous users may save locally. Account import remains explicit, and signed-in state later synchronizes through the same provider boundary established in Phase 8.
+
+Glossary review progress uses only `new`, `learning`, and `reviewed`, plus review count and timestamps. Checklist definitions are public canonical records; user checklist progress is private and uses `not-started`, `in-progress`, and `complete`. Recommendation rules are separate from taxonomy, carry an explanation and priority, and match controlled journey-stage, journey, route, or audience context.
+
+Roadmap resolution retains completed items and their article links, orders incomplete work first, then applies explicit priority and title ordering. Timestamp conflicts choose the newest record; exact-time conflicts prefer removal and then the cloud copy to remain deterministic.
+
+When Phase 9 is complete, the Account page explains synchronization benefits while stating that all public articles remain available without an account. Any landing-page account prompt remains secondary to journey onboarding.
+
+### Reason
+
+Public content definitions should not be copied into each account, and progress must never become an access-control mechanism. A shared save contract avoids duplicate article and glossary implementations. Tombstones and deterministic ordering make later synchronization testable, while a deliberately small glossary state model supports administrative-language review without expanding Nihonest into a general language-learning product.
+
+### Consequences
+
+- local UI and domain behavior can be implemented before starting Supabase;
+- saved-content, review, and checklist storage adapters must preserve update timestamps and removals;
+- recommendation results must explain their applicability;
+- synchronization tests must cover newer records and equal-time removal conflicts; and
+- account-benefit promotion is deferred until the promised Phase 9 features actually exist.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

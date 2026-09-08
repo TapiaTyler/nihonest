@@ -1,7 +1,33 @@
-import { faqSchema } from "@/domain/faq/faq";
+import { faqSchema, type FaqBrowseGroupId, type FaqInput } from "@/domain/faq/faq";
 
 // FAQs are search-oriented bridges. Their summaries provide orientation, while linked canonical content owns the substantive guidance.
-const defineFaq = (faq: Parameters<typeof faqSchema.parse>[0]) => faqSchema.parse(faq);
+const faqBrowseGroups: Record<string, FaqBrowseGroupId> = {
+  "short-study-without-student-visa": "study",
+  "visa-versus-status-of-residence": "immigration-and-entry",
+  "address-bank-housing-loop": "arrival-and-daily-life",
+  "health-insurance-after-moving": "arrival-and-daily-life",
+  "pension-after-moving": "arrival-and-daily-life",
+  "receiving-my-number": "arrival-and-daily-life",
+  "freelancing-alongside-sponsored-job": "work-and-business",
+  "software-developer-work-status": "work-and-business",
+  "business-manager-startup-capital": "work-and-business",
+  "student-part-time-work": "study",
+  "documents-received-at-entry": "immigration-and-entry",
+  "register-address-after-arrival": "arrival-and-daily-life",
+  "phone-or-bank-first": "arrival-and-daily-life",
+  "notify-immigration-after-job-change": "work-and-business",
+  "taxes-after-moving-to-japan": "ongoing-responsibilities",
+  "procedures-before-leaving-japan": "ongoing-responsibilities",
+  "join-spouse-or-family-in-japan": "family-and-long-term-residence",
+  "working-holiday-route": "immigration-and-entry",
+  "renew-or-change-residence-status": "immigration-and-entry",
+  "prepare-for-permanent-residence": "family-and-long-term-residence",
+};
+
+const defineFaq = (faq: Omit<FaqInput, "primaryBrowseGroupId">) => faqSchema.parse({
+  ...faq,
+  primaryBrowseGroupId: faqBrowseGroups[faq.id],
+});
 const dates = { createdAt: "2026-09-06", updatedAt: "2026-09-06", status: "draft" as const };
 
 export const faqs = [

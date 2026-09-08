@@ -9,6 +9,7 @@ const destinations = [
   { href: "/faq", label: "FAQ" },
   { href: "/glossary", label: "Glossary" },
   { href: "/residence-statuses", label: "Statuses" },
+  { href: "/saved", label: "Saved" },
   { href: "/account", label: "Account" },
 ] as const;
 
