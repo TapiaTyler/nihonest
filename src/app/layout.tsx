@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
 import { SavedContentProvider } from "@/components/saved-content/saved-content-provider";
+import { GlossaryStudyProvider } from "@/components/glossary-study/glossary-study-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteUrl } from "@/lib/site-url";
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body className="flex min-h-screen flex-col bg-stone-50 text-slate-900 antialiased">
         <PersonalizationProvider>
           <SavedContentProvider>
+            <GlossaryStudyProvider>
             <a className="skip-link" href="#main-content">
               Skip to main content
             </a>
@@ -38,6 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               {children}
             </main>
             <SiteFooter />
+            </GlossaryStudyProvider>
           </SavedContentProvider>
         </PersonalizationProvider>
       </body>

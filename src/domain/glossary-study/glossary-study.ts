@@ -34,3 +34,17 @@ export function recordGlossaryReview(
   });
 }
 
+export function setGlossaryReviewState(
+  progress: GlossaryStudyProgress,
+  state: GlossaryStudyProgress["state"],
+  updatedAt: string,
+): GlossaryStudyProgress {
+  return glossaryStudyProgressSchema.parse({ ...progress, state, updatedAt });
+}
+
+export function updateGlossaryStudyProgress(
+  records: readonly GlossaryStudyProgress[],
+  nextRecord: GlossaryStudyProgress,
+): readonly GlossaryStudyProgress[] {
+  return [...records.filter(({ termId }) => termId !== nextRecord.termId), nextRecord];
+}

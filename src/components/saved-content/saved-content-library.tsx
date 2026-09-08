@@ -1,18 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { visibleSavedContent } from "@/domain/saved-content/saved-content";
 import { SaveContentButton } from "./save-content-button";
 import { useSavedContent } from "./saved-content-provider";
+import { GlossaryStudyPanel } from "@/components/glossary-study/glossary-study-panel";
 
 export function SavedContentLibrary({ articles, residenceStatuses, terms }: Readonly<{
   articles: readonly ArticleMetadata[];
   residenceStatuses: readonly ResidenceStatus[];
   terms: readonly JapaneseTerm[];
 }>) {
+  const [studyOpen, setStudyOpen] = useState(false);
   const { isReady, records } = useSavedContent();
   const visibleRecords = visibleSavedContent(records);
   const savedArticleIds = new Set(visibleRecords.filter(({ kind }) => kind === "article").map(({ contentId }) => contentId));
@@ -77,7 +80,13 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
 
       {savedTerms.length > 0 && (
         <section aria-labelledby="saved-terms-heading">
-          <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Saved glossary terms</h2>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Saved glossary terms</h2>
+            <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center rounded-full border border-teal-700 bg-white px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              {studyOpen ? "Hide review" : "Review saved terms"}
+            </button>
+          </div>
+          {studyOpen && <div id="saved-glossary-review"><GlossaryStudyPanel terms={savedTerms} /></div>}
           <ul className="mt-5 space-y-3">
             {savedTerms.map((term) => (
               <li key={term.id} className="relative">
