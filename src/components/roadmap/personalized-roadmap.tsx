@@ -126,7 +126,7 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys }: 
             </ol>
           </section>
 
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="next-action-heading">
+          <section className="self-start rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="next-action-heading">
             <p className="eyebrow">Next action</p>
             <h2 id="next-action-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{nextArticle?.title ?? "Journey steps complete"}</h2>
             {nextArticle ? (

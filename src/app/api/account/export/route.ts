@@ -9,17 +9,20 @@ export async function GET() {
   const { client, identity } = await getAuthenticatedRequest();
   if (!identity) return NextResponse.json({ error: "Sign in to export account data." }, { status: 401 });
 
-  const [profileResult, preferenceResult] = await Promise.all([
+  const [profileResult, preferenceResult, savedContentResult, glossaryProgressResult, checklistProgressResult] = await Promise.all([
     client.from("profiles").select("*").maybeSingle(),
     client.from("user_preferences").select("*").maybeSingle(),
+    client.from("saved_content").select("*").order("content_kind").order("content_id"),
+    client.from("glossary_study_progress").select("*").order("term_id"),
+    client.from("checklist_progress").select("*").order("checklist_id"),
   ]);
-  if (profileResult.error || preferenceResult.error) {
+  if (profileResult.error || preferenceResult.error || savedContentResult.error || glossaryProgressResult.error || checklistProgressResult.error) {
     return NextResponse.json({ error: "Account data could not be read." }, { status: 500 });
   }
 
   const body = JSON.stringify({
     format: "nihonest-account-export",
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     account: {
       id: identity.id,
@@ -29,8 +32,11 @@ export async function GET() {
     userOwnedData: {
       profile: profileResult.data,
       preferences: preferenceResult.data,
+      savedContent: savedContentResult.data,
+      glossaryProgress: glossaryProgressResult.data,
+      checklistProgress: checklistProgressResult.data,
     },
-    notIncluded: ["Public browsing history", "Search queries", "Browser-local preferences on other devices"],
+    notIncluded: ["Public browsing history", "Search queries", "Unsynchronized browser-local data on other devices"],
   }, null, 2);
 
   return new NextResponse(body, {

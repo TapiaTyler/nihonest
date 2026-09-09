@@ -71,6 +71,36 @@ select:not(:disabled),
   outline-offset: 2px;
 }
 
+/* Explicit viewport and edge positioning prevents native dialog centering from affecting the drawer animation. */
+.mobile-nav-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.mobile-nav-panel {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+}
+
+.mobile-nav-dialog::backdrop {
+  background-color: rgb(15 23 42 / 0);
+  transition: background-color 200ms ease-out;
+}
+
+.mobile-nav-dialog[data-visible="true"]::backdrop {
+  background-color: rgb(15 23 42 / 0.42);
+}
+
 @media (min-width: 40rem) {
   .page-shell {
     width: min(100% - 3rem, 72rem);

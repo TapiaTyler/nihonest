@@ -23,6 +23,74 @@ export type Database = {
         };
         Relationships: [];
       };
+      saved_content: {
+        Row: {
+          user_id: string;
+          content_kind: "article" | "glossary-term" | "residence-status";
+          content_id: string;
+          state: "saved" | "removed";
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          content_kind: "article" | "glossary-term" | "residence-status";
+          content_id: string;
+          state: "saved" | "removed";
+          updated_at: string;
+        };
+        Update: {
+          state?: "saved" | "removed";
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      glossary_study_progress: {
+        Row: {
+          user_id: string;
+          term_id: string;
+          state: "new" | "learning" | "reviewed";
+          review_count: number;
+          last_reviewed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          term_id: string;
+          state: "new" | "learning" | "reviewed";
+          review_count: number;
+          last_reviewed_at?: string | null;
+          updated_at: string;
+        };
+        Update: {
+          state?: "new" | "learning" | "reviewed";
+          review_count?: number;
+          last_reviewed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      checklist_progress: {
+        Row: {
+          user_id: string;
+          checklist_id: string;
+          state: "not-started" | "in-progress" | "complete";
+          completed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          checklist_id: string;
+          state: "not-started" | "in-progress" | "complete";
+          completed_at?: string | null;
+          updated_at: string;
+        };
+        Update: {
+          state?: "not-started" | "in-progress" | "complete";
+          completed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       user_preferences: {
         Row: {
           user_id: string;
@@ -56,7 +124,16 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      sync_account_content: {
+        Args: {
+          p_saved_content?: Json;
+          p_glossary_progress?: Json;
+          p_checklist_progress?: Json;
+        };
+        Returns: Json;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

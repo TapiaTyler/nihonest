@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { AccountContentSyncProvider } from "@/components/account/account-content-sync-provider";
+import { AccountSessionProvider } from "@/components/account/account-session-provider";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
 import { SavedContentProvider } from "@/components/saved-content/saved-content-provider";
 import { GlossaryStudyProvider } from "@/components/glossary-study/glossary-study-provider";
@@ -34,6 +36,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <SavedContentProvider>
             <GlossaryStudyProvider>
               <ChecklistProgressProvider>
+                <AccountSessionProvider>
+                  <AccountContentSyncProvider>
             <a className="skip-link" href="#main-content">
               Skip to main content
             </a>
@@ -42,6 +46,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               {children}
             </main>
             <SiteFooter />
+                  </AccountContentSyncProvider>
+                </AccountSessionProvider>
               </ChecklistProgressProvider>
             </GlossaryStudyProvider>
           </SavedContentProvider>

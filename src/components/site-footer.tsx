@@ -9,7 +9,7 @@ export function SiteFooter() {
           <p className="mt-3 leading-6">Public-first guidance for finding your place in Japan.</p>
           <p className="mt-3 leading-6 text-slate-400">All public guidance is available without an account.</p>
         </div>
-        <nav aria-label="Guidance links">
+        <nav aria-label="Guidance links" className="hidden sm:block">
           <h2 className="font-semibold text-white">Find guidance</h2>
           <ul className="-mx-3 mt-1">
             <li><Link href="/explore" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Explore</Link></li>
@@ -18,7 +18,7 @@ export function SiteFooter() {
             <li><Link href="/residence-statuses" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Statuses</Link></li>
           </ul>
         </nav>
-        <nav aria-label="Personal links">
+        <nav aria-label="Personal links" className="hidden sm:block">
           <h2 className="font-semibold text-white">Your journey</h2>
           <ul className="-mx-3 mt-1">
             <li><Link href="/onboarding" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Starting point</Link></li>

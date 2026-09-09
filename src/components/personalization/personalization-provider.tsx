@@ -59,10 +59,10 @@ export function PersonalizationProvider({ children }: Readonly<{ children: React
 
   useEffect(() => {
     const localSnapshotAtStart = getAnonymousPreferencesSnapshot();
-    void loadSignedInPreferences().then((cloudPreferences) => {
-      // Do not replace a choice made while the cloud request was in flight.
-      if (cloudPreferences && getAnonymousPreferencesSnapshot() === localSnapshotAtStart) {
-        writeAnonymousPreferences(cloudPreferences);
+    void loadSignedInPreferences().then((accountPreferences) => {
+      // Do not replace a choice made while the account request was in flight.
+      if (accountPreferences && getAnonymousPreferencesSnapshot() === localSnapshotAtStart) {
+        writeAnonymousPreferences(accountPreferences);
       }
     });
   }, []);
