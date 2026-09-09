@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArticleCard } from "@/components/content/article-card";
 import { JourneyRouteLink } from "@/components/personalization/journey-route-link";
+import { ReminderLink } from "@/components/notifications/reminder-link";
 import { JourneyChecklistControl } from "@/components/roadmap/journey-checklist-control";
 import { JourneyProgressSummary } from "@/components/roadmap/journey-progress-summary";
 import type { ArticleMetadata } from "@/domain/article/article";
@@ -96,13 +97,13 @@ export function GuidedJourneyView({
               {phaseSteps.length > 0 && (
                 <div className="mt-6 grid gap-6 md:grid-cols-2">
                   {phaseSteps.map(({ article, step }) => (
-                    <div key={article.id} className={`relative h-full ${step.requiredness === "required" ? "pt-5" : ""}`}>
+                    <div id={`journey-step-${article.id}`} key={article.id} className={`relative h-full scroll-mt-24 ${step.requiredness === "required" ? "pt-5" : ""}`}>
                       {step.requiredness === "required" && <div className="pointer-events-none absolute left-5 top-0 z-10"><span className="rounded-full bg-teal-800 px-3 py-1 text-xs font-semibold text-white">Step {requiredStepNumbers.get(article.id)}</span></div>}
                       <ArticleCard
                         article={article}
                         href={articleJourneyHref(article.slug, journey.id, selectedRoute?.id, mode === "personal" ? "/my-journey" : undefined)}
                         notice={step.requiredness === "conditional" ? `May apply: ${step.conditionLabel}` : undefined}
-                        headerAction={<JourneyChecklistControl checklistId={article.id} />}
+                        headerAction={<div className="flex flex-wrap justify-end gap-2"><JourneyChecklistControl checklistId={article.id} /><ReminderLink targetId={article.id} title={article.title} returnTo={`${mode === "personal" ? "/my-journey" : journeyHref(journey.id, selectedRoute?.id)}#journey-step-${article.id}`} /></div>}
                       />
                     </div>
                   ))}

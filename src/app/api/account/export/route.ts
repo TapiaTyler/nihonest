@@ -9,20 +9,22 @@ export async function GET() {
   const { client, identity } = await getAuthenticatedRequest();
   if (!identity) return NextResponse.json({ error: "Sign in to export account data." }, { status: 401 });
 
-  const [profileResult, preferenceResult, savedContentResult, glossaryProgressResult, checklistProgressResult] = await Promise.all([
+  const [profileResult, preferenceResult, savedContentResult, glossaryProgressResult, checklistProgressResult, notificationPreferenceResult, reminderResult] = await Promise.all([
     client.from("profiles").select("*").maybeSingle(),
     client.from("user_preferences").select("*").maybeSingle(),
     client.from("saved_content").select("*").order("content_kind").order("content_id"),
     client.from("glossary_study_progress").select("*").order("term_id"),
     client.from("checklist_progress").select("*").order("checklist_id"),
+    client.from("notification_preferences").select("*").maybeSingle(),
+    client.from("reminders").select("*").order("scheduled_for"),
   ]);
-  if (profileResult.error || preferenceResult.error || savedContentResult.error || glossaryProgressResult.error || checklistProgressResult.error) {
+  if (profileResult.error || preferenceResult.error || savedContentResult.error || glossaryProgressResult.error || checklistProgressResult.error || notificationPreferenceResult.error || reminderResult.error) {
     return NextResponse.json({ error: "Account data could not be read." }, { status: 500 });
   }
 
   const body = JSON.stringify({
     format: "nihonest-account-export",
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     account: {
       id: identity.id,
@@ -35,6 +37,8 @@ export async function GET() {
       savedContent: savedContentResult.data,
       glossaryProgress: glossaryProgressResult.data,
       checklistProgress: checklistProgressResult.data,
+      notificationPreferences: notificationPreferenceResult.data,
+      reminders: reminderResult.data,
     },
     notIncluded: ["Public browsing history", "Search queries", "Unsynchronized browser-local data on other devices"],
   }, null, 2);

@@ -300,7 +300,7 @@ Immigration, legal, tax, employment, and administrative guidance requires contex
 
 ## ADR-017 — Notifications are event based
 
-**Status:** Accepted; implementation deferred
+**Status:** Accepted; foundation implemented
 
 ### Decision
 
@@ -864,6 +864,30 @@ Public content definitions should not be copied into each account, and progress 
 - recommendation results must explain their applicability;
 - synchronization tests must cover newer records and equal-time removal conflicts; and
 - account-benefit promotion is deferred until the promised Phase 9 features actually exist.
+
+---
+
+## ADR-051 — Reminder instants, event generation, and delivery consent remain separate
+
+**Status:** Accepted
+
+### Decision
+
+A reminder records the requested UTC instant, the IANA time zone used for the user's wall-clock choice, a controlled target, and a lifecycle state of `scheduled`, `cancelled`, or `fulfilled`. Nonexistent daylight-saving times are rejected, and repeated times use the earlier occurrence deterministically. Cancellation and fulfillment are mutually exclusive.
+
+When a scheduled reminder becomes due, trusted scheduling code may create a deduplicated notification event and mark the reminder fulfilled. Event generation does not assert successful delivery. Email delivery is evaluated afterward against explicit, independently stored channel and topic preferences, all of which default to off. Authenticated clients can manage only their own preferences and reminders and cannot create notification events directly.
+
+### Reason
+
+Storing an instant prevents a deadline from moving when the user travels or time-zone rules change, while retaining the zone supports accurate presentation. Separating due events from delivery makes retries and future channels possible without regenerating business events. Default-off topic and channel controls preserve the distinction between authentication and optional communication consent.
+
+### Consequences
+
+- local reminder creation must resolve and validate wall-clock time before persistence;
+- delivery workers must use deduplication keys and must re-check current preferences before sending;
+- a cancelled reminder can never produce a due event;
+- a fulfilled reminder may still have a pending or failed delivery; and
+- production scheduling and delivery remain disabled until the hosted-integration gate.
 
 ---
 

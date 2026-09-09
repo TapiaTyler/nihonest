@@ -353,6 +353,10 @@ feat: add personalized journey roadmap
 
 # Phase 10 — Reminders and Email
 
+**Iteration 1 complete locally: reminder, notification-event, explicit-preference, and time-zone contracts are implemented. The generated database migration and RLS tests await the next deliberate local Supabase verification checkpoint.**
+
+**Iteration 2 complete locally: signed-in users can configure optional notification topics, create custom or journey-linked reminder requests, review upcoming reminders, and cancel them. Email delivery remains disabled until the provider and scheduler iterations are complete.**
+
 Objectives:
 
 - reminder model;

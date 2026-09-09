@@ -91,6 +91,98 @@ export type Database = {
         };
         Relationships: [];
       };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          email_enabled: boolean;
+          deadline_reminders_enabled: boolean;
+          critical_updates_enabled: boolean;
+          time_zone: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          email_enabled?: boolean;
+          deadline_reminders_enabled?: boolean;
+          critical_updates_enabled?: boolean;
+          time_zone?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          email_enabled?: boolean;
+          deadline_reminders_enabled?: boolean;
+          critical_updates_enabled?: boolean;
+          time_zone?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      reminders: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          target_kind: "article" | "checklist" | "custom";
+          target_id: string | null;
+          scheduled_for: string;
+          time_zone: string;
+          state: "scheduled" | "cancelled" | "fulfilled";
+          cancelled_at: string | null;
+          fulfilled_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          target_kind: "article" | "checklist" | "custom";
+          target_id?: string | null;
+          scheduled_for: string;
+          time_zone: string;
+          state?: "scheduled" | "cancelled" | "fulfilled";
+          cancelled_at?: string | null;
+          fulfilled_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          title?: string;
+          target_kind?: "article" | "checklist" | "custom";
+          target_id?: string | null;
+          scheduled_for?: string;
+          time_zone?: string;
+          state?: "scheduled" | "cancelled" | "fulfilled";
+          cancelled_at?: string | null;
+          fulfilled_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      notification_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_type: "reminder-due" | "article-critical-update" | "residence-status-guidance-updated";
+          deduplication_key: string;
+          payload: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          event_type: "reminder-due" | "article-critical-update" | "residence-status-guidance-updated";
+          deduplication_key: string;
+          payload: Json;
+          created_at?: string;
+        };
+        Update: {
+          payload?: Json;
+        };
+        Relationships: [];
+      };
       user_preferences: {
         Row: {
           user_id: string;

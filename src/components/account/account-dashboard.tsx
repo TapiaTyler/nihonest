@@ -4,6 +4,7 @@ import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccountContentSync } from "@/components/account/account-content-sync-provider";
 import { useAccountSession } from "@/components/account/account-session-provider";
+import { NotificationPreferencesForm } from "@/components/notifications/notification-preferences-form";
 import type { AnonymousPreferences } from "@/domain/personalization/preferences";
 import {
   saveDisplayName,
@@ -145,12 +146,14 @@ export function AccountDashboard({
         {accountContentSync.errorMessage && <p role="status" className="mt-3 text-sm font-medium text-red-700">{accountContentSync.errorMessage}</p>}
       </section>
 
+      <NotificationPreferencesForm userId={userId} />
+
       <details className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <summary className="cursor-pointer text-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Privacy and account data</summary>
         <div className="mt-6 space-y-8 border-t border-slate-100 pt-6">
           <section aria-labelledby="data-heading">
             <h2 id="data-heading" className="text-lg font-semibold text-slate-950">Download a copy of your data</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">This optional technical record includes the profile, starting point, saved content, and progress associated with your account.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">This optional technical record includes the profile, starting point, saved content, progress, notification preferences, and reminders associated with your account.</p>
             <a href="/api/account/export" download className="mt-3 inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Download account data →</a>
           </section>
 

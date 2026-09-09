@@ -7,7 +7,7 @@ import { enabledSocialProviders, isSupabaseConfigured } from "@/lib/supabase/con
 
 export const metadata: Metadata = {
   title: "Account | Nihonest",
-  description: "Optionally synchronize your Nihonest starting point, saved guidance, and progress across devices.",
+  description: "Optionally synchronize your Nihonest starting point, saved guidance, progress, and reminders across devices.",
 };
 
 export const dynamic = "force-dynamic";
@@ -86,6 +86,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
             <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950">Glossary review</span><span className="mt-1 block">Continue your New, Learning, and Reviewed progress.</span></li>
             <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950">Journey progress</span><span className="mt-1 block">Keep checklist progress consistent in My Journey and Roadmap.</span></li>
             <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950">Personalized direction</span><span className="mt-1 block">Carry your chosen starting point, journey, and route with you.</span></li>
+            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950">Optional reminders</span><span className="mt-1 block">Keep requested deadlines and communication preferences under your control.</span></li>
           </ul>
           <p className="mt-5 text-sm font-medium leading-6 text-teal-950">Registration never unlocks or restricts public information. It only adds optional continuity for your choices and progress.</p>
         </section>

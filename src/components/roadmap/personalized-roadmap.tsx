@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePersonalization } from "@/components/personalization/personalization-provider";
 import { useSavedContent } from "@/components/saved-content/saved-content-provider";
 import { useGlossaryStudy } from "@/components/glossary-study/glossary-study-provider";
+import { ReminderLink } from "@/components/notifications/reminder-link";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { GuidedJourney } from "@/domain/discovery/discovery";
 import { getJourneyRouteById, resolveJourneySteps } from "@/domain/discovery/discovery";
@@ -126,9 +127,14 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys }: 
             </ol>
           </section>
 
-          <section className="self-start rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="next-action-heading">
-            <p className="eyebrow">Next action</p>
-            <h2 id="next-action-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{nextArticle?.title ?? "Journey steps complete"}</h2>
+          <section id="roadmap-next-action" className="self-start scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="next-action-heading">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Next action</p>
+                <h2 id="next-action-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{nextArticle?.title ?? "Journey steps complete"}</h2>
+              </div>
+              {nextArticle && <ReminderLink targetId={nextArticle.id} title={nextArticle.title} returnTo="/roadmap#roadmap-next-action" />}
+            </div>
             {nextArticle ? (
               <><p className="mt-3 leading-7 text-slate-600">{nextArticle.description}</p>{nextStep?.requiredness === "conditional" && <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-950">May apply: {nextStep.conditionLabel}</p>}<Link href={`/my-journey#phase-${nextStep?.phaseId}`} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Continue in My Journey →</Link></>
             ) : <p className="mt-3 leading-7 text-slate-600">Every currently applicable step is marked complete. You can still revisit the full journey and its public guidance.</p>}

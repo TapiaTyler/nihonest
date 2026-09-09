@@ -585,23 +585,19 @@ Exact implementation should follow current Expo and authentication-provider guid
 
 # 19. User Database
 
-Cloud persistence uses PostgreSQL through Supabase. Phase 8 creates only:
+Cloud persistence uses PostgreSQL through Supabase. Phase 8 begins with:
 
 ```text
 profiles
 user_preferences
 ```
 
-The remaining potential user-owned tables belong to later phases:
-
-Potential application tables include:
+Later phases add private state only when its feature contract is implemented. Phase 9 adds saved-content and progress tables; Phase 10 adds:
 
 ```text
-saved_articles
-saved_terms
-checklist_progress
 reminders
 notification_preferences
+notification_events
 ```
 
 Avoid creating a duplicate authentication-password database.
@@ -752,12 +748,17 @@ Translated search documents should be versioned against the canonical content re
 
 Notification generation and notification delivery should be separate.
 
+A requested reminder stores a UTC `scheduled_for` instant together with the IANA time zone used to interpret and present the user's wall-clock choice. This avoids changing an already-requested instant when time-zone rules or the user's current location change. Nonexistent daylight-saving times are rejected; repeated wall-clock times resolve deterministically to the earlier occurrence.
+
+Reminder lifecycle state is `scheduled`, `cancelled`, or `fulfilled`. Cancellation and fulfillment are mutually exclusive terminal states. A fulfilled reminder means its due event was generated; it does not claim that any delivery channel succeeded.
+
 Conceptual example:
 
 ```ts
 NotificationEvent {
   type
   userId
+  deduplicationKey
   payload
   createdAt
 }
@@ -775,6 +776,8 @@ Delivery services later decide whether to send:
 
 - email;
 - push.
+
+`notification_preferences` defaults every optional communication switch to off. Authentication messages never modify these preferences. Account holders manage only their own reminders and preferences through RLS; authenticated clients may read their own generated events but cannot manufacture events directly.
 
 ---
 
