@@ -9,7 +9,7 @@ export async function GET() {
   const { client, identity } = await getAuthenticatedRequest();
   if (!identity) return NextResponse.json({ error: "Sign in to export account data." }, { status: 401 });
 
-  const [profileResult, preferenceResult, savedContentResult, glossaryProgressResult, checklistProgressResult, notificationPreferenceResult, reminderResult] = await Promise.all([
+  const [profileResult, preferenceResult, savedContentResult, glossaryProgressResult, checklistProgressResult, notificationPreferenceResult, reminderResult, notificationEventResult, notificationDeliveryResult] = await Promise.all([
     client.from("profiles").select("*").maybeSingle(),
     client.from("user_preferences").select("*").maybeSingle(),
     client.from("saved_content").select("*").order("content_kind").order("content_id"),
@@ -17,14 +17,16 @@ export async function GET() {
     client.from("checklist_progress").select("*").order("checklist_id"),
     client.from("notification_preferences").select("*").maybeSingle(),
     client.from("reminders").select("*").order("scheduled_for"),
+    client.from("notification_events").select("*").order("created_at"),
+    client.from("notification_deliveries").select("*").order("created_at"),
   ]);
-  if (profileResult.error || preferenceResult.error || savedContentResult.error || glossaryProgressResult.error || checklistProgressResult.error || notificationPreferenceResult.error || reminderResult.error) {
+  if (profileResult.error || preferenceResult.error || savedContentResult.error || glossaryProgressResult.error || checklistProgressResult.error || notificationPreferenceResult.error || reminderResult.error || notificationEventResult.error || notificationDeliveryResult.error) {
     return NextResponse.json({ error: "Account data could not be read." }, { status: 500 });
   }
 
   const body = JSON.stringify({
     format: "nihonest-account-export",
-    version: 3,
+    version: 4,
     exportedAt: new Date().toISOString(),
     account: {
       id: identity.id,
@@ -39,6 +41,8 @@ export async function GET() {
       checklistProgress: checklistProgressResult.data,
       notificationPreferences: notificationPreferenceResult.data,
       reminders: reminderResult.data,
+      notificationEvents: notificationEventResult.data,
+      notificationDeliveries: notificationDeliveryResult.data,
     },
     notIncluded: ["Public browsing history", "Search queries", "Unsynchronized browser-local data on other devices"],
   }, null, 2);

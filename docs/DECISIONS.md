@@ -891,6 +891,84 @@ Storing an instant prevents a deadline from moving when the user travels or time
 
 ---
 
+## ADR-052 — Notification delivery uses a durable per-channel outbox
+
+**Status:** Accepted
+
+### Decision
+
+Each notification event may produce at most one durable delivery record per channel. Email delivery records use `pending`, `processing`, `sent`, `failed`, or `suppressed` state and retain attempt count, availability, last-attempt, sent, and bounded error metadata. They reference the account and event but do not copy the authentication email address.
+
+Trusted database functions generate due-reminder events, fulfill their reminder requests atomically, and prepare delivery decisions from current explicit preferences. Authenticated clients may read only their own delivery history and cannot create or mutate delivery work. Preparing a delivery does not contact a provider; the future sender must re-check consent immediately before sending.
+
+### Reason
+
+A durable outbox makes overlapping scheduler runs, retries, consent decisions, and delivery outcomes independently observable without confusing reminder fulfillment with message success. Keeping recipient addresses in the authentication system reduces duplicated personal data and stale-address risk.
+
+### Consequences
+
+- an event-channel unique constraint prevents duplicate email work;
+- missing or disabled consent creates a terminal suppressed record rather than silently dropping the event;
+- provider failures can be retried without regenerating reminder events;
+- account export includes the user's notification events and delivery history; and
+- provider selection, claiming, retry policy, and actual sending remain a later Phase 10 iteration.
+
+---
+
+## ADR-053 — Amazon SES is the production email provider and development sends nothing by default
+
+**Status:** Accepted
+
+### Decision
+
+Use Amazon SES for eventual production transactional email behind Nihonest's provider-neutral `EmailProvider` contract. Production will use a usage-based SES option without dedicated IPs or other fixed-price add-ons unless later volume and deliverability evidence justify them. Sender identity, AWS region, and site origin are runtime settings; the intended future sender may be configured as `notifications@nihonest.com` after that domain is owned and verified.
+
+Development is fail-closed and does not depend on an SES free allowance. Automated tests inject a fake sender. Mailpit may provide an optional local preview transport later. The official AWS client is wired behind server-only configuration, but credentials, DNS verification, sandbox exit, production enablement, and actual scheduled delivery remain disabled until the hosted-integration gate.
+
+### Reason
+
+SES supports usage-based billing and verified replaceable domain identities, matching the requirement to avoid a mandatory email subscription and to change the public sender domain later. Provider-neutral templates and orchestration retain portability, while disabled-by-default development prevents accidental charges or delivery to real recipients.
+
+### Consequences
+
+- AWS credentials and recipient addresses remain server-only and are never committed;
+- the sender address is configuration rather than content or database state;
+- both plain-text and HTML templates must remain usable independently;
+- delivery consent is checked immediately before the provider call;
+- tokenized claim leases recover abandoned work without allowing stale workers to finalize newer attempts;
+- retries use bounded exponential delays and stop after five attempts; and
+- the official AWS client is instantiated only when validated production delivery configuration explicitly enables it.
+
+---
+
+## ADR-054 — Critical updates require a published release and explicit relevance
+
+**Status:** Accepted
+
+### Decision
+
+Represent a user-notifiable critical change as a structured editorial release targeting one canonical article or residence status. The release contains a stable revision, concise factual summary, optional verification note, journey/route target snapshot, and `draft`, `approved`, or `published` state. Only a human-approved published release may generate events, and its substantive fields are immutable after publication.
+
+Generate one deduplicated notification event for each account that enabled the critical-update topic and either currently saved the affected target or selected a journey/route included in the release snapshot. Immediately before delivery, re-evaluate those same signals against current account state. Suppress an event when neither signal remains; do not delete the event or alter explicit reminder requests. Removed saves, unrelated routes, browsing/search history, glossary activity, and account registration alone are not relevance signals. Email consent remains a separate delivery-time decision.
+
+### Reason
+
+Source changes and ordinary edits are not necessarily urgent, correct, or relevant. An explicit editorial release creates an auditable boundary between detecting a change and contacting people. Narrow targeting avoids broad alarming messages while supporting users who deliberately saved affected guidance or selected a matching route.
+
+### Consequences
+
+- source monitoring may create or inform drafts but cannot notify users directly;
+- correcting a published release requires a new revision;
+- journey membership is snapshotted for stable audience resolution;
+- a later route change prevents stale route-derived delivery unless the affected target remains saved;
+- delivery copy identifies whether the current journey, Saved items, or both made the update relevant;
+- changing a journey never silently deletes user-created reminders or saved guidance;
+- generation records completion even when no current account is relevant;
+- deterministic release keys prevent duplicate events; and
+- production scheduling remains disabled until the hosted-integration gate.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

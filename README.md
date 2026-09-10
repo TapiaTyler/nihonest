@@ -46,7 +46,7 @@ Potential UI components may use shadcn/ui where appropriate.
 
 ## Local Account Development
 
-Phase 8 uses the Supabase CLI and Docker Desktop; it does not require a hosted Supabase project. Node.js 22 or newer is recommended for the current Supabase SDK.
+Phase 8 uses the Supabase CLI and Docker Desktop; it does not require a hosted Supabase project. Development is standardized on the Node.js 24 LTS line through `.nvmrc` and the `package.json` engine constraint.
 
 1. Start Docker Desktop.
 2. Run `npm run supabase:start`.

@@ -441,6 +441,8 @@ Critical-update notifications should be:
 - clear about what changed;
 - clear when users should verify something with an authority.
 
+Before notification events are generated, each critical update must have a human-approved published release containing a stable revision, canonical article or residence-status target, concise change summary, and an appropriate verification note. Relevance may derive only from an explicitly saved target or the user's current selected journey route together with enabled critical-update preferences, and must be checked again immediately before delivery. The email must plainly identify whether it was relevant because of the current journey, Saved items, or both. Drafts, automated source-change detections, ordinary edits, browsing history, and search history must never notify users.
+
 Avoid panic-oriented messages.
 
 ---

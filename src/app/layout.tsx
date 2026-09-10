@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AccountContentSyncProvider } from "@/components/account/account-content-sync-provider";
 import { AccountSessionProvider } from "@/components/account/account-session-provider";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
+import { JourneyUpdateNotice } from "@/components/personalization/journey-update-notice";
 import { SavedContentProvider } from "@/components/saved-content/saved-content-provider";
 import { GlossaryStudyProvider } from "@/components/glossary-study/glossary-study-provider";
 import { ChecklistProgressProvider } from "@/components/roadmap/checklist-progress-provider";
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               Skip to main content
             </a>
             <SiteHeader />
+            <JourneyUpdateNotice />
             <main id="main-content" className="flex-1">
               {children}
             </main>

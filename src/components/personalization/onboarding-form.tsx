@@ -15,6 +15,7 @@ import type { JourneyStageId } from "@/domain/taxonomy/taxonomy";
 import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { usePersonalization } from "./personalization-provider";
 import { useUnsavedChangesWarning } from "./use-unsaved-changes-warning";
+import { queueJourneyUpdateNotice } from "@/lib/storage/journey-update-notice";
 
 const stageDescriptions: Record<JourneyStageId, string> = {
   planning: "I am researching whether and how to move to Japan.",
@@ -90,6 +91,8 @@ export function OnboardingForm({
 
   function save() {
     if (!selectedStage) return;
+    const routeChanged = Boolean(preferences.journeyId || preferences.routeId)
+      && (selectedJourneyId !== preferences.journeyId || selectedRouteId !== preferences.routeId);
     allowNavigation();
     saveStartingPoint({
       journeyStage: selectedStage,
@@ -97,6 +100,7 @@ export function OnboardingForm({
       routeId: selectedRouteId,
       focusedArticleId: selectedFocusedArticleId,
     });
+    if (routeChanged) queueJourneyUpdateNotice();
     router.push(returnTo);
   }
 

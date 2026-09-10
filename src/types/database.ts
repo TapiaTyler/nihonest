@@ -183,6 +183,116 @@ export type Database = {
         };
         Relationships: [];
       };
+      notification_deliveries: {
+        Row: {
+          id: string;
+          event_id: string;
+          user_id: string;
+          channel: "email";
+          state: "pending" | "processing" | "sent" | "failed" | "suppressed";
+          attempt_count: number;
+          available_at: string;
+          last_attempted_at: string | null;
+          claim_token: string | null;
+          claim_expires_at: string | null;
+          sent_at: string | null;
+          provider_message_id: string | null;
+          last_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          user_id: string;
+          channel?: "email";
+          state: "pending" | "processing" | "sent" | "failed" | "suppressed";
+          attempt_count?: number;
+          available_at: string;
+          last_attempted_at?: string | null;
+          claim_token?: string | null;
+          claim_expires_at?: string | null;
+          sent_at?: string | null;
+          provider_message_id?: string | null;
+          last_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          state?: "pending" | "processing" | "sent" | "failed" | "suppressed";
+          attempt_count?: number;
+          available_at?: string;
+          last_attempted_at?: string | null;
+          claim_token?: string | null;
+          claim_expires_at?: string | null;
+          sent_at?: string | null;
+          provider_message_id?: string | null;
+          last_error?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      critical_update_releases: {
+        Row: {
+          id: string;
+          target_kind: "article" | "residence-status";
+          target_id: string;
+          title: string;
+          summary: string;
+          revision: string;
+          verification_note: string | null;
+          editorial_state: "draft" | "approved" | "published";
+          approved_at: string | null;
+          published_at: string | null;
+          events_generated_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          target_kind: "article" | "residence-status";
+          target_id: string;
+          title: string;
+          summary: string;
+          revision: string;
+          verification_note?: string | null;
+          editorial_state?: "draft" | "approved" | "published";
+          approved_at?: string | null;
+          published_at?: string | null;
+          events_generated_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          title?: string;
+          summary?: string;
+          revision?: string;
+          verification_note?: string | null;
+          editorial_state?: "draft" | "approved" | "published";
+          approved_at?: string | null;
+          published_at?: string | null;
+          events_generated_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      critical_update_journey_targets: {
+        Row: {
+          release_id: string;
+          journey_id: string;
+          route_id: string | null;
+        };
+        Insert: {
+          release_id: string;
+          journey_id: string;
+          route_id?: string | null;
+        };
+        Update: {
+          journey_id?: string;
+          route_id?: string | null;
+        };
+        Relationships: [];
+      };
       user_preferences: {
         Row: {
           user_id: string;
@@ -217,6 +327,34 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      generate_due_reminder_events: {
+        Args: { p_now?: string; p_limit?: number };
+        Returns: number;
+      };
+      generate_targeted_critical_update_events: {
+        Args: { p_now?: string; p_limit?: number };
+        Returns: number;
+      };
+      claim_email_notification_deliveries: {
+        Args: { p_now?: string; p_limit?: number; p_max_attempts?: number; p_lease_seconds?: number };
+        Returns: Database["public"]["Tables"]["notification_deliveries"]["Row"][];
+      };
+      finalize_email_notification_delivery: {
+        Args: {
+          p_delivery_id: string;
+          p_claim_token: string;
+          p_state: "sent" | "failed" | "suppressed";
+          p_now: string;
+          p_provider_message_id?: string | null;
+          p_error?: string | null;
+          p_retry_at?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["notification_deliveries"]["Row"];
+      };
+      prepare_email_notification_deliveries: {
+        Args: { p_now?: string; p_limit?: number };
+        Returns: number;
+      };
       sync_account_content: {
         Args: {
           p_saved_content?: Json;

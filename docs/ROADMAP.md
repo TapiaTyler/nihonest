@@ -323,6 +323,8 @@ feat: sync user preferences across devices
 
 # Phase 9 — Saved Content and Roadmap
 
+**Complete locally; cross-network synchronization and hosted-provider validation remain in the post-Phase 13 integration gate.**
+
 Objectives:
 
 - saved articles;
@@ -353,9 +355,17 @@ feat: add personalized journey roadmap
 
 # Phase 10 — Reminders and Email
 
+**Complete locally; production scheduling, SES credentials and domain verification, and hosted delivery validation remain in the post-Phase 13 integration gate.**
+
 **Iteration 1 complete locally: reminder, notification-event, explicit-preference, and time-zone contracts are implemented. The generated database migration and RLS tests await the next deliberate local Supabase verification checkpoint.**
 
 **Iteration 2 complete locally: signed-in users can configure optional notification topics, create custom or journey-linked reminder requests, review upcoming reminders, and cancel them. Email delivery remains disabled until the provider and scheduler iterations are complete.**
+
+**Iteration 3 complete locally: trusted database functions atomically generate deduplicated due-reminder events, fulfill their reminder requests, and prepare one durable email-delivery decision per event using current explicit preferences. Delivery lifecycle and retry metadata are modeled, while provider calls and production scheduling remain disabled.**
+
+**Iteration 4 complete locally: Amazon SES is selected for production delivery behind a provider-neutral boundary. Accessible transactional templates, official SES v2 client wiring, immediate consent re-checking, bounded retries, trusted claim/finalization functions, and fail-closed environment configuration are implemented. Tests use injected fakes and no messages are sent; credentials, DNS verification, production enablement, and scheduled execution remain disabled until the hosted-integration gate.**
+
+**Iteration 5 complete locally: immutable, human-reviewed critical-update releases can target saved articles, saved residence statuses, or the user's selected journey route. Trusted generation creates one deduplicated event per relevant topic subscriber, excludes drafts and unrelated context, and carries a concise change summary plus verification note into the existing delivery pipeline. Delivery re-checks the user's current route and saved state, suppresses stale route-only events without changing explicit reminders, and explains the applicable relevance signal in the email. Route changes receive an in-app confirmation of this behavior. Database tests are generated; no scheduler or delivery service is enabled.**
 
 Objectives:
 
@@ -557,7 +567,7 @@ Direction:
 
 - web knowledgebase remains free;
 - native app may use a modest one-time purchase price;
-- purchase supports development;
+- purchase supports development and article updates;
 - important information is not artificially paywalled.
 
 Exact price and store configuration are deferred until release planning.

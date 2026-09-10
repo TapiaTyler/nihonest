@@ -75,7 +75,7 @@ export function NotificationPreferencesForm({ userId }: Readonly<{ userId: strin
             </label>
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <input type="checkbox" checked={preferences.criticalUpdatesEnabled} onChange={(event) => updatePreference("criticalUpdatesEnabled", event.target.checked)} className="mt-1 size-5 accent-teal-700" />
-              <span><span className="block font-semibold text-slate-950">Targeted critical updates</span><span className="mt-1 block text-sm leading-6 text-slate-600">Important reviewed changes relevant to your saved context.</span></span>
+              <span><span className="block font-semibold text-slate-950">Targeted critical updates</span><span className="mt-1 block text-sm leading-6 text-slate-600">Important reviewed changes relevant to your current journey or Saved items.</span></span>
             </label>
           </div>
           <div>

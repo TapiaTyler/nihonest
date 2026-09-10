@@ -2,6 +2,19 @@ import { z } from "zod";
 
 const stableIdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const localDateTimeSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+const criticalUpdateJourneyTargetSchema = z.object({
+  journeyId: stableIdSchema,
+  routeId: stableIdSchema.optional(),
+});
+
+const criticalUpdatePayloadSchema = z.object({
+  releaseId: z.uuid(),
+  title: z.string().min(1),
+  revision: z.string().min(1),
+  summary: z.string().min(1).max(500),
+  verificationNote: z.string().min(1).max(300).optional(),
+  journeyTargets: z.array(criticalUpdateJourneyTargetSchema),
+});
 
 export const notificationTimeZoneSchema = z.string().min(1).max(100).refine((timeZone) => {
   try {
@@ -64,11 +77,15 @@ export const notificationEventSchema = z.discriminatedUnion("type", [
   }),
   notificationEventBaseSchema.extend({
     type: z.literal("article-critical-update"),
-    payload: z.object({ articleId: stableIdSchema, title: z.string().min(1), revision: z.string().min(1).optional() }),
+    payload: criticalUpdatePayloadSchema.extend({
+      articleId: stableIdSchema,
+    }),
   }),
   notificationEventBaseSchema.extend({
     type: z.literal("residence-status-guidance-updated"),
-    payload: z.object({ residenceStatusId: stableIdSchema, title: z.string().min(1), revision: z.string().min(1).optional() }),
+    payload: criticalUpdatePayloadSchema.extend({
+      residenceStatusId: stableIdSchema,
+    }),
   }),
 ]);
 

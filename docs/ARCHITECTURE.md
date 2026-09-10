@@ -777,13 +777,27 @@ Delivery services later decide whether to send:
 - email;
 - push.
 
+Email decisions are persisted separately in `notification_deliveries`. Each event can have at most one delivery record per channel. Its state is `pending`, `processing`, `sent`, `failed`, or `suppressed`; attempt timestamps and bounded error summaries support observable retries without copying the account email address into the delivery table. A suppressed decision is terminal for that generated event.
+
+Only trusted server scheduling code may generate due events or prepare delivery decisions. Due reminder selection uses row locking, event deduplication, and atomic reminder fulfillment so overlapping scheduler runs cannot create duplicate work. Preparation evaluates the user's current explicit channel and topic preferences and records either `pending` or `suppressed` without contacting a provider. The eventual sender must re-check consent immediately before sending because preferences may change after preparation.
+
+Amazon SES is the selected production email provider, isolated behind a small `EmailProvider` boundary. Templates remain provider-neutral and always include plain-text and HTML forms. The adapter maps that message to the SES v2 `SendEmail` contract, while a server-only factory instantiates the official AWS client only after delivery is explicitly enabled. A provider message ID is required for successful finalization. Sender name, sender address, AWS region, and public site origin are runtime configuration so a future verified domain such as `nihonest.com` requires configuration and DNS changes rather than application rewrites.
+
+Email is fail-closed unless `EMAIL_DELIVERY_ENABLED=true` and all production settings validate. Automated tests inject a fake provider and send nothing. Local visual delivery may later use Mailpit without changing templates or delivery orchestration. Production uses SES usage-based sending without optional fixed-cost deliverability features unless a later operational review explicitly approves them.
+
+Ready delivery records are claimed with row locking and `skip locked`, which prevents concurrent workers from sending the same attempt. Claims carry a five-minute tokenized lease: abandoned work can be reclaimed after expiry, and a stale worker cannot finalize a newer claim. A failed attempt receives exponential availability delays beginning at one minute and capped at six hours; work stops automatically after five attempts and remains visible as failed. Completion accepts only `sent`, `failed`, or `suppressed` from a current claimed record.
+
 `notification_preferences` defaults every optional communication switch to off. Authentication messages never modify these preferences. Account holders manage only their own reminders and preferences through RLS; authenticated clients may read their own generated events but cannot manufacture events directly.
 
 ---
 
 # 27. Update Targeting
 
-Structured metadata should eventually allow determining which users opted into an update.
+Critical changes enter notification targeting only through a structured `critical_update_releases` record. A release identifies one canonical article or residence status, a stable revision, a concise factual summary, an optional verification note, and an explicit `draft`, `approved`, or `published` editorial state. Only published releases are eligible, and their substantive fields become immutable; a correction requires a new revision.
+
+Relevance is deliberately based on explicit account context. A published release targets users who enabled the critical-update topic and either saved the affected canonical item or selected a journey/route snapshot containing it. Removed saves, unrelated routes, browsing history, search history, glossary activity, and account existence alone never qualify. Journey targets are snapshotted at publication so later journey editing cannot silently change the audience for an already-published update.
+
+Trusted generation processes each release once and creates one event per relevant user using the release ID as the deduplication key. Topic consent controls event creation; email channel consent is still re-evaluated during delivery so the same event model can support a future explicitly enabled channel.
 
 Example:
 
@@ -799,7 +813,7 @@ Notification event
 Email / push
 ```
 
-This must respect explicit user communication preferences.
+Source monitoring may propose a draft release, but it cannot approve, publish, or generate user events. Those remain separate human-review and trusted-execution actions.
 
 ---
 
