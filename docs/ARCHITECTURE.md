@@ -487,7 +487,7 @@ search(query, filters)
 
 Future dedicated providers might include specialized search engines, but no vendor should be selected now.
 
-Multilingual display does not by itself create multilingual retrieval. Phase 11 should produce locale-specific search documents from translated discovery metadata while retaining canonical content IDs and language-independent taxonomy relationships. Explore, FAQ, Glossary, and onboarding search should query the selected locale first. A canonical-English translation of the query may be used only as a controlled fallback when localized retrieval produces no useful result; this boundary must expose privacy, latency, caching, quota, confidence, and failure behavior instead of hiding a provider call inside UI components.
+Multilingual display does not by itself create multilingual retrieval. Phase 11 establishes locale-specific search documents for the pilot; Phase 14 extends them across translated group, FAQ, Glossary, onboarding, and catalog metadata while retaining canonical content IDs and language-independent taxonomy relationships. Explore, FAQ, Glossary, and onboarding search should query the selected locale first once corresponding artifacts exist. A canonical-English translation of the query may be used only as a controlled fallback when localized retrieval produces no useful result; this boundary must expose privacy, latency, caching, quota, confidence, and failure behavior instead of hiding a provider call inside UI components.
 
 Search normalization and tokenization must be selected per supported language. The English whitespace-token strategy cannot be assumed for languages without the same word boundaries or morphology. Protected Japanese, kana, romaji, acronyms, and official names remain searchable alongside localized fields, and cross-search handoffs preserve both the locale and the original query.
 
@@ -738,7 +738,19 @@ Potential conceptual interface:
 translateContent(content, locale)
 ```
 
-Provider selection is deferred.
+Initial localization uses Codex as an offline editorial generation tool. Codex writes validated, version-controlled artifacts; application page requests never call Codex. The application-level provider interface remains so generation can move to an API later without changing content consumers or cache semantics.
+
+Phase 11 implements a cache-first provider boundary without selecting a runtime vendor. A translation artifact is identified by its stable content ID and kind, canonical-source SHA-256 revision, protected-terminology SHA-256 revision, translation-prompt SHA-256 revision, target BCP 47 locale, generator, and model. Artifacts record whether they remain machine translated or received human review. Missing, malformed, or stale artifacts fall back to canonical English; a generator response that removes, duplicates, or invents protected placeholders is rejected rather than cached.
+
+Only two representative articles form the Phase 11 pilot corpus, initially in Japanese. Japanese is intended both for interface evaluation and for Japanese-speaking supporters helping a foreign resident understand the canonical guidance; it is not an assumption that Japanese citizens already know immigration procedure. Catalog-wide generation follows the major Phase 13 canonical-English pass in Phase 14 so extensive editorial changes do not create avoidable translation cost and churn. Repository artifacts are the initial shared cache, so production translation credentials and runtime quotas are unnecessary. Source, prompt, and terminology freshness for those repository artifacts is an editorial/build invariant enforced by artifact contract tests; a future dynamic cache uses the same revision identity at runtime.
+
+The pilot guidance-language preference is stored on the device and shared across tabs. Article pages only activate a translation when the selected locale has a complete validated title, description, and body artifact. Otherwise they render canonical English and explain the fallback. Translated article Markdown is rendered through a constrained component parser rather than injected as HTML. The document interface remains English during the pilot, while translated article regions carry their own language metadata for assistive technology.
+
+The kana/romaji reading-aid preference is also device-local and shared across tabs. A root presentation attribute controls server-rendered reading spans, allowing Glossary, inline terminology, residence-status, and saved-content surfaces to respond without duplicating client state throughout the component tree. Both readings are the default; if only one representation exists, that available representation remains visible regardless of the preference. Glossary study-session clue controls remain independent of this global presentation preference.
+
+Localized discovery indexes are assembled from compact search records rather than sending full translated article bodies to the client. During the Japanese pilot, translated article titles and descriptions are searched before canonical English fallback fields and are presented in Japanese when matched. Stable IDs and structured filters remain language-independent. Result sorting uses an `Intl.Collator` for the active locale, with kana as the Japanese glossary sort key, and cross-search URLs carry both the query and non-English locale.
+
+Glossary pronunciation uses the browser's `speechSynthesis` capability with a requested `ja-JP` voice. It speaks the glossary's curated kana reading when available, falling back to the Japanese written form, and exposes play, stop, replay, failure, and unsupported states. Stop cancels the short utterance reliably; browser pause and resume are intentionally avoided because their behavior is inconsistent for single-word speech. It never autoplays, does not require a hosted speech provider or generated-audio cache, and keeps kana and romaji visible when synthesis or a Japanese voice is unavailable.
 
 Translated search documents should be versioned against the canonical content revision and translation configuration so stale indexes can be invalidated with cached prose. Stable article, FAQ, glossary, group, journey, and taxonomy IDs must never be translated. Query translation is a retrieval fallback, not a source of canonical content and not permission to generate an answer independently of the reviewed guidance.
 
@@ -1023,9 +1035,9 @@ If editorial scale later makes a CMS useful, it should be evaluated based on act
 
 # 39. Deployment
 
-Initial production deployment is expected to use Railway through the connected GitHub repository, but public deployment is deferred until the post-Phase 13 hosted-integration gate.
+Initial production deployment is expected to use Railway through the connected GitHub repository, but public deployment is deferred until the post-Phase 14 hosted-integration gate.
 
-Phases 7–13 should remain local-first. A hosted integration environment is justified only when the already-implemented feature set needs validation of one or more capabilities that local execution cannot faithfully provide:
+Phases 7–14 should remain local-first. A hosted integration environment is justified only when the already-implemented feature set needs validation of one or more capabilities that local execution cannot faithfully provide:
 
 - cross-network account and data synchronization;
 - production authentication origins or OAuth callbacks;
@@ -1050,7 +1062,7 @@ Local Supabase or replaceable service boundaries should be used where practical 
 
 Do not prematurely select or implement:
 
-- translation provider;
+- runtime translation API provider;
 - email provider;
 - push provider;
 - dedicated search vendor;

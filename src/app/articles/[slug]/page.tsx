@@ -13,6 +13,13 @@ import { getJourneySteps } from "@/lib/content/articles";
 import { getGlossaryTermById } from "@/lib/content/glossary";
 import { getJourneyRouteById, getJourneyRouteForArticle } from "@/domain/discovery/discovery";
 import { articleJourneyHref, journeyHref } from "@/lib/navigation/journey-context";
+import {
+  ArticleTranslationNotice,
+  LocalizedArticleBody,
+  LocalizedArticleHeading,
+} from "@/components/localization/localized-article";
+import { getJapanesePilotArticleTranslation } from "@/lib/content/translations";
+import { ContinueExploringList } from "@/components/content/continue-exploring-list";
 
 export const dynamicParams = false;
 
@@ -54,6 +61,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   }
 
   const { Content, metadata } = article;
+  const japaneseTranslation = getJapanesePilotArticleTranslation(metadata.id);
   const articleSources = metadata.sourceIds.flatMap((sourceId) => {
     const source = getSourceById(sourceId);
     return source ? [source] : [];
@@ -99,6 +107,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
             ← Back to {journeyContext.journey.title}
           </Link>
         ) : <BackToExploreLink />}
+        <ArticleTranslationNotice translation={japaneseTranslation} />
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="article" contentId={metadata.id} /></div>
           <div className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
@@ -111,17 +120,20 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
               </span>
             ))}
           </div>
-          <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            {metadata.title}
-          </h1>
-          <p className="mt-5 text-lg leading-8 text-slate-600">{metadata.description}</p>
+          <LocalizedArticleHeading
+            canonicalTitle={metadata.title}
+            canonicalDescription={metadata.description}
+            translation={japaneseTranslation}
+          />
           <p className="mt-5 text-sm text-slate-500">
             Journey stages: {metadata.journeyStageIds.map((id) => labelFor(id, journeyStages)).join(", ")}
           </p>
         </header>
 
         <div className="mt-8">
-          <Content />
+          <LocalizedArticleBody translation={japaneseTranslation}>
+            <Content />
+          </LocalizedArticleBody>
         </div>
 
         <div className="mt-12">
@@ -176,9 +188,10 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
               Continue exploring
             </h2>
             <p className="mt-3 leading-7 text-slate-600">Continue with an ordered journey, browse the wider subject, or move to the next connected guide.</p>
-            {(relatedJourneys.length > 0 || relatedGroups.length > 0) && (
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {relatedJourneys.map((journey) => (
+            <ContinueExploringList
+              key={metadata.id}
+              cards={[
+                ...relatedJourneys.map((journey) => (
                   <Link
                     key={`journey-${journey.id}`}
                     href={journeyHref(journey.id, journeyContext?.journey.id === journey.id ? journeyContext.route?.id : getJourneyRouteForArticle(journey, metadata.id)?.id)}
@@ -187,8 +200,8 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Guided journey</span>
                     <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{journey.title} →</span>
                   </Link>
-                ))}
-                {relatedGroups.map((group) => (
+                )),
+                ...relatedGroups.map((group) => (
                   <Link
                     key={`group-${group.id}`}
                     href={`/explore/${group.id}`}
@@ -197,12 +210,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">Content group</span>
                     <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{group.title} →</span>
                   </Link>
-                ))}
-              </div>
-            )}
-            {continueGuides.size > 0 && (
-              <ul className="mt-6 space-y-3">
-                {[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
+                )),
+              ]}
+              guides={[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
                   <li key={relatedArticle.id}>
                     <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500">{label}:</span>
                     <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
@@ -210,8 +220,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                     </Link>
                   </li>
                 ))}
-              </ul>
-            )}
+            />
           </section>
         )}
 

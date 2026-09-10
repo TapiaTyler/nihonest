@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 
 export function InlineGlossaryTerm({
   term,
@@ -84,9 +85,7 @@ export function InlineGlossaryTerm({
       >
         <span className="block font-semibold">{term.englishName}</span>
         <span className="mt-1 block text-slate-200">
-          {term.kana && <span lang="ja">{term.kana}</span>}
-          {term.kana && term.romaji && " · "}
-          {term.romaji}
+          <JapaneseReading kana={term.kana} romaji={term.romaji} />
         </span>
         <span className="mt-2 block text-xs text-slate-300">Select the term to open its full glossary entry.</span>
       </span>

@@ -80,6 +80,26 @@ describe("knowledgebase search", () => {
     expect(hasActiveKnowledgebaseSearch({ ...defaultKnowledgebaseSearchFilters, kind: "glossary" })).toBe(true);
   });
 
+  it("searches the selected-language index while retaining canonical English fallback", () => {
+    const translations = [{
+      contentId: bankArticle.id,
+      targetLocale: "ja",
+      title: "銀行口座を開設する",
+      description: "銀行の審査に備えて住所と本人確認書類を準備します。",
+    }];
+    const japaneseResults = searchKnowledgebase([arrivalGroup], [bankArticle], [], {
+      ...defaultKnowledgebaseSearchFilters,
+      query: "銀行口座",
+    }, [], { locale: "ja", articleTranslations: translations });
+    const englishFallbackResults = searchKnowledgebase([arrivalGroup], [bankArticle], [], {
+      ...defaultKnowledgebaseSearchFilters,
+      query: "bank account",
+    }, [], { locale: "ja", articleTranslations: translations });
+
+    expect(japaneseResults.map(({ kind }) => kind)).toEqual(["group", "article"]);
+    expect(englishFallbackResults.map(({ kind }) => kind)).toEqual(["group", "article"]);
+  });
+
   it("orders groups, articles, and glossary terms by type and then title", () => {
     const secondArticle = articleMetadataSchema.parse({
       ...bankArticle,

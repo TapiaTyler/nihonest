@@ -9,13 +9,14 @@ type ArticleCardProps = Readonly<{
   href?: LinkProps["href"];
   notice?: string;
   headerAction?: ReactNode;
+  contentLanguage?: string;
 }>;
 
 function labelsFor(ids: readonly string[], options: readonly { id: string; label: string }[]) {
   return ids.map((id) => options.find((option) => option.id === id)?.label ?? id);
 }
 
-export function ArticleCard({ article, returnTo, href, notice, headerAction }: ArticleCardProps) {
+export function ArticleCard({ article, returnTo, href, notice, headerAction, contentLanguage }: ArticleCardProps) {
   const topicLabels = labelsFor(article.topicIds, topics);
   const stageLabels = labelsFor(article.journeyStageIds, journeyStages);
 
@@ -36,7 +37,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction }: A
           </div>
           {headerAction && <div className="relative z-10 shrink-0">{headerAction}</div>}
         </div>
-        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
+        <h2 lang={contentLanguage} className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
           <Link
             href={href ?? (returnTo ? { pathname: `/articles/${article.slug}`, query: { returnTo } } : `/articles/${article.slug}`)}
             aria-label={article.title}
@@ -45,7 +46,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction }: A
             {article.title}
           </Link>
         </h2>
-        <p className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
+        <p lang={contentLanguage} className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
           <p className="text-slate-500">Relevant to: {stageLabels.join(", ")}</p>
           <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">

@@ -9,6 +9,20 @@ import type {
   TopicId,
 } from "@/domain/taxonomy/taxonomy";
 import { normalizeSearchText } from "./normalize";
+import type { ContentLocalePreference } from "@/domain/localization/content-locale";
+
+export type ArticleSearchTranslation = Readonly<{
+  contentId: string;
+  targetLocale: string;
+  title: string;
+  description: string;
+  searchTerms?: readonly string[];
+}>;
+
+export type KnowledgebaseSearchOptions = Readonly<{
+  locale?: ContentLocalePreference;
+  articleTranslations?: readonly ArticleSearchTranslation[];
+}>;
 
 type AllOption = "all";
 
@@ -110,7 +124,12 @@ export function searchKnowledgebase(
   terms: readonly JapaneseTerm[],
   filters: KnowledgebaseSearchFilters,
   faqs: readonly Faq[] = [],
+  options: KnowledgebaseSearchOptions = {},
 ): readonly KnowledgebaseSearchResult[] {
+  const locale = options.locale ?? "en";
+  const articleTranslation = (articleId: string) => options.articleTranslations?.find((translation) => (
+    translation.contentId === articleId && translation.targetLocale === locale
+  ));
   const groupResults: KnowledgebaseSearchResult[] = groups.flatMap((group) => {
     if (filters.kind !== "all" && filters.kind !== "group") return [];
 
@@ -127,6 +146,9 @@ export function searchKnowledgebase(
         ...matchingMembers.flatMap((article) => [
           article.title,
           article.description,
+          articleTranslation(article.id)?.title,
+          articleTranslation(article.id)?.description,
+          ...(articleTranslation(article.id)?.searchTerms ?? []),
           article.id,
           ...article.topicIds,
           ...article.journeyStageIds,
@@ -140,9 +162,10 @@ export function searchKnowledgebase(
 
   const articleResults: KnowledgebaseSearchResult[] = articles.flatMap((article) => {
     if (!articleMatchesFilters(article, filters)) return [];
+    const translation = articleTranslation(article.id);
     const score = queryScore(
-      article.title,
-      [article.title, article.description, article.id, ...article.topicIds, ...article.journeyStageIds, ...article.termIds],
+      translation?.title ?? article.title,
+      [translation?.title, translation?.description, ...(translation?.searchTerms ?? []), article.title, article.description, article.id, ...article.topicIds, ...article.journeyStageIds, ...article.termIds],
       filters.query,
     );
     return score >= 0 ? [{ kind: "article" as const, article, score }] : [];
@@ -183,15 +206,20 @@ export function searchKnowledgebase(
     glossary: 3,
   };
 
+  const collator = new Intl.Collator(locale, { sensitivity: "base" });
   return [...groupResults, ...faqResults, ...articleResults, ...glossaryResults].sort(
     (left, right) => kindOrder[left.kind] - kindOrder[right.kind] ||
-      resultTitle(left).localeCompare(resultTitle(right), "en", { sensitivity: "base" }),
+      collator.compare(resultTitle(left, options.articleTranslations, locale), resultTitle(right, options.articleTranslations, locale)),
   );
 }
 
-function resultTitle(result: KnowledgebaseSearchResult) {
+function resultTitle(result: KnowledgebaseSearchResult, translations: readonly ArticleSearchTranslation[] | undefined, locale: ContentLocalePreference) {
   if (result.kind === "group") return result.group.title;
   if (result.kind === "faq") return result.faq.question;
-  if (result.kind === "article") return result.article.title;
-  return result.term.englishName;
+  if (result.kind === "article") return translations?.find((translation) => (
+    translation.contentId === result.article.id && translation.targetLocale === locale
+  ))?.title ?? result.article.title;
+  return locale === "ja"
+    ? result.term.kana ?? result.term.japanese
+    : result.term.englishName;
 }

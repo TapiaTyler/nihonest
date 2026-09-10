@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { GuidedJourney } from "@/domain/discovery/discovery";
 import { createCriticalUpdateEvent, criticalUpdateDeliveryReasons, isCriticalUpdateRelevant, journeyTargetsForArticle } from "./critical-updates";
 
 const publishedRelease = {
@@ -71,13 +72,13 @@ describe("targeted critical updates", () => {
   });
 
   it("derives global and route-specific journey targets without duplicates", () => {
-    const journey = {
+    const journey: GuidedJourney = {
       id: "worker", groupId: "work", title: "Worker", description: "Worker guidance", introduction: "Start here.",
       routes: [{ id: "engineer", title: "Engineer", description: "Engineer route", articleId: "engineer-guide" }],
       phases: [{ id: "arrival", title: "Arrival", steps: [
         { id: "shared", type: "article", articleId: "shared-guide", requiredness: "required" },
       ] }],
-    } as const;
+    };
     expect(journeyTargetsForArticle("shared-guide", [journey])).toEqual([{ journeyId: "worker" }]);
     expect(journeyTargetsForArticle("engineer-guide", [journey])).toEqual([{ journeyId: "worker", routeId: "engineer" }]);
   });

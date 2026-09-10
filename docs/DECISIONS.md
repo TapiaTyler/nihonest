@@ -473,11 +473,11 @@ No provider has been selected.
 
 ## ADR-028 — Machine-translation provider is deferred
 
-**Status:** Accepted
+**Status:** Superseded by ADR-055
 
 ### Decision
 
-Do not select a translation provider until translation development begins.
+Defer provider selection until translation development begins. ADR-055 later selected Codex as an offline generation workflow while continuing to defer any runtime translation vendor.
 
 ### Reason
 
@@ -771,7 +771,7 @@ A flat list cannot distinguish route alternatives from sequential work. It cause
 
 ### Decision
 
-Phase 7 establishes local production readiness but does not deploy a continuously hosted public site. Phases 8–12 implement cloud persistence, synchronization, reminders, translation, and monitoring against local infrastructure or replaceable provider boundaries where practical. After Phase 13, a dedicated hosted-integration gate provisions production resources, validates the capabilities that genuinely require a reachable or scheduled environment, and makes the web application public only as its final step.
+Phase 7 establishes local production readiness but does not deploy a continuously hosted public site. Phases 8–12 implement cloud persistence, synchronization, reminders, translation, and monitoring against local infrastructure or replaceable provider boundaries where practical. After Phase 14, a dedicated hosted-integration gate provisions production resources, validates the capabilities that genuinely require a reachable or scheduled environment, and makes the web application public only as its final step.
 
 A restricted staging environment may be created during that gate. Production infrastructure must not be kept active merely to mirror every development push or expose unfinished branches.
 
@@ -781,7 +781,7 @@ Responsive UI, search, content modeling, local persistence, editorial work, and 
 
 ### Consequences
 
-- Railway public deployment moves from Phase 7 to after Phase 13;
+- Railway public deployment moves from Phase 7 to after Phase 14;
 - production Supabase, OAuth, email, translation/TTS, and monitoring resources are provisioned only when required by the hosted gate;
 - local completion remains the default for earlier implementation phases;
 - server-dependent behavior receives hosted end-to-end validation before public launch; and
@@ -834,7 +834,7 @@ Accounts should provide continuity without turning access to public guidance int
 - email used for authentication is not marketing consent;
 - no password database or duplicate profile email is created;
 - account UI reaches Supabase only through account-service modules;
-- Google, Apple, production email delivery, and cross-network behavior require hosted validation after Phase 13; and
+- Google, Apple, production email delivery, and cross-network behavior require hosted validation after Phase 14; and
 - later user-owned tables must add and test their own RLS policies before use.
 
 ---
@@ -966,6 +966,39 @@ Source changes and ordinary edits are not necessarily urgent, correct, or releva
 - generation records completion even when no current account is relevant;
 - deterministic release keys prevent duplicate events; and
 - production scheduling remains disabled until the hosted-integration gate.
+
+---
+
+## ADR-055 — Translation is cache-first, piloted before editorial expansion, and rolled out afterward
+
+**Status:** Accepted
+
+### Decision
+
+Keep English as the canonical editorial source and expose machine translation through a provider-neutral application service. Cache artifacts by stable content identity, target locale, canonical-source revision, protected-terminology revision, translation-prompt revision, generator, and model. Reject generator responses that alter protected Japanese, kana, romaji, acronyms, or official-name placeholders. Missing, invalid, or stale translations fall back to canonical English.
+
+Phase 11 validates this architecture with `visa-and-status-of-residence-explained` and `preparing-to-enter-japan`; it does not translate the full catalog. Japanese is the first pilot locale so the experience can also support Japanese-speaking friends or helpers who need a general understanding of unfamiliar immigration procedures. Phase 13 completes the large canonical-English research and editorial pass, and Phase 14 performs catalog-wide localization and multilingual quality review.
+
+Use Codex as the initial offline translation generator. Codex writes repository-cached artifacts through a versioned prompt and terminology mapping; the application never calls Codex during a page request. Record the generation method, model identity, prompt revision, terminology revision, and canonical-source revision. Retain the provider-neutral boundary so a later API generator can replace this workflow without changing artifact consumers. Codex output remains machine translated until a separate qualified reviewer approves it.
+
+Persist the Phase 11 guidance-language choice locally and apply it only where a complete validated artifact exists. Display a machine-translation notice for translated guidance and an explicit canonical-English fallback notice when coverage is unavailable. Do not imply that the English interface, discovery indexes, or untranslated catalog have already been localized.
+
+Use browser `speechSynthesis` with an available `ja-JP` voice for basic glossary-term pronunciation. Do not add a hosted speech provider or audio cache for this scope. Never autoplay, and retain kana and romaji as the dependable fallback.
+
+### Reason
+
+Bulk generation before Phase 13 would immediately invalidate many paid translations. Revision-addressed artifacts make invalidation deterministic and keep page access independent from provider availability. Isolated glossary terms do not justify the cost and operational complexity of hosted text-to-speech.
+
+### Consequences
+
+- pilot translation can validate protection, caching, notices, fallback, search, and stale-state behavior without publishing incomplete locale support;
+- changing canonical content or protected terminology produces a new cache identity;
+- interface translations remain version-controlled rather than being generated per request;
+- runtime page views do not repeatedly purchase the same content translation;
+- initial localization does not require production translation credentials, quotas, or provider availability;
+- arbitrary live query translation remains deferred and localized indexes must provide the initial multilingual retrieval path;
+- browser pronunciation quality varies by installed voice and therefore remains an optional aid; and
+- deployment moves behind the Phase 14 localization rollout.
 
 ---
 

@@ -276,9 +276,9 @@ test: add critical public flow coverage
 
 # Phase 8 — Cloud Persistence and Accounts
 
-**Local implementation complete; hosted-provider validation remains in the post-Phase 13 integration gate.**
+**Local implementation complete; hosted-provider validation remains in the post-Phase 14 integration gate.**
 
-Develop against local or otherwise non-production infrastructure first. Do not provision the production Supabase project, production OAuth callbacks, or continuously hosted web application solely to begin this phase; final hosted integration belongs to the post-Phase 13 deployment gate.
+Develop against local or otherwise non-production infrastructure first. Do not provision the production Supabase project, production OAuth callbacks, or continuously hosted web application solely to begin this phase; final hosted integration belongs to the post-Phase 14 deployment gate.
 
 Objectives:
 
@@ -323,7 +323,7 @@ feat: sync user preferences across devices
 
 # Phase 9 — Saved Content and Roadmap
 
-**Complete locally; cross-network synchronization and hosted-provider validation remain in the post-Phase 13 integration gate.**
+**Complete locally; cross-network synchronization and hosted-provider validation remain in the post-Phase 14 integration gate.**
 
 Objectives:
 
@@ -355,7 +355,7 @@ feat: add personalized journey roadmap
 
 # Phase 10 — Reminders and Email
 
-**Complete locally; production scheduling, SES credentials and domain verification, and hosted delivery validation remain in the post-Phase 13 integration gate.**
+**Complete locally; production scheduling, SES credentials and domain verification, and hosted delivery validation remain in the post-Phase 14 integration gate.**
 
 **Iteration 1 complete locally: reminder, notification-event, explicit-preference, and time-zone contracts are implemented. The generated database migration and RLS tests await the next deliberate local Supabase verification checkpoint.**
 
@@ -390,13 +390,27 @@ feat: add opt-in reminder notifications
 
 # Phase 11 — Automated Translation
 
+**Complete locally at pilot scope.** The protected, cache-first architecture, Japanese sample artifacts, locale presentation and fallback, pilot search retrieval, reading aids, and browser pronunciation are implemented and verified without runtime translation or speech infrastructure. Phase 14 owns catalog-wide generation, interface localization, expanded multilingual indexes, language-specific retrieval quality, document-image localization, and any separately approved live-query fallback.
+
+**Iteration 1 complete locally: provider-neutral translation artifacts, deterministic source and terminology revisions, cache identities, protected-term restoration, fail-closed provider validation, and an in-memory development cache are implemented. Two representative articles define the pilot corpus. No provider has been selected or contacted, no translation is visible in the UI, and catalog-wide generation waits until canonical English is finalized in Phase 13.**
+
+**Iteration 2 complete locally: Codex-assisted repository generation is selected for pre-generated localization rather than runtime translation. The two pilot articles now have revision-addressed Japanese artifacts marked machine translated, backed by a versioned prompt and terminology map. Tests reject stale source, prompt, or terminology revisions. The artifacts remain outside the public UI pending locale presentation and fallback work.**
+
+**Iteration 3 complete locally: a device-local guidance-language preference now exposes English and a clearly labeled Japanese pilot in desktop and mobile navigation. The two pilot guides render their translated title, summary, and structured body with a machine-translation notice and direct return-to-English action. Guides without a complete current Japanese artifact remain available through an explicit canonical-English fallback. Interface chrome, discovery results, search, and the rest of the catalog remain English until their planned localization work.**
+
+**Iteration 4 complete locally: individual glossary-term pages now provide an accessible, user-initiated pronunciation control backed by browser `speechSynthesis`. It requests a Japanese voice, speaks the curated kana reading when available, exposes play, stop, replay, error, and unsupported states, never autoplays, and leaves Japanese, kana, and romaji visible regardless of audio support. Stop replaces pause because browser pause behavior is unreliable for short single-term utterances.**
+
+**Iteration 5 complete locally: the compact language menu now includes a device-local Japanese reading-aid preference for kana, romaji, or both. The preference applies consistently to Glossary cards and pages, inline terminology disclosures, residence-status cards and pages, and saved residence statuses. Both remains the default, and an available reading is never hidden when a term only has one representation. Glossary review retains its separate session controls because those options intentionally manage quiz clues rather than general presentation.**
+
+**Iteration 6 complete locally: Explore now builds a Japanese pilot index from the translated titles and descriptions of the two pilot guides. Japanese queries can retrieve and present those guides in Japanese, while canonical English fields remain searchable as a fallback under the Japanese preference. Article results sort through the active locale, Japanese glossary results use their kana reading as the locale-appropriate sort key, and Explore–FAQ handoffs preserve the selected locale alongside the original query. Full group, FAQ, glossary-definition, onboarding, and catalog localization remains deferred until translated artifacts exist.**
+
 Objectives:
 
-- select translation provider based on current quality/cost;
-- evaluate Japanese text-to-speech quality, licensing, latency, and cost independently, even if the translation provider also offers speech generation;
+- use Codex-assisted offline generation for repository-cached localization, retaining the provider boundary for a future change if evidence justifies it;
+- use browser `speechSynthesis` for basic glossary-word pronunciation, requesting an available `ja-JP` voice without adding a hosted speech provider;
 - preserve canonical English;
 - protect Japanese term structures;
-- translate eligible prose;
+- translate only the pilot corpus needed to validate the architecture; defer catalog-wide translation until Phase 14;
 - expand supported content and interface languages through the protected translation architecture, prioritizing languages according to demonstrated user need and verified provider quality;
 - build locale-specific search indexes from translated group titles, article titles and descriptions, article search terms, FAQ questions and summaries, FAQ aliases, glossary definitions, and onboarding discovery labels while retaining their stable canonical IDs;
 - keep structured filters and content relationships language-independent while localizing their user-facing labels;
@@ -410,18 +424,18 @@ Objectives:
 - display machine-translation notice;
 - gracefully fall back to English;
 - add an accessible pronunciation-audio control to individual glossary-term pages;
-- never autoplay pronunciation, expose clear play/pause/replay state, and retain kana and romaji as the non-audio fallback;
-- cache or pre-generate stable pronunciation audio where provider terms and editorial workflow allow;
+- never autoplay pronunciation, expose clear play/stop/replay state, and retain kana and romaji as the non-audio fallback;
+- retain kana and romaji when browser speech synthesis or a Japanese voice is unavailable;
 - add an optional reading-aid preference for showing kana, romaji, or both alongside Japanese terms across the product;
 - translate semantic document-image annotations, captions, and example-field guidance while keeping the underlying reference image independent from any one interface language.
 - sort translated lists by their visible labels using an `Intl.Collator` for the active locale, with locale-appropriate keys such as kana for Japanese glossary entries, canonical English fallback values, and preserved curated ordering where chronology or category priority matters more than alphabetization.
 
-Provider integration may be developed locally with protected credentials. Production secret management, shared caching, quotas, and failure behavior are validated at the hosted integration gate.
+Codex-assisted generation runs as a deliberate editorial workflow and is never called by a page request. No translation credential or runtime quota is required for the initial rollout. If a future live-query fallback or automated generator is approved, its secrets, quotas, privacy, and failure behavior must be validated at the hosted integration gate.
 
 Suggested checkpoint:
 
 ```text
-feat: add protected machine translation
+feat: add Japanese localization and multilingual search pilot
 ```
 
 ---
@@ -491,7 +505,30 @@ content: research visa guidance and add municipality coverage
 
 ---
 
-# Post-Phase 13 — Hosted Integration and Public Deployment Gate
+# Phase 14 — Localization Rollout
+
+Objectives:
+
+The objectives below define the complete localization direction. Phase 11 validates that direction through the Japanese pilot; objectives requiring content outside the pilot corpus or interface-wide localization are Phase 14 deliverables after canonical content stabilizes in Phase 13.
+
+- translate the finalized canonical catalog through the protected, cache-first Phase 11 architecture;
+- generate only artifacts whose canonical source and terminology revisions are current;
+- review high-risk immigration, legal, tax, healthcare, and administrative translations before treating them as reviewed;
+- regenerate and validate locale-specific search indexes;
+- verify translated links, structured fields, filters, sorting, search handoffs, and English fallback;
+- measure translation coverage and avoid presenting a partially translated locale as complete;
+- complete multilingual accessibility, responsive-layout, and machine-translation-notice review;
+- retain older artifacts only as explicitly stale data while a replacement is generated, never as silently current content.
+
+Suggested checkpoint:
+
+```text
+feat: roll out reviewed multilingual content
+```
+
+---
+
+# Post-Phase 14 — Hosted Integration and Public Deployment Gate
 
 This is the first planned continuously hosted application environment and public web launch. It occurs only after the features that need hosted validation and the major editorial pass have already been implemented locally.
 
@@ -502,7 +539,7 @@ Objectives:
 - deploy the web application to Railway from the intended production branch only after local tests and the production build pass;
 - validate account migration, cloud synchronization, and cross-device behavior against the hosted environment;
 - activate and verify opt-in email reminders and scheduled jobs without enabling unsolicited communication;
-- configure production translation/TTS secrets, caching, quotas, and graceful fallback if those features remain approved;
+- validate repository-cached localization, browser pronunciation, and graceful English fallback without introducing translation or speech secrets;
 - activate source-change monitoring schedules and editorial alerts without automated publication;
 - complete security, privacy, accessibility, observability, rollback, cost-limit, and deployment-frequency checks;
 - keep draft and review-state content visibly labeled and prevent incomplete administrative tools from becoming public accidentally.
@@ -521,7 +558,7 @@ chore: deploy public web application
 
 ---
 
-# Phase 14 — Native Application Foundation
+# Phase 15 — Native Application Foundation
 
 Objectives:
 
@@ -544,7 +581,7 @@ feat: scaffold Nihonest native application
 
 ---
 
-# Phase 15 — Native Convenience Features
+# Phase 16 — Native Convenience Features
 
 Potential objectives:
 
@@ -561,7 +598,7 @@ Exact offline storage technology should be selected based on requirements at thi
 
 ---
 
-# Phase 16 — Native Monetization
+# Phase 17 — Native Monetization
 
 Direction:
 
@@ -596,7 +633,7 @@ In particular, defer until justified:
 - production database;
 - authentication;
 - email provider;
-- translation provider;
+- runtime translation API provider;
 - push provider;
 - search SaaS;
 - CMS;

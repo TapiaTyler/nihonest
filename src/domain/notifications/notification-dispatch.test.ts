@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { dispatchNotificationEmail, nextEmailRetryAt } from "./notification-dispatch";
 import { prepareEmailDelivery, transitionNotificationDelivery } from "./notification-delivery";
+import type { NotificationEvent } from "./notifications";
 
 const event = {
   id: "10000000-0000-4000-8000-000000000001",
@@ -12,7 +13,7 @@ const event = {
 } as const;
 const preferences = { emailEnabled: true, deadlineRemindersEnabled: true, criticalUpdatesEnabled: false, timeZone: "Asia/Tokyo", updatedAt: event.createdAt };
 const emailContext = { fromName: "Nihonest", fromAddress: "notifications@nihonest.com", recipientAddress: "reader@example.com", siteOrigin: "https://nihonest.com" };
-const criticalEvent = {
+const criticalEvent: NotificationEvent = {
   ...event,
   type: "article-critical-update",
   deduplicationKey: "critical-update-release:60000000-0000-4000-8000-000000000006",
@@ -24,7 +25,7 @@ const criticalEvent = {
     summary: "The reviewed evidence list changed.",
     journeyTargets: [{ journeyId: "professional-worker", routeId: "engineer" }],
   },
-} as const;
+};
 
 function claimedDelivery() {
   const pending = prepareEmailDelivery(event, preferences, "40000000-0000-4000-8000-000000000004", event.createdAt);

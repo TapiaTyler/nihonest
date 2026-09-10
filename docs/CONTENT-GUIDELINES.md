@@ -98,7 +98,7 @@ Keep the consolidated Key Japanese terminology section after the main guidance s
 
 ## 6. Machine Translation
 
-Machine translation is planned but deferred.
+Machine translation uses a limited Codex-assisted Phase 11 pilot before catalog-wide generation after the Phase 13 canonical-English review. Codex-generated output remains machine translated; Codex must not confer human-reviewed status on its own translation.
 
 When implemented:
 
@@ -109,6 +109,9 @@ When implemented:
 - translation failures should fall back to English;
 - important official names should be preserved appropriately;
 - translations should be cached where practical.
+- cache currency must be determined from canonical source and protected-terminology revisions rather than dates alone;
+- incomplete locale coverage must not be presented as a complete translation;
+- high-risk machine translations require deliberate review before receiving a reviewed state.
 
 A future notice may read:
 

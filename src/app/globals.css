@@ -33,6 +33,13 @@ select:not(:disabled),
   padding-right: 1.5rem;
 }
 
+html[data-reading-aid="kana"] [data-reading-aid-romaji],
+html[data-reading-aid="kana"] [data-reading-aid-separator],
+html[data-reading-aid="romaji"] [data-reading-aid-kana],
+html[data-reading-aid="romaji"] [data-reading-aid-separator] {
+  display: none;
+}
+
 ::selection {
   background: oklch(0.91 0.07 180);
   color: oklch(0.2 0.04 190);

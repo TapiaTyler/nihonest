@@ -7,8 +7,12 @@ import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { FAQ_BROWSE_GROUP_IDS, faqBrowseGroupLabels } from "@/domain/faq/faq";
 import type { FaqEntry } from "@/lib/content/faqs";
 import { searchFaqs } from "@/lib/search/faq-search";
+import { useContentLocale } from "@/components/localization/content-locale-provider";
+import { contentLocalePreferenceSchema } from "@/domain/localization/content-locale";
+import { writeContentLocale } from "@/lib/storage/content-locale";
 
 export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[] }>) {
+  const { locale } = useContentLocale();
   const searchId = useId();
   const [query, setQuery] = useState("");
   const hasQuery = Boolean(query.trim());
@@ -29,7 +33,10 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
   // URL-backed state makes cross-search handoffs, refresh, and browser Back reproduce the same question.
   useEffect(() => {
     function restoreFromUrl() {
-      const restoredQuery = new URLSearchParams(window.location.search).get("q") ?? "";
+      const params = new URLSearchParams(window.location.search);
+      const requestedLocale = contentLocalePreferenceSchema.safeParse(params.get("lang"));
+      if (requestedLocale.success) writeContentLocale(requestedLocale.data);
+      const restoredQuery = params.get("q") ?? "";
       setQuery(restoredQuery);
     }
     restoreFromUrl();
@@ -41,6 +48,7 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
     setQuery(nextQuery);
     const params = new URLSearchParams();
     if (nextQuery.trim()) params.set("q", nextQuery);
+    if (locale !== "en") params.set("lang", locale);
     window.history.replaceState(null, "", params.size ? `/faq?${params}` : "/faq");
   }
 
@@ -93,7 +101,7 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
             <h3 className="text-xl font-semibold text-slate-950">No matching FAQ found</h3>
             <p className="mt-2 text-slate-600">Try fewer words, browse all questions, or search the complete guidance catalog with the same wording.</p>
             <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
-              <Link href={{ pathname: "/explore", query: { q: query } }} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={{ pathname: "/explore", query: { q: query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                 Search all guidance for this question →
               </Link>
               <button type="button" onClick={() => updateQuery("")} className="min-h-11 rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Browse all questions</button>

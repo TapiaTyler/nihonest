@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 
 export function GlossaryCard({ term, returnTo }: Readonly<{ term: JapaneseTerm; returnTo?: string }>) {
   return (
@@ -14,9 +15,7 @@ export function GlossaryCard({ term, returnTo }: Readonly<{ term: JapaneseTerm; 
         </p>
         {(term.kana || term.romaji) && (
           <p className="mt-2 text-sm text-slate-500">
-            {term.kana && <span lang="ja">{term.kana}</span>}
-            {term.kana && term.romaji && <span> · </span>}
-            {term.romaji && <span>{term.romaji}</span>}
+            <JapaneseReading kana={term.kana} romaji={term.romaji} />
           </p>
         )}
         <h2 className="mt-5 text-xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">

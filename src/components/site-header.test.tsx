@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "./site-header";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { ReadingAidProvider } from "@/components/localization/reading-aid-provider";
 
 const accountMocks = vi.hoisted(() => ({
   useAccountSession: vi.fn(),
@@ -14,6 +16,7 @@ vi.mock("@/components/account/account-session-provider", () => ({
 
 describe("SiteHeader", () => {
   beforeEach(() => {
+    window.localStorage.clear();
     accountMocks.endSession.mockReset().mockResolvedValue({ ok: true });
     accountMocks.useAccountSession.mockReturnValue({
       status: "signed-out",
@@ -22,8 +25,16 @@ describe("SiteHeader", () => {
     });
   });
 
+  function renderHeader() {
+    return render(
+      <ContentLocaleProvider>
+        <ReadingAidProvider><SiteHeader /></ReadingAidProvider>
+      </ContentLocaleProvider>,
+    );
+  }
+
   it("keeps key destinations visible and groups related desktop links", () => {
-    render(<SiteHeader />);
+    renderHeader();
 
     const navigation = screen.getByRole("navigation", { name: "Primary navigation" });
     expect(within(navigation).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
@@ -53,7 +64,7 @@ describe("SiteHeader", () => {
       endSession: accountMocks.endSession,
       updateDisplayName: vi.fn(),
     });
-    render(<SiteHeader />);
+    renderHeader();
 
     const navigation = screen.getByRole("navigation", { name: "Primary navigation" });
     fireEvent.click(within(navigation).getByRole("button", { name: "Tyler" }));
@@ -64,7 +75,7 @@ describe("SiteHeader", () => {
   });
 
   it("opens and closes an accessible mobile navigation drawer", async () => {
-    render(<SiteHeader />);
+    renderHeader();
 
     const openButton = screen.getByRole("button", { name: "Open navigation menu" });
     expect(openButton).toHaveAttribute("aria-expanded", "false");
@@ -81,7 +92,7 @@ describe("SiteHeader", () => {
   });
 
   it("closes the drawer when a destination is selected", async () => {
-    render(<SiteHeader />);
+    renderHeader();
     fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
     fireEvent.click(within(screen.getByRole("navigation", { name: "Mobile navigation" })).getByRole("link", { name: "Saved" }));
     await waitFor(() => expect(screen.queryByRole("navigation", { name: "Mobile navigation" })).not.toBeInTheDocument());

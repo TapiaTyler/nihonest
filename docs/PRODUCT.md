@@ -53,7 +53,7 @@ Nihonest is primarily designed for foreigners who:
 
 The canonical content language is English.
 
-Future machine translation should make explanatory content accessible in additional languages without requiring separate manually maintained versions of every article.
+The localization system should make explanatory content accessible in additional languages without requiring separately authored versions of every article. Phase 11 validates this through a limited Japanese machine-translation pilot before catalog-wide rollout.
 
 Japanese terminology remains part of the instructional content and must be preserved rather than translated away.
 
@@ -624,9 +624,9 @@ Translated pages should clearly identify that:
 - the displayed content may be machine translated;
 - Japanese terms and official names have intentionally been preserved.
 
-Generated translations should eventually be cached to avoid unnecessary repeated API usage.
+Generated translations are cached as revision-addressed repository artifacts so page views do not repeat generation work or depend on a live translation service.
 
-The translation provider is intentionally deferred.
+Initial translations are generated offline with Codex and stored as validated, revision-addressed repository artifacts. Codex is not a runtime application dependency, and its output remains labeled as machine translated until separately reviewed. A live translation API remains deferred unless later search or automation requirements justify it.
 
 ---
 

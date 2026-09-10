@@ -10,6 +10,7 @@ import { getSourceById } from "@/data/sources";
 import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { getGlossaryTermById } from "@/lib/content/glossary";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "long",
@@ -98,7 +99,7 @@ export default async function ResidenceStatusPage({
             </InlineGlossaryTerm>
           </p>
           <p className="mt-2 text-sm text-slate-500">
-            <span lang="ja">{residenceStatus.japaneseKana}</span> · {residenceStatus.romaji}
+            <JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />
           </p>
           <p className="mt-5 text-lg leading-8 text-slate-600">{residenceStatus.summary}</p>
         </header>

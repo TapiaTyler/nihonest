@@ -8,6 +8,8 @@ import { getSourceById } from "@/data/sources";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getArticleById } from "@/lib/content/articles";
 import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from "@/lib/content/glossary";
+import { PronunciationButton } from "@/components/glossary/pronunciation-button";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 
 export const dynamicParams = false;
 
@@ -56,10 +58,9 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
           </div>
           <h1 lang="ja" className="mt-5 text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl">{term.japanese}</h1>
           <p className="mt-4 text-lg text-slate-500">
-            {term.kana && <span lang="ja">{term.kana}</span>}
-            {term.kana && term.romaji && <span> · </span>}
-            {term.romaji}
+            <JapaneseReading kana={term.kana} romaji={term.romaji} />
           </p>
+          <PronunciationButton japanese={term.japanese} kana={term.kana} englishName={term.englishName} />
           <p className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">{term.englishName}</p>
           <p className="mt-4 text-lg leading-8 text-slate-600">{term.shortDefinition}</p>
         </header>

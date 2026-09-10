@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { ArticleMetadata } from "@/domain/article/article";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { visibleSavedContent } from "@/domain/saved-content/saved-content";
@@ -20,6 +21,8 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
 
   // Deep links from the Roadmap reveal the otherwise-collapsed review on arrival.
   useEffect(() => {
+    // The hash only exists in the browser, so this one-time post-hydration synchronization is intentional.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (window.location.hash === "#saved-glossary-review") setStudyOpen(true);
   }, []);
 
@@ -79,7 +82,7 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
               <li key={status.id} className="relative">
                 <Link href={{ pathname: `/residence-statuses/${status.slug}`, query: { returnTo: "/saved" } }} aria-label={status.englishName} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                   <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700">{status.englishName}</span>
-                  <p className="mt-1 text-sm text-slate-500"><span lang="ja">{status.japaneseName}</span> · {status.romaji}</p>
+                  <p className="mt-1 text-sm text-slate-500"><span lang="ja">{status.japaneseName}</span> · <JapaneseReading kana={status.japaneseKana} romaji={status.romaji} /></p>
                   <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{status.summary}</p>
                   <span className="mt-4 block text-sm font-semibold text-teal-800">View status and related guidance →</span>
                 </Link>

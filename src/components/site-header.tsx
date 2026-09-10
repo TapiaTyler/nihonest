@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAccountSession } from "@/components/account/account-session-provider";
+import { ContentLanguageOptions } from "@/components/localization/content-language-options";
+import { useContentLocale } from "@/components/localization/content-locale-provider";
+import { ReadingAidOptions } from "@/components/localization/reading-aid-options";
 
 const destinations = [
   { href: "/", label: "Home" },
@@ -20,7 +23,7 @@ const destinations = [
 ] as const;
 
 type DestinationHref = (typeof destinations)[number]["href"];
-type DesktopDisclosure = "journey" | "resources" | "account";
+type DesktopDisclosure = "journey" | "resources" | "language" | "account";
 type DesktopLinkDisclosure = Exclude<DesktopDisclosure, "account">;
 
 const journeyLinks = [
@@ -44,6 +47,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const accountSession = useAccountSession();
+  const { locale } = useContentLocale();
   const [desktopDisclosure, setDesktopDisclosure] = useState<DesktopDisclosure>();
   const [signOutPending, setSignOutPending] = useState(false);
   const [signOutError, setSignOutError] = useState<string>();
@@ -53,6 +57,7 @@ export function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const journeyButtonRef = useRef<HTMLButtonElement>(null);
   const resourcesButtonRef = useRef<HTMLButtonElement>(null);
+  const languageButtonRef = useRef<HTMLButtonElement>(null);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -77,7 +82,9 @@ export function SiteHeader() {
         ? journeyButtonRef
         : currentDisclosure === "resources"
           ? resourcesButtonRef
-          : accountButtonRef;
+          : currentDisclosure === "language"
+            ? languageButtonRef
+            : accountButtonRef;
       requestAnimationFrame(() => buttonRef.current?.focus());
     }
   }
@@ -104,7 +111,9 @@ export function SiteHeader() {
         ? journeyButtonRef
         : desktopDisclosure === "resources"
           ? resourcesButtonRef
-          : accountButtonRef;
+          : desktopDisclosure === "language"
+            ? languageButtonRef
+            : accountButtonRef;
       setDesktopDisclosure(undefined);
       requestAnimationFrame(() => buttonRef.current?.focus());
     }
@@ -268,6 +277,39 @@ export function SiteHeader() {
     );
   }
 
+  function desktopLanguageControl() {
+    const open = desktopDisclosure === "language";
+    const languageName = locale === "ja" ? "Japanese pilot" : "English";
+    return (
+      <li className="relative">
+        <button
+          ref={languageButtonRef}
+          type="button"
+          aria-label={`Guide language: ${languageName}`}
+          aria-expanded={open}
+          aria-controls="desktop-language-options"
+          onClick={() => toggleDesktopDisclosure("language")}
+          className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${open || locale !== "en" ? "bg-teal-50" : ""}`}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" strokeLinecap="round" /></svg>
+          <span>{locale.toUpperCase()}</span>
+          <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+        {open && (
+          <div id="desktop-language-options" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
+            <p className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Guide language</p>
+            <div className="mt-2"><ContentLanguageOptions onSelect={() => closeDesktopDisclosure()} /></div>
+            <p className="mt-2 border-t border-slate-100 px-3 pt-3 text-xs leading-5 text-slate-500">Japanese pilot translations are available for selected guides.</p>
+            <div className="mt-3 border-t border-slate-100 px-3 pt-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Japanese readings</p>
+              <ReadingAidOptions />
+            </div>
+          </div>
+        )}
+      </li>
+    );
+  }
+
   return (
     <header ref={headerRef} className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur lg:static">
       <div className="page-shell">
@@ -285,6 +327,7 @@ export function SiteHeader() {
               {desktopDisclosureButton("journey", "Journey", journeyLinks)}
               {desktopDisclosureButton("resources", "Resources", resourceLinks)}
               <li>{directDesktopLink("/saved", "Saved")}</li>
+              {desktopLanguageControl()}
               {desktopAccountControl()}
             </ul>
           </nav>
@@ -330,6 +373,15 @@ export function SiteHeader() {
                 )}
               </ul>
               {signOutError && <p role="status" className="px-3 pt-2 text-sm text-red-700">{signOutError}</p>}
+            </section>
+            <section aria-labelledby="mobile-navigation-language" className="mt-6 px-3">
+              <h3 id="mobile-navigation-language" className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Guide language</h3>
+              <div className="mt-2"><ContentLanguageOptions /></div>
+              <p className="mt-2 px-3 text-xs leading-5 text-slate-500">Japanese pilot translations are available for selected guides.</p>
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Japanese readings</p>
+                <ReadingAidOptions />
+              </div>
             </section>
           </nav>
           <p className="border-t border-slate-200 px-5 py-4 text-xs leading-5 text-slate-500">All public guidance remains available without an account.</p>

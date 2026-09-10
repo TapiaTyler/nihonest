@@ -6,6 +6,9 @@ import { faqSchema } from "@/domain/faq/faq";
 import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { ExploreDiscovery } from "./explore-discovery";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
+import type { ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 const bankArticle = articleMetadataSchema.parse({
   id: "opening-bank-account",
@@ -53,15 +56,18 @@ const faqEntry = {
   targets: [{ kind: "guide" as const, id: bankArticle.id, label: "Finding housing and moving in", href: "/articles/finding-housing-and-moving-in" }],
 };
 
-function renderDiscovery() {
+function renderDiscovery(articleTranslations: readonly ArticleSearchTranslation[] = []) {
   render(
-    <ExploreDiscovery
-      groups={[group]}
-      articles={[bankArticle]}
-      terms={glossaryTerms}
-      residenceStatuses={residenceStatuses}
-      faqEntries={[faqEntry]}
-    />,
+    <ContentLocaleProvider>
+      <ExploreDiscovery
+        groups={[group]}
+        articles={[bankArticle]}
+        terms={glossaryTerms}
+        residenceStatuses={residenceStatuses}
+        faqEntries={[faqEntry]}
+        articleTranslations={articleTranslations}
+      />
+    </ContentLocaleProvider>,
   );
 }
 
@@ -69,6 +75,7 @@ describe("ExploreDiscovery", () => {
   beforeEach(() => {
     window.history.replaceState(null, "", "/explore");
     sessionStorage.clear();
+    window.localStorage.clear();
   });
 
   it("shows groups at a glance before a search is active", () => {
@@ -104,13 +111,15 @@ describe("ExploreDiscovery", () => {
 
   it("alphabetizes the default content-group cards", () => {
     render(
-      <ExploreDiscovery
-        groups={[laterAlphabeticalGroup, group]}
-        articles={[bankArticle]}
-        terms={glossaryTerms}
-        residenceStatuses={residenceStatuses}
-        faqEntries={[faqEntry]}
-      />,
+      <ContentLocaleProvider>
+        <ExploreDiscovery
+          groups={[laterAlphabeticalGroup, group]}
+          articles={[bankArticle]}
+          terms={glossaryTerms}
+          residenceStatuses={residenceStatuses}
+          faqEntries={[faqEntry]}
+        />
+      </ContentLocaleProvider>,
     );
 
     expect(screen.getAllByRole("link", { name: /^Explore / }).map((link) => link.getAttribute("aria-label"))).toEqual([
@@ -131,6 +140,21 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("heading", { name: "Content groups" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Guides" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Glossary terms" })).toBeInTheDocument();
+  });
+
+  it("presents a Japanese pilot result from a Japanese query", () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    renderDiscovery([{
+      contentId: bankArticle.id,
+      targetLocale: "ja",
+      title: "銀行口座を開設する",
+      description: "銀行の審査に備えて住所と本人確認書類を準備します。",
+    }]);
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "銀行口座" } });
+
+    expect(screen.getByRole("link", { name: "銀行口座を開設する" })).toBeInTheDocument();
+    expect(screen.getByText("Japanese pilot translation")).toBeInTheDocument();
+    expect(window.location.search).toBe("?q=%E9%8A%80%E8%A1%8C%E5%8F%A3%E5%BA%A7&lang=ja");
   });
 
   it("returns FAQ questions and their compact canonical links", () => {

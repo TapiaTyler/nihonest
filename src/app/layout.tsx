@@ -7,6 +7,8 @@ import { JourneyUpdateNotice } from "@/components/personalization/journey-update
 import { SavedContentProvider } from "@/components/saved-content/saved-content-provider";
 import { GlossaryStudyProvider } from "@/components/glossary-study/glossary-study-provider";
 import { ChecklistProgressProvider } from "@/components/roadmap/checklist-progress-provider";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { ReadingAidProvider } from "@/components/localization/reading-aid-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteUrl } from "@/lib/site-url";
@@ -33,7 +35,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="flex min-h-screen flex-col bg-stone-50 text-slate-900 antialiased">
-        <PersonalizationProvider>
+        <ContentLocaleProvider>
+          <ReadingAidProvider>
+            <PersonalizationProvider>
           <SavedContentProvider>
             <GlossaryStudyProvider>
               <ChecklistProgressProvider>
@@ -53,7 +57,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               </ChecklistProgressProvider>
             </GlossaryStudyProvider>
           </SavedContentProvider>
-        </PersonalizationProvider>
+            </PersonalizationProvider>
+          </ReadingAidProvider>
+        </ContentLocaleProvider>
       </body>
     </html>
   );

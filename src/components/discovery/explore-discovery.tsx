@@ -13,7 +13,10 @@ import type { FaqEntry } from "@/lib/content/faqs";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
-import { defaultKnowledgebaseSearchFilters, hasActiveKnowledgebaseSearch, searchKnowledgebase, type KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
+import { defaultKnowledgebaseSearchFilters, hasActiveKnowledgebaseSearch, searchKnowledgebase, type ArticleSearchTranslation, type KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
+import { useContentLocale } from "@/components/localization/content-locale-provider";
+import { contentLocalePreferenceSchema } from "@/domain/localization/content-locale";
+import { writeContentLocale } from "@/lib/storage/content-locale";
 
 const contentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
   guide: "Guide", reference: "Reference", checklist: "Checklist", glossary: "Glossary", "official-procedure": "Official procedure",
@@ -53,29 +56,32 @@ function filtersFromSearch(search: string, residenceStatuses: readonly Residence
   };
 }
 
-function searchForFilters(filters: KnowledgebaseSearchFilters) {
+function searchForFilters(filters: KnowledgebaseSearchFilters, locale = "en") {
   const params = new URLSearchParams();
   for (const [key, paramKey] of Object.entries(filterParamKeys) as [keyof KnowledgebaseSearchFilters, string][]) {
     const value = filters[key];
     if (value && value !== "all") params.set(paramKey, value);
   }
+  if (locale !== "en") params.set("lang", locale);
   return params.toString();
 }
 
-export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [] }: Readonly<{
+export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [], articleTranslations = [] }: Readonly<{
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
   terms: readonly JapaneseTerm[];
   residenceStatuses: readonly ResidenceStatus[];
   faqEntries?: readonly FaqEntry[];
+  articleTranslations?: readonly ArticleSearchTranslation[];
 }>) {
+  const { locale } = useContentLocale();
   const searchId = useId();
   const [filters, setFilters] = useState<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
   const filtersRef = useRef<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
   const isSearching = hasActiveKnowledgebaseSearch(filters);
   const results = useMemo(
-    () => searchKnowledgebase(groups, articles, terms, filters, faqEntries.map(({ faq }) => faq)),
-    [articles, faqEntries, filters, groups, terms],
+    () => searchKnowledgebase(groups, articles, terms, filters, faqEntries.map(({ faq }) => faq), { locale, articleTranslations }),
+    [articleTranslations, articles, faqEntries, filters, groups, locale, terms],
   );
   const groupResults = results.flatMap((result) => result.kind === "group" ? [result.group] : []);
   const faqResults = results.flatMap((result) => {
@@ -99,12 +105,15 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
     })).filter(({ options }) => options.length > 0),
     [residenceStatuses],
   );
-  const filterSearch = searchForFilters(filters);
+  const filterSearch = searchForFilters(filters, locale);
   const returnTo = filterSearch ? `/explore?${filterSearch}` : "/explore";
 
   useEffect(() => {
     // The URL is the durable discovery state so result-page returns, refresh, and browser history reconstruct the same filters.
     function restoreFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const requestedLocale = contentLocalePreferenceSchema.safeParse(params.get("lang"));
+      if (requestedLocale.success) writeContentLocale(requestedLocale.data);
       const restoredFilters = filtersFromSearch(window.location.search, residenceStatuses);
       filtersRef.current = restoredFilters;
       setFilters(restoredFilters);
@@ -119,7 +128,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
     const next = { ...filtersRef.current, [key]: value };
     filtersRef.current = next;
     setFilters(next);
-    const search = searchForFilters(next);
+    const search = searchForFilters(next, locale);
     window.history.replaceState(null, "", search ? `/explore?${search}` : "/explore");
     sessionStorage.setItem(exploreReturnStorageKey, search ? `/explore?${search}` : "/explore");
   }
@@ -127,8 +136,9 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
   function clearSearch() {
     filtersRef.current = defaultKnowledgebaseSearchFilters;
     setFilters(defaultKnowledgebaseSearchFilters);
-    window.history.replaceState(null, "", "/explore");
-    sessionStorage.setItem(exploreReturnStorageKey, "/explore");
+    const href = locale === "en" ? "/explore" : `/explore?lang=${locale}`;
+    window.history.replaceState(null, "", href);
+    sessionStorage.setItem(exploreReturnStorageKey, href);
   }
 
   return (
@@ -142,7 +152,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
             type="search"
             value={filters.query}
             onChange={(event) => updateFilter("query", event.target.value)}
-            placeholder="Try bank account, Student status, or juminhyo"
+            placeholder={locale === "ja" ? "例：在留資格、ビザ、日本へ入国" : "Try bank account, Student status, or juminhyo"}
             className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
           />
           {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Clear search and filters</button>}
@@ -201,7 +211,23 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
               )}
               {articleResults.length > 0 && (
                 <ResultSection id="result-guides" title="Guides" count={articleResults.length}>
-                  {articleResults.map((article) => <ArticleCard key={article.id} article={article} returnTo={returnTo} />)}
+                  {articleResults.map((article) => {
+                    const translation = articleTranslations.find((candidate) => (
+                      candidate.contentId === article.id && candidate.targetLocale === locale
+                    ));
+                    const presentedArticle = translation
+                      ? { ...article, title: translation.title, description: translation.description }
+                      : article;
+                    return (
+                      <ArticleCard
+                        key={article.id}
+                        article={presentedArticle}
+                        returnTo={returnTo}
+                        notice={translation ? "Japanese pilot translation" : undefined}
+                        contentLanguage={translation ? locale : "en"}
+                      />
+                    );
+                  })}
                 </ResultSection>
               )}
               {glossaryResults.length > 0 && (
@@ -216,7 +242,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
               <p className="mt-2 text-slate-600">Try a broader phrase, remove a filter, or return to the content groups.</p>
               <button type="button" onClick={clearSearch} className="mt-5 min-h-11 rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Browse all groups</button>
               {filters.query.trim() && (
-                <Link href={{ pathname: "/faq", query: { q: filters.query } }} className="mt-3 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                <Link href={{ pathname: "/faq", query: { q: filters.query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="mt-3 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                   Search FAQs for this question →
                 </Link>
               )}

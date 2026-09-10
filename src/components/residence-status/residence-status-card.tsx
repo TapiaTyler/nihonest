@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
+import { JapaneseReading } from "@/components/localization/japanese-reading";
 
 type ResidenceStatusCardProps = Readonly<{
   residenceStatus: ResidenceStatus;
@@ -24,7 +25,7 @@ export function ResidenceStatusCard({ residenceStatus, returnTo }: ResidenceStat
           <span className="min-w-0 text-right text-slate-500">
             <span lang="ja" className="block break-words text-lg font-medium">{residenceStatus.japaneseName}</span>
             <span className="mt-1 block break-words text-xs">
-              <span lang="ja">{residenceStatus.japaneseKana}</span> · {residenceStatus.romaji}
+              <JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />
             </span>
           </span>
         </div>
