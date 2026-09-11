@@ -24,6 +24,9 @@ export const japaneseTermSchema = z.object({
   status: z.enum(["draft", "verified", "needs-review"]),
   lastReviewedAt: z.iso.date().optional(),
 }).superRefine((term, context) => {
+  if (term.status === "verified" && !term.lastReviewedAt) {
+    context.addIssue({ code: "custom", path: ["lastReviewedAt"], message: "Verified glossary terms require a human review date." });
+  }
   if (term.primaryBrowseGroupId && !term.topicIds.includes(term.primaryBrowseGroupId)) {
     context.addIssue({
       code: "custom",

@@ -361,6 +361,8 @@ OfficialSource {
   authorityLevel
   language
   lastCheckedAt?
+  lastReviewedAt?
+  checkMethod
 }
 ```
 
@@ -843,6 +845,10 @@ It should not:
 3. automatically publish that rewrite.
 
 Human review remains necessary for critical information. A detected revision is stored as a candidate and does not replace the accepted baseline until the editor resolves it. Codex may summarize the difference and prepare a patch, but only an explicit human decision may mark content `verified`, accept a substantive source revision, or authorize publication.
+
+Repository review records use validated JSON as the canonical audit artifact and generate adjacent Markdown for human reading. They retain the official URL and candidate fingerprint, deterministic impact priority, potential claim categories, dependencies, labeled notes, the human outcome, examined dependencies, associated content changes, unresolved uncertainty, and focused validation. Local normalized source snapshots remain ignored working data; accepted fingerprints and resolved review records are version-controlled. The resolution command fails closed unless the editor explicitly asserts approval and accounts for every registered dependency.
+
+Content approval uses a separate immutable repository ledger because accepting a source revision does not prove that dependent guidance was reviewed. Each `verified` article, glossary term, residence status, or FAQ must have `lastReviewedAt` metadata and a human-approved ledger record for the exact current SHA-256 content revision. The repository audit rejects missing, stale, duplicate, future-dated, or date-inconsistent approvals. Any content change creates a new revision and therefore requires a new approval before the record may remain verified.
 
 The Phase 12 workflow is intentionally single-editor and repository-first. A future multi-user CMS would add role-based access, durable assignments and comments, versioned drafts and previews, approval gates, conflict handling, immutable audit events, rollback, and protected administrative hosting. It would also require a deliberate migration that preserves stable content IDs, source relationships, and Git interoperability; it is not an incremental UI toggle over the local workflow.
 

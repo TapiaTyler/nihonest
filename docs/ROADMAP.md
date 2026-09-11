@@ -446,12 +446,16 @@ Phase 12 uses a repository-first editorial workflow. Canonical content, accepted
 
 **Iteration 1 — Source registry and dependency validation**
 
+**Complete locally:** source metadata now separates successful reachability checks from human substantive review and records the intended automated or manual check method. A deterministic reverse dependency graph connects official sources to articles, glossary terms, residence statuses, and the groups and journeys that inherit those sources through article membership. Registry diagnostics report missing, duplicate, unknown, and unused relationships together, with focused contract coverage.
+
 - expand operational source metadata and distinguish a successful link check from substantive editorial verification;
 - build reverse source mappings for articles, glossary terms, residence statuses, groups, and journeys;
 - report missing, duplicate, and unused source references; and
 - add focused schema and dependency tests.
 
 **Iteration 2 — Manual source-change detection**
+
+**Complete locally:** a deliberately scoped `sources:check` command now checks named sources or an explicit `--all` selection, with a non-writing dry-run option. It creates normalized SHA-256 observations for HTML, text, PDF, and binary sources; classifies unchanged, changed, redirected, unavailable, and manual outcomes; updates reachability dates only after successful requests; and preserves unresolved candidates separately from human-accepted revisions. Deterministic fixtures cover content normalization, classification, and failure safety without contacting live sources.
 
 - add an explicit local source-check command;
 - compare normalized candidate fingerprints with the last human-accepted source revision;
@@ -461,6 +465,8 @@ Phase 12 uses a repository-first editorial workflow. Canonical content, accepted
 
 **Iteration 3 — Impact reports and revision records**
 
+**Complete locally:** unresolved candidate revisions can now produce validated JSON review records and readable Markdown impact reports. Reports preserve the official source identity, concise fingerprint or normalized-text evidence, deterministic risk priority, potentially affected claim categories, and direct and inherited dependencies. Resolution is fail-closed: every registered dependency must be explicitly attested as examined, validation and uncertainty must be recorded, Codex notes remain labeled advisory, and only an explicit human-approved command can accept or reject the candidate baseline.
+
 - summarize detected differences and identify dependent content and potentially affected claims;
 - prioritize review targets using source authority, content importance, subject risk, and dependency breadth;
 - generate a repository-controlled review report rather than a database-backed assignment queue;
@@ -468,6 +474,8 @@ Phase 12 uses a repository-first editorial workflow. Canonical content, accepted
 - allow Codex-assisted summaries while labeling them advisory.
 
 **Iteration 4 — Human approval workflow and audit**
+
+**Complete locally:** a documented single-editor lifecycle now distinguishes draft, review, verified, and archived content. Verified articles, glossary terms, residence statuses, and FAQs require a human review date, while a repository audit additionally requires an immutable approval record for the exact current SHA-256 revision. The approval command requires explicit human attestation, substantive change and approval notes, focused validation evidence, and consistent review/update dates. Source acceptance and content verification remain separate decisions, stale approvals fail closed, and Git history remains the authoritative audit trail. Phase 12 requires no Docker, Supabase, deployment, or automated publication.
 
 - document the single-editor workflow from draft through `needs-review` to `verified`;
 - require explicit human approval before Codex changes content to `verified` or accepts a substantive source revision;

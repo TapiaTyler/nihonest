@@ -1021,6 +1021,8 @@ Nihonest currently has one human editor and no operational editorial team. A CMS
 - Phase 12 requires no Supabase or Docker dependency for editorial workflow state;
 - source checks run deliberately through local commands until scheduled monitoring is activated at the hosted integration gate;
 - `needs-review` means awaiting or undergoing human editorial review, while `verified` records explicit approval and a review date;
+- `verified` also requires an immutable repository approval record matching the exact current content revision; changing content invalidates that approval until the new revision is reviewed;
+- accepting an official-source candidate and approving dependent content are separate human decisions and neither action implies the other;
 - Git history remains the authoritative record of content and editorial metadata changes;
 - a future CMS must provide least-privilege roles, assignments, review discussions, versioned drafts and diffs, previews, approval and publication separation, conflicts, rollback, immutable audit events, backups, and protected administrative hosting;
 - any CMS migration must preserve stable IDs, content relationships, source dependencies, revision history, and an import/export or Git-interoperability strategy; and

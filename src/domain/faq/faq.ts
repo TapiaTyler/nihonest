@@ -38,7 +38,14 @@ export const faqSchema = z.object({
   status: z.enum(["draft", "verified", "needs-review"]),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
+  lastReviewedAt: z.iso.date().optional(),
 }).superRefine((faq, context) => {
+  if (faq.status === "verified" && !faq.lastReviewedAt) {
+    context.addIssue({ code: "custom", path: ["lastReviewedAt"], message: "Verified FAQs require a human review date." });
+  }
+  if (faq.lastReviewedAt && faq.lastReviewedAt < faq.updatedAt) {
+    context.addIssue({ code: "custom", path: ["lastReviewedAt"], message: "The review date cannot precede the current FAQ update." });
+  }
   const targetCount = faq.relatedArticleIds.length
     + faq.relatedGroupIds.length
     + faq.relatedJourneyIds.length

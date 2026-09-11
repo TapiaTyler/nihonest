@@ -96,6 +96,8 @@ Before contributing or asking an AI coding assistant to modify the project, read
 3. `docs/CONTENT-GUIDELINES.md`
 4. `docs/ROADMAP.md`
 5. `docs/DECISIONS.md`
+6. `docs/SOURCE-REVIEW.md`
+7. `docs/EDITORIAL-WORKFLOW.md`
 
 These documents are the project's current source of truth.
 

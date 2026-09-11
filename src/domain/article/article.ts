@@ -37,6 +37,13 @@ export const articleMetadataSchema = z.object({
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
   lastReviewedAt: z.iso.date().optional(),
+}).superRefine((article, context) => {
+  if (article.status === "verified" && !article.lastReviewedAt) {
+    context.addIssue({ code: "custom", path: ["lastReviewedAt"], message: "Verified articles require a human review date." });
+  }
+  if (article.lastReviewedAt && article.lastReviewedAt < article.updatedAt) {
+    context.addIssue({ code: "custom", path: ["lastReviewedAt"], message: "The review date cannot precede the current article update." });
+  }
 });
 
 export type ArticleMetadata = z.infer<typeof articleMetadataSchema>;

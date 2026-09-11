@@ -1,6 +1,8 @@
 import { officialSourceSchema } from "@/domain/source/source";
+import { sourceMonitoringStateSchema } from "@/domain/source/source-monitoring";
+import sourceMonitoringStateJson from "../../content/source-monitoring/state.json";
 
-export const sources = [
+const declaredSources = [
   officialSourceSchema.parse({
     id: "japan-government-portal",
     organization: "Government of Japan",
@@ -81,6 +83,15 @@ export const sources = [
   officialSourceSchema.parse({ id: "nta-nonresident-income-tax", organization: "National Tax Agency", title: "Non-residents and Japanese income tax", url: "https://www.nta.go.jp/english/taxes/individual/12006.htm", authorityLevel: "national-government", language: "en", lastCheckedAt: "2026-09-06" }),
   officialSourceSchema.parse({ id: "nta-leaving-japan-tax", organization: "National Tax Agency", title: "Procedures for leaving Japan", url: "https://www.nta.go.jp/english/taxes/individual/12004.htm", authorityLevel: "national-government", language: "en", lastCheckedAt: "2026-09-06" }),
 ] as const;
+
+const sourceMonitoringState = sourceMonitoringStateSchema.parse(sourceMonitoringStateJson);
+
+/** Operational checks override only their own date; editorial review metadata remains human-authored. */
+export const sources = declaredSources.map((source) => officialSourceSchema.parse({
+  ...source,
+  lastCheckedAt: sourceMonitoringState.sources[source.id]?.lastSuccessfulCheckAt ?? source.lastCheckedAt,
+  lastReviewedAt: sourceMonitoringState.sources[source.id]?.lastReviewedAt ?? source.lastReviewedAt,
+}));
 
 export function getSourceById(id: string) {
   return sources.find((source) => source.id === id);

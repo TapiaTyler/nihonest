@@ -203,11 +203,14 @@ Critical content should eventually record:
 source ID
 source organization
 official URL
-last reviewed
+last successful link check
+last substantive review
+check method
 review status
 ```
 
 Source references should be structured rather than existing only as prose links.
+`lastCheckedAt` records successful reachability only. `lastReviewedAt` records a human review of the source's substance and must not be inferred from an automated request succeeding.
 
 ---
 
@@ -245,7 +248,7 @@ It is preferable to use obviously limited sample content than misleading pseudo-
 
 ## 12. Changes to Official Sources
 
-Future automation may identify that an official source has changed.
+Deliberate local checks, and later scheduled monitoring, may identify that an official source has changed.
 
 A detected source change should:
 
@@ -254,6 +257,8 @@ A detected source change should:
 3. request review.
 
 It should not automatically publish AI-generated changes to critical content without review.
+
+Follow `docs/SOURCE-REVIEW.md` for triage, dependency review, resolution outcomes, required records, translation invalidation, and explicit human approval. A source baseline may be accepted without refreshing an article review date when the editor verified only that the detected source change was non-substantive. Follow `docs/EDITORIAL-WORKFLOW.md` separately before marking any changed content `verified`; source acceptance is not content approval.
 
 ---
 

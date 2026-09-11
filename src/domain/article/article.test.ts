@@ -22,6 +22,11 @@ const validArticle = articleMetadataSchema.parse({
 });
 
 describe("article metadata", () => {
+  it("requires verified content to carry a current human review date", () => {
+    expect(() => articleMetadataSchema.parse({ ...validArticle, status: "verified" })).toThrow("human review date");
+    expect(() => articleMetadataSchema.parse({ ...validArticle, status: "verified", lastReviewedAt: "2026-09-04" })).toThrow("cannot precede");
+  });
+
   it("rejects values outside the controlled taxonomy", () => {
     expect(() =>
       articleMetadataSchema.parse({

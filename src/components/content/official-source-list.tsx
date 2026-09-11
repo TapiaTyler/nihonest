@@ -41,6 +41,7 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
             <p className="mt-2 text-sm leading-6 text-slate-500">
               {authorityLabels[source.authorityLevel]} · {source.language === "en" ? "English" : "Japanese"}
               {source.lastCheckedAt ? ` · Last link check: ${checkedDate(source.lastCheckedAt)}` : ""}
+              {source.lastReviewedAt ? ` · Last substantive review: ${checkedDate(source.lastReviewedAt)}` : ""}
             </p>
           </li>
         ))}

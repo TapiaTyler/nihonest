@@ -17,6 +17,7 @@
 .env*
 !.env.example
 /supabase/.temp/
+/.source-monitoring/
 
 # logs and system files
 npm-debug.log*

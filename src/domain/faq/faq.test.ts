@@ -22,6 +22,10 @@ const targets = {
 };
 
 describe("FAQ model", () => {
+  it("requires verified questions to carry a current human review date", () => {
+    expect(() => faqSchema.parse({ ...faq, status: "verified" })).toThrow("human review date");
+  });
+
   it("requires a canonical target", () => {
     expect(() => faqSchema.parse({ ...faq, relatedArticleIds: [] })).toThrow();
   });
