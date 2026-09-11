@@ -366,7 +366,7 @@ OfficialSource {
 
 Content references sources by ID.
 
-This establishes the foundation for a future source dependency graph.
+This establishes the foundation for the Phase 12 source dependency graph. Operational metadata must distinguish a successful availability check from the date on which an editor substantively verified the source and dependent claims.
 
 ---
 
@@ -385,9 +385,7 @@ OfficialSource
    └── ChecklistDefinition
 ```
 
-The initial milestone does not require automated monitoring.
-
-The data model should simply avoid making future dependency tracking unnecessarily difficult.
+Phase 12 resolves this graph in reverse so a changed source can identify every dependent content record. The initial workflow remains repository-controlled: accepted source revisions, candidate changes, impact reports, resolutions, and content metadata are reviewed through files and Git rather than a CMS.
 
 ---
 
@@ -831,7 +829,7 @@ Source monitoring may propose a draft release, but it cannot approve, publish, o
 
 # 28. Source Change Monitoring
 
-Future source monitoring may:
+Source monitoring may:
 
 1. check authoritative pages for meaningful changes;
 2. record that a source changed;
@@ -844,7 +842,9 @@ It should not:
 2. ask an AI to silently rewrite immigration/legal content;
 3. automatically publish that rewrite.
 
-Human review remains necessary for critical information.
+Human review remains necessary for critical information. A detected revision is stored as a candidate and does not replace the accepted baseline until the editor resolves it. Codex may summarize the difference and prepare a patch, but only an explicit human decision may mark content `verified`, accept a substantive source revision, or authorize publication.
+
+The Phase 12 workflow is intentionally single-editor and repository-first. A future multi-user CMS would add role-based access, durable assignments and comments, versioned drafts and previews, approval gates, conflict handling, immutable audit events, rollback, and protected administrative hosting. It would also require a deliberate migration that preserves stable content IDs, source relationships, and Git interoperability; it is not an incremental UI toggle over the local workflow.
 
 ---
 

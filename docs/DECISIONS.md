@@ -1002,6 +1002,32 @@ Bulk generation before Phase 13 would immediately invalidate many paid translati
 
 ---
 
+## ADR-056 — Source review remains repository-first until multi-editor needs justify a CMS
+
+**Status:** Accepted
+
+### Decision
+
+Implement Phase 12 as a single-editor, repository-first workflow. Canonical content, accepted source revisions, candidate changes, impact reports, resolution notes, review dates, and content states remain version-controlled. Codex may detect changes, summarize evidence, identify dependencies, and prepare patches, but only an explicit human editorial decision may mark content `verified`, accept a substantive source revision, or authorize publication.
+
+Do not add a CMS, contributor portal, database-backed assignment queue, or in-browser publication controls during Phase 12. Reconsider a CMS only when multiple independent editors or external contributors demonstrate a need for durable collaboration that Git and the Codex-assisted workflow cannot reasonably satisfy.
+
+### Reason
+
+Nihonest currently has one human editor and no operational editorial team. A CMS would introduce roles, authorization, workflow state, conflict resolution, administrative security, backups, hosting, and migration work without solving a present constraint. Repository records and Git provide a smaller, inspectable audit trail while keeping high-stakes approval visibly human-controlled.
+
+### Consequences
+
+- Phase 12 requires no Supabase or Docker dependency for editorial workflow state;
+- source checks run deliberately through local commands until scheduled monitoring is activated at the hosted integration gate;
+- `needs-review` means awaiting or undergoing human editorial review, while `verified` records explicit approval and a review date;
+- Git history remains the authoritative record of content and editorial metadata changes;
+- a future CMS must provide least-privilege roles, assignments, review discussions, versioned drafts and diffs, previews, approval and publication separation, conflicts, rollback, immutable audit events, backups, and protected administrative hosting;
+- any CMS migration must preserve stable IDs, content relationships, source dependencies, revision history, and an import/export or Git-interoperability strategy; and
+- source detection or AI assistance can inform a review but can never bypass human approval in either workflow.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

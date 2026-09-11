@@ -442,20 +442,44 @@ feat: add Japanese localization and multilingual search pilot
 
 # Phase 12 — Source Review and Change Monitoring
 
-Objectives:
+Phase 12 uses a repository-first editorial workflow. Canonical content, accepted source state, review reports, revision notes, and approval metadata remain version-controlled. Codex may prepare changes and review evidence, but the human editor explicitly decides when content becomes `verified`.
 
-- operationalize source dependency graph;
-- source check dates;
-- identify changed sources;
-- flag dependent content;
-- provide intelligent source-change assistance that summarizes detected differences, identifies potentially affected claims, and proposes review targets without automatically rewriting or publishing high-stakes guidance;
-- editorial review queue;
-- add focused contributor and editor workflows for assignment, review, revision notes, approval, and publication state while deferring a general-purpose CMS or external contributor portal until justified;
-- revision/change notes.
+**Iteration 1 — Source registry and dependency validation**
+
+- expand operational source metadata and distinguish a successful link check from substantive editorial verification;
+- build reverse source mappings for articles, glossary terms, residence statuses, groups, and journeys;
+- report missing, duplicate, and unused source references; and
+- add focused schema and dependency tests.
+
+**Iteration 2 — Manual source-change detection**
+
+- add an explicit local source-check command;
+- compare normalized candidate fingerprints with the last human-accepted source revision;
+- distinguish unchanged, changed, redirected, unavailable, and manually checked sources;
+- retain unresolved candidate changes rather than silently advancing the accepted baseline; and
+- use deterministic fixtures for automated tests, with live checks remaining optional and deliberate.
+
+**Iteration 3 — Impact reports and revision records**
+
+- summarize detected differences and identify dependent content and potentially affected claims;
+- prioritize review targets using source authority, content importance, subject risk, and dependency breadth;
+- generate a repository-controlled review report rather than a database-backed assignment queue;
+- record reviewer notes, resolution, accepted source revision, and associated content changes; and
+- allow Codex-assisted summaries while labeling them advisory.
+
+**Iteration 4 — Human approval workflow and audit**
+
+- document the single-editor workflow from draft through `needs-review` to `verified`;
+- require explicit human approval before Codex changes content to `verified` or accepts a substantive source revision;
+- validate revision/change notes and review dates against content metadata;
+- audit source-monitoring safety, failure states, documentation, and focused tests; and
+- preserve Git history as the authoritative editorial audit trail.
 
 Do not automatically republish high-stakes information solely from machine-generated changes.
 
 Local/manual checks can establish the workflow, but continuous scheduled monitoring requires hosted execution and is activated only at the hosted integration gate.
+
+A multi-user CMS, contributor portal, database-backed assignments, and in-browser publication controls are not Phase 12 requirements. Their adoption requirements remain documented under Deferred / Unscheduled Ideas.
 
 Suggested checkpoint:
 
@@ -616,7 +640,7 @@ Exact price and store configuration are deferred until release planning.
 These should remain visible but have no implementation commitment:
 
 - advanced search provider;
-- CMS;
+- multi-user CMS and external contributor portal (see the adoption requirements below);
 - analytics provider;
 - broad municipality coverage;
 - additional reminder channels;
@@ -640,6 +664,23 @@ In particular, defer until justified:
 - analytics SaaS;
 - native database;
 - AI functionality.
+
+## CMS Adoption Requirements
+
+A CMS should be reconsidered only when multiple independent editors or external contributors make the repository-first workflow materially limiting. Adoption would require:
+
+- authenticated editor, reviewer, publisher, and administrator roles with least-privilege authorization;
+- durable assignments, comments, review requests, approval gates, and conflict handling;
+- versioned drafts, field-level or rendered diffs, previews, revision notes, rollback, and immutable audit events;
+- a clear canonical-content decision and a migration/import-export path that preserves stable IDs, relationships, source dependencies, and Git history;
+- source-review queue integration without allowing detected changes or AI suggestions to publish content;
+- staging and publication controls that separate editorial approval from deployment;
+- protection for unpublished content, personal data, credentials, and administrative routes;
+- backup, recovery, retention, moderation, and account-removal procedures;
+- accessibility and localization support for the editorial interface; and
+- hosted database, storage, observability, and security validation before editors rely on it.
+
+Until those needs are demonstrated, repository files, explicit human approval, review metadata, and Git provide the smaller and more auditable workflow.
 
 ---
 
