@@ -1,7 +1,7 @@
 export const metadata = {
   id: "filing-a-japanese-income-tax-return",
   title: "Filing a Japanese income-tax return",
-  description: "Decide whether to investigate a final return, assemble income and deduction records, and plan for filing or departure deadlines.",
+  description: "Check employee filing triggers, understand the limited ¥200,000 exception, prepare records, and distinguish required and refund returns.",
   slug: "filing-a-japanese-income-tax-return",
   journeyStageIds: ["living-in-japan"],
   topicIds: ["taxes", "employment"],
@@ -9,29 +9,75 @@ export const metadata = {
   geographicScopes: ["national"],
   importance: "critical",
   contentType: "official-procedure",
-  sourceIds: ["nta-individual-income-tax", "nta-leaving-japan-tax"],
-  termIds: ["kakutei-shinkoku", "shotoku-zei", "zei-rishi", "nozei-kanrinin"],
+  sourceIds: ["nta-income-tax-guide-2025", "nta-final-tax-return", "nta-wage-earner-final-return", "nta-refund-return", "nta-leaving-japan-tax"],
+  termIds: ["kakutei-shinkoku", "shotoku-zei", "kyuyo-shotoku-no-gensen-choshu-hyo", "zei-rishi", "nozei-kanrinin"],
+  searchTerms: ["file taxes Japan", "Japan tax return employee", "kakutei shinkoku", "200000 yen side income rule", "two employers tax return Japan", "tax refund Japan", "medical expense deduction Japan", "e-Tax foreign resident", "missed year end adjustment"],
   residenceStatusIds: [],
-  relationships: [{ type: "prerequisite", articleId: "income-and-resident-tax-after-moving-to-japan" }, { type: "related", articleId: "leaving-japan-and-closing-out-procedures" }],
-  status: "draft",
+  relationships: [{ type: "prerequisite", articleId: "tax-residence-and-taxable-income-in-japan" }, { type: "prerequisite", articleId: "payroll-withholding-and-year-end-adjustment" }, { type: "related", articleId: "foreign-income-tax-treaties-and-foreign-tax-credits" }, { type: "related", articleId: "tax-for-side-work-and-sole-proprietors" }, { type: "related", articleId: "consumption-tax-and-the-invoice-system" }, { type: "related", articleId: "tax-procedures-before-leaving-japan" }],
+  status: "needs-review",
   createdAt: "2026-09-06",
-  updatedAt: "2026-09-06",
+  updatedAt: "2026-09-12",
 }
 
-> **Draft filing guide:** Filing duties and deadlines depend on the tax year, residence classification, income, withholding, deductions, and departure. Use the current National Tax Agency instructions.
+> **Editorial review needed:** Filing duties, deductions, forms, and dates depend on the tax year and the taxpayer's complete facts. Check the current National Tax Agency guide before acting.
 
-## When to investigate a return
+## What a final return does
 
-A Final Tax Return ([確定申告](/glossary/kakutei-shinkoku), **kakutei shinkoku**) reconciles national Income Tax ([所得税](/glossary/shotoku-zei), **shotokuzei**) for the year. Investigate the requirement if you have freelance or multiple-employer income, income not fully handled through payroll, qualifying deductions or losses, overseas income or assets, or a mid-year move or departure.
+A Final Tax Return ([確定申告](/glossary/kakutei-shinkoku), **kakutei shinkoku**) calculates and reconciles national Income Tax ([所得税](/glossary/shotoku-zei), **shotokuzei**) for the calendar year. It brings together taxable income, deductions, credits, withholding, and estimated payments.
 
-Do not use a generic “side income under a certain amount never needs reporting” shortcut. National filing exceptions and municipal resident-tax reporting are not identical, and the income calculation is not simply the cash received.
+The ordinary filing period is generally February 16 through March 15 of the following year, subject to the current year's calendar and official instructions. Some returns must be handled earlier because the person will depart Japan without leaving a tax agent.
 
-## Prepare before the filing window
+## Salary earners who should investigate filing
 
-Reconcile income by category, withholding, allowable expenses, social-insurance and other deductions, and payments already made. Preserve source documents and the exchange-rate method used for foreign-currency amounts. Confirm whether electronic filing, a tax-office appointment, or professional assistance is appropriate.
+Many employees whose covered salary is fully handled through one employer's year-end adjustment do not need a final return. Do not stop the analysis there. Current NTA guidance identifies filing situations that include:
 
-A licensed tax accountant ([税理士](/glossary/zei-rishi), **zeirishi**) can give individualized tax advice. Immigration professionals and employers do not automatically fill that role.
+- total employment earnings exceeding ¥20 million;
+- one salary payer and more than ¥200,000 of total income outside employment and retirement income;
+- two or more salary payers where the applicable secondary salary and other-income calculation exceeds ¥200,000;
+- salary from a payer not required to withhold Japanese income tax;
+- certain payments from a closely held family company; and
+- a retirement-income calculation that leaves additional tax under the defined rule.
 
-## If you will leave Japan
+Other income, deductions, residence periods, foreign income, and special regimes can also change the answer. Use the NTA decision rules for the relevant year rather than treating this list as a personalized conclusion.
 
-Resolve filing and payment before departure or determine whether to appoint a tax agent ([納税管理人](/glossary/nozei-kanrinin), **nōzei kanrinin**) under the applicable procedure. Departure can also leave later resident-tax, pension, insurance, business, and refund matters, so coordinate the tax plan with the broader departure checklist.
+## The ¥200,000 rule is not a general exemption
+
+The commonly quoted ¥200,000 amount is part of limited **national final-return filing exceptions** for defined salary earners. It does not mean:
+
+- the income is automatically tax-free;
+- every employee with income below that amount may omit a return;
+- only profit above ¥200,000 matters;
+- the income can be left out when a return is filed for another reason; or
+- the municipality has no separate resident-tax declaration requirement.
+
+The calculation generally concerns **income**, not simply cash received. Income classification and allowable expenses therefore matter. Confirm the national rule with the tax office and the resident-tax reporting question with the municipality.
+
+## A return can also claim a refund
+
+Even when filing is not mandatory, a refund return can recover excess withholding when the annual calculation supports it. NTA examples include a person who left employment before year-end adjustment and certain medical-expense, housing, casualty, donation, or other deductions.
+
+The NTA generally permits a refund return within five years from January 1 following the relevant year. Filing a return can affect other choices or information, so confirm the complete return rather than adding one deduction in isolation.
+
+## Assemble the complete record
+
+Prepare:
+
+- every Salary Income Withholding Tax Slip ([給与所得の源泉徴収票](/glossary/kyuyo-shotoku-no-gensen-choshu-hyo), **kyūyo shotoku no gensen chōshūhyō**);
+- other payer statements, invoices, platform records, and bank records;
+- calculations for each income category and allowable expenses;
+- social-insurance, pension, medical, donation, casualty, dependant, and other deduction evidence;
+- arrival, departure, domicile, work-location, foreign-income, remittance, and foreign-tax records where relevant;
+- My Number and identity information required by the current process; and
+- prior returns, payment records, and correspondence.
+
+Do not discard the underlying evidence after entering totals. Retention duties and later questions differ by document and activity.
+
+## Choose a filing channel
+
+The NTA's return-preparation system can calculate and prepare a return from entered information. Depending on the available identity method, the return may be submitted through e-Tax or printed and submitted through an accepted channel. A tax office can explain public procedures but does not become the taxpayer's private adviser.
+
+A licensed tax accountant ([税理士](/glossary/zei-rishi), **zeirishi**) can give individualized advice or provide covered representation. Consider professional assistance for competing residence claims, treaties, non-permanent-resident remittances, foreign tax, foreign entities or trusts, equity compensation, significant investments, business income, prior-year corrections, or uncertain departure duties.
+
+## Coordinate departure separately
+
+If you will cease having a Japanese domicile or residence, determine whether a return and payment are due before departure or whether to appoint a tax agent ([納税管理人](/glossary/nozei-kanrinin), **nōzei kanrinin**). National income tax and local resident tax use separate procedures. [Read the focused departure-tax guide](/articles/tax-procedures-before-leaving-japan) before fixing the timeline.

@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "id": "international-and-independent-tax-discovery",
+  "workstreamId": "tax-curriculum",
+  "preparedAt": "2026-09-12",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Foreign and domestic-source income, non-permanent-resident remittances, treaty relief, foreign tax credits, and the records required to support cross-border positions.",
+    "Side-work income classification, necessary expenses, bookkeeping, business commencement, blue-return applications, and the separation of tax treatment from immigration and employment permission.",
+    "Consumption-tax taxable-person tests, base and specified periods, voluntary elections, qualified-invoice registration, public registration data, filing duties, and cancellation consequences.",
+    "Departure-year national income tax, quasi-final returns, national and local tax agents, resident-tax bills after departure, continuing Japanese-source income, and secure notice handling."
+  ],
+  "userSituations": [
+    "A resident receives overseas salary, rent, investments, pension, or freelance payments and assumes the foreign payer or bank account keeps the income outside Japan.",
+    "A person pays tax abroad and assumes Japan automatically removes all double taxation without a treaty procedure or foreign-tax-credit filing.",
+    "An employee starts freelance work and assumes a tax registration or final return also grants immigration or employer permission.",
+    "A freelancer labels every cost as an expense or assumes every recurring side activity is automatically business income.",
+    "A small supplier registers to issue qualified invoices at a client's request without understanding the consumption-tax filing, publication, recordkeeping, and cancellation consequences.",
+    "A resident leaves Japan before annual filing or a later resident-tax notice and assumes municipal deregistration ends the tax obligations."
+  ],
+  "edgeCasesAndExceptions": [
+    "Income source is a legal classification and does not necessarily follow payer, currency, contract, or account location.",
+    "Tax treaties differ by jurisdiction, income type, residence, beneficial ownership, duration, payer, permanent establishment, and procedural requirements; a 183-day phrase is not a universal exemption.",
+    "Foreign tax credit is limited, evidence-based, and can require continuous carryover statements; foreign tax charged above a treaty limit may not be creditable.",
+    "Business income and miscellaneous income are determined from the activity's facts and records, not a preferred label; loss and bookkeeping consequences differ.",
+    "A tax-exempt business can become a consumption-tax filer through a taxable-person election or qualified-invoice registration even below the ordinary base-period threshold.",
+    "Qualified-invoice registration publishes defined sole-proprietor information and can continue taxable-person consequences after cancellation.",
+    "Leaving Japan without appointing a national tax agent can require a quasi-final return and payment before departure; resident tax uses a separate local process and agent appointment.",
+    "Japanese-source income or business matters can continue after departure."
+  ],
+  "jurisdictionVariables": [
+    "Tax residence, income source and category, earning and payment location, remittances, foreign tax, treaty jurisdiction, and required applications or certificates.",
+    "Continuity, scale, profit purpose, records, business organization, client relationship, expenses, assets, employees, and municipal or prefectural business-tax requirements.",
+    "Taxable sales in the base and specified periods, payroll alternative, elections, invoice registration date, taxable purchases, simplified treatment, and cancellation timing.",
+    "Departure date, loss of domicile or residence, filing requirement, agent appointment, January 1 municipality, collection method, continuing income, business closure, and refund timing."
+  ],
+  "primarySourceCandidates": [
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12007.htm", "supports": ["Foreign tax credit", "Credit limits", "Evidence and carryover procedure"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/international/", "supports": ["Current tax-convention catalog", "International procedure resources"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/withholing/tax_convention.htm", "supports": ["Income-tax convention applications", "Payer-channel procedure"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1300.htm", "supports": ["Income categories", "Business and miscellaneous income distinction"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12010.htm", "supports": ["Blue-return eligibility", "Bookkeeping", "Benefits and retention"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/42.htm", "supports": ["Business commencement filings", "Blue-return deadline", "Consumption-tax election warning"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/consumption_tax/01.htm", "supports": ["Consumption-tax base period", "Taxable-person tests", "Sole-proprietor tax period"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/consumption_tax/pdf/2025/general_00.pdf", "supports": ["Qualified-invoice registration", "Filing consequences", "Published registration data"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12004.htm", "supports": ["Departure filing", "Tax-agent route", "Quasi-final return"] }
+  ],
+  "contentImpacts": [
+    { "kind": "new-article", "id": "foreign-income-tax-treaties-and-foreign-tax-credits", "action": "create", "reason": "Provide a safe cross-border decision path without reducing treaty or credit rules to slogans." },
+    { "kind": "new-article", "id": "tax-for-side-work-and-sole-proprietors", "action": "create", "reason": "Separate income-tax classification and records from the existing immigration-focused side-work guide." },
+    { "kind": "new-article", "id": "consumption-tax-and-the-invoice-system", "action": "create", "reason": "Explain a separate tax that can be triggered by sales, elections, or invoice registration." },
+    { "kind": "new-article", "id": "tax-procedures-before-leaving-japan", "action": "create", "reason": "Coordinate national and local departure obligations without overloading the general departure checklist." },
+    { "kind": "article", "id": "filing-a-japanese-income-tax-return", "action": "update", "reason": "Link the focused international, independent-work, consumption-tax, and departure guides." },
+    { "kind": "group", "id": "taxes-and-resident-responsibilities", "action": "update", "reason": "Expose the complete tax curriculum." },
+    { "kind": "journey", "id": "ongoing-resident-responsibilities", "action": "update", "reason": "Add conditional cross-border, independent-work, and departure tax branches." },
+    { "kind": "faq", "id": "foreign-income-japan-tax", "action": "create", "reason": "Route common foreign-payer and foreign-account assumptions to sourced guidance." },
+    { "kind": "glossary-term", "id": "gaikoku-zeigaku-kojo", "action": "create", "reason": "Teach the formal foreign-tax-credit concept." },
+    { "kind": "glossary-term", "id": "inboisu-seido", "action": "create", "reason": "Make qualified-invoice questions searchable." }
+  ],
+  "scopeBoundaries": [
+    "The guides teach issue spotting and records, not treaty interpretation, foreign-tax-credit calculations, income classification verdicts, expense approval, or consumption-tax calculations.",
+    "Corporate tax, inheritance and gift tax, securities exit tax, customs, and detailed prefectural enterprise tax remain outside this pass except for warnings to seek appropriate advice.",
+    "Tax filings and business notices do not grant immigration permission, employer consent, a professional license, or municipal operating permission.",
+    "Municipal resident-tax departure procedures are described as locally verified steps rather than one national form.",
+    "Annual thresholds, relief measures, forms, and treaty lists require current-source confirmation."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": { "approvedAt": "2026-09-12", "note": "The editor approved starting the next tax implementation after review of the reserved 9B-2 scope." }
+}

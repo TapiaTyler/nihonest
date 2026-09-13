@@ -1,7 +1,7 @@
 export const metadata = {
   id: "side-work-and-freelancing-on-a-work-status",
   title: "Side work and freelancing while on a work status",
-  description: "Separate immigration scope, outside-activity permission, contract rules, notifications, and taxes before accepting freelance or second-job work.",
+  description: "Resolve immigration scope, outside-activity permission, and notifications before separately handling employment, freelance-contract, insurance, and tax rules.",
   slug: "side-work-and-freelancing-on-a-work-status",
   journeyStageIds: ["planning", "living-in-japan"],
   topicIds: ["immigration", "employment", "taxes"],
@@ -9,20 +9,21 @@ export const metadata = {
   geographicScopes: ["national"],
   importance: "critical",
   contentType: "official-procedure",
-  sourceIds: ["isa-outside-activity-application", "isa-outside-activity-guidance", "isa-affiliated-organization-notification", "nta-individual-income-tax"],
-  termIds: ["shikakugai-katsudo-kyoka", "gijutsu-jinbun-kokusai", "shozoku-kikan-todokede", "kakutei-shinkoku", "kojin-jigyo-nushi"],
+  sourceIds: ["isa-outside-activity-application", "isa-outside-activity-guidance", "isa-affiliated-organization-notification", "isa-outside-activity-rules"],
+  termIds: ["shikakugai-katsudo-kyoka", "gijutsu-jinbun-kokusai", "shozoku-kikan-todokede", "fukugyo-kengyo", "kojin-jigyo-nushi"],
+  searchTerms: ["side job work visa Japan", "freelance while employed Japan", "moonlighting residence status", "outside activity permission professional", "two employers work status", "freelance web developer sponsored visa"],
   residenceStatusIds: ["engineer-specialist-humanities-international-services"],
-  relationships: [{ type: "prerequisite", articleId: "engineer-specialist-humanities-international-services-status" }, { type: "next-step", articleId: "notifying-immigration-about-work-contract-changes" }, { type: "related", articleId: "filing-a-japanese-income-tax-return" }],
-  status: "draft",
+  relationships: [{ type: "prerequisite", articleId: "engineer-specialist-humanities-international-services-status" }, { type: "next-step", articleId: "notifying-immigration-about-work-contract-changes" }, { type: "related", articleId: "side-jobs-and-multiple-employers-in-japan" }, { type: "related", articleId: "freelance-contracts-and-client-obligations-in-japan" }, { type: "related", articleId: "employment-insurance-social-insurance-and-work-injury" }, { type: "related", articleId: "tax-for-side-work-and-sole-proprietors" }],
+  status: "needs-review",
   createdAt: "2026-09-06",
-  updatedAt: "2026-09-06",
+  updatedAt: "2026-09-12",
 }
 
-> **Draft legal guidance:** Side work is fact-specific. Confirm the proposed duties, contracts, status, and permission with the Immigration Services Agency before beginning paid work. Immigration permission does not override an employment contract, professional-license rule, or tax obligation.
+> **Editorial review needed:** Side work is fact-specific. Confirm the proposed duties, contracts, status, and permission with the Immigration Services Agency before beginning paid work. Immigration permission does not override an employment contract, professional-license rule, insurance rule, or tax obligation.
 
 ## Start with the activity, not the word “freelance”
 
-Japan authorizes activities through a status of residence. “Freelance,” “side job,” and “second job” describe working arrangements, not immigration categories. Write down the actual services, clients, place of work, contract type, hours, and expected income before asking which rule applies.
+Japan authorizes activities through a status of residence. Side Jobs and Concurrent Employment ([副業・兼業](/glossary/fukugyo-kengyo), **fukugyō・kengyō**), “freelance,” and “second job” describe working arrangements, not immigration categories. Write down the actual services, clients, place of work, contract type, hours, and expected income before asking which rule applies.
 
 For example, a developer employed under Engineer / Specialist in Humanities / International Services ([技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai), **gijutsu, jinbun chishiki, kokusai gyōmu**) might want to build websites for another client. Similar-looking software duties may be within the authorized status, but that is not automatic: the real duties, client or organization, contract, and continuing main employment all matter.
 
@@ -40,11 +41,13 @@ Official criteria include whether the side activity interferes with the principa
 
 Prepare the current residence card and passport, contracts and work descriptions for both roles, proposed schedule, compensation, client or organization details, and any explanation showing the main job will continue. Use the current ISA checklist for the exact application.
 
-## Employer, notification, and tax checks remain separate
+## Other work and business rules remain separate
 
-Review your employment agreement and work rules for approval, confidentiality, intellectual-property, conflict-of-interest, working-time, and equipment restrictions. If a covered contract ends or a new covered contract begins, a Notification Concerning an Affiliated Organization ([所属機関に関する届出](/glossary/shozoku-kikan-todokede), **shozoku kikan ni kansuru todokede**) may be due within 14 days.
+Review your employment agreement and work rules for approval, confidentiality, intellectual-property, conflict-of-interest, working-time, and equipment restrictions. If the second role is employment, [use the multiple-employer guide](/articles/side-jobs-and-multiple-employers-in-japan). If it is an independent commission, [check the freelance-contract guide](/articles/freelance-contracts-and-client-obligations-in-japan). If a covered contract ends or a new covered contract begins, a Notification Concerning an Affiliated Organization ([所属機関に関する届出](/glossary/shozoku-kikan-todokede), **shozoku kikan ni kansuru todokede**) may be due within 14 days.
 
-Keep invoices, contracts, expenses, payment records, and any withholding statements from the first day. A freelancer or sole proprietor ([個人事業主](/glossary/kojin-jigyo-nushi), **kojin jigyōnushi**) may need a final income-tax return ([確定申告](/glossary/kakutei-shinkoku), **kakutei shinkoku**) even when the main employer handles year-end adjustment. Tax treatment depends on residence, income category, deductions, withholding, and other facts; ask the tax office or a qualified tax professional.
+Keep invoices, contracts, expenses, payment records, and any withholding statements from the first day. A freelancer or sole proprietor ([個人事業主](/glossary/kojin-jigyo-nushi), **kojin jigyōnushi**) can have separate tax, consumption-tax, and insurance questions even when the main employer handles payroll.
+
+[Read the focused side-work and sole-proprietor tax guide](/articles/tax-for-side-work-and-sole-proprietors) after resolving whether immigration permits the activity.
 
 ## Before accepting the project
 

@@ -57,7 +57,8 @@ export const articleGroups = [
   articleGroupSchema.parse({ id: "designated-activities", title: "Designated Activities", description: "An umbrella status containing distinct programs such as working holiday, J-Find, long-stay tourism, digital nomad, and graduate job hunting.", articleIds: ["visa-and-status-of-residence-explained", "designated-activities-status", "working-holiday-in-japan", "long-stay-sightseeing-designated-activities", "future-creation-j-find", "digital-nomad-designated-activities", "continued-job-hunting-after-study", "startup-visa"] }),
   articleGroupSchema.parse({ id: "short-stay-and-medical", title: "Short stay and medical visits", description: "Compare visa, exemption, eVISA, Temporary Visitor, short-study, and planned Medical Stay routes without applying ordinary resident-settlement assumptions.", articleIds: ["visa-and-status-of-residence-explained", "temporary-visitor-and-short-stay", "medical-stay-visa", "short-term-study-in-japan"] }),
   articleGroupSchema.parse({ id: "diplomatic-and-official", title: "Diplomatic and official", description: "Special-purpose routes for recognized diplomatic and official government or international-organization activity.", articleIds: ["visa-and-status-of-residence-explained", "diplomatic-visa", "official-visa"] }),
-  articleGroupSchema.parse({ id: "taxes-and-resident-responsibilities", title: "Taxes and resident responsibilities", description: "Ongoing obligations after arrival: income and resident tax, side work, immigration notifications, status renewal or change, temporary travel, and departure.", articleIds: ["income-and-resident-tax-after-moving-to-japan", "filing-a-japanese-income-tax-return", "side-work-and-freelancing-on-a-work-status", "notifying-immigration-about-work-contract-changes", "renewing-or-changing-your-status-of-residence", "reentry-permission-and-temporary-travel", "leaving-japan-and-closing-out-procedures"] }),
+  articleGroupSchema.parse({ id: "taxes-and-resident-responsibilities", title: "Taxes and resident responsibilities", description: "Tax residence, income and resident tax, payroll, filing, cross-border income, independent work, immigration maintenance, temporary travel, and departure responsibilities.", articleIds: ["tax-residence-and-taxable-income-in-japan", "income-and-resident-tax-after-moving-to-japan", "payroll-withholding-and-year-end-adjustment", "filing-a-japanese-income-tax-return", "foreign-income-tax-treaties-and-foreign-tax-credits", "tax-for-side-work-and-sole-proprietors", "consumption-tax-and-the-invoice-system", "tax-procedures-before-leaving-japan", "side-work-and-freelancing-on-a-work-status", "notifying-immigration-about-work-contract-changes", "renewing-or-changing-your-status-of-residence", "reentry-permission-and-temporary-travel", "leaving-japan-and-closing-out-procedures"] }),
+  articleGroupSchema.parse({ id: "working-in-japan", title: "Working in Japan", description: "Employment contracts, pay and time, insurance and work injury, workplace help, side jobs, freelance protections, employment endings, and connected immigration and tax questions.", articleIds: ["understanding-your-employment-contract-and-working-conditions", "wages-working-hours-overtime-and-paid-leave", "employment-insurance-social-insurance-and-work-injury", "workplace-harassment-safety-and-getting-help", "side-work-and-freelancing-on-a-work-status", "side-jobs-and-multiple-employers-in-japan", "freelance-contracts-and-client-obligations-in-japan", "tax-for-side-work-and-sole-proprietors", "resigning-dismissal-and-fixed-term-contract-endings", "notifying-immigration-about-work-contract-changes"] }),
 ] as const;
 
 export const guidedJourneys = [
@@ -210,8 +211,9 @@ export const guidedJourneys = [
     routes: professionalRoutes,
     phases: [
       { id: "current-status", title: "Identify your current work status", steps: [routeChoice] },
-      { id: "assess-side-work", title: "Assess the proposed side work", steps: [articleStep("side-work-and-freelancing-on-a-work-status"), conditionalStep("notifying-immigration-about-work-contract-changes", "If a covered contract or affiliated organization changes")] },
-      { id: "handle-tax", title: "Handle tax records and filing", steps: [articleStep("income-and-resident-tax-after-moving-to-japan"), conditionalStep("filing-a-japanese-income-tax-return", "If your income and filing circumstances require a final return")] },
+      { id: "assess-side-work", title: "Assess the proposed side work", steps: [articleStep("side-work-and-freelancing-on-a-work-status"), conditionalStep("side-jobs-and-multiple-employers-in-japan", "If the additional activity is employment with another employer"), conditionalStep("freelance-contracts-and-client-obligations-in-japan", "If a business will commission you as an independent freelancer"), conditionalStep("notifying-immigration-about-work-contract-changes", "If a covered contract or affiliated organization changes")] },
+      { id: "handle-coverage", title: "Check coverage and working time", steps: [conditionalStep("employment-insurance-social-insurance-and-work-injury", "If employment coverage changes, you have multiple workplaces, or a work or commuting injury occurs"), conditionalStep("workplace-harassment-safety-and-getting-help", "If work becomes unsafe or a workplace problem requires help")] },
+      { id: "handle-tax", title: "Handle tax records and filing", steps: [articleStep("tax-residence-and-taxable-income-in-japan"), articleStep("income-and-resident-tax-after-moving-to-japan"), conditionalStep("payroll-withholding-and-year-end-adjustment", "If you receive salary through Japanese payroll"), articleStep("tax-for-side-work-and-sole-proprietors"), conditionalStep("consumption-tax-and-the-invoice-system", "If taxable sales, an election, or invoice registration may apply"), conditionalStep("filing-a-japanese-income-tax-return", "If your income, deductions, or filing circumstances require or support a final return")] },
       { id: "maintain-status", title: "Maintain the underlying status", steps: [articleStep("renewing-or-changing-your-status-of-residence")] },
     ],
   }),
@@ -220,11 +222,11 @@ export const guidedJourneys = [
     description: "Keep tax, immigration, and eventual departure obligations visible after initial arrival.",
     introduction: "These responsibilities apply differently based on employment, income, status, municipality, and future plans.",
     phases: [
-      { id: "tax", title: "Maintain tax records", steps: [articleStep("income-and-resident-tax-after-moving-to-japan"), conditionalStep("filing-a-japanese-income-tax-return", "If your income and filing circumstances require a final return")] },
+      { id: "tax", title: "Maintain tax records", steps: [articleStep("tax-residence-and-taxable-income-in-japan"), articleStep("income-and-resident-tax-after-moving-to-japan"), conditionalStep("payroll-withholding-and-year-end-adjustment", "If you receive salary through Japanese payroll"), conditionalStep("foreign-income-tax-treaties-and-foreign-tax-credits", "If you receive foreign-connected income, paid foreign tax, or may claim treaty relief"), conditionalStep("tax-for-side-work-and-sole-proprietors", "If you earn outside ordinary salary or operate independently"), conditionalStep("consumption-tax-and-the-invoice-system", "If independent activity, taxable sales, an election, or invoice registration may apply"), conditionalStep("filing-a-japanese-income-tax-return", "If your income, deductions, or filing circumstances require or support a final return")] },
       { id: "work-changes", title: "Handle work changes", steps: [conditionalStep("side-work-and-freelancing-on-a-work-status", "If you plan additional paid work"), conditionalStep("notifying-immigration-about-work-contract-changes", "If a covered contract or organization changes")] },
       { id: "immigration", title: "Maintain immigration permission", steps: [articleStep("renewing-or-changing-your-status-of-residence")] },
       { id: "temporary-travel", title: "Prepare for temporary travel", steps: [conditionalStep("reentry-permission-and-temporary-travel", "When you plan to leave Japan temporarily and return under the current residence permission")] },
-      { id: "departure", title: "Close out residence", steps: [conditionalStep("leaving-japan-and-closing-out-procedures", "When you prepare to leave Japan and end residence")] },
+      { id: "departure", title: "Close out residence", steps: [conditionalStep("tax-procedures-before-leaving-japan", "When ending Japanese tax residence or leaving unresolved national or local tax matters"), conditionalStep("leaving-japan-and-closing-out-procedures", "When you prepare to leave Japan and end residence")] },
     ],
   }),
   guidedJourneySchema.parse({
@@ -233,7 +235,7 @@ export const guidedJourneys = [
     introduction: "This time-limited Designated Activities route is not a general local-employment or relocation route.",
     phases: [
       { id: "understand", title: "Understand the route", steps: [articleStep("visa-and-status-of-residence-explained"), articleStep("designated-activities-status"), articleStep("digital-nomad-designated-activities")] },
-      { id: "tax", title: "Check tax treatment", steps: [conditionalStep("income-and-resident-tax-after-moving-to-japan", "If your work or stay creates a Japanese tax question")] },
+      { id: "tax", title: "Check tax treatment", steps: [conditionalStep("tax-residence-and-taxable-income-in-japan", "If your stay or work creates a Japanese tax-residence question"), conditionalStep("foreign-income-tax-treaties-and-foreign-tax-credits", "If income is paid abroad, connected to another country, or taxed outside Japan")] },
       { id: "departure", title: "Prepare for the fixed end date", steps: [articleStep("leaving-japan-and-closing-out-procedures")] },
     ],
   }),
@@ -305,6 +307,18 @@ export const guidedJourneys = [
       { id: "understand", title: "Understand the residence framework", steps: [articleStep("visa-and-status-of-residence-explained")] },
       { id: "maintain", title: "Maintain your record", steps: [articleStep("income-and-resident-tax-after-moving-to-japan"), articleStep("renewing-or-changing-your-status-of-residence")] },
       { id: "apply", title: "Prepare the application", steps: [articleStep("permanent-residence-in-japan")] },
+    ],
+  }),
+  guidedJourneySchema.parse({
+    id: "employment-lifecycle-in-japan", groupId: "working-in-japan", title: "Employment lifecycle journey",
+    description: "Review the employment relationship and working conditions, understand pay and time, then handle optional changes or an eventual employment ending.",
+    introduction: "Employment rights, immigration permission, insurance, and tax use separate rules. This journey connects them without treating one as proof of another.",
+    phases: [
+      { id: "start", title: "Understand the employment arrangement", steps: [articleStep("understanding-your-employment-contract-and-working-conditions")] },
+      { id: "work", title: "Check pay, time, and leave", steps: [articleStep("wages-working-hours-overtime-and-paid-leave")] },
+      { id: "coverage", title: "Confirm coverage and safety", steps: [articleStep("employment-insurance-social-insurance-and-work-injury"), conditionalStep("workplace-harassment-safety-and-getting-help", "If the workplace is unsafe, harassment occurs, or another problem requires help")] },
+      { id: "changes", title: "Handle additional work", steps: [conditionalStep("side-work-and-freelancing-on-a-work-status", "If you plan a second job, freelance project, or other paid activity"), conditionalStep("side-jobs-and-multiple-employers-in-japan", "If the additional activity is another employed role"), conditionalStep("freelance-contracts-and-client-obligations-in-japan", "If a business commissions you as an independent freelancer")] },
+      { id: "ending", title: "Handle an employment ending", steps: [conditionalStep("resigning-dismissal-and-fixed-term-contract-endings", "When employment may end or a fixed-term renewal is uncertain"), conditionalStep("notifying-immigration-about-work-contract-changes", "If the ending or new contract creates a covered immigration notification"), conditionalStep("payroll-withholding-and-year-end-adjustment", "When collecting tax records or moving to another employer during the year")] },
     ],
   }),
 ] as const;

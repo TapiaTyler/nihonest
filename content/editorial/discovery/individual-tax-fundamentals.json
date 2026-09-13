@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "id": "individual-tax-fundamentals-discovery",
+  "workstreamId": "tax-curriculum",
+  "preparedAt": "2026-09-12",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Tax residence under income-tax law, including resident, non-permanent resident, and non-resident classifications and their separation from nationality and immigration status.",
+    "The calendar-year national income-tax cycle and the later individual resident-tax cycle administered by the municipality associated with January 1 residence.",
+    "Salary withholding, year-end adjustment, employee declarations and deduction evidence, overseas dependants, prior-employer records, and the salary withholding slip.",
+    "Final-return filing for employees, including multiple payers, income outside salary, the limited 200,000-yen filing exception, refund returns, and the distinction from municipal declarations.",
+    "Records to preserve from arrival, job changes, year end, filing, and departure."
+  ],
+  "userSituations": [
+    "A newcomer assumes a residence card or a named visa decides whether they are tax resident.",
+    "An employee receives little or no resident-tax bill in the first year and is surprised by a later bill based on prior-year income.",
+    "A worker changes employers mid-year and the new employer needs the prior salary withholding slip before completing year-end adjustment.",
+    "An employee supports relatives overseas and needs relationship, remittance, translation, or other route-specific evidence for a deduction.",
+    "A salary earner has a second employer, freelance income, investment income, foreign income, or an unclaimed deduction and assumes year-end adjustment resolved everything.",
+    "A person hears that income of 200,000 yen or less never needs to be reported and misses the narrow scope of that national filing exception or a separate resident-tax declaration."
+  ],
+  "edgeCasesAndExceptions": [
+    "Income-tax residence turns on domicile and residence facts. Temporary absence can preserve residence, while immigration labels and nationality do not decide the classification.",
+    "A non-permanent resident is still a tax resident; the label has a specific nationality and five-of-ten-year test and changes the taxable scope of certain foreign-source income.",
+    "Withholding is a collection mechanism, not a final determination of taxable scope or liability.",
+    "Year-end adjustment applies only to covered salary and people meeting its conditions. It does not reconcile every income source, deduction, employer, residence period, or international issue.",
+    "The 200,000-yen rule is not a tax-free allowance. It is part of limited national final-return exceptions for defined salary earners, and municipal resident-tax reporting can still differ.",
+    "Filing a return for another reason generally requires all reportable income to be included rather than omitting income below a popular threshold.",
+    "A refund return can be available even when filing is not mandatory, subject to its own time limit and evidence.",
+    "Individual resident-tax rates, declarations, collection, relief, notices, and departure handling contain municipal or prefectural implementation details."
+  ],
+  "jurisdictionVariables": [
+    "Domicile, length and continuity of residence, nationality, prior ten-year presence, temporary-absence facts, income source, payment location, and remittances.",
+    "Calendar year, employer and payer count, salary amount, other income categories, withholding, deductions, prior employment, and departure timing.",
+    "Municipality of residence on January 1, prior-year income, salary special collection or ordinary collection, job changes, and local declaration requirements.",
+    "Relationship, age, disability or study facts, remittance evidence, and translation for dependants living outside Japan.",
+    "Treaty, foreign tax, foreign assets, self-employment, consumption tax, and business facts reserved for the next implementation pass or professional advice."
+  ],
+  "primarySourceCandidates": [
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/incometax_2025.htm", "supports": ["Resident classifications and taxable scope", "Current filing guide", "Calendar-year filing and departure framework"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12018.htm", "supports": ["Salary-earner filing triggers", "Limited 200,000-yen exceptions", "Multiple-payer cases"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12011.htm", "supports": ["Final-return purpose", "Ordinary filing period", "General filing framework"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12009.htm", "supports": ["Refund returns", "Five-year refund claim period", "Electronic and paper preparation channels"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/withholing/", "supports": ["Salary withholding materials", "Current employee forms", "Year-end-adjustment resources"] },
+    { "organization": "National Tax Agency", "url": "https://www.nta.go.jp/english/taxes/individual/12016.htm", "supports": ["Overseas-relative deduction evidence", "Relationship and remittance documents", "Translation requirement"] },
+    { "organization": "Tokyo Metropolitan Government Bureau of Taxation", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju/tokubetsu/about", "supports": ["January 1 municipality", "Salary special collection", "Resident-tax administration model"] }
+  ],
+  "contentImpacts": [
+    { "kind": "new-article", "id": "tax-residence-and-taxable-income-in-japan", "action": "create", "reason": "Separate the foundational residence and taxable-scope decision from payment and filing procedures." },
+    { "kind": "article", "id": "income-and-resident-tax-after-moving-to-japan", "action": "update", "reason": "Turn the draft overview into a clear national-versus-local calendar and first-year planning guide." },
+    { "kind": "new-article", "id": "payroll-withholding-and-year-end-adjustment", "action": "create", "reason": "Explain the employee documents and payroll reconciliation workflow without treating it as universal filing completion." },
+    { "kind": "article", "id": "filing-a-japanese-income-tax-return", "action": "update", "reason": "Document employee filing triggers, the limited threshold exception, refunds, records, and filing workflow." },
+    { "kind": "group", "id": "taxes-and-resident-responsibilities", "action": "update", "reason": "Expose the focused tax sequence in Explore." },
+    { "kind": "journey", "id": "ongoing-resident-responsibilities", "action": "update", "reason": "Order tax classification, payroll, and filing without presenting every step as universal." },
+    { "kind": "faq", "id": "taxes-after-moving-to-japan", "action": "update", "reason": "Route common questions to the new canonical guides." },
+    { "kind": "glossary-term", "id": "kyojusha", "action": "create", "reason": "Teach tax-resident terminology without confusing it with immigration residence." },
+    { "kind": "glossary-term", "id": "kyuyo-shotoku-no-gensen-choshu-hyo", "action": "create", "reason": "Make the core employee tax record searchable and understandable." }
+  ],
+  "scopeBoundaries": [
+    "9B-1 provides general individual employee guidance, not individualized tax calculations, treaty conclusions, or filing preparation.",
+    "Foreign-income remittance calculations, foreign tax credits, treaty claims, self-employment, consumption tax, invoice registration, and detailed departure handling remain in 9B-2.",
+    "Resident-tax guidance explains the common national framework and requires confirmation with the responsible municipality; it does not claim nationwide uniform forms or relief.",
+    "Tax compliance does not establish immigration permission, employment-contract permission, professional licensing, or social-insurance compliance.",
+    "Annual thresholds and forms must be tied to current NTA material and must not be presented as timeless."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": {
+    "approvedAt": "2026-09-12",
+    "note": "The editor approved beginning 9B-1 after reviewing and accepting the proposed employee-and-resident fundamentals split."
+  }
+}

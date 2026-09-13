@@ -127,14 +127,29 @@
       "targetIteration": 9,
       "articleIds": [
         "filing-a-japanese-income-tax-return",
-        "income-and-resident-tax-after-moving-to-japan"
+        "foreign-income-tax-treaties-and-foreign-tax-credits",
+        "income-and-resident-tax-after-moving-to-japan",
+        "consumption-tax-and-the-invoice-system",
+        "payroll-withholding-and-year-end-adjustment",
+        "tax-procedures-before-leaving-japan",
+        "tax-residence-and-taxable-income-in-japan",
+        "tax-for-side-work-and-sole-proprietors"
       ],
       "residenceStatusIds": []
     },
     {
       "id": "employment-and-side-work",
       "targetIteration": 10,
-      "articleIds": ["side-work-and-freelancing-on-a-work-status"],
+      "articleIds": [
+        "employment-insurance-social-insurance-and-work-injury",
+        "freelance-contracts-and-client-obligations-in-japan",
+        "resigning-dismissal-and-fixed-term-contract-endings",
+        "side-jobs-and-multiple-employers-in-japan",
+        "side-work-and-freelancing-on-a-work-status",
+        "understanding-your-employment-contract-and-working-conditions",
+        "wages-working-hours-overtime-and-paid-leave",
+        "workplace-harassment-safety-and-getting-help"
+      ],
       "residenceStatusIds": []
     }
   ],

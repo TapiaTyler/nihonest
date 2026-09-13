@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "id": "employment-rights-and-independent-work-discovery",
+  "workstreamId": "employment-and-side-work",
+  "preparedAt": "2026-09-12",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Employment status, written working conditions, rules of employment, fixed and indefinite terms, probation, and the difference between an employee and an independent contractor.",
+    "Wages, prefectural or industry minimum wages, working-time records, statutory hours, breaks, days off, overtime agreements and premiums, fixed overtime, and annual paid leave.",
+    "Voluntary resignation, agreed separation, dismissal, dismissal notice or allowance, fixed-term nonrenewal, indefinite-contract conversion, final records, and immigration handoffs after work ends.",
+    "Workplace harassment, nationality-related treatment, retaliation, safety, work-related injury, evidence preservation, internal reporting, Labour Bureau and Labour Standards Inspection Office consultation, and emergency routes.",
+    "Employee health and pension insurance, employment insurance, workers' accident compensation, coverage changes, multiple workplaces, and the handoff from employee coverage to municipal systems.",
+    "Side jobs and concurrent employment, employer work rules, legitimate restriction reasons, disclosure, aggregate working-time questions, health management, immigration permission, tax, and social insurance as separate layers.",
+    "The Freelance Act, employee misclassification, covered business-to-business outsourcing, written transaction terms, payment deadlines, prohibited conduct, recruitment accuracy, care accommodations, harassment systems, and termination notice."
+  ],
+  "userSituations": [
+    "A foreign employee receives only a Japanese offer or contract and cannot identify pay, work location, duties, term, renewal, overtime, leave, or dismissal conditions.",
+    "A worker is called a manager, contractor, trainee, or freelancer and assumes the label removes ordinary wage, hour, insurance, or labor protections.",
+    "An employee is told a salary or fixed-overtime allowance covers unlimited overtime, or does not know how to preserve their own working-time and pay records.",
+    "A fixed-term worker expects renewal, an employee is pressured to sign a resignation, or a worker is dismissed without understanding that notice procedure and substantive validity are separate questions.",
+    "A foreign worker experiences harassment or nationality-related mistreatment and fears that seeking help will immediately cancel residence permission.",
+    "An employee takes a second employed job and neither workplace has a clear, privacy-conscious process for declaring hours, conflicts, or health risks.",
+    "A freelancer receives an informal order, late or reduced payment, uncompensated rework, misleading recruitment information, harassment, or sudden termination.",
+    "A person leaves employment and does not know which insurance, pension, unemployment, municipal, immigration, and tax procedures must be handled separately."
+  ],
+  "edgeCasesAndExceptions": [
+    "Japanese labor protections generally apply to covered workers regardless of nationality, while immigration authorization remains a separate question and unauthorized work does not erase workplace rights.",
+    "Employee or contractor status depends on the real working relationship, not only the agreement title; the Freelance Act must not be used to displace protections available to a legally recognized worker.",
+    "A rules-of-employment clause or model rule is not identical to a statute. Side work is not safely described as either universally prohibited or an unlimited personal right.",
+    "Working-time aggregation for concurrent employment has defined scope and information problems. Employed side work, independent contracting, director activity, and business operation must not be merged.",
+    "An Article 36 agreement permits overtime only within its legal framework; it does not eliminate premium pay, health duties, upper limits, or the need to record actual time.",
+    "A fixed salary, annual salary, manager title, or fixed-overtime allowance does not automatically eliminate overtime rights. Applicability and calculation are fact-specific.",
+    "A dismissal-notice payment does not by itself make a dismissal substantively valid, and a two-week resignation slogan is unsafe across fixed terms, work rules, collective agreements, and disputed facts.",
+    "Minimum wages vary by prefecture and can also involve specified-industry rates; every amount must be current and geographically identified.",
+    "Social-insurance and employment-insurance coverage depend on the employer, workplace, hours, pay, expected duration, student status, age, and other current criteria; one generic hours threshold is insufficient.",
+    "Workers' accident compensation, employer safety duties, private health insurance, employee health insurance, and municipal National Health Insurance solve different problems.",
+    "The Freelance Act uses statutory definitions narrower than everyday 'freelancer.' Consumer commissions, a freelancer employing workers, direct sales of self-created goods, overseas relationships, and disguised employment require separate analysis.",
+    "Freelance obligations vary with the commissioning party and duration. The transaction-terms duty is broader than duties tied to one-month or six-month engagements."
+  ],
+  "jurisdictionVariables": [
+    "Whether the person is legally a worker, dispatched worker, executive, independent contractor, sole proprietor, or statutory freelancer; the real direction, control, economic dependence, equipment, substitution, and business facts.",
+    "Contract term, renewal history, workplace rules, collective agreement, probation, duties, location, schedule, wage system, fixed-overtime terms, attendance, and ending method.",
+    "Prefecture and industry, actual hours across employers, night or holiday work, exemptions or special systems, Article 36 agreement, and current minimum-wage effective date.",
+    "Employer size and coverage, weekly hours, monthly remuneration, expected employment duration, student and age rules, multiple workplaces, separation reason, and municipal coverage after employment.",
+    "Residence status, authorized activity, outside-activity permission, affiliated-organization notification, and whether the principal authorized activity continues.",
+    "Client and supplier legal forms, use of employees, business-to-business versus consumer relationship, outsourcing duration, delivery or service date, re-outsourcing, payment date, governing law, and work location.",
+    "Immediate safety or criminal risk, available internal process, responsible Labour Bureau or Inspection Office, language access, union or legal support, limitation periods, and evidence."
+  ],
+  "primarySourceCandidates": [
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.mhlw.go.jp/content/001395762.pdf", "supports": ["Written working conditions", "Core wage and hour protections", "Employment endings and insurance overview"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.mhlw.go.jp/content/001456903.pdf", "supports": ["Current model rules of employment", "Side-job model provision", "Annual paid leave and workplace rules"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000192188.html", "supports": ["March 31, 2025 side-job guidelines", "Concurrent working-time management", "Worker and employer materials"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.check-roudou.mhlw.go.jp/study/roudousya_taisyoku.html", "supports": ["Resignation and agreed separation", "Dismissal notice and validity", "Fixed-term nonrenewal"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.check-roudou.mhlw.go.jp/study/roudousya_jikangai.html", "supports": ["Overtime and premium wages", "Fixed overtime and time records", "Night and statutory-holiday work"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.mhlw.go.jp/stf/tekiyoukakudai_multilingual.html", "supports": ["Employee social-insurance coverage", "Employee and employer multilingual resources"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/gyousei/rousai/gaikoku-pamphlet.html", "supports": ["Workers' accident compensation for foreign workers", "Claims and departure considerations"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.no-harassment.mhlw.go.jp/foreign_workers/foreign_workers_en/", "supports": ["Workplace harassment categories", "Employer prevention and consultation measures", "Foreign-worker examples"] },
+    { "organization": "Ministry of Health, Labour and Welfare", "url": "https://www.check-roudou.mhlw.go.jp/soudan/foreigner_eng.html", "supports": ["Current foreign-language labor consultation", "Labour Standards Advice Hotline"] },
+    { "organization": "Japan Fair Trade Commission", "url": "https://www.jftc.go.jp/freelancelaw_2025/", "supports": ["Freelancer and commissioning-party definitions", "Transaction terms and payment", "Prohibited conduct and engagement-duration duties"] },
+    { "organization": "Japan Fair Trade Commission", "url": "https://www.jftc.go.jp/fllaw_limited/fllaw_qa.html", "supports": ["Current Freelance Act interpretations", "Coverage and exceptions", "Complaint and compliance questions"] }
+  ],
+  "contentImpacts": [
+    { "kind": "new-article", "id": "understanding-your-employment-contract-and-working-conditions", "action": "create", "reason": "Give employees a document-first starting point and distinguish the real relationship from its label." },
+    { "kind": "new-article", "id": "wages-working-hours-overtime-and-paid-leave", "action": "create", "reason": "Explain the connected pay and time rules without burying them inside immigration-status guidance." },
+    { "kind": "new-article", "id": "resigning-dismissal-and-fixed-term-contract-endings", "action": "create", "reason": "Separate voluntary, agreed, employer-initiated, and term-expiry endings and connect their later procedures." },
+    { "kind": "new-article", "id": "workplace-harassment-safety-and-getting-help", "action": "create", "reason": "Provide an evidence-preserving, multilingual path from immediate safety through internal and government help." },
+    { "kind": "new-article", "id": "employment-insurance-social-insurance-and-work-injury", "action": "create", "reason": "Connect employment-triggered coverage and separation handoffs without merging distinct insurance systems." },
+    { "kind": "new-article", "id": "side-jobs-and-multiple-employers-in-japan", "action": "create", "reason": "Cover employment-law and health questions separately from the existing immigration and tax guides." },
+    { "kind": "new-article", "id": "freelance-contracts-and-client-obligations-in-japan", "action": "create", "reason": "Explain the current Freelance Act, its narrow definitions, and protections without assuming every freelancer is covered." },
+    { "kind": "article", "id": "side-work-and-freelancing-on-a-work-status", "action": "update", "reason": "Keep this as the immigration authority guide and link the separate employment, freelance-contract, insurance, and tax layers." },
+    { "kind": "group", "id": "working-in-japan", "action": "create", "reason": "Separate workplace rights and responsibilities from residence-status selection and tax guidance." },
+    { "kind": "journey", "id": "employment-lifecycle-in-japan", "action": "create", "reason": "Sequence contract review, pay and coverage, workplace problems, optional side work, and employment endings without making conditional problems universal." },
+    { "kind": "journey", "id": "side-work-or-freelancing-while-employed", "action": "update", "reason": "Add separate employed-side-job, freelance-contract, insurance, and tax branches after immigration review." },
+    { "kind": "faq", "id": "foreign-worker-same-labor-rights", "action": "create", "reason": "Answer whether nationality or residence status removes ordinary workplace protections." },
+    { "kind": "glossary-term", "id": "rodo-joken-tsuchisho", "action": "create", "reason": "Make the written working-conditions notice searchable." },
+    { "kind": "glossary-term", "id": "freelance-ho", "action": "create", "reason": "Teach the statutory freelance-protection framework without equating it with all independent work." }
+  ],
+  "scopeBoundaries": [
+    "The implementation will teach issue spotting, records, and responsible help routes, not decide worker status, calculate wages or benefits, validate a dismissal, or give individualized legal advice.",
+    "Immigration permission, employment rights, professional licensing, tax, employee or municipal insurance, and client-contract regulation remain separate even when one event affects several layers.",
+    "Minimum-wage amounts, insurance thresholds, hotline hours, model rules, and other changing values require effective dates and current-source checks.",
+    "Detailed union law, collective bargaining, litigation, workers' compensation calculations, unemployment-benefit calculations, pension benefits, family leave, and every protected-class regime remain outside the initial guides except for safe orientation and handoffs.",
+    "The group will address people already working or evaluating terms, not duplicate occupation-to-residence-status selection in Professional work.",
+    "All new and materially revised guidance remains needs-review until explicit human editorial approval."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": {
+    "approvedAt": "2026-09-12",
+    "note": "The editor approved the proposed two-pass sequence. Employee terms, pay and time, and employment endings proceed first; coverage, workplace problems, side jobs, and freelance protections remain in the second pass."
+  }
+}

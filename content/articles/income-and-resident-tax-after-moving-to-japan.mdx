@@ -1,7 +1,7 @@
 export const metadata = {
   id: "income-and-resident-tax-after-moving-to-japan",
   title: "Income tax and resident tax after moving to Japan",
-  description: "Build a first-year tax map covering tax residence, payroll withholding, resident-tax timing, side income, and records to keep.",
+  description: "Follow the two tax calendars, anticipate the delayed resident-tax bill, and keep the records needed after arrival or a job change.",
   slug: "income-and-resident-tax-after-moving-to-japan",
   journeyStageIds: ["planning", "recently-arrived", "living-in-japan"],
   topicIds: ["taxes", "employment", "municipal-procedures"],
@@ -9,34 +9,78 @@ export const metadata = {
   geographicScopes: ["national", "municipal"],
   importance: "critical",
   contentType: "guide",
-  sourceIds: ["nta-individual-income-tax", "nta-nonresident-income-tax", "isa-daily-life-guidebook"],
-  termIds: ["shotoku-zei", "jumin-zei", "gensen-choshu", "nenmatsu-chosei", "kakutei-shinkoku"],
+  sourceIds: ["nta-income-tax-guide-2025", "nta-withholding-tax", "tokyo-resident-tax-special-collection", "isa-daily-life-guidebook"],
+  termIds: ["shotoku-zei", "jumin-zei", "gensen-choshu", "tokubetsu-choshu", "futsu-choshu", "nenmatsu-chosei", "kakutei-shinkoku"],
+  searchTerms: ["Japan taxes after moving", "first year tax Japan", "resident tax first year", "inhabitant tax bill", "city tax Japan", "income tax versus resident tax", "resident tax after changing jobs", "salary resident tax deduction", "June resident tax bill"],
   residenceStatusIds: [],
-  relationships: [{ type: "next-step", articleId: "filing-a-japanese-income-tax-return" }, { type: "related", articleId: "side-work-and-freelancing-on-a-work-status" }],
-  status: "draft",
+  relationships: [{ type: "prerequisite", articleId: "tax-residence-and-taxable-income-in-japan" }, { type: "next-step", articleId: "payroll-withholding-and-year-end-adjustment" }, { type: "related", articleId: "filing-a-japanese-income-tax-return" }, { type: "related", articleId: "side-work-and-freelancing-on-a-work-status" }],
+  status: "needs-review",
   createdAt: "2026-09-06",
-  updatedAt: "2026-09-06",
+  updatedAt: "2026-09-12",
 }
 
-> **Draft tax orientation:** Tax residence is not the same as immigration status or nationality. Cross-border income, treaties, and departure timing need fact-specific advice from the tax office or a qualified tax professional.
+> **Editorial review needed:** National income tax and individual resident tax use related income information but different authorities, calendars, declarations, and collection methods. Confirm local procedures with the municipality responsible for your case.
 
-## Learn the two tax timelines
+## Put two tax calendars on your timeline
 
-National income tax ([所得税](/glossary/shotoku-zei), **shotokuzei**) applies under national rules to income within the relevant taxable scope. An employer may deduct tax through withholding ([源泉徴収](/glossary/gensen-choshu), **gensen chōshū**) and may complete year-end adjustment ([年末調整](/glossary/nenmatsu-chosei), **nenmatsu chōsei**) for eligible salary income.
+National Income Tax ([所得税](/glossary/shotoku-zei), **shotokuzei**) generally follows income for the calendar year from January 1 through December 31. Salary tax may be collected through withholding ([源泉徴収](/glossary/gensen-choshu), **gensen chōshū**), reconciled through qualifying year-end adjustment, or settled through a Final Tax Return ([確定申告](/glossary/kakutei-shinkoku), **kakutei shinkoku**).
 
-Individual resident tax ([住民税](/glossary/jumin-zei), **jūminzei**) is administered locally and commonly reflects prior-year income. That delay surprises newcomers and people leaving a job: low or absent first-year billing does not mean the later bill will be low. Municipality, January 1 residence, income, and collection method matter.
+Individual Resident Tax ([住民税](/glossary/jumin-zei), **jūminzei**) is local. It generally uses prior-year income and is imposed and collected by the municipality connected to the person's residence on January 1 of the relevant assessment year.
 
-## Immigration labels do not determine tax residence
+This means income earned this year can affect a resident-tax bill collected later. A small first-year bill after arriving from abroad does not mean resident tax will remain small.
 
-Tax law separately evaluates domicile, residence duration, and income source. A Temporary Visitor can still have a tax question, while a resident-card holder's worldwide-income treatment can change over time. Do not infer “nonresident for tax” from a visa label.
+## Understand the first-year delay
 
-## Records to keep from arrival
+A common sequence is:
 
-- employment contracts, payslips, and withholding slips;
-- overseas and Japanese income records with payment dates and currencies;
-- invoices and evidence of business expenses for side work;
-- social-insurance, pension, donation, dependent, and other deduction records;
-- entry, address, and departure dates; and
-- tax-office and municipal notices.
+1. You arrive and begin earning salary during one calendar year.
+2. Income tax is withheld from salary during that year.
+3. The employer may perform year-end adjustment, or you may file a national return after year end.
+4. The municipality uses the prior-year income information to calculate the later resident-tax assessment.
+5. Collection commonly begins through salary deductions or municipal payment notices.
 
-Ask early how side income, overseas accounts or assets, remote work, stock compensation, cryptocurrency, rental income, dependents abroad, or a tax treaty affects you. Year-end adjustment is not a universal substitute for a Final Tax Return ([確定申告](/glossary/kakutei-shinkoku), **kakutei shinkoku**).
+The exact result depends on the arrival date, January 1 address, prior income, employer reporting, deductions, declarations, and local rules. Ask the municipality what it has recorded rather than assuming that no notice means no liability.
+
+## Check how resident tax will be collected
+
+Under salary special collection ([特別徴収](/glossary/tokubetsu-choshu), **tokubetsu chōshū**), an employer deducts the resident-tax installments from salary and pays the municipality. Under ordinary collection ([普通徴収](/glossary/futsu-choshu), **futsū chōshū**), the person pays using municipal notices or an available local payment channel.
+
+A change of employer, loss of employment, leave, reduced hours, or departure can change the collection path without canceling the assessment. Ask:
+
+- whether deductions will continue through the old or new employer;
+- whether remaining installments will be collected at once or converted to ordinary collection;
+- which address will receive notices; and
+- how payment will be handled if you leave Japan.
+
+Do not treat a payroll label such as “resident tax” as proof that every municipal amount is fully settled.
+
+## Read the documents from different authorities separately
+
+Keep:
+
+- monthly payslips showing national income-tax and resident-tax deductions separately;
+- the annual Salary Income Withholding Tax Slip;
+- employer year-end-adjustment declarations and deduction certificates;
+- any Final Tax Return and proof of submission or payment;
+- municipal resident-tax assessment and payment notices; and
+- records of job changes, address changes, arrival, and departure.
+
+Income tax questions normally go to the responsible tax office. Individual resident-tax questions normally go to the responsible municipal tax desk. Payroll can explain what it deducted, but the employer cannot give every employee an authoritative determination of tax residence, foreign-income scope, or municipal liability.
+
+## Plan cash flow before the later bill
+
+Budget for resident tax while earning the income, even when collection has not begun. This is particularly important when:
+
+- you arrived partway through a year;
+- salary rises substantially;
+- a job ends before the collection cycle finishes;
+- you move to another municipality;
+- you switch between employment and independent work; or
+- you plan to leave Japan.
+
+National filing exceptions and municipal declaration rules are not identical. A person who does not need a national return may still need to confirm a resident-tax declaration or missing income information with the municipality.
+
+## Keep other systems separate
+
+Tax payment does not authorize side work under immigration law or an employment contract. Likewise, income-tax and resident-tax treatment do not decide health-insurance or pension enrollment. Review each system on its own facts and keep the resulting records together.
+
