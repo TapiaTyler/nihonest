@@ -493,6 +493,8 @@ The goal is to publish information that users can understand, trace, and appropr
 
 Canonical articles may participate in multiple journeys. Do not rewrite shared guidance to pretend it belongs exclusively to one audience or route.
 
+Reserve a selectable journey for a primary relocation, residence, study, work, family, or other life-transition pathway whose ordered steps and saved route choice materially help the user. Optional or concurrent subjects—such as driving, emergency preparation, waste, consumer protection, or neighborhood life—belong in browse groups and contextual relationships unless they genuinely define the user's main pathway. They must not overwrite an account-level journey preference merely because several related guides can be read in sequence.
+
 Journey definitions should distinguish:
 
 - shared phases;

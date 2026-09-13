@@ -631,6 +631,27 @@ Discovery is exploratory and may expand or divide the implementation batch. It m
 
 **Iteration 10B-2 complete locally:** Four additional guides now distinguish employee health and pension insurance, employment insurance, workers’ compensation, and municipal handoffs; provide a safety-first path through harassment, evidence, multilingual consultation, labor authorities, unions, legal help, and immigration threats; explain workplace rules, aggregate working time, health, conflicts, insurance, immigration, and tax across multiple employed jobs; and document the Freelance Act’s defined coverage, transaction terms, payment deadline, prohibited conduct, working-environment duties, and termination rules. The existing side-work guide is now the focused immigration layer and links to employment, freelance-contract, insurance, and tax guidance. Seventeen additional Japanese terms, seven FAQs, and completed Working in Japan and side-work journeys support retrieval. All new and materially revised guidance remains `needs-review`.
 
+**Iteration 11A — Integration, mobility, and daily-life discovery**
+
+- research driving authority and foreign-licence conversion, vehicle ownership, traffic and bicycle rules, accidents and emergency calls, disaster preparation and evacuation, household waste, consumer protection, shared-space living, cultural context, Japanese-language learning, and local support; and
+- separate national law, prefectural administration, municipal rules and live instructions, private contracts, official recommendations, common practice, and individual preference before implementation.
+
+**Iteration 11A discovery and scope approval complete locally:** `content/editorial/discovery/integration-mobility-and-daily-life.json` and `docs/research/INTEGRATION-MOBILITY-AND-DAILY-LIFE-DISCOVERY.md` map the safety-critical and locally variable decisions. The approved direction creates separate temporary-driving and licence-conversion guides; a transport, safety, and emergency pass; then a waste, consumer, neighborhood, language, and local-support pass. It treats the April 1, 2026 bicycle enforcement change and the emergency-evacuation-site versus shelter distinction as dated, explicit concepts rather than generic advice.
+
+**Iteration 11B-1 — Mobility, emergencies, and disaster readiness**
+
+- implement the approved driving, licence-conversion, vehicle, traffic-accident, bicycle, emergency-call, and disaster guidance; and
+- add focused group, terminology, FAQ, search, and contextual-link integration without turning supporting safety topics into account-level journey preferences.
+
+**Complete locally:** Seven current-source guides now separate temporary foreign-document driving, Japanese licence conversion, vehicle ownership, road and collision duties, bicycle rules, emergency calls, and disaster preparation. Nineteen contextual Japanese terms and seven FAQs expose ordinary search language through a Transport, safety, and emergencies group and focused cross-links. These supporting topics do not become selectable account-level journeys and cannot replace a user's relocation pathway. The guidance identifies national, prefectural, municipal, contract, insurer, and live-instruction boundaries; dates the April 1, 2026 bicycle notice system; and distinguishes a hazard-specific emergency evacuation site from a shelter. All new guidance remains `needs-review`.
+
+**Iteration 11B-2 — Local responsibilities and community integration**
+
+- implement the approved waste, consumer-contract, shared-space, cultural-context, Japanese-language, and local-support guidance; and
+- complete daily-life group, terminology, FAQ, search, and cross-article integration without creating a competing account-level local-settlement journey.
+
+**Complete locally:** Five current-source guides now cover setting up and closing electricity, gas, water, and home-internet services; address-specific household waste and regulated disposal; consumer contracts, limited cooling-off rights, evidence, and public help; neighborhood and shared-space communication without presenting custom as universal law; and the distinct roles of formal language schools, practical Japanese learning, interpretation, consultation, and specialist advice. Nineteen contextual Japanese terms, ten search-oriented FAQs, a Daily life and local community group, and links from housing, phone, banking, and departure guidance support discovery. No selectable journey was added, so these optional and concurrent topics cannot overwrite a user's primary relocation pathway. All new and materially revised guidance remains `needs-review`.
+
 **Iterations 12A–13A / 12B–13B — Geographic and document discovery and implementation pilots**
 
 - validate a small municipality model and introduce accessible, safely sourced document and form examples.

@@ -151,6 +151,32 @@
         "workplace-harassment-safety-and-getting-help"
       ],
       "residenceStatusIds": []
+    },
+    {
+      "id": "mobility-emergencies-and-disasters",
+      "targetIteration": 11,
+      "articleIds": [
+        "bicycle-rules-registration-and-accidents-in-japan",
+        "buying-registering-and-insuring-a-vehicle-in-japan",
+        "calling-police-fire-and-ambulance-services-in-japan",
+        "converting-a-foreign-drivers-license-in-japan",
+        "driving-in-japan-with-a-foreign-or-international-license",
+        "driving-rules-and-traffic-accidents-in-japan",
+        "preparing-for-disasters-and-evacuation-in-japan"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "daily-life-and-local-community",
+      "targetIteration": 11,
+      "articleIds": [
+        "consumer-contracts-cancellations-and-getting-help",
+        "finding-japanese-language-and-local-support",
+        "living-in-a-japanese-neighborhood-and-shared-spaces",
+        "setting-up-electricity-gas-water-and-home-internet",
+        "sorting-household-waste-and-arranging-disposal"
+      ],
+      "residenceStatusIds": []
     }
   ],
   "residenceStatusBatches": [
