@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "id": "municipal-geography-pilot-discovery",
+  "workstreamId": "municipal-geography-pilot",
+  "preparedAt": "2026-09-13",
+  "reviewState": "scope-approved",
+  "scopeApproval": {
+    "approvedAt": "2026-09-13",
+    "note": "Approved the paired Shinjuku and Nagoya pilot, six canonical article surfaces, local supplements, and an explicit device-local location preference."
+  },
+  "topicCandidates": [
+    "A paired pilot using Shinjuku City and Nagoya City to test two materially different local-government shapes: a Tokyo special ward and a designated city whose residents use one of sixteen ward offices.",
+    "A hierarchical geography model that distinguishes national, prefecture-level, municipality or special-ward, and service-office scope without treating every office as a separate body of law.",
+    "Local supplements attached to canonical national articles rather than copies of the article, with jurisdiction, applicability, effective date, last-checked date, source links, local actions, office routing, and explicit national-versus-local boundaries.",
+    "Initial local coverage for address and household changes, National Health Insurance routing, household and oversized waste, resident-tax and departure information, disaster and hazard information, and multilingual consultation or Japanese-language support.",
+    "Geographic discovery through an optional location selection and local labels, without making location a journey, requiring an account, or hiding the national guidance when no supported municipality is selected.",
+    "Accessible handling of source formats: Shinjuku provides extensive English HTML pages, while Nagoya combines Japanese and Easy Japanese HTML, multilingual PDFs, city pages, and Nagoya International Center materials."
+  ],
+  "pilotLocations": [
+    {
+      "id": "shinjuku",
+      "name": "Shinjuku City",
+      "jurisdictionType": "special-ward",
+      "parent": "Tokyo Metropolis",
+      "recommendedRole": "paired-pilot",
+      "reason": "Tests a Tokyo special ward with a dedicated foreign-resident site, extensive English HTML, direct procedure pages, multilingual waste material, local hazard information, and established consultation services."
+    },
+    {
+      "id": "nagoya",
+      "name": "Nagoya City",
+      "jurisdictionType": "designated-city",
+      "parent": "Aichi Prefecture",
+      "recommendedRole": "paired-pilot",
+      "reason": "Tests a designated city with sixteen ward offices, a recently reorganized official website, Easy Japanese HTML, multilingual living and waste guides, city tax resources, and support delivered with Nagoya International Center."
+    }
+  ],
+  "userSituations": [
+    "A resident knows they live in Tokyo but follows a procedure from another ward instead of Shinjuku's current office and document instructions.",
+    "A Nagoya resident sees 'ward office' and mistakes the ward for a separate municipality, or visits a citywide office when the procedure belongs to the ward of residence.",
+    "A user interprets a Shinjuku or Nagoya waste category, bag, collection time, or oversized-item threshold as a nationwide rule.",
+    "A resident needs a local procedure but the official source is available only in Japanese, Easy Japanese, or a PDF in their preferred language.",
+    "A user needs both the national eligibility rule and the local filing route, such as National Health Insurance coverage followed by the responsible municipal counter.",
+    "A resident moves between Shinjuku and Nagoya and needs to understand that moving-out, moving-in, insurance, waste, tax, water, and disaster resources change while the canonical national concepts remain available.",
+    "A person searches for an office by a neighborhood name, station, ward, city, prefecture, or English spelling and needs the application to resolve the supported jurisdiction accurately.",
+    "A person relies on saved local information after a source, office, form, fee, collection rule, or language schedule has changed."
+  ],
+  "edgeCasesAndExceptions": [
+    "Shinjuku City is a special ward within Tokyo Metropolis. It must not be modeled as an ordinary city or collapsed into a generic Tokyo procedure.",
+    "Nagoya City is a designated city divided into sixteen wards. Ward offices and branches can receive city procedures, but those wards are not equivalent to Shinjuku's special-ward government structure.",
+    "A local office route is not necessarily a local legal variation. National rules may be administered through local counters without their substance changing.",
+    "Address registration, National Health Insurance, pension, My Number, and tax can interact at one visit, but eligibility, responsible agencies, records, and deadlines remain distinct.",
+    "Foreign-language summaries can lag the controlling Japanese page, omit exceptions, or move to a new URL. Each local supplement needs a controlling source, language label, and verification date.",
+    "A multilingual PDF may be visually useful but have weak or absent text extraction. The application must provide accessible text outside the source document and must not claim that the PDF itself is accessible.",
+    "Waste collection days can vary below city level by address or collection point. A city guide cannot safely generate a household schedule without the city's current address-specific lookup.",
+    "Hazard maps describe specified modeled hazards and do not replace live warnings, evacuation information, or an assessment of the exact building and route.",
+    "Consultation languages, days, hours, appointment rules, and professional availability can change more frequently than the underlying guide. Avoid embedding a schedule unless it is dated and monitored.",
+    "Tokyo Metropolitan or Aichi Prefectural services may be relevant even when the immediate procedure belongs to Shinjuku or Nagoya. The schema must allow more than one applicable geographic layer.",
+    "Nagoya International Center is an important city-linked support institution, but its guidance must be attributed to the Center rather than silently presented as a city ordinance or ward-office decision.",
+    "Users outside both pilots must continue to receive complete national guidance and a clear instruction to check their own municipality; the absence of a local supplement is not the absence of a procedure."
+  ],
+  "jurisdictionVariables": [
+    "Country, prefecture or metropolis, municipality or special ward, designated-city ward or service office, exact address, and whether the user is moving from overseas, another municipality, or within the same municipality.",
+    "Procedure owner, receiving counter, eligible online or postal route, deadline, identity and relationship documents, translation requirements, household position, proxy rules, and connected insurance or pension procedures.",
+    "Insurance route, employment coverage, resident registration, residence status and period, household membership, prior insurer, income reporting, and the responsible ward or city counter.",
+    "Waste category, item material and dimensions, battery or regulated-appliance status, address-specific collection day, collection point, reservation, fee, bag or ticket, and whether waste comes from a household or business.",
+    "Tax year, January 1 address, current and former municipality, employer collection, departure date, tax agent, outstanding notices, certificate need, and responsible tax office.",
+    "Hazard type, exact property, map edition, designated site or shelter, accessibility, household needs, live warning, and whether a city, ward, metropolis or prefecture publishes the instruction.",
+    "Preferred language, source language, source format, accessibility, consultation subject, interpreter availability, appointment, operating schedule, and whether the service provides orientation, referral, interpretation, or professional advice."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/first/",
+      "supports": ["Foreign-resident entry point", "Shinjuku living guide and newcomer procedures", "English HTML navigation"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/kurashi/jyushohenko/",
+      "supports": ["Address-change procedure types", "Fourteen-day local filing route", "Residence, household-relationship, translation, and insurance documents"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/kurashi/kokuhotodokede/",
+      "supports": ["National Health Insurance enrollment and withdrawal routing", "Household notification responsibility", "Local procedure timing"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/kurashi/shigenyagomi/",
+      "supports": ["Household and business waste distinction", "Local multilingual disposal material", "Oversized-waste and collection rules"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/kurashi/hazard/",
+      "supports": ["Shinjuku flood hazard map", "Local modeled-hazard context", "Local disaster information route"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.foreign.city.shinjuku.lg.jp/en/sodan/",
+      "supports": ["Foreign Resident Advisory Corner", "Local daily-life consultation", "Current language and access route"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/shisei/kokusai/1017227/1017236.html",
+      "supports": ["Official multilingual Nagoya Living Guide", "Local procedure and service categories", "City and Nagoya International Center handoffs"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/easyjapanese/1017885/1017886.html",
+      "supports": ["Easy Japanese arrival and moving checklist", "Ward-office routing", "Fourteen-day moving procedures"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/hoken/1011736/1011750/1011751.html",
+      "supports": ["Current National Health Insurance enrollment and withdrawal", "Foreign-resident eligibility and exceptions", "Electronic and ward-office routes"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/gomi/1012183/1012187/1042497.html",
+      "supports": ["Current multilingual waste guide", "Address-specific collection-day lookup", "Local recycling and disposal routes"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/zeikin/1012135/1017900/1042197.html",
+      "supports": ["Foreign-resident personal-tax guide", "Resident-tax and departure questions", "Local tax office handoffs"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/bousaiportal/international/index.html",
+      "supports": ["Foreign-resident disaster information", "Local multilingual disaster resources", "Nagoya International Center handoff"]
+    },
+    {
+      "organization": "Nagoya International Center",
+      "url": "https://www.nic-nagoya.or.jp/en/",
+      "supports": ["Multilingual consultation and living information", "Disaster information", "Local support and referral boundary"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "geography-schema",
+      "id": "supported-geographies",
+      "action": "create",
+      "reason": "Represent Tokyo Metropolis, Aichi Prefecture, Shinjuku special ward, Nagoya designated city, and Nagoya service wards without conflating their governmental roles."
+    },
+    {
+      "kind": "local-guidance-schema",
+      "id": "article-local-supplements",
+      "action": "create",
+      "reason": "Attach sourced, dated local actions and office routes to canonical articles instead of forking national prose."
+    },
+    {
+      "kind": "location-ui",
+      "id": "local-guidance-selector",
+      "action": "pilot",
+      "reason": "Let users optionally choose Shinjuku or Nagoya and clearly show when a local supplement is available, while preserving national guidance and anonymous access."
+    },
+    {
+      "kind": "article",
+      "id": "registering-your-address-after-arrival",
+      "action": "update",
+      "reason": "Pilot the national-rule and local-counter relationship using current Shinjuku and Nagoya address procedures."
+    },
+    {
+      "kind": "article",
+      "id": "joining-national-health-insurance",
+      "action": "update",
+      "reason": "Keep national coverage eligibility separate from Shinjuku and Nagoya enrollment, withdrawal, document, and office routes."
+    },
+    {
+      "kind": "article",
+      "id": "sorting-household-waste-and-arranging-disposal",
+      "action": "update",
+      "reason": "Demonstrate genuinely local categories, collection timing, oversized-waste routing, and address-specific lookup."
+    },
+    {
+      "kind": "article",
+      "id": "income-and-resident-tax-after-moving-to-japan",
+      "action": "update",
+      "reason": "Connect the national and local tax calendar to current city or special-ward information without recalculating an individual's tax."
+    },
+    {
+      "kind": "article",
+      "id": "preparing-for-disasters-and-evacuation-in-japan",
+      "action": "update",
+      "reason": "Link exact local hazard maps and multilingual live-information routes while preserving the live-instruction warning."
+    },
+    {
+      "kind": "article",
+      "id": "finding-japanese-language-and-local-support",
+      "action": "update",
+      "reason": "Show current Shinjuku and Nagoya consultation, language-learning, and referral services with accurate provider attribution."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 12B will implement Shinjuku and Nagoya as a paired architecture pilot. It will not attempt all Tokyo wards, Aichi municipalities, or nationwide municipality coverage.",
+    "The pilot will not duplicate complete national articles or create municipality-specific journeys. Local supplements will remain optional contextual guidance.",
+    "Only claims that materially differ in local action, office, source, or terminology belong in a supplement. Merely repeating a national rule is insufficient.",
+    "The application will not infer a user's location from IP, browser location, search history, or account data. Location selection must be explicit and national guidance remains available without it.",
+    "The pilot will not calculate premiums or tax, generate address-specific garbage calendars, choose evacuation routes, or guarantee counter acceptance. It will link users to current official tools and responsible offices.",
+    "Source language and format will remain visible. Nihonest summaries will be accessible text, but they will not be represented as official translations of a Japanese source.",
+    "Frequently changing telephone schedules, fees, form editions, office hours, and live emergency instructions will be linked rather than copied unless there is a clear user need and monitoring plan.",
+    "All new local supplements remain needs-review and carry effective or last-checked dates."
+  ],
+  "unresolvedQuestions": []
+}

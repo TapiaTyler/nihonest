@@ -519,6 +519,7 @@ Objectives:
 - compare education routes and school types—including Japanese-language schools, universities, graduate schools, professional training colleges, exchange programs, and short courses—together with academic, language, financial, admission, institutional, and Student-status requirements;
 - add organization-facing guidance for education providers and employers that explains lawful recruitment or admission, activity and status fit, organization-side evidence, authorized COE representation, onboarding, recordkeeping, and applicable post-acceptance reporting; clearly state that ISA—not the accepting organization—issues the COE and that organizational support never guarantees approval;
 - distinguish work-status qualification paths such as a relevant bachelor's degree or other education, professional experience alternatives, Japanese professional licensing, remuneration, employer or contracting-organization requirements, route-specific exceptions, and supporting evidence;
+- explain common employment language expectations and credentials, including JLPT levels, occupation-specific Japanese needs, business communication, English-teaching requirements, and other relevant tests or evidence; distinguish immigration criteria, regulated-profession rules, employer preferences, and demonstrated workplace ability, and do not present “native English” wording as a universal legal requirement;
 - expand carefully sourced practical-law and compliance guidance, including acquiring or converting a driver's license and understanding rules for driving in Japan;
 - build a practical tax curriculum covering tax residence, national income tax, resident tax, payroll withholding and year-end adjustment, final returns, side income and self-employment, tax treaties and foreign tax credits, consumption-tax and invoice-system questions, departure filings, and appointing a tax agent;
 - expand integration-focused legal guidance for the situations foreign residents regularly encounter: employment rights and workplace rules, social-insurance enrollment, leases and consumer contracts, traffic and bicycle rules, family and civil registration, waste and local ordinances, disaster preparedness, and access to qualified multilingual help;
@@ -526,6 +527,8 @@ Objectives:
 - add sourced cultural and daily-life guidance that clearly distinguishes law, official procedure, common practice, etiquette, and individual variation, using reputable cultural and Japanese-language learning organizations where government sources are not the right fit;
 - add accessible annotated examples of important documents to relevant articles and glossary entries, with structured English explanations of each section and translatable text outside the image itself;
 - provide clearly fictional or safely redacted completion examples for commonly encountered forms, explain what belongs in each field, and never expose real identity-document data;
+- include commonly encountered tax documents in the document-literacy work, such as withholding slips, resident-tax notices, filing and payment records, and departure-related tax forms, while distinguishing examples from individualized tax-filing advice;
+- retain useful document-specific history for year-dependent or materially redesigned records: show the latest applicable version by default, allow archived versions to replace the complete in-article schematic and explanation, distinguish document lifecycle from editorial review state, and present archives as interpretation aids rather than current submission forms;
 - audit every article, including content already marked ready for editorial review, so one or more relevant Japanese terms are introduced naturally in the article body rather than appearing only in the Key Japanese terminology section;
 - verify that each article's linked glossary terms are actually taught in context alongside their English equivalents, removing or replacing terms that cannot be usefully integrated into the passage;
 - expand the FAQ catalog from reviewed user-language questions, audit common and zero-result search wording—including occupation variants such as teacher and teaching—validate each question's applicability and answer links, and ensure high-stakes questions lead to current sourced guidance rather than unsupported generated answers;
@@ -656,9 +659,32 @@ Discovery is exploratory and may expand or divide the implementation batch. It m
 
 - validate a small municipality model and introduce accessible, safely sourced document and form examples.
 
+**Iteration 12A municipal discovery complete and scope approved locally:** `content/editorial/discovery/municipal-geography-pilot.json` and `docs/research/MUNICIPAL-GEOGRAPHY-PILOT-DISCOVERY.md` define Shinjuku and Nagoya as a paired pilot. The approved hierarchy distinguishes a Tokyo special ward from a designated city, while local supplements preserve one canonical national article. Six bounded surfaces test address registration, National Health Insurance, waste, resident tax, disaster information, and language or consultation support. Location remains optional context rather than a journey, and Fukuoka is outside this pilot.
+
+**Iteration 12B paired municipal pilot implemented locally:** the application now models Tokyo Metropolis, Aichi Prefecture, Shinjuku City, and Nagoya City as distinct geographic records; adds sourced, dated, `needs-review` local supplements to the six approved canonical guides; and provides an explicit device-local location selector. Place-name search metadata reveals the supported national guides without creating local article copies or journeys. National content remains visible with no location selected, and local panels identify responsible bodies, source languages, review state, verification dates, and official handoffs.
+
+**Iteration 13A — Document and form literacy discovery**
+
+- inventory high-value immigration, residence, municipal, My Number, health-insurance, employment, and tax documents and forms;
+- identify current official specimens, reuse constraints, versions, source formats, field meanings, accessibility needs, safe fictional completion examples, and redaction boundaries; and
+- propose a bounded first annotated-document set for approval before implementing the reusable viewer in Iteration 13B.
+
+**Iteration 13A discovery complete locally; scope approval pending:** `content/editorial/discovery/document-and-form-literacy.json` and `docs/research/DOCUMENT-AND-FORM-LITERACY-DISCOVERY.md` recommend a six-family pilot covering the 2026 residence card, paper or electronic COE context, My Number context, paired Shinjuku and Nagoya residence-change forms, the annual Salary Income Withholding Tax Slip, and a Nagoya-specific resident-tax notice. The proposed viewer uses a Nihonest schematic with synthetic data plus complete semantic HTML; it records version, jurisdiction, source format, reuse basis, review state, and stale triggers. A full annotated final income-tax return is deferred from the first pilot because it is annual, multi-page, conditional, and already has detailed current NTA guidance.
+
+**Iteration 13B — Accessible annotated-document pilot**
+
+- implement the approved reusable document model and mobile-accessible viewer with searchable, translatable explanations outside the image; and
+- default each family to its current applicable version and provide an in-article selector for useful immutable archived versions, replacing the visual, annotations, warnings, dates, sources, and lifecycle label together without requiring direct archive routes; and
+- connect approved examples to their canonical articles and glossary terms without presenting fictional values as real records or filing advice.
+
 **Iterations 14A–16A / 14B–16B — Findability, decision support, and final discovery/audit**
 
 - audit terminology, FAQs, search language, groups, journeys, residence-status exploration, and the educational “Can I do this?” cross-reference before completing a phase-wide source and editorial audit.
+
+**Iteration 14A / 14B — Employment language credentials and findability**
+
+- research and then implement a focused guide to common Japanese and English workplace expectations, JLPT and other relevant credentials, occupation and employer variation, and the boundary between hiring preferences and legal requirements; and
+- integrate reviewed language-requirement search terms, FAQs, profession guides, employer guidance, and contextual links without claiming that one test level guarantees a job or residence status.
 
 Do not attempt every municipality simultaneously.
 

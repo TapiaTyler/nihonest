@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "id": "document-and-form-literacy-discovery",
+  "workstreamId": "document-and-form-literacy",
+  "preparedAt": "2026-09-13",
+  "reviewState": "proposed",
+  "topicCandidates": [
+    "A reusable, version-aware document model that identifies the issuing body, document kind, jurisdiction, valid-from or tax year, source language, source format, review state, official specimen, and the canonical guide or glossary term where the example belongs.",
+    "Document-specific history that selects the latest applicable version by default and lets readers replace the complete visual, annotations, dates, warnings, and sources with an immutable archived version from within the canonical article.",
+    "A visual schematic with numbered callouts paired with complete semantic HTML explanations, so the information remains usable without sight, without JavaScript-driven image inspection, and without reading text baked into an image.",
+    "Synthetic examples only: clearly fictional names, addresses, identification numbers, employers, amounts, signatures, barcodes, QR codes, and photographs, with no real person's record used as a redaction starting point.",
+    "Residence card front and back under the design introduced June 14, 2026, including identity fields, status, period, work restrictions, address updates, pending-application notation, and outside-activity permission without reproducing security features or a valid card number.",
+    "Certificate of Eligibility in paper or electronic form, explaining identity, intended status, period or category information, issuing details, validity and presentation context, and the fact that it does not guarantee a visa or landing permission.",
+    "My Number Card and application or notification context, emphasizing the separation of the card, the twelve-digit Individual Number, electronic certificates, residence-card integration choices, expiry, and information that should not be casually shared.",
+    "A municipal notification of change in residence using Shinjuku and Nagoya as the local-variation case: move type, notification date, actual move date, former and new address, household head, people moving, relationship, residence-card information, representative, signature, and municipality-specific counter or form differences.",
+    "The Salary Income Withholding Tax Slip for the applicable year, explaining recipient and payer details, gross payment, employment-income amount, deductions, withheld tax, year-end-adjustment context, dependants, social-insurance and other fields without calculating an individual's tax.",
+    "A municipal and prefectural resident-tax notice using Nagoya's multilingual explanation as the first local specimen, explaining tax year, responsible municipality, income and deductions, assessed amount, collection method, installments, payment references, and inquiry destination without implying every municipality uses the same layout."
+  ],
+  "userSituations": [
+    "A new resident receives a residence card but cannot identify where work restrictions, status expiry, address changes, pending applications, or outside-activity permission appear.",
+    "A student receives an electronic COE and mistakes it for a visa, landing permission, residence card, or guarantee of admission to Japan.",
+    "A resident is asked for a My Number-related document and does not know whether the requester needs the card as identification, the Individual Number itself, or an electronic certificate.",
+    "A newcomer reaches a municipal counter and cannot map English concepts such as current address, former address, household head, relationship, or actual moving date to the local Japanese form.",
+    "An employee receives a withholding slip and confuses gross salary, taxable employment income, deductions, tax withheld, and take-home pay.",
+    "A resident receives a resident-tax notice months after earning the income or after changing jobs and cannot identify the municipality, collection route, installments, or inquiry details.",
+    "A screen-reader user needs the same field explanations and relationships as a sighted user without depending on a diagram's spatial layout.",
+    "A user viewing a translated page needs translated explanations while the protected Japanese field label and official source remain identifiable.",
+    "A resident needs to interpret a withholding slip, resident-tax notice, residence card, or other document received in an earlier year after the current version has changed."
+  ],
+  "edgeCasesAndExceptions": [
+    "Residence cards issued before June 14, 2026 can remain in circulation while newer residence cards and specified residence cards use changed layouts and functionality. A single undated diagram would be misleading.",
+    "A residence card's visible work-restriction field may require the reverse-side outside-activity permission field or a separate designation document to understand the actual boundary.",
+    "Electronic and paper COEs differ in presentation, and neither replaces the later decisions made by a diplomatic mission or landing inspector.",
+    "My Number is sensitive personal information. An educational example must not create a realistic usable number, QR code, electronic certificate, or scannable card image.",
+    "Moving forms and submission channels vary by municipality. Nagoya states that its ordinary moving-in form is supplied at the counter, while downloadable moving-out examples and Shinjuku's residence-change materials use different formats.",
+    "A municipal form can ask about several household members and representatives. A one-person fictional example must not imply that every household or proxy case uses the same fields or evidence.",
+    "Withholding-slip layouts and instructions are tied to the calendar year, and the NTA announced further system and form changes in September 2026. A diagram needs a tax-year/version label and source review trigger.",
+    "A withholding slip is employer-issued evidence; it is not itself a final tax calculation, resident-tax notice, proof that no return is required, or permission for side work.",
+    "Resident-tax notices differ by municipality, collection method, and local format. Nagoya's multilingual explanation can teach concepts but cannot be presented as Shinjuku's or Japan's universal notice.",
+    "Official PDFs may be image-based or difficult to navigate. Linking the PDF does not satisfy Nihonest's obligation to provide accessible explanatory text.",
+    "Government website terms, third-party material, logos, portraits, security designs, and embedded assets can have different reuse conditions. Government authorship is not blanket permission to copy every image.",
+    "A completion example can become dangerous if users copy fictional values, use an outdated form, or assume it covers a complex tax or immigration case. Examples need a non-submission warning and current-form link.",
+    "An archive selector must replace the complete versioned artifact atomically. Reusing current annotations, sources, or warnings with an older visual could create a false explanation."
+  ],
+  "jurisdictionVariables": [
+    "Issuing authority, national or municipal jurisdiction, document type, version, valid-from date, tax year, language, source format, paper or electronic presentation, and whether an official specimen or Nihonest schematic is displayed.",
+    "Resident's age, residence-card issuance date and type, status, period, work restrictions, outside permission, address history, pending application, and linked designation document.",
+    "Municipality, kind of move, origin, destination, exact address, household composition, representative, submission channel, local form availability, and required identity or relationship evidence.",
+    "Employer and employee relationship, tax year, year-end adjustment, multiple employers, dependant claims, social-insurance deductions, withholding, electronic issue, and whether a final return is separately required.",
+    "Resident-tax year, January 1 municipality, current municipality, ordinary or salary special collection, installments, departure, tax agent, payment status, and the office shown on the notice.",
+    "Reuse terms, excluded logos or third-party elements, attribution wording, modification disclosure, security-feature risk, redaction or synthetic-data method, and accessibility alternative."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/whatzairyu_00001.html",
+      "supports": ["Residence-card purpose and fields", "June 14, 2026 design transition", "Front and reverse-side annotations"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/online/onlineshinsei.html",
+      "supports": ["Electronic COE receipt", "Official online-system manuals", "Paper and electronic presentation context"]
+    },
+    {
+      "organization": "Digital Agency",
+      "url": "https://www.digital.go.jp/en/policies/mynumber_resources",
+      "supports": ["Official My Number materials", "Current card and system explanations", "Public source handoff"]
+    },
+    {
+      "organization": "Digital Agency",
+      "url": "https://www.digital.go.jp/en/copyright-policy",
+      "supports": ["Public Data License attribution", "Modified-content disclosure", "Excluded logos and separately licensed content"]
+    },
+    {
+      "organization": "Shinjuku City",
+      "url": "https://www.city.shinjuku.lg.jp/todokede/koseki03_000011.html",
+      "supports": ["Downloadable resident-record forms", "English and multilingual availability", "Current local form handoff"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/todokede/1007833/1007834/1007835.html",
+      "supports": ["Ward-office moving route", "Counter-supplied moving-in form", "Downloadable moving-out example and local variation"]
+    },
+    {
+      "organization": "National Tax Agency",
+      "url": "https://www.nta.go.jp/publication/pamph/hotei/tebiki2026/index.htm",
+      "supports": ["2026 Salary Income Withholding Tax Slip", "Field-level completion instructions", "Tax-year versioning"]
+    },
+    {
+      "organization": "National Tax Agency",
+      "url": "https://www.nta.go.jp/english/taxes/individual/incometax_2025.htm",
+      "supports": ["English final-return field guidance", "How tax documents feed a return", "Departure and tax-agent context"]
+    },
+    {
+      "organization": "Nagoya City",
+      "url": "https://www.city.nagoya.jp/kurashi/zeikin/1012135/1037357/1012136/1012137.html",
+      "supports": ["Multilingual resident-tax notice explanation", "Municipal and prefectural tax fields", "Local-format and language boundaries"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "document-schema",
+      "id": "annotated-document-model",
+      "action": "create",
+      "reason": "Represent immutable versions, lifecycle state, jurisdiction, source, reuse, synthetic-data, field, callout, privacy, and accessibility metadata independently of an image."
+    },
+    {
+      "kind": "document-ui",
+      "id": "accessible-document-viewer",
+      "action": "pilot",
+      "reason": "Pair a responsive schematic with keyboard-operable callouts and complete semantic text, default to the current version, and allow in-article selection of useful archived versions without a separate route."
+    },
+    {
+      "kind": "document-example",
+      "id": "residence-card-2026",
+      "action": "create",
+      "reason": "Teach the current front and reverse-side fields while making the 2026 transition and security boundary explicit."
+    },
+    {
+      "kind": "document-example",
+      "id": "certificate-of-eligibility",
+      "action": "create",
+      "reason": "Distinguish paper or electronic proof of the COE decision from a visa, landing permission, or guarantee."
+    },
+    {
+      "kind": "document-example",
+      "id": "my-number-card-and-application",
+      "action": "create",
+      "reason": "Explain high-value fields and privacy boundaries without generating a usable card, number, or credential."
+    },
+    {
+      "kind": "document-example",
+      "id": "municipal-change-of-residence-notification",
+      "action": "create",
+      "reason": "Use Shinjuku and Nagoya to demonstrate local form and office variation while teaching shared moving concepts."
+    },
+    {
+      "kind": "document-example",
+      "id": "salary-income-withholding-tax-slip",
+      "action": "create",
+      "reason": "Teach employees to identify core annual salary and withholding fields without calculating or deciding their return."
+    },
+    {
+      "kind": "document-example",
+      "id": "resident-tax-notice",
+      "action": "create",
+      "reason": "Use Nagoya's multilingual explanation as a bounded municipal example and clearly warn that layouts and collection routes vary."
+    },
+    {
+      "kind": "article",
+      "id": "documents-received-when-entering-japan",
+      "action": "update",
+      "reason": "Host or link the residence-card and COE examples in their canonical arrival context."
+    },
+    {
+      "kind": "article",
+      "id": "understanding-my-number",
+      "action": "update",
+      "reason": "Host the privacy-conscious My Number example and current card distinctions."
+    },
+    {
+      "kind": "article",
+      "id": "registering-your-address-after-arrival",
+      "action": "update",
+      "reason": "Host the paired municipal moving-form explanation without creating a national form that does not exist."
+    },
+    {
+      "kind": "article",
+      "id": "payroll-withholding-and-year-end-adjustment",
+      "action": "update",
+      "reason": "Host the annual withholding-slip example and connect it to tax records and filing decisions."
+    },
+    {
+      "kind": "article",
+      "id": "income-and-resident-tax-after-moving-to-japan",
+      "action": "update",
+      "reason": "Host the locally scoped resident-tax notice and explain the delayed municipal calendar."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 13B should implement six document families: the 2026 residence card, COE, My Number card or application context, municipal change-of-residence notification, Salary Income Withholding Tax Slip, and a Nagoya resident-tax notice explanation.",
+    "The pilot will create Nihonest schematics from verified field concepts by default. It will not copy an official image unless its exact reuse terms and required attribution have been recorded.",
+    "The pilot will never begin with a real person's document, even if redacted. All identifying data, numbers, amounts, portraits, signatures, machine-readable areas, barcodes, and QR codes will be obviously fictional or omitted.",
+    "Every visual will have a complete ordered HTML field explanation. Color, position, hover, and the image alone will not carry essential meaning.",
+    "Examples will be clearly marked educational, fictional, non-submittable, versioned, and subject to the current official form. They will not calculate tax, choose a filing position, or complete an immigration application for the user.",
+    "The full final income-tax return is outside the first visual pilot because it is annual, multi-page, fact-dependent, and already supported by detailed NTA instructions and e-Tax. The pilot will link it and can add it after the simpler tax documents validate the architecture.",
+    "Municipal examples will identify the actual municipality and will not be generalized as nationwide forms. Nagoya and Shinjuku differences remain visible.",
+    "Document upload, OCR, automatic redaction, user form storage, generated filled PDFs, and form submission are outside Phase 13.",
+    "Archived versions will be included only when readers may realistically possess them or their fields materially differ. The archive is for interpreting an older document, not recommending an obsolete form for a current submission.",
+    "The latest applicable version is the default. Selecting an archive version changes the entire artifact, including its explanations, warnings, dates, lifecycle state, and official sources; versions must not inherit mutable current annotations.",
+    "Archived document selection does not require direct-link routing or persistent account or device storage in the pilot."
+  ],
+  "unresolvedQuestions": [
+    "Approve the six-family pilot: 2026 residence card, COE, My Number context, municipal change-of-residence notification, Salary Income Withholding Tax Slip, and Nagoya resident-tax notice.",
+    "Approve Nihonest-created schematics with synthetic data as the default, using an official specimen image only after exact reuse terms and attribution are recorded.",
+    "Approve excluding a full final income-tax return from the first visual pilot while linking the current NTA guide and revisiting it after the reusable viewer is validated.",
+    "Approve placing each example inside its canonical article, with relevant glossary pages linking to the article section rather than duplicating the complete annotated artifact."
+  ]
+}

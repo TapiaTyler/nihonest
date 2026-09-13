@@ -1132,6 +1132,55 @@ The programs differ in legal purpose, effective date, employment relationship, a
 
 ---
 
+## ADR-061 — Municipal guidance supplements canonical national articles
+
+**Status:** Accepted
+
+### Decision
+
+Represent supported geography as a hierarchy and attach dated local supplements to canonical national articles. The initial paired pilot covers Shinjuku City as a Tokyo special ward and Nagoya City as a designated city in Aichi Prefecture. Location is optional, explicitly selected, and stored on the device; it is contextual information rather than a journey or eligibility input.
+
+Each supplement identifies applicability, the responsible body, an office route where useful, bounded local actions, current official sources, source language, review state, and a last-checked date. National guidance remains visible regardless of selection. Nihonest does not infer location or describe its summaries as official translations.
+
+### Reason
+
+Municipal administration materially affects where residents file, which local rules apply, and which support services are available. Duplicating entire articles would allow national explanations to drift, while flattening Shinjuku and Nagoya into the same kind of jurisdiction would misrepresent their government structures.
+
+### Consequences
+
+- searches may use supported place names to discover canonical guides;
+- unsupported locations receive the complete national guide without fabricated local instructions;
+- local journeys are not created and location cannot replace a user's selected journey;
+- volatile hours, forms, fees, calendars, and emergency instructions are linked rather than copied by default;
+- the first pilot remains device-local and does not require an account or database; and
+- every pilot supplement remains `needs-review` until explicitly approved through the editorial workflow.
+
+---
+
+## ADR-062 — Document families retain useful immutable versions in context
+
+**Status:** Accepted
+
+### Decision
+
+Model changing documents as families of immutable versions. The latest applicable version appears by default. When a materially different historical version remains useful to someone interpreting a document they possess, the canonical article provides an in-context version selector that replaces the complete schematic, annotations, warnings, dates, sources, and metadata together.
+
+Keep document lifecycle (`current`, `superseded`, or `future`) separate from editorial review state. Archived versions explain their applicable period and must not be presented as forms to use for a current submission. The pilot does not require direct version URLs or persisted version selection.
+
+### Reason
+
+Tax records, residence cards, and municipal forms can remain relevant after their layout or tax year changes. Overwriting the previous example prevents users from interpreting an older record, while combining an old image with current field explanations can be actively misleading.
+
+### Consequences
+
+- versions are complete immutable snapshots rather than visual diffs or mutable annotation overlays;
+- the application archives only materially useful versions, not every cosmetic revision;
+- current versions remain the default and clearly label superseded examples;
+- source monitoring and editorial review apply independently to every retained version; and
+- archives help interpret older records but do not become a general document repository or submission service.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

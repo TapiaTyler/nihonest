@@ -104,6 +104,8 @@ import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { getJourneyArticleIds, getJourneyRouteById, resolveJourneySteps, validateDiscoveryModel } from "@/domain/discovery/discovery";
 import { glossaryTerms } from "@/data/glossary";
 import { validateGlossaryCollection } from "@/domain/glossary/glossary";
+import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { validateLocalGuidanceCollection } from "@/domain/geography/local-guidance";
 
 export type ArticleRecord = Readonly<{
   metadata: ArticleMetadata;
@@ -218,6 +220,12 @@ validateDiscoveryModel(
   articleGroups,
   guidedJourneys,
   articles.map(({ metadata }) => metadata.id),
+);
+validateLocalGuidanceCollection(
+  supportedGeographies,
+  localGuidanceSupplements,
+  articles.map(({ metadata }) => metadata.id),
+  sources.map(({ id }) => id),
 );
 
 export function getAllArticles(): readonly ArticleRecord[] {

@@ -266,7 +266,14 @@
       "targetIterations": [13],
       "dimensionIds": ["documents-and-forms"],
       "plannedArticleIds": [],
-      "summary": "Provide accessible field explanations and safe fictional or redacted examples while using official specimens only when sourcing and reuse are appropriate."
+      "summary": "Provide accessible field explanations and safe fictional or redacted examples for immigration, resident-registration, My Number, health-insurance, employment, and tax documents while using official specimens only when sourcing and reuse are appropriate. Versioned document families should show the current applicable version by default and retain only useful immutable historical snapshots for readers interpreting older records. Tax coverage should include commonly encountered national income-tax, withholding, resident-tax, and departure-related records without turning examples into filing advice."
+    },
+    {
+      "id": "employment-language-credentials",
+      "targetIterations": [14],
+      "dimensionIds": ["employment-language-requirements", "culture-and-language", "search-and-navigation"],
+      "plannedArticleIds": ["understanding-language-requirements-and-certifications-for-jobs-in-japan"],
+      "summary": "Explain common Japanese and English language expectations, JLPT and other relevant credentials, occupation and workplace variation, and how employer preferences differ from immigration rules, regulated-profession requirements, and proof of actual communication ability. Treat phrases such as native English as job-posting language to evaluate rather than a universal legal requirement."
     },
     {
       "id": "findability-and-route-consistency",

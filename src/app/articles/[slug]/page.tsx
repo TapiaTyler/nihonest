@@ -20,6 +20,8 @@ import {
 } from "@/components/localization/localized-article";
 import { getJapanesePilotArticleTranslation } from "@/lib/content/translations";
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
+import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
+import { getLocalGuidanceForArticle } from "@/lib/content/local-guidance";
 
 export const dynamicParams = false;
 
@@ -62,6 +64,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
 
   const { Content, metadata } = article;
   const japaneseTranslation = getJapanesePilotArticleTranslation(metadata.id);
+  const localGuidance = getLocalGuidanceForArticle(metadata.id);
   const articleSources = metadata.sourceIds.flatMap((sourceId) => {
     const source = getSourceById(sourceId);
     return source ? [source] : [];
@@ -135,6 +138,8 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
             <Content />
           </LocalizedArticleBody>
         </div>
+
+        {localGuidance.length > 0 && <LocalGuidancePanel options={localGuidance} />}
 
         <div className="mt-12">
           <ArticleTerminology terms={glossaryTerms} />

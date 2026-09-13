@@ -169,6 +169,8 @@ For each visa, status, or named program, research and explain where applicable:
 
 Occupation lists should be as useful and comprehensive as authoritative sources permit, but must not imply that a job title alone establishes eligibility. Describe the actual duties that control classification. For example, coverage of Engineer / Specialist in Humanities / International Services should explicitly discuss software developers and software engineers rather than relying only on the generic word “engineering.”
 
+Employment language guidance must identify what kind of requirement is being described: an immigration criterion, a Japanese professional-licensing rule, an employer preference, a client or workplace need, or evidence of practical communication ability. Do not imply that JLPT N1 or N2 is universally required for professional work, that a certificate guarantees employability, or that the absence of a certificate proves insufficient ability. Explain occupation, employer, customer contact, reading, writing, safety, and technical-vocabulary differences. Treat phrases such as “native English” or “business-level Japanese” as variable job-posting language that needs clarification, not standardized legal categories.
+
 Do not label a user's proposed job or activity simply:
 
 ```text
@@ -278,6 +280,10 @@ Where appropriate, articles should help users answer:
 
 Not every article must mechanically contain every heading.
 
+Annotated document examples belong to a versioned document family. Show the latest applicable version by default. Preserve an older version only when readers may realistically possess it or a material field, meaning, or layout changed. Selecting an archived version must replace its complete schematic, field explanations, warnings, applicable dates, review metadata, and sources together; never combine an old visual with current annotations.
+
+Document lifecycle (`current`, `superseded`, or `future`) is distinct from editorial state (`needs-review`, `verified`, or `stale`). Archived documents are aids for interpreting records from their stated period, not recommendations to use an obsolete form for a current submission. Direct archive routes and persistent version preferences are not required.
+
 For route-specific immigration articles, period of stay, extension or transition limits, covered activities, representative occupations, exclusions, and evidence should be easy to locate even when the precise heading structure varies.
 
 When a comparison article gives a route its own section, place a plainly labeled contextual link to the canonical route guide in that section. Do not require the reader to reach “Continue exploring” or search again after identifying a plausible route. Link text should name the destination, such as “Learn more about Instructor status,” rather than repeat an ambiguous “Learn more” label without context.
@@ -331,6 +337,12 @@ When appropriate, content should distinguish:
 Initial municipality coverage may intentionally be limited.
 
 Do not pretend to provide exhaustive municipality-specific instructions before that data exists.
+
+Municipal coverage should be implemented as a dated local supplement on a canonical national article unless the local subject genuinely requires a standalone guide. Each supplement must identify its jurisdiction, applicability, responsible body, receiving office when useful, local actions, source language, last-checked date, and official sources. A local office route must not be described as a change to national law merely because that office administers it.
+
+Location selection must be explicit. Do not infer it from an IP address, browser location, account history, or journey choice. Users outside supported pilots must retain the complete national guide, and the interface must never imply that an unsupported municipality has no procedure.
+
+For volatile local details—such as office hours, class schedules, forms, fees, collection calendars, and live emergency instructions—prefer a current official link over copied values. When Nihonest summarizes Japanese, Easy Japanese, or PDF material, show the source language or format and do not label the summary an official translation.
 
 Shared resident procedures—such as address registration, My Number, public health insurance, and pension—should remain reusable guidance rather than being duplicated as though they belong only to a Student or work-status journey. Each article and conditional journey step must state the residence, age, coverage, municipal, or other facts controlling applicability.
 
