@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "catalogSnapshotDate": "2026-09-12",
+  "workflow": {
+    "discoveryRequiredBeforeImplementation": true,
+    "requiredDiscoveryOutputs": [
+      "topic-candidates",
+      "user-situations",
+      "edge-cases-and-exceptions",
+      "jurisdiction-variables",
+      "primary-source-candidates",
+      "content-impacts",
+      "scope-boundaries",
+      "unresolved-questions"
+    ]
+  },
+  "articleBatches": [
+    {
+      "id": "immigration-foundations",
+      "targetIteration": 3,
+      "articleIds": [
+        "choosing-a-work-status-and-coe",
+        "leaving-japan-and-closing-out-procedures",
+        "notifying-immigration-about-work-contract-changes",
+        "preparing-for-long-term-entry-to-japan",
+        "reentry-permission-and-temporary-travel",
+        "renewing-or-changing-your-status-of-residence",
+        "visa-and-status-of-residence-explained"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "student-short-stay-and-arrival",
+      "targetIteration": 4,
+      "articleIds": [
+        "accepting-international-students-and-supporting-coe-applications",
+        "choosing-a-school-and-understanding-admission-requirements",
+        "completing-school-arrival-procedures",
+        "documents-received-when-entering-japan",
+        "finding-housing-and-moving-in",
+        "getting-a-phone-number-in-japan",
+        "joining-national-health-insurance",
+        "national-pension-after-moving-to-japan",
+        "opening-a-bank-account-after-moving-to-japan",
+        "planning-your-studies-in-japan",
+        "preparing-to-enter-japan",
+        "registering-your-address-after-arrival",
+        "short-term-study-in-japan",
+        "student-visa-and-certificate-of-eligibility",
+        "understanding-my-number",
+        "working-part-time-on-student-status"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "professional-work-academic-and-technical",
+      "targetIteration": 5,
+      "articleIds": [
+        "accepting-foreign-workers-and-supporting-coe-applications",
+        "choosing-a-residence-status-for-teaching-in-japan",
+        "engineer-specialist-humanities-international-services-status",
+        "instructor-status",
+        "intra-company-transferee-status",
+        "professor-status",
+        "researcher-status"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "professional-work-regulated-and-creative",
+      "targetIteration": 6,
+      "articleIds": [
+        "choosing-a-residence-status-for-creative-and-media-work",
+        "choosing-a-status-for-medical-and-care-work-in-japan",
+        "artist-status",
+        "entertainer-status",
+        "journalist-status",
+        "legal-accounting-services-status",
+        "medical-services-status",
+        "nursing-care-status",
+        "religious-activities-status",
+        "skilled-labor-status"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "business-and-workforce-programs",
+      "targetIteration": 7,
+      "articleIds": [
+        "business-manager-status",
+        "choosing-a-training-or-workforce-development-route-in-japan",
+        "cultural-activities-visa",
+        "employment-for-skill-development-system",
+        "highly-skilled-professional-status",
+        "specified-skilled-worker-status",
+        "startup-visa",
+        "technical-intern-training-status",
+        "training-visa"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "family-designated-visitor-and-official",
+      "targetIteration": 8,
+      "articleIds": [
+        "choosing-a-family-or-personal-status-in-japan",
+        "continued-job-hunting-after-study",
+        "dependent-family-stay-visa",
+        "designated-activities-status",
+        "digital-nomad-designated-activities",
+        "diplomatic-visa",
+        "future-creation-j-find",
+        "long-stay-sightseeing-designated-activities",
+        "long-term-resident-status",
+        "medical-stay-visa",
+        "official-visa",
+        "permanent-residence-in-japan",
+        "spouse-or-child-of-japanese-national",
+        "spouse-or-child-of-permanent-resident",
+        "temporary-visitor-and-short-stay",
+        "working-holiday-in-japan"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "tax-curriculum",
+      "targetIteration": 9,
+      "articleIds": [
+        "filing-a-japanese-income-tax-return",
+        "income-and-resident-tax-after-moving-to-japan"
+      ],
+      "residenceStatusIds": []
+    },
+    {
+      "id": "employment-and-side-work",
+      "targetIteration": 10,
+      "articleIds": ["side-work-and-freelancing-on-a-work-status"],
+      "residenceStatusIds": []
+    }
+  ],
+  "residenceStatusBatches": [
+    {
+      "id": "academic-and-technical-statuses",
+      "targetIteration": 5,
+      "articleIds": [],
+      "residenceStatusIds": ["engineer-specialist-humanities-international-services", "instructor", "intra-company-transferee", "professor", "researcher"]
+    },
+    {
+      "id": "regulated-and-creative-statuses",
+      "targetIteration": 6,
+      "articleIds": [],
+      "residenceStatusIds": ["artist", "entertainer", "journalist", "legal-accounting-services", "medical-services", "nursing-care", "religious-activities", "skilled-labor"]
+    },
+    {
+      "id": "business-and-workforce-statuses",
+      "targetIteration": 7,
+      "articleIds": [],
+      "residenceStatusIds": ["business-manager", "cultural-activities", "employment-for-skill-development", "highly-skilled-professional", "specified-skilled-worker", "technical-intern-training", "trainee"]
+    },
+    {
+      "id": "family-special-and-study-statuses",
+      "targetIteration": 8,
+      "articleIds": [],
+      "residenceStatusIds": ["dependent", "designated-activities", "diplomat", "long-term-resident", "official", "permanent-resident", "spouse-or-child-japanese-national", "spouse-or-child-permanent-resident", "student", "temporary-visitor"]
+    }
+  ],
+  "coverageTracks": [
+    {
+      "id": "immigration-actions-and-reentry",
+      "targetIterations": [3, 4, 8],
+      "dimensionIds": ["entry-and-residence", "reentry-and-travel", "renewal-and-change"],
+      "plannedArticleIds": ["reentry-permission-and-temporary-travel"],
+      "summary": "Cover ordinary and special re-entry permission, validity and passport or residence-card interactions, departure and return timing, status expiry while abroad, route exclusions, and when a fresh visa or status procedure may be needed."
+    },
+    {
+      "id": "school-selection-and-admission",
+      "targetIterations": [4],
+      "dimensionIds": ["school-selection", "status-eligibility"],
+      "plannedArticleIds": [
+        "choosing-a-school-and-understanding-admission-requirements",
+        "accepting-international-students-and-supporting-coe-applications"
+      ],
+      "summary": "Compare language schools, universities, graduate schools, vocational schools, exchange and short-term programs, including admission, academic, language, financial, institutional, and Student-status suitability checks."
+    },
+    {
+      "id": "accepting-organizations-and-coe-support",
+      "targetIterations": [4, 5],
+      "dimensionIds": ["accepting-organization-duties"],
+      "plannedArticleIds": [
+        "accepting-international-students-and-supporting-coe-applications",
+        "accepting-foreign-workers-and-supporting-coe-applications"
+      ],
+      "summary": "Teach education providers and employers how to assess the intended activity, prepare truthful organization-side evidence, support or represent a COE application where authorized, onboard the person, and complete applicable reporting without implying that the organization issues or guarantees a COE."
+    },
+    {
+      "id": "work-status-qualification-matrix",
+      "targetIterations": [2, 5, 6, 7],
+      "dimensionIds": ["education-and-experience", "activity-scope", "employment-and-side-work"],
+      "plannedArticleIds": [],
+      "summary": "For every work route, distinguish activity fit, degree or equivalent education, relevant professional experience, remuneration, contracting organization, licensing, exceptions, permitted side work, and evidence instead of reducing eligibility to a job title."
+    },
+    {
+      "id": "family-and-life-administration",
+      "targetIterations": [8, 10],
+      "dimensionIds": ["family-and-dependants", "social-insurance", "housing-and-consumer"],
+      "plannedArticleIds": [],
+      "summary": "Cover family relationships and dependency, insurance and pension routes, housing and consumer contracts, employment rights, and the consequences of changes in work or household circumstances."
+    },
+    {
+      "id": "tax-and-compliance-curriculum",
+      "targetIterations": [9, 10],
+      "dimensionIds": ["tax"],
+      "plannedArticleIds": [],
+      "summary": "Expand national and resident tax, payroll, filing, side-income, treaty, foreign-tax-credit, consumption-tax, invoice-system, departure, and tax-agent guidance with explicit professional-advice boundaries."
+    },
+    {
+      "id": "integration-and-local-life",
+      "targetIterations": [11, 12],
+      "dimensionIds": ["mobility-and-safety", "civic-and-disaster", "culture-and-language", "municipal-variation"],
+      "plannedArticleIds": [],
+      "summary": "Cover driving, bicycles, emergencies, disasters, waste and local rules, daily-life interaction, language-learning support, and scoped municipal variation without presenting common practice as law."
+    },
+    {
+      "id": "document-and-form-literacy",
+      "targetIterations": [13],
+      "dimensionIds": ["documents-and-forms"],
+      "plannedArticleIds": [],
+      "summary": "Provide accessible field explanations and safe fictional or redacted examples while using official specimens only when sourcing and reuse are appropriate."
+    },
+    {
+      "id": "findability-and-route-consistency",
+      "targetIterations": [14, 15],
+      "dimensionIds": ["search-and-navigation"],
+      "plannedArticleIds": [],
+      "summary": "Audit natural Japanese terminology, ordinary-language and occupation search terms, FAQs, groups, journeys, residence-status comparisons, and the educational activity cross-reference after canonical research stabilizes."
+    }
+  ]
+}

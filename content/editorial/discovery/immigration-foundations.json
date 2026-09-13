@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "id": "immigration-foundations-discovery",
+  "workstreamId": "immigration-foundations",
+  "preparedAt": "2026-09-11",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "The distinct roles of a visa, Certificate of Eligibility, landing permission, status of residence, period of stay, and residence card.",
+    "The ordinary long-term entry sequence from route and sponsor selection through COE, consular visa application, landing examination, and post-arrival residence registration.",
+    "COE scope, ordinary three-month validity, electronic or printed presentation, and the fact that a COE does not guarantee visa issuance or landing permission.",
+    "Work-status selection based on actual principal duties, contract and organization facts, qualifications or licensing, remuneration, and adjacent-status exclusions rather than job title alone.",
+    "The boundary between visa-exempt or Temporary Visitor entry and permission to perform income-earning activity.",
+    "Extension of period of stay versus change of status of residence, their application windows, discretionary review, and the special pending-application period.",
+    "Covered resident notifications after a contract, employer, school, or other affiliated-organization change, kept separate from employer-side reporting duties.",
+    "The optional Certificate of Authorized Employment as evidence about permitted work activity, without treating it as a status change or approval of unrelated work.",
+    "Status-maintenance risks when the authorized principal activity stops, including category-specific inactivity periods and individualized justifiable-reason review.",
+    "Special re-entry permission for eligible short trips, its one-year ceiling, the earlier period-of-stay expiry, required departure declaration, and exclusions.",
+    "Ordinary single or multiple re-entry permission for longer absences, limited by both its grant and the existing period of stay.",
+    "Travel while an extension or change application is pending, including the shortened return-and-decision deadline created by the special pending-application period.",
+    "Lost passports or residence cards abroad, proof of the re-entry deadline for carrier checks, and post-return residence-card replacement.",
+    "Temporary departure versus permanent departure, including residence-card return when a planned return no longer occurs and handoffs to municipal, tax, pension, insurance, housing, and account closure guidance."
+  ],
+  "userSituations": [
+    "A first-time long-term entrant who has received a COE and needs to understand what remains undecided before boarding and at the airport.",
+    "A visa-exempt traveler considering paid work or a stay longer than the short-stay allowance.",
+    "A professional comparing two work statuses whose job title is ambiguous but whose actual duties, qualifications, contract, and institution are known.",
+    "A resident approaching expiry who is unsure whether to extend the current status or change to a different residence purpose.",
+    "A worker who has resigned, joined a new employer, or changed contracts and needs to separate notification duties from permission to perform the new work.",
+    "A resident who has stopped the principal authorized activity while job searching, ill, studying elsewhere, or waiting for a new contract.",
+    "A student or worker taking a short trip abroad and expecting to return under the existing status of residence.",
+    "A resident planning to remain abroad for more than one year but return before the current period of stay expires.",
+    "A resident whose period of stay will expire while abroad or who needs to travel while an extension or change application is pending.",
+    "A traveler who loses a passport or residence card abroad and may need proof of Japanese residence status to board the return flight.",
+    "A person who left under re-entry arrangements but later decides not to return and must close out the residence record properly."
+  ],
+  "edgeCasesAndExceptions": [
+    "A COE normally expires three months after issuance; an old pandemic-era validity extension must not be presented as current general policy.",
+    "A COE certifies a landing-condition category but does not guarantee a visa, and a visa remains only one condition for landing rather than permission to enter by itself.",
+    "A visa-exemption allowance generally assumes a short stay without income-earning activity; nationality-specific consular rules and multiple-entry visas remain separate questions.",
+    "A change application allows a person to request a different status without leaving Japan, but filing alone must not be described as authorization to begin activity outside the current status.",
+    "Extension applications are generally accepted up to three months before expiry for periods of six months or more; shorter periods use a different opening rule.",
+    "When a timely extension or change application remains undecided at expiry, the special period ends at the decision or two months after the old expiry date, whichever comes first.",
+    "Travel during a pending application is possible with valid re-entry arrangements, but the resident must remain reachable and return and receive the decision before the applicable special-period deadline.",
+    "A resident notification within 14 days applies only to covered statuses and events; the former or new organization may have a separate reporting duty with different forms and deadlines.",
+    "Submitting an organization-change notification does not establish that duties at the new organization fit the current status.",
+    "Status revocation is not automatic on day 91 without activity; the legal category, duration, alternative activity, and justifiable reason require individualized assessment, and Highly Skilled Professional (ii) uses a different period.",
+    "Special re-entry permission excludes Temporary Visitor and people granted a period of stay of three months or less, as well as specifically listed enforcement or public-interest cases.",
+    "Special re-entry expires at the earlier of one year after departure and the current period-of-stay expiry and cannot be extended abroad.",
+    "Ordinary re-entry permission can be single-use or multiple-use and may be granted for up to five years, but never beyond the current period of stay; special permanent residents follow different periods.",
+    "A period-of-stay extension cannot be filed at a Japanese embassy abroad. Limited consular extension of an ordinary re-entry permit is a separate procedure and cannot extend the underlying period of stay.",
+    "A residence card lost abroad does not necessarily prevent re-entry, but airlines may request proof; after return, the holder generally must apply for replacement within 14 days of re-entry or learning of the loss, as applicable.",
+    "A person who leaves temporarily and later abandons the return may acquire a residence-card return obligation; this differs from surrendering the card as a permanent departure at the port of departure.",
+    "Permanent Resident status has no period-of-stay expiry but the residence card itself expires and re-entry permission remains relevant; Special Permanent Resident rules must not be generalized to other residents."
+  ],
+  "jurisdictionVariables": [
+    "Immigration Services Agency rules for landing, residence status, residence applications, notifications, residence cards, and re-entry.",
+    "Ministry of Foreign Affairs and the responsible embassy or consulate for visa issuance, nationality-specific documentation, and overseas procedures.",
+    "Airline or carrier document checks, which may require practical proof beyond the legal elements of re-entry.",
+    "Municipal residence registration and moving-out procedures after immigration decisions.",
+    "Employer reporting to the Ministry of Health, Labour and Welfare, separate from the resident's Immigration Services Agency notification.",
+    "Professional licensing, employment, tax, pension, health-insurance, and municipal obligations that are affected by a move or job change but are not decided by immigration permission.",
+    "Individual regional immigration examination and discretion; local procedural practice must not be represented as a different national eligibility rule."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/system/",
+      "supports": ["Visa and landing-permission distinction", "Visa issuance outside Japan", "A visa does not guarantee landing"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/faq.html",
+      "supports": ["COE and visa sequence", "Electronic or printed COE presentation", "COE and visa do not guarantee later decisions", "Short-stay and income-earning boundary"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-1.html",
+      "supports": ["Certificate of Eligibility procedure", "Applicant and proxy context", "Current procedure and evidence routing"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/nyuukokukanri01_00155_1.html",
+      "supports": ["Ordinary three-month COE validity", "Identification of obsolete pandemic-era exceptions"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": ["Canonical status categories", "Official activity definitions", "Available periods of stay"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-2.html",
+      "supports": ["Change-of-status purpose", "Application timing", "Discretionary review and inactivity warning"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-3.html",
+      "supports": ["Extension purpose", "Ordinary filing window", "Current procedure and evidence routing"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/tokureikikan_00001.html",
+      "supports": ["Special pending-application period", "Decision-or-two-month deadline"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/shozokunikansuru.html",
+      "supports": ["Covered affiliation and contracting-organization changes", "Resident's 14-day notification timing", "Late and advance-notification handling"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/syuurou_00001.html",
+      "supports": ["Purpose and evidentiary role of a Certificate of Authorized Employment", "Relationship to existing work authorization"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/immigration/faq/kanri_qa.html",
+      "supports": ["Travel during a pending application", "Ordinary and special re-entry timing", "Overseas extension limits", "Status-maintenance and revocation edge cases"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/minashisainyukoku.html",
+      "supports": ["Special re-entry eligibility and exclusions", "Passport and residence-card handling", "Earlier-of-one-year-or-status-expiry rule", "Departure declaration"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/immigration/procedures/16-5.html",
+      "supports": ["Ordinary re-entry application", "Single and multiple permission", "Current fees and procedure"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/publications/faq/newimmiact_4_q-and-a_page3.html",
+      "supports": ["Lost residence card abroad", "Proof of re-entry deadline", "Card return after abandoning a planned return"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/support/guidance/",
+      "supports": ["New long-term resident arrival sequence", "Residence-card and address-registration handoff"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/todokede/index.html",
+      "supports": ["Employer-side foreign-worker reporting", "Separation from the resident's immigration notification"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "article",
+      "id": "visa-and-status-of-residence-explained",
+      "action": "review",
+      "reason": "Turn the overview into the canonical decision chain separating visa, COE, landing permission, status, period of stay, and residence card."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-work-status-and-coe",
+      "action": "review",
+      "reason": "Ground route selection in actual duties, organization, contract, qualifications or licensing, remuneration, and adjacent-status exclusions, then connect it to the structured status pilot."
+    },
+    {
+      "kind": "article",
+      "id": "preparing-for-long-term-entry-to-japan",
+      "action": "review",
+      "reason": "Add a precise pre-departure decision and document sequence, COE validity checks, changed-circumstance warnings, and arrival handoffs without duplicating municipal guidance."
+    },
+    {
+      "kind": "article",
+      "id": "renewing-or-changing-your-status-of-residence",
+      "action": "review",
+      "reason": "Explain extension versus change, filing windows, special-period deadlines, pending-application travel, discretionary review, and safe next actions."
+    },
+    {
+      "kind": "article",
+      "id": "notifying-immigration-about-work-contract-changes",
+      "action": "review",
+      "reason": "Separate resident and employer notifications from work authorization, add status/event applicability, and explain when a Certificate of Authorized Employment may help."
+    },
+    {
+      "kind": "article",
+      "id": "leaving-japan-and-closing-out-procedures",
+      "action": "review",
+      "reason": "Make permanent departure explicit, link temporary travelers to dedicated re-entry guidance, and cover a later decision not to return."
+    },
+    {
+      "kind": "new-article",
+      "id": "reentry-permission-and-temporary-travel",
+      "action": "create",
+      "reason": "Provide one reusable guide for ordinary and special re-entry, competing deadlines, pending applications, exclusions, document loss, and return planning across journeys."
+    },
+    {
+      "kind": "faq",
+      "id": "temporary-travel-and-reentry",
+      "action": "create",
+      "reason": "Answer the ordinary-language question about leaving Japan temporarily without losing the current residence route and link to the dedicated guide."
+    },
+    {
+      "kind": "faq",
+      "id": "renew-or-change-residence-status",
+      "action": "update",
+      "reason": "Add pending-application timing and travel language without turning the FAQ into an individualized eligibility answer."
+    },
+    {
+      "kind": "faq",
+      "id": "notify-immigration-after-job-change",
+      "action": "update",
+      "reason": "Clarify resident-versus-employer duties and that notification alone does not authorize new duties."
+    },
+    {
+      "kind": "glossary-term",
+      "id": "sainyukoku-kyoka",
+      "action": "create",
+      "reason": "Introduce ordinary re-entry permission with pronunciation, plain-language meaning, and the separate permission and status-expiry clocks."
+    },
+    {
+      "kind": "glossary-term",
+      "id": "minashi-sainyukoku-kyoka",
+      "action": "create",
+      "reason": "Introduce special re-entry permission and distinguish it from ordinary re-entry permission."
+    },
+    {
+      "kind": "glossary-term",
+      "id": "tokurei-kikan",
+      "action": "create",
+      "reason": "Explain the special pending-application period and its deadline without describing it as an automatic two-month extension."
+    },
+    {
+      "kind": "journey",
+      "id": "ongoing-resident-responsibilities",
+      "action": "update",
+      "reason": "Add temporary travel and re-entry as a focused optional branch instead of placing permanent-departure guidance in the travel path."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 3B should revise the six assigned foundation articles, create the dedicated re-entry guide, add the directly required glossary and FAQ records, and connect relevant journeys; it should not rewrite every route-specific article.",
+    "The guides may explain official categories, timing, evidence, and decision points but must not decide an individual's eligibility, predict approval, or replace Immigration Services Agency or consular advice.",
+    "The re-entry guide should be shared across student, work, family, business, and other eligible residence journeys rather than copied into each route article.",
+    "Temporary Visitor, multiple-entry visa, refugee-applicant, enforcement, Special Permanent Resident, and passportless-travel cases require explicit boundaries and must not inherit the ordinary mid-to-long-term resident summary.",
+    "Arrival guidance should stop at the handoff to residence-card and municipal registration guides; municipal, My Number, insurance, pension, banking, housing, and phone procedures remain separate reusable content.",
+    "Permanent-departure guidance may identify tax, pension, insurance, housing, banking, utilities, and municipal handoffs but detailed legal rules remain in their later research workstreams.",
+    "Employer reporting, professional licensing, employment law, and tax consequences must be labeled as separate authority domains even when linked from a job-change guide.",
+    "No researched assertion or revised article becomes editorially approved without explicit human review; implementation should retain the existing needs-review state."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": {
+    "approvedAt": "2026-09-11",
+    "note": "Approved all five recommendations: shared optional re-entry placement, duplicated source-backed pending-travel warning, compact resident-versus-employer distinction, Certificate of Authorized Employment retained within the contract-change guide, and one permanent-departure guide pending later tax and municipal research."
+  }
+}

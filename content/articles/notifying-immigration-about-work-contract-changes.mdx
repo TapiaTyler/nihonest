@@ -1,37 +1,82 @@
 export const metadata = {
   id: "notifying-immigration-about-work-contract-changes",
   title: "Notifying immigration about employer and contract changes",
-  description: "Recognize when covered residents must notify immigration about an organization, contract ending, or new contract—and what the notice does not decide.",
+  description: "Separate resident and employer notices from the immigration decision about whether new work fits the current status.",
   slug: "notifying-immigration-about-work-contract-changes",
   journeyStageIds: ["living-in-japan"],
   topicIds: ["immigration", "employment"],
-  audienceIds: ["employee", "freelancer"],
+  audienceIds: ["employee", "employer", "freelancer"],
   geographicScopes: ["national"],
   importance: "critical",
   contentType: "official-procedure",
-  sourceIds: ["isa-affiliated-organization-notification", "isa-status-search"],
-  termIds: ["shozoku-kikan-todokede", "zairyu-shikaku", "zairyu-card"],
+  sourceIds: ["isa-affiliated-organization-notification", "isa-affiliated-organization-faq", "isa-authorized-employment-certificate", "isa-immigration-residence-faq", "mhlw-foreign-worker-notification"],
+  termIds: ["shozoku-kikan-todokede", "zairyu-shikaku", "zairyu-shikaku-henko-kyoka", "shikakugai-katsudo-kyoka", "zairyu-card"],
+  searchTerms: ["changed employer Japan immigration", "job change 14 days", "contract ended notification", "company reports foreign worker", "can new job use same visa", "certificate authorized employment"],
   residenceStatusIds: [],
-  relationships: [{ type: "related", articleId: "side-work-and-freelancing-on-a-work-status" }, { type: "next-step", articleId: "renewing-or-changing-your-status-of-residence" }],
-  status: "draft",
+  relationships: [{ type: "related", articleId: "side-work-and-freelancing-on-a-work-status" }, { type: "next-step", articleId: "renewing-or-changing-your-status-of-residence" }, { type: "related", articleId: "choosing-a-work-status-and-coe" }],
+  status: "needs-review",
   createdAt: "2026-09-06",
-  updatedAt: "2026-09-06",
+  updatedAt: "2026-09-11",
 }
 
-> **Draft procedure map:** The event categories and covered statuses must be checked on the current ISA page. This guide does not decide whether a new job fits your status.
+> **Editorial review needed:** Covered events and statuses must be checked on the current ISA page. This guide does not decide whether a new role fits the current status.
 
-## A job change can create more than one immigration question
+## One job change can create three separate questions
 
-For covered employment- and institution-based statuses, a change involving the affiliated or contracting organization may require a Notification Concerning an Affiliated Organization ([所属機関に関する届出](/glossary/shozoku-kikan-todokede), **shozoku kikan ni kansuru todokede**). Reportable events can include the organization changing its name or location, ceasing to exist, a contract ending, or a new contract beginning.
+1. **Must the resident notify ISA?** Some activity-based statuses require a notification after specified changes involving an affiliated or contracting organization.
+2. **Must the employer report the hire or separation?** The employer may have a separate Ministry of Health, Labour and Welfare reporting duty.
+3. **Does the new work fit the current status?** Neither notification answers this question.
 
-ISA's procedure sets a 14-day period for covered events. File through an accepted channel and retain the submission record with the contract, separation documents, and residence-card records.
+Complete each applicable task independently. One party's filing does not replace the other's.
 
-## Notification is not permission
+## The resident's immigration notification
 
-Submitting the notice does not certify that the new duties fit the current Status of Residence ([在留資格](/glossary/zairyu-shikaku), **zairyū shikaku**). Before starting, separately determine whether the work is within scope, needs outside-activity permission, or requires a change of status. A certificate of authorized employment may help in some cases, but it is a separate procedure.
+For covered statuses and events, a Notification Concerning an Affiliated Organization ([所属機関に関する届出](/glossary/shozoku-kikan-todokede), *shozoku kikan ni kansuru todokede*) is generally due within 14 days after the event. Depending on the status, relevant events can include:
 
-Also distinguish an employer's required notification from your own resident notification. One party's filing does not necessarily replace the other's obligation.
+- an organization changing its name or location;
+- an organization ceasing to exist;
+- leaving an organization or ending a contract; and
+- joining a new organization or beginning a new contract.
 
-## Build a safe changeover file
+The precise notification type differs among activity organization, contracting organization, and spouse-related events. Check the current ISA list for your status and event. ISA does not accept a future date as though the change already occurred; notify after the event and preserve proof of submission. If late, file promptly and follow current instructions rather than deciding the duty has disappeared.
 
-Keep the old and new contracts, detailed duty descriptions, work locations, start and end dates, organization registration information, pay terms, and proof of each filing. Check the expiry date on your Residence Card ([在留カード](/glossary/zairyu-card), **zairyū kādo**) because a contract change does not extend the period of stay.
+## The employer's separate report
+
+An employer generally reports specified foreign-worker hiring and separation information through the employment-insurance or other applicable Ministry of Health, Labour and Welfare (MHLW) process. The form and deadline depend on whether the worker is covered by employment insurance and on the employer's circumstances.
+
+Three responsibilities must not be confused:
+
+### Your resident notification to ISA
+
+If your status and the organization or contract change are covered, you file your own notification with ISA. This records that the change happened. It does **not** establish that the duties at the new job fit your current status.
+
+### The employer's notification to MHLW
+
+The employer files the applicable foreign-worker hiring or separation report. Ask which process applies and retain any confirmation made available to you. The employer's report does **not** complete your separate ISA notification.
+
+### The work-authorization check
+
+You and the employer should compare the new primary duties, contract, and organization with your current immigration permission. A notification, signed employment contract, or completed employer report does **not** by itself authorize work outside your current status.
+
+## Notification is not work authorization
+
+Submitting the notice records a change. It does not expand the Status of Residence ([在留資格](/glossary/zairyu-shikaku), *zairyū shikaku*), grant Permission to Engage in Activity Outside the Status Scope ([資格外活動許可](/glossary/shikakugai-katsudo-kyoka), *shikakugai katsudō kyoka*), approve a Change of Status of Residence ([在留資格変更許可](/glossary/zairyu-shikaku-henko-kyoka), *zairyū shikaku henkō kyoka*), or extend the current stay.
+
+Before beginning the new role, compare the actual primary duties, employer or contracting organization, work location, remuneration, and relevant qualifications with the current status. If the work falls outside it, determine which permission or status change must be granted first.
+
+## When a Certificate of Authorized Employment may help
+
+A Certificate of Authorized Employment can provide official evidence about the income-producing activity a person is permitted to perform under existing immigration permission. It is not a mandatory document for every hire and does not change the status itself. Its usefulness is fact-specific, particularly when a new role appears similar but the parties want evidence about work scope.
+
+## Keep a complete changeover file
+
+- old and new contracts and detailed duty descriptions;
+- organization names, addresses, registration details, and work locations;
+- actual end and start dates;
+- remuneration and employment conditions;
+- proof of the resident notification;
+- the employer's filing confirmation where available;
+- advice or application records about status fit; and
+- the Residence Card ([在留カード](/glossary/zairyu-card), *zairyū kādo*) expiry date.
+
+If the principal authorized activity stops, keep evidence of active job searching, offers, illness, or another relevant circumstance. Do not assume that an informal “three-month grace period” guarantees the status: inactivity, other activity, justifiable reasons, and revocation are assessed under separate rules.

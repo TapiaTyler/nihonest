@@ -31,6 +31,7 @@ export const articleMetadataSchema = z.object({
   contentType: contentTypeSchema,
   sourceIds: z.array(stableIdSchema).default([]),
   termIds: z.array(stableIdSchema).default([]),
+  searchTerms: z.array(z.string().min(1)).default([]),
   residenceStatusIds: z.array(stableIdSchema).default([]),
   relationships: z.array(articleRelationshipSchema).default([]),
   status: z.enum(["draft", "verified", "needs-review", "archived"]),

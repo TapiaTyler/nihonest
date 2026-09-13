@@ -56,6 +56,20 @@ describe("knowledgebase search", () => {
     ).toEqual([]);
   });
 
+  it("finds articles and their groups through reviewed search aliases", () => {
+    const aliasedArticle = articleMetadataSchema.parse({
+      ...bankArticle,
+      searchTerms: ["cash card setup"],
+    });
+
+    const results = searchKnowledgebase([arrivalGroup], [aliasedArticle], [], {
+      ...defaultKnowledgebaseSearchFilters,
+      query: "cash card",
+    });
+
+    expect(results.map(({ kind }) => kind)).toEqual(["group", "article"]);
+  });
+
   it("excludes glossary results from article-only dimensions", () => {
     const results = searchKnowledgebase([arrivalGroup], [bankArticle], glossaryTerms, {
       ...defaultKnowledgebaseSearchFilters,

@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "id": "student-school-and-arrival-discovery",
+  "workstreamId": "student-short-stay-and-arrival",
+  "preparedAt": "2026-09-11",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "The separate decisions made by a school during admission, ISA during Student-status and COE examination, a diplomatic mission during visa examination, and an immigration inspector during landing examination.",
+    "School types and program shapes: Japanese-language institutions, undergraduate and junior-college programs, graduate programs, professional training colleges, exchange programs, non-degree research or audit study, and genuinely short courses.",
+    "How official recognition, certification or designation and the particular course affect whether a school can support Student status, including the transition affecting Japanese-language institutions through March 2029.",
+    "Academic, prior-education, language, financial, program-fit, application-calendar, tuition, refund, housing, support, and outcome checks without presenting one school type's threshold as universal.",
+    "The distinction between a short educational program and the immigration basis used to attend it: Temporary Visitor or visa-exempt short stay, Student, Cultural Activities, or another existing status.",
+    "Student COE preparation, including school representation, applicant and expense-supporter evidence, changed facts, document consistency, and the absence of any approval guarantee.",
+    "Education-provider responsibilities before and after admission: truthful screening and evidence, authorized application handling, status and work-boundary guidance, enrollment records, attendance support, and applicable institutional notifications.",
+    "The 2026 Japanese-language-school changes to proof and institutional confirmation of Japanese ability, with precise effective dates and stated exceptions.",
+    "Part-time work as a separate permission question, including the 28-hour weekly limit, official long-vacation treatment, prohibited business categories, and school oversight boundaries.",
+    "Arrival documents and handoffs: residence-card issuance at designated airports or later delivery, checking granted records, school enrollment, address registration, My Number, insurance, pension, housing, phone, and banking dependencies.",
+    "Temporary travel during study, school vacations, transfer, withdrawal, graduation, and changes of plan, linked to the shared re-entry and status-maintenance guidance rather than duplicated."
+  ],
+  "userSituations": [
+    "A prospective language-school student comparing schools, agents, refund terms, course intensity, progression support, and whether the institution and course can support Student status.",
+    "A university applicant who meets a school's academic admission standard but does not yet know whether the Student-status evidence or financial-support record is sufficient.",
+    "A graduate applicant whose prior education does not fit a simple sixteen-year rule but may qualify through another official route or institutional individual assessment.",
+    "A vocational-school applicant comparing several accepted ways to establish Japanese ability and checking whether the credential and intended occupation justify the program.",
+    "An exchange student attending for one semester who must distinguish exchange-program rules, credits, tuition arrangements, and the correct immigration basis.",
+    "A person taking a six-week language course who may qualify for a short stay but whose nationality, intended activities, or length means that 'no student visa needed' is not a universal statement.",
+    "A non-degree research or audit student whose class hours or unpaid research activity may change the appropriate status comparison.",
+    "A school employee asked to help with a COE who needs to understand representative authority, truthful institutional evidence, secure document handling, and that the school does not issue the certificate.",
+    "A newly arrived student whose bank requires an address while a lease or phone contract asks for payment details, requiring a sequenced temporary workaround rather than circular instructions.",
+    "A Student-status holder considering part-time work, changing schools, withdrawing, graduating, or leaving Japan temporarily during a school break."
+  ],
+  "edgeCasesAndExceptions": [
+    "Admission does not establish Student-status eligibility, COE issuance, visa issuance, or landing permission; each actor makes a separate decision.",
+    "A school employee may act as a COE representative in an eligible case, but the accepting school neither issues the COE nor guarantees the result.",
+    "The everyday label 'short-term study' describes programs from a few weeks to a full academic year and therefore does not determine whether Temporary Visitor, Student, Cultural Activities, or another status applies.",
+    "Visa exemption is nationality- and passport-dependent, is not permission for remunerative activity, and cannot be summarized as a universal ninety-day allowance.",
+    "Research, audit, and credit-earning students seeking Student status generally face a ten-hours-per-week class rule; unpaid research without auditing may instead fit Cultural Activities.",
+    "Twelve-year and sixteen-year education descriptions are common routes, not complete universal rules; preparatory courses, equivalency, age, foreign credentials, and individual eligibility assessment can matter.",
+    "An English-taught degree may remove a Japanese-language admission threshold but does not remove academic, financial, immigration, or institution-specific evidence requirements.",
+    "Japanese-language education is in a regulatory transition: qualifying existing institutions can continue during the transition, while certification requirements and dates must be verified rather than inferred from marketing language.",
+    "For specified 2026 applications involving Japanese-language institutions, prior learning hours alone no longer substitute for the newly required test certificate or interview confirmation; the application type and effective date matter.",
+    "The accepting institution's classification can alter the required Student application evidence without functioning as a consumer-quality ranking.",
+    "A financial supporter may be different from the school acting as application representative; the term sponsor must not collapse expense support and institutional acceptance.",
+    "Student status alone does not authorize paid work. Comprehensive outside-activity permission has limits and exclusions, and an individual activity may require a different analysis.",
+    "Students already holding another residence status may be allowed to study without changing to Student, but benefits, scholarships, work conditions, and institutional handling can differ.",
+    "Minor students, secondary-school students, and applicants needing guardianship or welfare arrangements have materially different support risks and may require a later focused guide.",
+    "School transfer, withdrawal, expulsion, graduation, prolonged absence, or loss of institutional recognition can trigger separate resident and institutional actions; neither notification itself changes or extends status.",
+    "Residence cards are issued at landing only at designated airports; at other ports, the passport records later issuance and the card is generally mailed after address notification.",
+    "Temporary Visitor entrants are not mid-to-long-term residents and should not be sent through residence-card, resident-registration, My Number, National Health Insurance, or National Pension steps as though those always apply.",
+    "A temporary trip home during study is a re-entry question, not a new Student-visa application by default, but the student's period of stay and return deadline remain controlling."
+  ],
+  "jurisdictionVariables": [
+    "National immigration law, ministerial criteria, notices, and current Immigration Services Agency operational guidance.",
+    "Foreign-ministry and diplomatic-mission visa practice, including nationality, passport, residence jurisdiction, and local document instructions.",
+    "MEXT recognition and certification of educational institutions and transition rules for Japanese-language education.",
+    "Institution-specific admission, examination, curriculum, credit, tuition, refund, housing, deadline, and support rules.",
+    "Home-institution exchange agreements and decisions about credit transfer or tuition waivers.",
+    "Municipal address, insurance, pension, and local support procedures after the student establishes residence.",
+    "Private-provider screening for leases, mobile service, and bank accounts; these are not national immigration requirements."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/student",
+      "supports": ["Student activity and available period", "Institution and application-context distinctions", "Current application evidence routing"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/immigration-procedures/",
+      "supports": ["Student COE and visa sequence", "School representation in common applications", "Financial-support evidence examples"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/learn-about-schools/japanese-language-schools/",
+      "supports": ["Japanese-language institution types", "School-selection checks", "Common admission evidence"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/learn-about-schools/universities/",
+      "supports": ["Undergraduate admission pathways", "Language and examination considerations", "English-taught programs"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/learn-about-schools/graduate-schools/",
+      "supports": ["Graduate admission pathways and alternatives", "Research planning", "Institutional eligibility assessment"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/learn-about-schools/vocational-schools/",
+      "supports": ["Professional training college entry routes", "Japanese-language evidence alternatives", "Program and credential selection"]
+    },
+    {
+      "organization": "Japan Student Services Organization",
+      "url": "https://www.studyinjapan.go.jp/en/planning/learn-about-schools/short-term/",
+      "supports": ["Short-program types", "Exchange, research, audit and credit distinctions", "Ten-hour Student-status rule and Cultural Activities boundary"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/",
+      "supports": ["Short-stay and long-term visa boundary", "No-remunerative-activity condition", "Long-term COE sequence"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html",
+      "supports": ["Current nationality and passport visa-exemption conditions", "Country-specific permitted stay notes"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/10_00258",
+      "supports": ["2026 Japanese-language ability evidence change", "Application-specific effective dates", "Institutional confirmation and outside-activity oversight"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/shozokutodokede_00001.html",
+      "supports": ["Education-provider acceptance and termination notifications", "May and November status reports", "Fourteen-day timing"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/publications/faq/newimmiact_4_port-city.html",
+      "supports": ["Residence-card issuance at designated airports", "Later issuance after address notification at other ports"]
+    },
+    {
+      "organization": "Ministry of Education, Culture, Sports, Science and Technology",
+      "url": "https://www.nihongokyouiku.mext.go.jp/top/guide-japanese-language-institution",
+      "supports": ["Certified Japanese-language institution system", "Public institution checks", "Transition guidance"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "new-article",
+      "id": "choosing-a-school-and-understanding-admission-requirements",
+      "action": "create",
+      "reason": "Provide a route-neutral school comparison and admission guide without overloading the Student COE article."
+    },
+    {
+      "kind": "new-article",
+      "id": "accepting-international-students-and-supporting-coe-applications",
+      "action": "create",
+      "reason": "Give schools a distinct pre-admission, COE-support, onboarding, attendance, work-guidance, and reporting workflow while correcting the claim that a school gives a student a COE."
+    },
+    {
+      "kind": "article",
+      "id": "planning-your-studies-in-japan",
+      "action": "update",
+      "reason": "Turn the overview into a decision path that routes to school type, admission, immigration basis, budget, and timing details."
+    },
+    {
+      "kind": "article",
+      "id": "short-term-study-in-japan",
+      "action": "update",
+      "reason": "Separate program duration from immigration status and cover exchange, audit, research, nationality, work, and resident-system exclusions."
+    },
+    {
+      "kind": "article",
+      "id": "student-visa-and-certificate-of-eligibility",
+      "action": "update",
+      "reason": "Separate admission, school representation, ISA COE issuance, consular visa review, landing, financial support, and changed facts."
+    },
+    {
+      "kind": "article",
+      "id": "preparing-to-enter-japan",
+      "action": "update",
+      "reason": "Focus the Student-specific pre-departure checklist and hand off temporary travel to the shared re-entry guide."
+    },
+    {
+      "kind": "article",
+      "id": "completing-school-arrival-procedures",
+      "action": "update",
+      "reason": "Cover enrollment evidence, school contacts, attendance and work boundaries, institutional support, and change-of-plan escalation."
+    },
+    {
+      "kind": "article",
+      "id": "working-part-time-on-student-status",
+      "action": "update",
+      "reason": "Deepen permission, time-limit, prohibited-business, long-vacation, multiple-job, internship, and school-support distinctions."
+    },
+    {
+      "kind": "article",
+      "id": "documents-received-when-entering-japan",
+      "action": "update",
+      "reason": "Clarify designated-airport residence-card issuance, later delivery, record checking, and Temporary Visitor exclusions."
+    },
+    {
+      "kind": "article",
+      "id": "registering-your-address-after-arrival",
+      "action": "review",
+      "reason": "Verify the long-term-resident applicability boundary and its role as the prerequisite for later resident administration."
+    },
+    {
+      "kind": "article",
+      "id": "understanding-my-number",
+      "action": "review",
+      "reason": "Keep this shared across eligible residence routes and prevent short-stay students from being sent into resident procedures."
+    },
+    {
+      "kind": "article",
+      "id": "joining-national-health-insurance",
+      "action": "review",
+      "reason": "Preserve route-dependent and employer-insurance applicability instead of treating enrollment as a universal student step."
+    },
+    {
+      "kind": "article",
+      "id": "national-pension-after-moving-to-japan",
+      "action": "review",
+      "reason": "Preserve age, coverage, exemption, and postponement branches as shared resident guidance."
+    },
+    {
+      "kind": "article",
+      "id": "finding-housing-and-moving-in",
+      "action": "review",
+      "reason": "Retain school housing, temporary accommodation, guarantor, payment, and address-registration dependencies without making housing a Student-status requirement."
+    },
+    {
+      "kind": "article",
+      "id": "getting-a-phone-number-in-japan",
+      "action": "review",
+      "reason": "Retain temporary connectivity and identity, address, payment, and contract dependencies as shared arrival guidance."
+    },
+    {
+      "kind": "article",
+      "id": "opening-a-bank-account-after-moving-to-japan",
+      "action": "review",
+      "reason": "Preserve the address, phone, school, employer, residence-duration, and private screening branches that resolve the housing-bank loop."
+    },
+    {
+      "kind": "journey",
+      "id": "international-student",
+      "action": "update",
+      "reason": "Branch clearly between short-stay study and Student status, add school selection, keep shared arrival steps conditional, and link temporary travel without forcing it into the main sequence."
+    },
+    {
+      "kind": "journey",
+      "id": "accepting-international-students",
+      "action": "create",
+      "reason": "Provide education-provider users a focused institutional workflow instead of mixing their duties into the student's personal journey."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 4B should implement the student, school-selection, education-provider, and arrival scope only; the employer-facing COE guide belongs to the professional-work batch beginning with Iteration 5.",
+    "The education-provider guide is an operational orientation, not individualized legal advice or a substitute for ISA, MEXT, a licensed attorney, or an administrative scrivener.",
+    "The site must not say that a school, employer, agent, or financial supporter issues, grants, sponsors, guarantees, or approves a COE when the responsible decision belongs to ISA.",
+    "Institution-specific admissions, fees, refunds, calendars, housing, scholarships, and accepted evidence must be verified directly with the institution rather than copied into universal rules.",
+    "Short-term study guidance must route users by intended activity, duration, nationality and passport conditions, and school/program facts; it must not promise visa-free or ninety-day entry.",
+    "Shared address, My Number, insurance, pension, housing, phone, and banking articles remain cross-route guidance. Iteration 4B should change them only where applicability or dependency errors are found.",
+    "Exact COE and residence-application document inventories should be linked to current official application pages and expressed as evidence categories, not frozen as one universal checklist.",
+    "Minor and secondary-school safeguarding may warrant a later dedicated guide; Iteration 4B should flag the issue without pretending an adult-student flow is sufficient.",
+    "No researched guide becomes verified without explicit human approval under the Phase 12 editorial workflow."
+  ],
+  "unresolvedQuestions": [
+    "Should the education-provider guide and journey launch in Iteration 4B with a new `education-provider` audience value, while the parallel `employer` audience waits for Iteration 5B?",
+    "Should school selection remain one comparative guide with expandable school-type sections, or should language schools and degree or vocational institutions receive separate guides after the shared comparison is tested?",
+    "Should minors and secondary-school students receive a dedicated later article, or a prominent conditional section in the provider and Student guides?",
+    "How much of the school transfer, withdrawal, expulsion, and graduation lifecycle belongs in Iteration 4B versus a later status-transition guide?",
+    "Should the education-provider journey be visible from the default Explore group catalog immediately, or first be discoverable through Audience filtering and contextual links while organization-facing coverage remains small?",
+    "Which already reviewed shared-arrival guides require substantive revision rather than a source/applicability check, so their established editorial quality is not needlessly disturbed?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-11",
+    "note": "The editor approved the proposed Iteration 4B scope, including education-provider guidance and the later employer counterpart."
+  }
+}

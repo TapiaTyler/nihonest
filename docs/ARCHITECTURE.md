@@ -310,6 +310,8 @@ Future additions may include:
 
 Do not build a legal eligibility engine during the initial milestone.
 
+The Phase 13 pilot adds an optional structured-guidance object to canonical residence-status records. It models route shape, available periods, work authorization, activity boundaries, alternative qualification pathways, organization conditions, renewal, transitions, evidence categories, search terms, and source-backed assertions with effective dates. The schema is intentionally descriptive: `allOf` and `anyOf` preserve the structure of official criteria for readers but do not calculate an individual's eligibility. Records without reviewed structured guidance continue to use the existing summary presentation while later route batches populate the model.
+
 ---
 
 # 9. Glossary Domain
@@ -741,6 +743,8 @@ translateContent(content, locale)
 Initial localization uses Codex as an offline editorial generation tool. Codex writes validated, version-controlled artifacts; application page requests never call Codex. The application-level provider interface remains so generation can move to an API later without changing content consumers or cache semantics.
 
 Phase 11 implements a cache-first provider boundary without selecting a runtime vendor. A translation artifact is identified by its stable content ID and kind, canonical-source SHA-256 revision, protected-terminology SHA-256 revision, translation-prompt SHA-256 revision, target BCP 47 locale, generator, and model. Artifacts record whether they remain machine translated or received human review. Missing, malformed, or stale artifacts fall back to canonical English; a generator response that removes, duplicates, or invents protected placeholders is rejected rather than cached.
+
+Repository artifacts also carry an explicit `active` or `stale` availability state. Phase 13 canonical edits must mark an outdated pilot artifact stale when its source revision no longer matches. Stale artifacts remain in Git as historical evidence but are excluded from both rendering and localized search until Phase 14 creates a current replacement.
 
 Only two representative articles form the Phase 11 pilot corpus, initially in Japanese. Japanese is intended both for interface evaluation and for Japanese-speaking supporters helping a foreign resident understand the canonical guidance; it is not an assumption that Japanese citizens already know immigration procedure. Catalog-wide generation follows the major Phase 13 canonical-English pass in Phase 14 so extensive editorial changes do not create avoidable translation cost and churn. Repository artifacts are the initial shared cache, so production translation credentials and runtime quotas are unnecessary. Source, prompt, and terminology freshness for those repository artifacts is an editorial/build invariant enforced by artifact contract tests; a future dynamic cache uses the same revision identity at runtime.
 

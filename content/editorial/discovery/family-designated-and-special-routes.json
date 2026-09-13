@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "id": "family-designated-and-special-routes-discovery",
+  "workstreamId": "family-designated-visitor-and-official",
+  "preparedAt": "2026-09-12",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Dependent as a supported-spouse-or-child activity route tied to an eligible principal status, with the current sponsor-status list, financial support, cohabitation or family-life evidence, individually designated period, and separate outside-activity permission.",
+    "Spouse or Child of Japanese National and Spouse or Child of Permanent Resident as distinct status-based routes whose child definitions are not interchangeable and whose spouse cases require an ongoing genuine marital relationship.",
+    "Long-Term Resident as a notification-based or individually recognized status for specified special circumstances, not a general fallback after divorce, family change, or long residence.",
+    "Permanent Residence under the February 24, 2026 guideline, including the ordinary residence rule, route-specific exceptions, public obligations, current-status compliance, guarantor and evidence paths, pending-application obligations, and the maximum-period treatment changing April 1, 2027.",
+    "Designated Activities as an umbrella whose permitted work, family accompaniment, period, renewal, and transition are controlled by the exact designation rather than the English status label.",
+    "Continued job hunting after Japanese study, including covered graduates, school recommendation and continuing search evidence, ordinary time limits, qualifying local-government support, outside-activity permission, and the separate job-offer waiting route.",
+    "J-Find for recent graduates of currently qualifying overseas universities: ranking-list and graduation timing, degree, age, initial funds, job-search or business-preparation activity, family, cumulative program time, and transition planning.",
+    "Digital Nomad Designated Activities: covered nationality or citizenship, foreign-facing remote work, income and insurance thresholds, six-month non-renewable stay, six-month wait before reuse, family, local-client prohibition, tax-treaty uncertainty, and absence of a residence card.",
+    "Long-stay sightseeing and recreation: visa-waiver nationality or citizenship, age, savings ownership and history, insurance, accompanying-spouse conditions, exclusion of children and work, six-month grant, and possible extension up to one year.",
+    "Medical Stay as a coordinated visa and residence decision: short treatment, multiple-entry medical visa, hospitalization beyond ninety days, Designated Activities for the patient and attendant, guarantor or medical coordinator, treatment and financing evidence, and no remunerative activity for the attendant.",
+    "Working Holiday as a bilateral, holiday-first Designated Activities program with country-specific age, residence, quota, funds, insurance, participation-count, work, prohibited-industry, and application rules rather than one global checklist.",
+    "Temporary Visitor as a short activity category distinct from visa exemption or eVISA eligibility, with nationality and passport conditions, 15-, 30-, or 90-day landing periods, no remunerative activity, exceptional extension rules, and no ordinary resident onboarding.",
+    "Diplomat and Official as assignment- and recognition-based routes coordinated through governments, missions, or recognized international organizations; passport type alone does not establish either status and private travel may instead be Temporary Visitor."
+  ],
+  "userSituations": [
+    "A professional or student wants to bring a spouse, child, parent, unmarried partner, or other relative and assumes every principal status supports Dependent.",
+    "A spouse on Dependent wants part-time or full-time work and needs to distinguish outside-activity permission from obtaining an independent work status.",
+    "A family member is choosing among Dependent, Spouse or Child of Japanese National, Spouse or Child of Permanent Resident, and Long-Term Resident based on the exact relationship and sponsor position.",
+    "A child is born in Japan and the parents need to distinguish nationality, municipal birth registration, status acquisition, and the narrow born-in-Japan child rule for Spouse or Child of Permanent Resident.",
+    "A marriage ends through divorce, bereavement, separation, or domestic violence and the resident needs urgent notification and route-change guidance without being told that Long-Term Resident is automatic.",
+    "A resident is preparing for Permanent Residence and needs the ordinary or exceptional residence timeline, timely tax and social-insurance record, current period-of-stay rule, and continued extension of the present status while the application is pending.",
+    "A former international student continues a pre-graduation job search, joins a qualifying local support program, receives a future job offer, or considers J-Find and needs the routes kept separate.",
+    "A recent overseas graduate checks J-Find using an outdated university ranking list or assumes its two years are independent of time used under certain similar programs.",
+    "A remote worker has Japanese clients, a Japanese employment offer, a spouse or child, or plans repeated stays and needs the Digital Nomad boundaries stated before travel.",
+    "A financially self-supported visitor compares ordinary Temporary Visitor, long-stay sightseeing, Digital Nomad, and a relocation status.",
+    "A patient compares a short medical visit, repeated treatment trips, and hospitalization exceeding ninety days while an accompanying person needs a legally accurate route and work boundary.",
+    "A young traveler checks Working Holiday eligibility after recent bilateral changes and needs the rules for their nationality and application location rather than a generic age promise.",
+    "A diplomatic or official passport holder travels privately, accompanies an assigned household member, or changes assignment and needs coordination with the sending organization and Japanese mission."
+  ],
+  "edgeCasesAndExceptions": [
+    "Dependent currently covers the supported spouse or child of listed principal statuses, including Specified Skilled Worker (ii), but not Specified Skilled Worker (i). A parent, sibling, unmarried partner, or adult independent child does not become eligible merely through financial support.",
+    "Dependent does not authorize ordinary employment. Blanket outside-activity permission may allow up to twenty-eight hours weekly under its conditions, but a full-time career generally requires an appropriate independent status or a distinct special-family provision.",
+    "The child categories differ: Spouse or Child of Japanese National includes a person born as a child of a Japanese national and a qualifying special adoptee, while Spouse or Child of Permanent Resident covers a biological child born in Japan who continued residing in Japan. These are not generic dependent-child labels.",
+    "Status-based residence ordinarily has no activity restriction, but the relationship or position supporting a spouse status must remain genuine for renewal. Divorce or bereavement triggers a fourteen-day notification for covered spouse holders.",
+    "Six months without spouse activity can create revocation risk, but domestic violence, child-rearing, litigation, unavoidable separation, or other justifiable reasons require careful treatment. The guide must not tell a person in danger to remain with an abusive spouse.",
+    "Long-Term Resident includes notification categories and discretionary individual cases. Prior marriage to a Japanese or permanent resident, years lived in Japan, or custody of a child is relevant evidence in some cases but never an automatic entitlement.",
+    "Permanent Residence is a separate permission, not an extension. A pending application does not extend the current period of stay, so the applicant must separately maintain and renew the present status when necessary.",
+    "The February 24, 2026 Permanent Residence guideline continues temporary treatment of a three-year period as the longest period only through March 31, 2027, with limited transitional handling for certain holders thereafter. This must be effective-dated rather than stated as a timeless three-year rule.",
+    "Designated Activities does not carry one work rule. A Working Holiday designation may allow incidental work, Digital Nomad permits defined foreign-facing remote work, long-stay sightseeing prohibits work, and continued job hunting requires separate outside-activity permission for part-time work.",
+    "Continued job hunting is not available to every graduate or every post-graduation search. Covered institution, course, credential, continuity of job hunting, school recommendation, finances, and relation to a prospective work status matter.",
+    "Waiting after receiving a job offer is a separate Designated Activities situation. Current guidance uses both an offer-to-start limit and a graduation-to-start limit and requires employer contact and cancellation undertakings.",
+    "J-Find uses the currently published eligible-university basis, graduation within five years, a degree, age eighteen or older, and initial funds. Its maximum two-year period can interact with time used under listed similar job-hunting or entrepreneurial-preparation programs.",
+    "Digital Nomad is six months with no extension and no residence card. It does not authorize employment or comparable contracting with a Japanese public or private organization, and a tax treaty—not the immigration label alone—controls any income-tax exemption.",
+    "Long-stay sightseeing normally begins with six months and can reach at most one year through an eligible extension. Children cannot accompany under that scheme, and spouses staying separately create a higher combined savings requirement.",
+    "A Medical Stay visa is not itself one uniform status of residence. Treatment of ninety days or less can use a short-stay framework, while hospitalization exceeding ninety days requires the longer Designated Activities analysis and a COE route.",
+    "Working Holiday eligibility and repeat participation changed for several partner countries and Taiwan between December 2024 and February 2026. Country-specific embassy rules, quotas, and prohibited employment must be checked at application time.",
+    "Visa exemption, eVISA availability, visa validity, and the Temporary Visitor period granted at landing are separate concepts. Short stay never authorizes remunerative activity merely because a visa was waived.",
+    "Diplomatic or official passport possession does not alone produce Diplomat or Official status. Private tourism can result in Temporary Visitor treatment, and visa-exemption arrangements differ by passport and nationality.",
+    "Diplomat, Official, Temporary Visitor, and Digital Nomad holders are outside the ordinary mid-to-long-term residence-card system; shared arrival guidance must not automatically send them through residence-card and municipal resident-registration steps."
+  ],
+  "jurisdictionVariables": [
+    "The principal resident's exact status, the family relationship recognized under the applicable route, dependency, household facts, age, place of birth, continued residence, and evidence from every relevant civil registry.",
+    "Nationality and family law, Japanese family-register records, foreign marriage or birth documents, translation, legalization or authentication, and same-sex-marriage or non-marital-partner facts requiring route-specific official advice.",
+    "The resident's current status, period, address, tax, pension, health-insurance, criminal, notification, travel, and compliance record for renewal or Permanent Residence.",
+    "The exact Designated Activities notification number or individual designation printed in the person's designated-activities record, not merely the status name on a residence card.",
+    "Current eligible countries, passport type, bilateral arrangement, application residence, age, quota, funds, insurance, permitted work, and repeat-participation rule for visitor, digital-nomad, and Working Holiday routes.",
+    "The education provider, credential, graduation date, pre-graduation search activity, recommendation, local-government support program, job offer, anticipated start date, and prospective work-status fit for graduate routes.",
+    "The medical purpose, expected treatment and hospitalization duration, single or repeated visits, host institution, registered guarantor, accompanying-person need, financing, and treatment plan.",
+    "The sending government or international organization, Japanese recognition, assignment purpose, household relationship, note verbale, passport, privileges or immunities, and whether the trip is official or private.",
+    "Tax, social insurance, family law, employment, professional licensing, public benefits, and municipal processes that remain separate from immigration permission."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": ["Current status categories and activity definitions", "Periods of stay", "Work-restriction classification"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/dependent",
+      "supports": ["Dependent activity and eligible principal statuses", "Individually designated period", "Family and support evidence"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/nyuukokukanri07_00069.html",
+      "supports": ["Dependent outside-activity permission", "Twenty-eight-hour blanket-permission boundary"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/spouseorchildofjapanese",
+      "supports": ["Covered Japanese-national relationships", "Periods", "Current application contexts"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/spouseorchildofpermanentresident",
+      "supports": ["Covered permanent- or special-permanent-resident relationships", "Born-in-Japan child condition", "Periods and evidence"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00016.html",
+      "supports": ["Fourteen-day spouse notification after divorce or bereavement", "Covered spouse-status holders"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/longtermresident.html",
+      "supports": ["Long-Term Resident notification examples", "Minor-child age rule", "Periods and special-circumstance boundary"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/930002855.pdf",
+      "supports": ["Non-binding granted and refused examples after spouse-route breakdown", "Case-specific factors and domestic-violence context"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyukan_nyukan50.html",
+      "supports": ["Permanent Residence legal requirements and ordinary timeline", "Route-specific exceptions", "February 2026 revision and April 2027 period treatment"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-4.html",
+      "supports": ["Permanent Residence application paths", "Pending-status renewal warning", "Current evidence and guarantor framework"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities.html",
+      "supports": ["Designated Activities umbrella", "Named current programs", "Designation-specific periods"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities14.html",
+      "supports": ["Covered continued-job-hunting graduates", "Recommendation, search, finance, and course relationship evidence"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyuukokukanri07_00013.html",
+      "supports": ["Post-offer waiting route", "Employment-start limits", "Employer undertaking and outside-activity permission"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities51.html",
+      "supports": ["J-Find eligibility and evidence", "Job-search and business-preparation activity", "Family and maximum stay"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities53_00001.html",
+      "supports": ["Digital Nomad activity and Japanese-client boundary", "Income, insurance, nationality, period, repeat-use, family, and residence-card rules"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/ca/fna/page22e_000738.html",
+      "supports": ["Long-stay sightseeing eligibility", "Savings and spouse rules", "Six-month period and one-year ceiling"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/w_holiday/",
+      "supports": ["Current Working Holiday partners and bilateral model", "General eligibility", "Effective-dated repeat-participation changes"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/temporaryvisitor",
+      "supports": ["Temporary Visitor activities", "Current periods", "Short-stay status boundary"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/",
+      "supports": ["Current short-stay visa and exemption routes", "eVISA and mission-specific application boundaries", "No-remuneration rule"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/medical_stay1.html",
+      "supports": ["Medical Stay visa purpose and periods", "Registered guarantor and treatment-plan process", "Accompanying-person boundary"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities06.html",
+      "supports": ["Longer Medical Stay and attendant Designated Activities", "Hospital, treatment, accommodation, and financing evidence"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/long/visa14.html",
+      "supports": ["Diplomat activity and household family", "During-mission period", "Passport and private-travel boundary"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/long/visa15.html",
+      "supports": ["Official activity and household family", "Available periods", "Passport and private-travel boundary"]
+    }
+  ],
+  "contentImpacts": [
+    {"kind":"new-article","id":"choosing-a-family-or-personal-status-in-japan","action":"create","reason":"Compare Dependent, the two spouse-or-child statuses, and Long-Term Resident by the exact relationship or position, work authorization, sponsor, child definition, and change-of-circumstances consequences."},
+    {"kind":"article","id":"dependent-family-stay-visa","action":"update","reason":"Correct the sponsor-status list, dependency and relationship evidence, work-permission boundary, periods, renewal, family changes, and independent-status alternatives."},
+    {"kind":"article","id":"spouse-or-child-of-japanese-national","action":"update","reason":"Separate spouse, biological-child, and special-adoption paths; explain unrestricted work, evidence, periods, renewal, and relationship changes."},
+    {"kind":"article","id":"spouse-or-child-of-permanent-resident","action":"update","reason":"Make the narrow born-in-Japan child rule and permanent or special permanent resident relationship explicit; cover periods, evidence, work, renewal, and changes."},
+    {"kind":"article","id":"long-term-resident-status","action":"update","reason":"Map principal notification categories and individual cases without advertising the route as a fallback; include periods, unrestricted work, renewal, and spouse-breakdown cautions."},
+    {"kind":"article","id":"permanent-residence-in-japan","action":"update","reason":"Implement the February 2026 guideline, ordinary and exceptional timelines, public obligations, status maintenance while pending, evidence paths, and April 2027 maximum-period change."},
+    {"kind":"article","id":"designated-activities-status","action":"update","reason":"Turn the generic stub into a routing hub explaining why the designation controls work, family, period, renewal, and evidence, with contextual links to each researched program."},
+    {"kind":"article","id":"continued-job-hunting-after-study","action":"update","reason":"Separate ordinary continued job hunting, qualifying local support, and waiting after an offer; cover eligibility, time limits, recommendation, evidence, work permission, and transitions."},
+    {"kind":"article","id":"future-creation-j-find","action":"update","reason":"Cover the current institution list, graduation timing, degree, age, funds, activity, family, cumulative program time, periods, and later work or business route."},
+    {"kind":"article","id":"digital-nomad-designated-activities","action":"update","reason":"Add the complete current nationality, activity, Japanese-client, income, insurance, family, non-renewal, repeat-use, tax, and no-residence-card rules."},
+    {"kind":"article","id":"long-stay-sightseeing-designated-activities","action":"update","reason":"Add the current nationality, age, savings, insurance, spouse, child, work, six-month, extension, and one-year-limit rules."},
+    {"kind":"article","id":"working-holiday-in-japan","action":"update","reason":"Use the current partner list and effective dates while directing users to nationality-specific embassy rules for age, quota, funds, insurance, repeat participation, and work."},
+    {"kind":"article","id":"temporary-visitor-and-short-stay","action":"update","reason":"Separate status, visa, visa exemption, eVISA, validity, and landing period; cover permitted activities, no work, exceptional extension, and non-resident handling."},
+    {"kind":"article","id":"medical-stay-visa","action":"update","reason":"Explain the short-stay and longer Designated Activities branches, repeated visits, guarantor, treatment plan, COE, hospitalization, attendant, funding, and work boundary."},
+    {"kind":"article","id":"diplomatic-visa","action":"update","reason":"Cover recognized assignment, household family, note verbale, during-mission period, private travel, passport, and coordinated change or departure."},
+    {"kind":"article","id":"official-visa","action":"update","reason":"Distinguish Official from Diplomat and private Temporary Visitor travel; cover assignment evidence, household family, periods, and coordination."},
+    {"kind":"residence-status","id":"family-designated-visitor-and-official-records","action":"update","reason":"Populate the ten assigned status records with periods, work boundaries, qualification or relationship paths, renewal modes, transitions, evidence, search language, and effective-dated source assertions."},
+    {"kind":"journey","id":"joining-family-in-japan","action":"update","reason":"Add the comparison guide and route-specific change-of-circumstances steps without sending every family route through irrelevant articles."},
+    {"kind":"journey","id":"designated-and-visit-journeys","action":"update","reason":"Audit Working Holiday, Digital Nomad, J-Find, sightseeing, Temporary Visitor, medical, and permanent-residence journeys for residence-card, settlement, tax, renewal, and departure applicability."},
+    {"kind":"group","id":"family-designated-visitor-and-official-groups","action":"update","reason":"Place the comparison and researched guides in their primary groups while cross-linking Medical Stay from Designated Activities without duplicating it in default browsing."},
+    {"kind":"faq","id":"family-designated-and-special-route-questions","action":"create","reason":"Add reviewed questions for bringing family, family work, divorce or bereavement, Permanent Residence timing, graduate job hunting, J-Find, remote work, long visits, medical care, Working Holiday, and official travel."}
+  ],
+  "scopeBoundaries": [
+    "Do not use family visa as though it were one legal route. Name the exact status and relationship or principal-status basis.",
+    "Do not determine whether a foreign marriage, same-sex marriage, adoption, parent-child relationship, domestic partnership, or custody arrangement is legally recognized from a short questionnaire; identify the document and authority checks required.",
+    "Do not imply that marriage, birth, sponsorship, divorce, bereavement, domestic violence, years in Japan, or child custody automatically grants, preserves, changes, or cancels a status.",
+    "Do not present Long-Term Resident as a general humanitarian or post-divorce fallback. Explain published categories and examples while preserving individual review.",
+    "Do not predict Permanent Residence approval from years alone or collapse the ordinary, spouse or child, Long-Term Resident, highly skilled, contribution, refugee, and other exceptions into one timeline.",
+    "Do not say that a pending Permanent Residence application protects an expiring current status, and do not publish the temporary three-year treatment without its April 2027 effective-date boundary.",
+    "Do not assign one period, renewal rule, work permission, family rule, or evidence list to all Designated Activities. The exact designation controls.",
+    "Do not treat J-Find, continued job hunting, waiting after a job offer, Start-up, or ordinary work status as interchangeable because each can involve job or business preparation.",
+    "Do not imply that Digital Nomad authorizes Japanese employment or clients, that long-stay sightseeing permits remote work, or that a tax treaty automatically exempts every remote worker.",
+    "Do not describe a Medical Stay visa, Temporary Visitor, and Designated Activities medical stay as the same legal permission.",
+    "Do not copy one Working Holiday country's age, quota, funds, insurance, or participation rule to every partner.",
+    "Do not infer Diplomat or Official status from a passport label; assignment purpose and Japanese recognition control.",
+    "Keep family law, nationality, tax, insurance, employment, healthcare, professional licensing, diplomatic privileges, and municipal obligations separate from immigration permission.",
+    "Keep every materially revised or new guide at needs-review until explicit human editorial approval."
+  ],
+  "unresolvedQuestions": [
+    "Should Iteration 8B create the proposed family-route comparison guide, or is the existing joining-family journey sufficient once each route guide is rewritten?",
+    "Should the Designated Activities status page remain a linked routing hub backed by individual articles, or should the structured status UI gain a first-class program-variant model in this phase?",
+    "Should Medical Stay keep Short stay and medical visits as its primary browse group while receiving a contextual link from Designated Activities, rather than appearing as a duplicate default group card?",
+    "Is the proposed two-pass sequence acceptable: 8B-1 for family, Long-Term Resident, and Permanent Residence; 8B-2 for Designated Activities, visitors, medical, Diplomat, and Official?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-12",
+    "note": "The editor approved the standalone family comparison, the existing Designated Activities routing-hub model, Medical Stay's short-stay primary group with contextual cross-linking, and the two-pass 8B implementation sequence."
+  }
+}

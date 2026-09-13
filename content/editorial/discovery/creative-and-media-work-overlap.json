@@ -1,0 +1,283 @@
+{
+  "version": 1,
+  "id": "creative-and-media-work-overlap",
+  "workstreamId": "professional-work-regulated-and-creative",
+  "preparedAt": "2026-09-11",
+  "reviewState": "scope-proposed",
+  "topicCandidates": [
+    "A duty-first comparison for creative and media work across Engineer/Specialist in Humanities/International Services, Artist, Entertainer, Journalist, Cultural Activities, Business Manager, and statuses without activity restrictions.",
+    "Searchable occupation maps for graphic design, digital product and media work, film and video production, photography, games, advertising, publishing, and independent artistic practice.",
+    "The difference between a useful search title and a residence-status conclusion: employer, contract, output, audience, commercial context, artistic independence, and principal duties remain decisive.",
+    "Portfolio, education, experience, contract, remuneration, production schedule, client, foreign-news-organization, and artistic-career evidence that may become relevant under different routes.",
+    "Mixed creative work, multiple clients, side work, self-employment, online content, and transitions between employed specialist work and operating a creative business."
+  ],
+  "searchableRoleCandidates": {
+    "visualAndBrandDesign": [
+      "graphic designer",
+      "visual designer",
+      "brand designer",
+      "art director",
+      "creative director",
+      "illustrator",
+      "animator",
+      "motion graphics designer",
+      "3D artist"
+    ],
+    "digitalProductAndGames": [
+      "UI designer",
+      "UX designer",
+      "UX researcher",
+      "web designer",
+      "digital product designer",
+      "multimedia designer",
+      "game designer",
+      "game artist",
+      "VFX artist"
+    ],
+    "filmVideoAndSound": [
+      "film director",
+      "producer",
+      "video producer",
+      "cinematographer",
+      "director of photography",
+      "camera operator",
+      "videographer",
+      "film editor",
+      "video editor",
+      "production designer",
+      "sound designer"
+    ],
+    "photographyAndNews": [
+      "photographer",
+      "commercial photographer",
+      "editorial photographer",
+      "fine-art photographer",
+      "photojournalist",
+      "news photographer",
+      "studio photographer"
+    ],
+    "contentAdvertisingAndPublishing": [
+      "content creator",
+      "content strategist",
+      "social media manager",
+      "copywriter",
+      "advertising creative",
+      "editor",
+      "publisher",
+      "digital media producer"
+    ]
+  },
+  "routeComparisons": [
+    {
+      "route": "Engineer/Specialist in Humanities/International Services",
+      "activityBoundary": "Specialized natural-science, humanities, or foreign-culture work under a contract with a Japanese public or private organization, excluding activities assigned to listed neighboring statuses.",
+      "rolesToExamine": [
+        "graphic designer",
+        "visual or brand designer",
+        "UI, UX, web, or digital product designer",
+        "motion or multimedia designer",
+        "game designer or game artist",
+        "advertising creative or content strategist"
+      ],
+      "warning": "The official example 'designer' supports discovery, not automatic eligibility for every design title. Duties, qualification relationship, contract, and exclusions still require review."
+    },
+    {
+      "route": "Artist",
+      "activityBoundary": "Income-producing artistic activity in music, fine arts, literature, or another artistic field, excluding activity assigned to Entertainer.",
+      "rolesToExamine": [
+        "fine artist",
+        "illustrator",
+        "independent animator",
+        "writer",
+        "fine-art photographer",
+        "independent artistic creator"
+      ],
+      "warning": "A creative job title does not establish an artistic career, sufficient income, or the boundary from commercial production and employed specialist work."
+    },
+    {
+      "route": "Entertainer",
+      "activityBoundary": "Entertainment and specified entertainment-business activity, including advertising activity, broadcast or film production, commercial photography, and commercial recording or filming.",
+      "rolesToExamine": [
+        "actor or performer",
+        "model",
+        "film or broadcast production worker",
+        "commercial photographer",
+        "commercial recording or video participant"
+      ],
+      "warning": "The exact activity, production, contracting and inviting organizations, duration, position, remuneration, and applicable landing-criteria category matter."
+    },
+    {
+      "route": "Journalist",
+      "activityBoundary": "Reporting and other journalistic activity under contract with a foreign news organization.",
+      "rolesToExamine": [
+        "foreign correspondent",
+        "reporter",
+        "photojournalist",
+        "news photographer",
+        "news camera operator"
+      ],
+      "warning": "Photography, editing, or publishing for a domestic company is not converted into Journalist activity by using a press-related title."
+    },
+    {
+      "route": "Cultural Activities",
+      "activityBoundary": "Unpaid academic or artistic activity, or specialized study of Japanese culture or arts under expert guidance, subject to the route's exclusions.",
+      "rolesToExamine": [
+        "unpaid artistic researcher",
+        "traditional-arts student",
+        "unpaid creative practitioner studying under an expert"
+      ],
+      "warning": "This route is not a substitute for paid creative employment."
+    },
+    {
+      "route": "Business Manager",
+      "activityBoundary": "Genuine operation or management of a business in Japan rather than merely performing freelance creative services.",
+      "rolesToExamine": [
+        "creative-agency founder",
+        "production-company operator",
+        "studio owner"
+      ],
+      "warning": "Calling oneself a freelancer, founder, or creative director does not establish business-management activity."
+    }
+  ],
+  "userSituations": [
+    "A graphic designer comparing an employed agency role, in-house product-design job, and independent client practice.",
+    "A UI or UX designer whose title mixes research, product planning, visual design, and software-adjacent duties.",
+    "A game artist, animator, motion designer, or VFX artist whose work may be employed specialist design, independent art, or part of a commercial production.",
+    "A filmmaker comparing directing, production, camera, editing, acting, advertising, and corporate-video work.",
+    "A photographer comparing fine-art practice, foreign-news photojournalism, commercial photography, studio work, and event assignments.",
+    "A content creator, YouTuber, influencer, or social-media professional whose income may come from a Japanese employer, foreign clients, advertising, sponsorship, platforms, or their own business.",
+    "A creative worker combining employment with commissions, exhibitions, royalties, or multiple clients and needing an outside-activity analysis.",
+    "A creative-agency founder who performs production work as well as genuinely operating and managing the business."
+  ],
+  "edgeCasesAndExceptions": [
+    "Photographer is a particularly unsafe title-only classification: fine-art photography, foreign-news photography, and commercial photography appear in materially different route contexts.",
+    "Film worker is not one immigration category. Performance, production, corporate specialist work, journalism, and independent artistic creation require different fact patterns.",
+    "Graphic design may be employed specialized design or independent artistic work; the medium alone does not settle the route.",
+    "Digital media and content creator are umbrella labels. The actual output, client, contract, revenue, audience, and principal activity must be identified.",
+    "A creator publishing online for foreign clients from Japan still needs a status and work-authority analysis; remote delivery does not make the activity legally invisible.",
+    "Game design can mix visual art, narrative, product planning, programming, marketing, and production. The article must not present one universal route.",
+    "Art director and creative director may describe hands-on specialist work, artistic authorship, or genuine business management; seniority and the word director are not determinative.",
+    "A foreign-news contract is central to Journalist. Domestic publishing, corporate communications, and general documentary work should not be routed there from title alone.",
+    "Commercial photography is expressly named in the Entertainer materials, but the implementation must not extrapolate an unsourced universal answer for wedding, event, product, or studio work.",
+    "Side commissions, royalties, exhibitions, platform income, and multiple short contracts may raise outside-activity, notification, tax, and evidence issues even where the principal job is clearly authorized.",
+    "Statuses based on personal or family position may permit broad work, but professional licensing, tax, business, labor, and other laws still apply."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/gijinkoku",
+      "supports": [
+        "Engineer/Specialist activity definition and exclusions",
+        "Designer and marketing examples",
+        "Current application contexts and periods of stay"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyukan_nyukan69.html",
+      "supports": [
+        "Current Engineer/Specialist clarification package",
+        "Fashion-design and Cool Japan materials",
+        "Effective-dated April 2026 revisions"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001413895.pdf",
+      "supports": [
+        "Approved and denied duty examples",
+        "Design-office and fashion-coordination cases",
+        "Principal and incidental activity analysis"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/entertainer",
+      "supports": [
+        "Entertainment route categories",
+        "Film and broadcast production",
+        "Advertising, commercial photography, and commercial recording or filming"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/journalist.html",
+      "supports": [
+        "Foreign-news-organization contract boundary",
+        "Reporter and camera-person examples",
+        "Current application contexts and periods of stay"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": [
+        "Artist activity and Entertainer exclusion",
+        "Journalist and Cultural Activities boundaries",
+        "Representative occupations and periods of stay"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/culturalactivities",
+      "supports": [
+        "Unpaid artistic and cultural-study boundary",
+        "Activity-dependent evidence routing"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/930004070.pdf",
+      "supports": [
+        "Artist and Cultural Activities application-form distinctions",
+        "Artist or photographer activity category"
+      ]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "new-article",
+      "id": "choosing-a-residence-status-for-creative-and-media-work",
+      "action": "create-in-iteration-6-after-scope-approval",
+      "reason": "Give creative workers one activity-first comparison across employed design, independent art, entertainment production, foreign-news work, unpaid cultural study, business operation, and unrestricted work statuses."
+    },
+    {
+      "kind": "article",
+      "id": "engineer-specialist-humanities-international-services-status",
+      "action": "expand-search-and-visible-occupation-map-in-iteration-5B-2",
+      "reason": "Add common graphic, visual, brand, UI, UX, web, digital-product, motion, multimedia, game, advertising, and content-design language while preserving duty and qualification warnings."
+    },
+    {
+      "kind": "article-set",
+      "id": "artist-entertainer-journalist",
+      "action": "rewrite-in-iteration-6",
+      "reason": "Deepen the distinct artistic, production, commercial-photography, film, broadcast, and foreign-news boundaries and connect them to the comparison guide."
+    },
+    {
+      "kind": "article",
+      "id": "cultural-activities-status",
+      "action": "review-and-link-in-iteration-6",
+      "reason": "Make the unpaid artistic-study boundary visible without presenting Cultural Activities as a paid-work route."
+    },
+    {
+      "kind": "search-and-faq",
+      "id": "creative-and-media-common-language",
+      "action": "expand-across-iterations-5B-2-and-6",
+      "reason": "Make ordinary titles discoverable even where the answer is a comparison rather than one status article."
+    }
+  ],
+  "scopeBoundaries": [
+    "Do not create one residence-status article for every occupation title; occupations and statuses are not one-to-one.",
+    "Do not claim that every designer qualifies for Engineer/Specialist or every filmmaker and commercial photographer qualifies for Entertainer.",
+    "Do not turn search aliases into approval claims or job whitelists.",
+    "Do not provide unsourced universal treatment for influencers, YouTubers, wedding photographers, foreign-client remote workers, or other fact-sensitive models.",
+    "Keep copyright, model releases, location permits, drone rules, professional licensing, tax, and business compliance in later law or integration coverage except for clear cross-links.",
+    "Keep new and materially rewritten guidance at needs-review until explicit human editorial approval."
+  ],
+  "unresolvedQuestions": [
+    "Approve the standalone creative-and-media comparison guide for Iteration 6 rather than separate articles for each profession.",
+    "Approve adding the reviewed design and digital-media titles to Engineer/Specialist search metadata and visible examples during Iteration 5B-2.",
+    "During Iteration 6 research, determine whether film-production roles need a focused sub-guide after the comparison article is drafted.",
+    "During the later law workstream, determine the minimum useful coverage for drones, location shooting, image rights, copyright, and independent creative-business compliance."
+  ]
+}

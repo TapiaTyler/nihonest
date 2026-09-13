@@ -1,0 +1,258 @@
+{
+  "version": 1,
+  "id": "professional-work-academic-and-technical-discovery",
+  "workstreamId": "professional-work-academic-and-technical",
+  "preparedAt": "2026-09-11",
+  "reviewState": "scope-proposed",
+  "topicCandidates": [
+    "A duty-first comparison of Engineer/Specialist in Humanities/International Services, Instructor, Professor, Researcher, and Intra-company Transferee rather than selection by English job title.",
+    "Common job-title maps for technical work, humanities work, international services, English and other language teaching, academic teaching, research, and intra-group assignments, with each title presented as an example rather than a whitelist.",
+    "The English-teaching decision path: university or equivalent higher education, covered elementary or secondary education, qualifying vocational or miscellaneous-category schools, private language companies, international schools, preschools, direct-hire and dispatched ALT arrangements, and freelance or multi-employer instruction.",
+    "Engineer/Specialist qualification alternatives: relevant university or qualifying Japanese professional-training education, relevant experience, the international-services experience route, graduate exceptions for specified language work, recognized information-processing examinations, remuneration parity, and a qualifying Japanese contract.",
+    "The relationship between the applicant's field of study and actual duties, including the different treatment of university and Japanese professional-training education and the danger of relying on a degree title alone.",
+    "Mixed and incidental work: onboarding, practical training, customer contact, physical work, management, translation, sales, and administrative tasks that may be compatible only when subordinate to the qualifying principal activity.",
+    "Institution boundaries among Professor, Instructor, and Researcher, including university research, private or government research institutes, research guidance, non-degree appointments, part-time appointments, and work across multiple organizations.",
+    "Intra-company Transferee requirements: qualifying overseas and Japanese offices, a time-limited transfer, the required prior overseas service, covered professional duties, remuneration, corporate relationships, and the consequences of changing to an unrelated employer.",
+    "Available periods of stay, extension review, employer or institution changes, resident and organization notifications, outside-activity permission, and when a change of status may be needed.",
+    "Employer-side lawful recruitment, residence-card and work-authority checks, truthful duty design, written employment conditions, organization evidence, authorized COE representation, onboarding, employment reporting, and change or separation handling.",
+    "The distinct roles of the employer, applicant, Immigration Services Agency, diplomatic mission, and any licensed representative; an employer can support an application but cannot issue or guarantee a COE, visa, landing permission, or extension."
+  ],
+  "userSituations": [
+    "A prospective English teacher comparing an ALT role, an eikaiwa position, an international-school job, and a university lecturer appointment without knowing that institution and duties can point to different statuses.",
+    "An ALT employed directly by a board of education or school versus an ALT dispatched by a private company to work at covered schools.",
+    "A language instructor teaching adults for a private conversation school whose role may sit under Engineer/Specialist in Humanities/International Services rather than Instructor.",
+    "A university English lecturer, assistant professor, or researcher whose employment title does not itself establish whether Professor applies.",
+    "A preschool, kindergarten, after-school, tutoring, or international-school teacher who needs the institution's legal classification and real duties checked rather than being routed by the word teacher.",
+    "A software developer, software engineer, programmer, systems engineer, data professional, or IT consultant comparing degree, experience, and recognized-examination pathways.",
+    "A designer, translator, interpreter, marketer, sales-planning professional, accountant, consultant, or human-resources professional whose ordinary title conceals materially different duty and qualification questions.",
+    "An engineer whose role includes initial factory-floor training, installation, maintenance, customer support, or manual production work and needs the principal-versus-incidental activity boundary explained.",
+    "A corporate or government-laboratory researcher deciding between Researcher, Professor, Engineer/Specialist, Highly Skilled Professional, or a designated research program.",
+    "An employee transferred from an overseas affiliate to Japan who has the right professional duties but may not satisfy the corporate-relationship, prior-service, workplace, or limited-transfer conditions.",
+    "A foreign employer hiring its first international professional and trying to understand COE support, document responsibility, employment law, reporting, and onboarding without an internal immigration team.",
+    "A current work-status holder changing employers, adding freelance work, teaching for another institution, or combining roles across categories."
+  ],
+  "edgeCasesAndExceptions": [
+    "English teacher is not a status category. University teaching can point to Professor, qualifying school teaching to Instructor, and private-company language teaching to Engineer/Specialist in Humanities/International Services; edge institutions require classification rather than guesswork.",
+    "ALT is also not determinative. Direct employment, dispatch arrangements, the contracting organization, actual school and workplace, and assigned activities all need to be represented.",
+    "A job at an international school, preschool, kindergarten, cram school, after-school program, online platform, or employer training department cannot be classified safely from its English marketing label.",
+    "A bachelor's degree is not a universal stand-alone rule for every professional route, and a degree unrelated to the duties may require a different qualification pathway or closer evidence.",
+    "A university graduate performing translation, interpretation, or language instruction may fall within a stated international-services exception, but that exception should not be generalized to every foreign-culture role.",
+    "Recognized information-processing examinations can create a route separate from ordinary degree or experience evidence; an arbitrary commercial IT certificate does not necessarily qualify.",
+    "Software developer, systems engineer, data analyst, product manager, sales engineer, and consultant are useful discovery terms but remain too broad to establish status fit without a duty breakdown.",
+    "Routine customer service, retail, food service, factory-line, warehouse, cleaning, driving, and primarily manual work do not become professional activity merely because the title includes engineer, coordinator, manager, or international.",
+    "Practical training may be acceptable when temporary and connected to later qualifying duties, but indefinite assignment to non-qualifying work must not be normalized as onboarding.",
+    "Professor depends on activity at a university, equivalent institution, or college of technology; rank labels such as lecturer, assistant professor, visiting faculty, or researcher do not decide the status by themselves.",
+    "Researcher excludes activity within the Professor category. A role combining product development and original research may require classification by its principal duties and host rather than the word researcher.",
+    "Intra-company Transferee covers the same activity field as Engineer/Specialist but adds a qualifying group relationship, prior overseas service, a defined transfer period, and work at the relevant Japanese office.",
+    "A new external hire, a transfer after insufficient qualifying overseas service, or a move to an unrelated Japanese employer is not preserved as Intra-company Transferee merely because the company calls it an assignment.",
+    "Part-time or multiple appointments can alter evidence and notification needs. A Professor teaching for a private company is an official example of work that may require outside-activity permission.",
+    "The optional Certificate of Authorized Employment can help clarify permitted work but neither grants a status nor may be demanded where work authorization is otherwise clear as a condition for avoiding discriminatory treatment.",
+    "The resident's organization-change notification, an employer's foreign-worker employment notification, and any organization-side ISA notification are distinct; completing one does not prove that another duty or the new work-status fit has been resolved.",
+    "All five statuses currently list five years, three years, one year, or three months as available periods, but the period actually granted and any later extension remain individual decisions.",
+    "A COE or successful prior extension does not guarantee the next visa, landing, change, or extension decision, particularly after duties, organization, remuneration, finances, or compliance facts change."
+  ],
+  "jurisdictionVariables": [
+    "National immigration statutes, landing criteria, ministerial notices, Immigration Services Agency guidance, and current application checklists.",
+    "The legal classification and facilities of the employing school, university, research institute, company, Japanese office, and overseas affiliate.",
+    "The applicant's exact contract, work locations, principal and incidental duties, remuneration, education, experience, examinations, and prior service.",
+    "Ministry of Health, Labour and Welfare employment rules, written working-condition duties, foreign-worker employment reporting, social insurance, and workplace protections, which remain separate from immigration approval.",
+    "Professional licensing or regulated-activity law where a job includes reserved services, even if some surrounding work could fit a professional residence status.",
+    "Municipal onboarding and resident procedures after arrival, which employers may support but do not control.",
+    "The responsible Japanese diplomatic mission for the visa application and any nationality- or jurisdiction-specific supporting documents.",
+    "Individual ISA examination and regional procedure; local filing practice must not be represented as a different national activity definition."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": ["Official activity definitions", "Representative occupations", "Available periods of stay for all five routes"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/gijinkoku",
+      "supports": ["Engineer/Specialist activity and exclusions", "Current application contexts and evidence routing", "Private-company language-teacher example"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyukan_nyukan69.html",
+      "supports": ["Engineer/Specialist clarification and case studies", "Permissible practical training", "Language-facing work and hotel examples", "Current April 2026 revisions"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/930003139.pdf",
+      "supports": ["Systems engineer, programmer, and software engineer cases", "IT examination pathway", "Degree and actual-duty relationships"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/laws/nyukan_hourei_h09.html",
+      "supports": ["Recognized information-processing examinations and qualifications", "Exception boundary for IT professionals"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/instructor",
+      "supports": ["Instructor activity and covered institutions", "Language-teacher example", "Employment and non-employment contract evidence", "Current procedure categories"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/professor.html",
+      "supports": ["Professor institution and activity boundary", "Full-time and part-time evidence", "Current application checklists"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/researcher",
+      "supports": ["Researcher activity and Professor exclusion", "Government and private-organization examples", "Current 2026 organization-evidence notice"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/immigration/faq/kanri_qa.html",
+      "supports": ["Intra-company activity and workplace boundary", "Extension considerations", "Common residence-examination questions"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001368446.pdf",
+      "supports": ["Intra-company prior-service criterion", "Professional-duty and remuneration criteria", "Transfer-specific landing criteria"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001457117.pdf",
+      "supports": ["Current intra-company evidence", "Corporate relationship and office evidence", "Transfer order, role, period, and remuneration records"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001344550.pdf",
+      "supports": ["Employer questions about work-status applications", "Organization evidence and explanation methods", "Changed-employer and contract scenarios"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/10_00114.html",
+      "supports": ["Authorized organization staff and application-intermediary conditions", "Online filing boundaries", "Organization compliance prerequisites"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/shozokunikansuru.html",
+      "supports": ["Organization-side start and end notifications", "Interaction with foreign-worker employment reporting", "Covered work statuses"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/nyuukokukanri07_00045.html",
+      "supports": ["Outside-activity permission", "University Professor teaching for a private company example", "Individual permission for freelance or hard-to-measure work"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/syuurou_00001.html",
+      "supports": ["Certificate of Authorized Employment purpose", "Work-authority checks", "Prohibition on disadvantage solely for non-presentation"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/todokede/index.html",
+      "supports": ["Foreign-worker employment notification", "Hiring and separation reporting", "Employer procedure"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/page11.html",
+      "supports": ["Employer work-authority checks", "Lawful foreign-worker employment", "Employment-management guidance"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "new-article",
+      "id": "choosing-a-residence-status-for-teaching-in-japan",
+      "action": "create",
+      "reason": "Give the popular English-teaching entrance path a concise institution-first comparison across Professor, Instructor, Engineer/Specialist, ALT, eikaiwa, international-school, preschool, online, and side-teaching situations."
+    },
+    {
+      "kind": "article",
+      "id": "engineer-specialist-humanities-international-services-status",
+      "action": "rewrite",
+      "reason": "Add sourced qualification alternatives, duties and exclusions, periods and renewal, and a broad occupation map including software developer, software engineer, programmer, systems engineer, design, translation, language instruction, marketing, planning, sales, accounting, and consulting examples."
+    },
+    {
+      "kind": "article",
+      "id": "instructor-status",
+      "action": "rewrite",
+      "reason": "Make English teacher, ALT, school teacher, international-school, vocational-school, preschool, dispatch, and multiple-worksite distinctions visible while tying classification to the institution and duties."
+    },
+    {
+      "kind": "article",
+      "id": "professor-status",
+      "action": "rewrite",
+      "reason": "Cover university professor, associate and assistant professor, lecturer, language instructor, researcher, and research-supervision titles without treating rank as determinative."
+    },
+    {
+      "kind": "article",
+      "id": "researcher-status",
+      "action": "rewrite",
+      "reason": "Cover corporate, government, institute, laboratory, R&D, and scientific-research roles and distinguish university, product-development, regulated clinical, and designated-program work."
+    },
+    {
+      "kind": "article",
+      "id": "intra-company-transferee-status",
+      "action": "rewrite",
+      "reason": "Add prior overseas service, corporate relationship, office, transfer-period, remuneration, and covered-duty rules plus representative technical, consulting, finance, marketing, design, and language roles."
+    },
+    {
+      "kind": "new-article",
+      "id": "accepting-foreign-workers-and-supporting-coe-applications",
+      "action": "create",
+      "reason": "Give employers a lawful hiring, activity-fit, evidence, authorized COE support, onboarding, reporting, and change-management workflow parallel to but distinct from the education-provider guide."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-work-status-and-coe",
+      "action": "review-and-link",
+      "reason": "Retain the route-neutral comparison and point its employer workflow and common title examples to the detailed status and employer guides."
+    },
+    {
+      "kind": "article",
+      "id": "side-work-and-freelancing-on-a-work-status",
+      "action": "review-and-link",
+      "reason": "Connect multiple teaching appointments, consulting, contracting, freelance, and cross-category activity examples without duplicating the outside-activity rules."
+    },
+    {
+      "kind": "article",
+      "id": "notifying-immigration-about-work-contract-changes",
+      "action": "review-and-link",
+      "reason": "Keep resident and employer reporting separate and connect employment changes to route-specific status fit."
+    },
+    {
+      "kind": "taxonomy",
+      "id": "employer",
+      "action": "create-audience",
+      "reason": "Expose organization-facing guidance only when substantive employer content exists."
+    },
+    {
+      "kind": "journey",
+      "id": "accepting-foreign-workers",
+      "action": "create",
+      "reason": "Provide employers a focused sequence from role design and lawful recruitment through COE support, arrival, employment reporting, and later changes."
+    },
+    {
+      "kind": "search-and-faq",
+      "id": "professional-work-common-language",
+      "action": "expand",
+      "reason": "Index common titles and questions including English teacher, ALT, eikaiwa, international school, university lecturer, software developer, programmer, systems engineer, researcher, and company transfer."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 5B should implement only the five academic and technical work statuses and the shared employer-facing guide; regulated and creative professions remain Iteration 6, and business and workforce programs remain Iteration 7.",
+    "Job titles are explanatory examples and search aids, never a whitelist, guarantee, or substitute for actual duties, qualifications, institution, contract, and current official criteria.",
+    "The employer guide is an operational orientation, not individualized legal advice and not a substitute for ISA, the labour authorities, a licensed attorney, or an administrative scrivener.",
+    "Nihonest must not say that an employer sponsors, issues, approves, or guarantees a COE without clarifying the precise support or representative role and ISA's decision-making authority.",
+    "Exact document inventories must link to the current application context and organization category instead of being frozen as one universal checklist.",
+    "Employment law, immigration permission, professional licensing, tax, social insurance, and contract restrictions remain separate legal layers even when one event affects several of them.",
+    "The English-teaching comparison should classify common institutional scenarios but must direct unclear international-school, preschool, tutoring, dispatch, online, freelance, and mixed-role cases to an authoritative individual check.",
+    "Iteration 5B should add an `employer` Audience value only when the employer guide and journey are available, avoiding an empty or misleading filter.",
+    "No researched guide or structured assertion becomes verified without explicit human approval under the Phase 12 editorial workflow."
+  ],
+  "unresolvedQuestions": [
+    "Should dispatched ALT arrangements receive their own conditional block in Instructor, given that the employer, worksite, and contract structure may differ, or remain an edge-case callout pending stronger source detail?",
+    "How should international schools, kindergartens, preschools, cram schools, after-school programs, and online teaching platforms be labeled in public guidance when their English names do not establish their Japanese legal institution category?",
+    "Should the employer journey appear as a default Explore content group once created, or initially through the Employer audience filter and contextual links as with education-provider guidance?",
+    "Should occupation examples be stored only in structured status records and article `searchTerms`, or should a reusable occupation-to-status comparison structure be introduced now for the later Can I do this feature?",
+    "How much employment-law and social-insurance onboarding belongs in the employer guide versus links to the later Phase 13 integration and compliance curriculum?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-11",
+    "note": "The editor approved the proposed scope and explicitly required the concise standalone English-teaching comparison guide."
+  }
+}

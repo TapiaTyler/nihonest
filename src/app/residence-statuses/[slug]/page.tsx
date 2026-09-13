@@ -11,6 +11,7 @@ import { residenceStatusCategoryLabels } from "@/domain/residence-status/residen
 import { getGlossaryTermById } from "@/lib/content/glossary";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { StructuredStatusGuidance } from "@/components/residence-status/structured-status-guidance";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "long",
@@ -110,6 +111,10 @@ export default async function ResidenceStatusPage({
           </h2>
           <p className="mt-4 leading-8 text-slate-700">{residenceStatus.purpose}</p>
         </section>
+
+        {residenceStatus.structuredGuidance && (
+          <StructuredStatusGuidance guidance={residenceStatus.structuredGuidance} />
+        )}
 
         <section className="mt-10" aria-labelledby="activities-heading">
           <h2 id="activities-heading" className="text-2xl font-semibold tracking-tight text-slate-950">

@@ -23,6 +23,8 @@ export const TOPIC_IDS = [
 export const AUDIENCE_IDS = [
   "newcomer",
   "student",
+  "education-provider",
+  "employer",
   "employee",
   "freelancer",
   "business-owner",
@@ -82,6 +84,8 @@ export const topics = createOptions(TOPIC_IDS, {
 export const audiences = createOptions(AUDIENCE_IDS, {
   employee: "Employee",
   student: "Student",
+  "education-provider": "Education provider",
+  employer: "Employer",
   spouse: "Spouse",
   dependent: "Dependent",
   parent: "Parent",

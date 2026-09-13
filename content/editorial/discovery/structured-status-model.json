@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "id": "structured-status-model-discovery",
+  "workstreamId": "structured-status-model",
+  "preparedAt": "2026-09-11",
+  "reviewState": "proposed",
+  "topicCandidates": [
+    "Legal basis and route kind: activity-based status, status-or-position-based status, or an individually designated activity/program.",
+    "Official activity definition, positive activity examples, adjacent-status exclusions, and mixed or incidental duties.",
+    "Available periods of stay, program-wide aggregate limits, renewal/change availability, transition routes, and rules whose effective date matters.",
+    "Qualification pathways expressed as alternatives and conjunctions: relevant education, experience, recognized examinations, professional qualifications, language or skills tests, and exceptions.",
+    "Employer, contracting organization, host institution, business, remuneration, support-plan, family-relationship, nationality, and program conditions.",
+    "Work authorization boundaries: unrestricted work, status-limited work, no work by default, activities permitted outside status, and route-specific secondary activities.",
+    "Evidence categories and application context, separating entry/COE, change, extension, and post-grant notification requirements.",
+    "Source-level provenance, effective dates, review state, and uncertainty so the educational cross-reference uses only current reviewed assertions.",
+    "Cross-cutting travel and re-entry implications without duplicating the later dedicated re-entry guide.",
+    "School and institution classifications that affect Student, Professor, Instructor, Researcher, and related routes."
+  ],
+  "userSituations": [
+    "A software developer checking whether actual duties, a related degree, experience, or a recognized IT examination can support Engineer/Specialist in Humanities/International Services.",
+    "A private-language-school teacher, school teacher, and university instructor who share a job label but may fall under different residence statuses because the institution and activities differ.",
+    "A regulated professional whose degree or overseas license alone does not establish authority to perform work reserved to holders of a Japanese legal qualification.",
+    "A company founder comparing Business Manager with a local startup-preparation program and needing to distinguish entry preparation from operating an established business.",
+    "A sector worker comparing Specified Skilled Worker (i) and (ii), including tests, designated fields, family accompaniment, and aggregate stay limits.",
+    "A person with a family- or status-based residence status who can work without an immigration activity restriction but may still face licensing, employment, and tax rules.",
+    "A person shown only the label Designated Activities who must identify the individual designation before any duration, work, family, or renewal guidance can be reliable.",
+    "A resident considering freelance or side work whose proposed activity may be inside the current status, require individual permission, qualify for comprehensive permission, or require a status change.",
+    "A resident temporarily leaving Japan who must understand that re-entry permission and the underlying period of stay are separate clocks.",
+    "A prospective student comparing institution types whose admission rules and eligibility to support Student status are not interchangeable."
+  ],
+  "edgeCasesAndExceptions": [
+    "Job title is not determinative; actual primary duties, contract, institution, and excluded activities control the status comparison.",
+    "A role can contain mixed duties. The model must distinguish principal, incidental, temporary-training, and outside-status activities rather than attach one occupation list to one status.",
+    "Engineer/Specialist in Humanities/International Services includes distinct education/experience paths, a shorter experience path for some international-services work, a graduate exception for translation/interpreting/language instruction, and recognized IT examination or qualification exceptions.",
+    "A foreign vocational credential is not automatically equivalent to a qualifying Japanese professional-training-college title; credential type, country, curriculum, and route-specific rules must remain explicit.",
+    "Intra-company Transferee uses the same broad activity family as Engineer/Specialist in Humanities/International Services but adds a corporate relationship, limited transfer period, designated workplace, and prior-service rule.",
+    "Legal/Accounting Services, Medical Services, and Nursing Care are license-dependent shapes; an academic credential and an immigration status do not replace the required Japanese professional qualification.",
+    "Highly Skilled Professional has activity subclasses, points or J-Skip paths, organization-linked activity, compound activities, and different transition timing for category 2.",
+    "Specified Skilled Worker varies by category and industrial field; tests, permitted tasks, Japanese level, support, family accompaniment, employer change, and aggregate duration cannot be stored as one status-wide sentence.",
+    "Business Manager criteria changed materially on 2025-10-16, so capital/investment, staffing, experience, language, office, and business-plan assertions require effective dates and transition notes.",
+    "Designated Activities is an envelope for many named and individually designated programs; program identity and the passport designation must be first-class, not a note under one generic route.",
+    "Status-based routes may have no immigration work restriction while regulated professions, employer policies, tax, and other laws continue to apply.",
+    "Permission to engage in activity outside the status may be comprehensive or individual and is not a reusable declaration that all side work is allowed.",
+    "The period requested, the period legally available, and the period actually granted are different; extension is discretionary and is not guaranteed by an available duration.",
+    "COE, visa issuance, landing permission, status of residence, and period of stay are separate decisions and must not share one eligibility field.",
+    "Special re-entry normally ends at the earlier of one year after departure and the current period-of-stay expiry; travel logic must reference, not overwrite, route duration.",
+    "Nationality, bilateral agreement, age, quota, and application-place constraints affect routes such as Working Holiday and some designated programs without applying to the whole status category.",
+    "Requirements and documents can differ for a first landing, COE, change of status, extension, employer change, and in-country acquisition.",
+    "Immigration approval does not decide professional licensing, employment-contract validity, tax treatment, or municipal obligations."
+  ],
+  "jurisdictionVariables": [
+    "National immigration law, ministerial ordinances, notices, and Immigration Services Agency operational guidance.",
+    "Foreign ministry and consular visa procedure, including nationality-specific documentary practice, kept separate from residence-status eligibility.",
+    "Japanese professional regulators and competent ministries for licensed occupations.",
+    "Sector ministries and field-specific operational rules for Specified Skilled Worker and successor workforce programs.",
+    "Municipal startup-visa programs and local support organizations, within nationally authorized frameworks.",
+    "Education regulators, recognized institution lists, institution classification, and institution-specific admission rules.",
+    "Regional immigration bureau fact-finding and discretionary case assessment; local practice must not be presented as a different legal rule."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": ["Canonical status categories", "Official activity definitions and examples", "Available periods of stay"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001425124.pdf",
+      "supports": ["English status list", "Activity-based and status-based distinctions", "Representative periods of stay"]
+    },
+    {
+      "organization": "Japanese Law Translation Database System",
+      "url": "https://www.japaneselawtranslation.go.jp/en/laws/download/3548/09/h02Cod00160504en13.0_h29O19.pdf",
+      "supports": ["Landing-criteria rule structure", "Qualification, remuneration, institution, and route-specific conditions"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/gijinkoku",
+      "supports": ["Engineer/Specialist in Humanities/International Services activity scope", "Application contexts", "Evidence categories"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001413895.pdf",
+      "supports": ["Education and experience alternatives", "International-services exception", "Remuneration parity", "Compliance considerations"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/laws/nyukan_hourei_h09.html",
+      "supports": ["Recognized information-processing examination and qualification exception"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/businessmanager",
+      "supports": ["Business Manager activity scope", "Available periods", "Current-reform notice"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/10_00237.html",
+      "supports": ["Business Manager criteria effective 2025-10-16", "Capital and staffing changes", "Transition guidance"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/specifiedskilledworker",
+      "supports": ["Specified Skilled Worker category differences", "Periods and aggregate limits", "Field-specific rule routing"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/designatedactivities",
+      "supports": ["Individual-designation model", "Named Designated Activities programs", "Variable periods"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/newimmiact_3_system_index.html",
+      "supports": ["Highly Skilled Professional subclasses and points", "Compound activities", "Category 1 and 2 benefits and transition"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/nyuukokukanri07_00045.html",
+      "supports": ["Outside-activity permission principles", "Comprehensive and individual permission shapes", "Side-work boundaries"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/publications/materials/nyuukokukanri07_00058.html",
+      "supports": ["Extension and change discretion", "Required activity fit", "Representative review factors"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/minashisainyukoku.html",
+      "supports": ["Special re-entry eligibility", "One-year and period-expiry interaction", "Excluded residents"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/student",
+      "supports": ["Student activity and period", "Institution classes", "Application-document variation"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "residence-status",
+      "id": "engineer-specialist-humanities-international-services",
+      "action": "review",
+      "reason": "Pilot alternative qualification paths, recognized-IT exceptions, actual-duty examples, exclusions, remuneration, contracts, and mixed-duty cautions."
+    },
+    {
+      "kind": "residence-status",
+      "id": "instructor",
+      "action": "review",
+      "reason": "Pilot institution-controlled boundaries using teaching roles that cannot be classified by the word teacher alone."
+    },
+    {
+      "kind": "residence-status",
+      "id": "legal-accounting-services",
+      "action": "review",
+      "reason": "Pilot a Japanese-professional-qualification-gated route and separation of immigration permission from licensing."
+    },
+    {
+      "kind": "residence-status",
+      "id": "business-manager",
+      "action": "review",
+      "reason": "Pilot conjunctive business requirements, effective-dated reform assertions, and startup-program transitions."
+    },
+    {
+      "kind": "residence-status",
+      "id": "specified-skilled-worker",
+      "action": "review",
+      "reason": "Pilot category and sector variants, tests, support, family rules, and aggregate-duration constraints."
+    },
+    {
+      "kind": "residence-status",
+      "id": "dependent",
+      "action": "review",
+      "reason": "Pilot relationship-based eligibility and work-not-authorized-by-default behavior."
+    },
+    {
+      "kind": "residence-status",
+      "id": "designated-activities",
+      "action": "review",
+      "reason": "Pilot program identity and individualized designation instead of false status-wide requirements."
+    },
+    {
+      "kind": "residence-status",
+      "id": "highly-skilled-professional",
+      "action": "review",
+      "reason": "Pilot subclasses, point and J-Skip qualification paths, compound activities, and category transitions."
+    },
+    {
+      "kind": "article",
+      "id": "side-work-and-freelancing-on-a-work-status",
+      "action": "review",
+      "reason": "Consume structured primary-activity and outside-permission relationships without treating a status label as blanket approval."
+    },
+    {
+      "kind": "new-article",
+      "id": "reentry-permission-and-temporary-travel",
+      "action": "create",
+      "reason": "Later implementation should consume status duration and exclusions while keeping re-entry as a separate cross-cutting procedure."
+    },
+    {
+      "kind": "article",
+      "id": "planning-your-studies-in-japan",
+      "action": "review",
+      "reason": "Later school discovery should consume institution classifications without conflating school admission with Student-status eligibility."
+    }
+  ],
+  "scopeBoundaries": [
+    "Iteration 2B should implement a reusable data model and a representative internal/public pilot only; it should not populate every route or rewrite all visa articles.",
+    "The educational cross-reference may compare reviewed rule assertions and direct users to official checks, but it must not calculate or promise individual eligibility.",
+    "Occupation examples are discovery and search aids, never a whitelist; actual duties and all applicable conditions remain controlling.",
+    "Application-document inventories belong to later route research and should initially be modeled as evidence categories plus source links, not copied as universal checklists.",
+    "Re-entry details belong to Iterations 3A/3B or 4A/4B; Iteration 2B only ensures the status model can link to cross-cutting travel rules.",
+    "School-choice details belong to Iteration 4A/4B; Iteration 2B only represents institution types and institution-dependent activity boundaries needed by status comparisons.",
+    "Municipal startup programs, local procedures, tax, employment law, and professional licensing sources remain separate authorities even where the status record links to them.",
+    "No record may be marked editorially verified merely because it parses or cites a source; explicit human approval remains required."
+  ],
+  "unresolvedQuestions": [
+    "Should the Iteration 2B public pilot expose all eight representative routes, or keep some fixtures internal until their article research batches are completed?",
+    "Should qualification logic use a small typed expression tree for allOf/anyOf/notApplicable, or typed pathway arrays with human-readable conditions and no executable eligibility semantics?",
+    "Should time-sensitive assertions carry effectiveFrom and effectiveTo at field level, or should all source-backed assertions use a generic validity window?",
+    "How much of the official occupation-code list should be retained as structured metadata versus later reviewed search terms and prose examples?",
+    "Should institution category be a shared taxonomy used by both residence-status and school records, even though school records are not implemented until Iteration 4B?",
+    "Should individually designated programs be child route records under Designated Activities or a separate program entity linked to the umbrella status?",
+    "Which evidence categories are stable enough for the pilot without implying that the list is complete for a nationality, employer category, or application context?"
+  ]
+}

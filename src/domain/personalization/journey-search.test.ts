@@ -17,6 +17,7 @@ describe("journey onboarding search", () => {
     contentType: "guide",
     sourceIds: [],
     termIds: [],
+    searchTerms: [],
     residenceStatusIds: [],
     relationships: [],
     status: "draft",
@@ -28,6 +29,8 @@ describe("journey onboarding search", () => {
     article("startup-visa", "Start-up pathway", "A transition toward Business Manager status"),
     article("short-term-study-in-japan", "Short-term study in Japan"),
     article("student-visa-and-certificate-of-eligibility", "Student visa and Certificate of Eligibility"),
+    article("technical-intern-training-status", "Technical Intern Training status"),
+    article("employment-for-skill-development-system", "Employment for Skill Development"),
   ];
 
   it("finds a journey through the title of a specific visa route", () => {
@@ -48,6 +51,12 @@ describe("journey onboarding search", () => {
       "short-term-study-in-japan",
       "student-visa-and-certificate-of-eligibility",
     ]);
+  });
+
+  it("finds the dedicated workforce-development journey through successor terminology", () => {
+    const results = searchJourneyOptions("skill development", guidedJourneys, articleGroups, articles);
+
+    expect(results.map(({ journey }) => journey.id)).toContain("workforce-development-in-japan");
   });
 
   it("finds a focused guide even when no guided journey contains it", () => {

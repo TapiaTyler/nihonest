@@ -146,6 +146,7 @@ export function searchKnowledgebase(
         ...matchingMembers.flatMap((article) => [
           article.title,
           article.description,
+          ...article.searchTerms,
           articleTranslation(article.id)?.title,
           articleTranslation(article.id)?.description,
           ...(articleTranslation(article.id)?.searchTerms ?? []),
@@ -165,7 +166,7 @@ export function searchKnowledgebase(
     const translation = articleTranslation(article.id);
     const score = queryScore(
       translation?.title ?? article.title,
-      [translation?.title, translation?.description, ...(translation?.searchTerms ?? []), article.title, article.description, article.id, ...article.topicIds, ...article.journeyStageIds, ...article.termIds],
+      [translation?.title, translation?.description, ...(translation?.searchTerms ?? []), article.title, article.description, ...article.searchTerms, article.id, ...article.topicIds, ...article.journeyStageIds, ...article.termIds],
       filters.query,
     );
     return score >= 0 ? [{ kind: "article" as const, article, score }] : [];

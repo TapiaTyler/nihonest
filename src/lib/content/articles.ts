@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
 import Planning, { metadata as planning } from "../../../content/articles/planning-your-studies-in-japan.mdx";
+import ChoosingASchoolAndUnderstandingAdmissionRequirements, { metadata as choosingASchoolAndUnderstandingAdmissionRequirementsMetadata } from "../../../content/articles/choosing-a-school-and-understanding-admission-requirements.mdx";
+import AcceptingInternationalStudentsAndSupportingCoeApplications, { metadata as acceptingInternationalStudentsAndSupportingCoeApplicationsMetadata } from "../../../content/articles/accepting-international-students-and-supporting-coe-applications.mdx";
+import AcceptingForeignWorkersAndSupportingCoeApplications, { metadata as acceptingForeignWorkersAndSupportingCoeApplicationsMetadata } from "../../../content/articles/accepting-foreign-workers-and-supporting-coe-applications.mdx";
 import ShortTermStudy, { metadata as shortTermStudy } from "../../../content/articles/short-term-study-in-japan.mdx";
 import Visa, { metadata as visa } from "../../../content/articles/student-visa-and-certificate-of-eligibility.mdx";
 import Preparing, { metadata as preparing } from "../../../content/articles/preparing-to-enter-japan.mdx";
@@ -21,6 +24,9 @@ import Diplomatic, { metadata as diplomatic } from "../../../content/articles/di
 import Official, { metadata as official } from "../../../content/articles/official-visa.mdx";
 import VisaAndStatusOfResidenceExplained, { metadata as visaAndStatusOfResidenceExplainedMetadata } from "../../../content/articles/visa-and-status-of-residence-explained.mdx";
 import ChoosingAWorkStatusAndCoe, { metadata as choosingAWorkStatusAndCoeMetadata } from "../../../content/articles/choosing-a-work-status-and-coe.mdx";
+import ChoosingAResidenceStatusForTeachingInJapan, { metadata as choosingAResidenceStatusForTeachingInJapanMetadata } from "../../../content/articles/choosing-a-residence-status-for-teaching-in-japan.mdx";
+import ChoosingAResidenceStatusForCreativeAndMediaWork, { metadata as choosingAResidenceStatusForCreativeAndMediaWorkMetadata } from "../../../content/articles/choosing-a-residence-status-for-creative-and-media-work.mdx";
+import ChoosingAStatusForMedicalAndCareWorkInJapan, { metadata as choosingAStatusForMedicalAndCareWorkInJapanMetadata } from "../../../content/articles/choosing-a-status-for-medical-and-care-work-in-japan.mdx";
 import PreparingForLongTermEntryToJapan, { metadata as preparingForLongTermEntryToJapanMetadata } from "../../../content/articles/preparing-for-long-term-entry-to-japan.mdx";
 import ProfessorStatus, { metadata as professorStatusMetadata } from "../../../content/articles/professor-status.mdx";
 import ArtistStatus, { metadata as artistStatusMetadata } from "../../../content/articles/artist-status.mdx";
@@ -39,6 +45,9 @@ import EntertainerStatus, { metadata as entertainerStatusMetadata } from "../../
 import SkilledLaborStatus, { metadata as skilledLaborStatusMetadata } from "../../../content/articles/skilled-labor-status.mdx";
 import SpecifiedSkilledWorkerStatus, { metadata as specifiedSkilledWorkerStatusMetadata } from "../../../content/articles/specified-skilled-worker-status.mdx";
 import TechnicalInternTrainingStatus, { metadata as technicalInternTrainingStatusMetadata } from "../../../content/articles/technical-intern-training-status.mdx";
+import EmploymentForSkillDevelopmentSystem, { metadata as employmentForSkillDevelopmentSystemMetadata } from "../../../content/articles/employment-for-skill-development-system.mdx";
+import ChoosingATrainingOrWorkforceDevelopmentRouteInJapan, { metadata as choosingATrainingOrWorkforceDevelopmentRouteInJapanMetadata } from "../../../content/articles/choosing-a-training-or-workforce-development-route-in-japan.mdx";
+import ChoosingAFamilyOrPersonalStatusInJapan, { metadata as choosingAFamilyOrPersonalStatusInJapanMetadata } from "../../../content/articles/choosing-a-family-or-personal-status-in-japan.mdx";
 import SpouseOrChildOfJapaneseNational, { metadata as spouseOrChildOfJapaneseNationalMetadata } from "../../../content/articles/spouse-or-child-of-japanese-national.mdx";
 import SpouseOrChildOfPermanentResident, { metadata as spouseOrChildOfPermanentResidentMetadata } from "../../../content/articles/spouse-or-child-of-permanent-resident.mdx";
 import LongTermResidentStatus, { metadata as longTermResidentStatusMetadata } from "../../../content/articles/long-term-resident-status.mdx";
@@ -56,6 +65,7 @@ import NotifyingImmigrationAboutWorkContractChanges, { metadata as notifyingImmi
 import IncomeAndResidentTaxAfterMovingToJapan, { metadata as incomeAndResidentTaxAfterMovingToJapanMetadata } from "../../../content/articles/income-and-resident-tax-after-moving-to-japan.mdx";
 import FilingAJapaneseIncomeTaxReturn, { metadata as filingAJapaneseIncomeTaxReturnMetadata } from "../../../content/articles/filing-a-japanese-income-tax-return.mdx";
 import RenewingOrChangingYourStatusOfResidence, { metadata as renewingOrChangingYourStatusOfResidenceMetadata } from "../../../content/articles/renewing-or-changing-your-status-of-residence.mdx";
+import ReentryPermissionAndTemporaryTravel, { metadata as reentryPermissionAndTemporaryTravelMetadata } from "../../../content/articles/reentry-permission-and-temporary-travel.mdx";
 import LeavingJapanAndClosingOutProcedures, { metadata as leavingJapanAndClosingOutProceduresMetadata } from "../../../content/articles/leaving-japan-and-closing-out-procedures.mdx";
 import {
   articleMetadataSchema,
@@ -76,13 +86,20 @@ export type ArticleRecord = Readonly<{
 }>;
 
 const entries = [
-  [planning, Planning], [shortTermStudy, ShortTermStudy], [visa, Visa], [preparing, Preparing], [documents, Documents],
+  [planning, Planning],
+  [choosingASchoolAndUnderstandingAdmissionRequirementsMetadata, ChoosingASchoolAndUnderstandingAdmissionRequirements],
+  [acceptingInternationalStudentsAndSupportingCoeApplicationsMetadata, AcceptingInternationalStudentsAndSupportingCoeApplications],
+  [acceptingForeignWorkersAndSupportingCoeApplicationsMetadata, AcceptingForeignWorkersAndSupportingCoeApplications],
+  [shortTermStudy, ShortTermStudy], [visa, Visa], [preparing, Preparing], [documents, Documents],
   [address, Address], [myNumber, MyNumber], [insurance, Insurance], [pension, Pension],
   [housing, Housing], [phone, Phone], [banking, Banking], [school, School], [work, Work],
   [culturalActivities, CulturalActivities], [training, Training], [dependentVisa, DependentVisa],
   [startup, Startup], [diplomatic, Diplomatic], [official, Official],
   [visaAndStatusOfResidenceExplainedMetadata, VisaAndStatusOfResidenceExplained],
   [choosingAWorkStatusAndCoeMetadata, ChoosingAWorkStatusAndCoe],
+  [choosingAResidenceStatusForTeachingInJapanMetadata, ChoosingAResidenceStatusForTeachingInJapan],
+  [choosingAResidenceStatusForCreativeAndMediaWorkMetadata, ChoosingAResidenceStatusForCreativeAndMediaWork],
+  [choosingAStatusForMedicalAndCareWorkInJapanMetadata, ChoosingAStatusForMedicalAndCareWorkInJapan],
   [preparingForLongTermEntryToJapanMetadata, PreparingForLongTermEntryToJapan],
   [professorStatusMetadata, ProfessorStatus],
   [artistStatusMetadata, ArtistStatus],
@@ -101,6 +118,9 @@ const entries = [
   [skilledLaborStatusMetadata, SkilledLaborStatus],
   [specifiedSkilledWorkerStatusMetadata, SpecifiedSkilledWorkerStatus],
   [technicalInternTrainingStatusMetadata, TechnicalInternTrainingStatus],
+  [employmentForSkillDevelopmentSystemMetadata, EmploymentForSkillDevelopmentSystem],
+  [choosingATrainingOrWorkforceDevelopmentRouteInJapanMetadata, ChoosingATrainingOrWorkforceDevelopmentRouteInJapan],
+  [choosingAFamilyOrPersonalStatusInJapanMetadata, ChoosingAFamilyOrPersonalStatusInJapan],
   [spouseOrChildOfJapaneseNationalMetadata, SpouseOrChildOfJapaneseNational],
   [spouseOrChildOfPermanentResidentMetadata, SpouseOrChildOfPermanentResident],
   [longTermResidentStatusMetadata, LongTermResidentStatus],
@@ -118,6 +138,7 @@ const entries = [
   [incomeAndResidentTaxAfterMovingToJapanMetadata, IncomeAndResidentTaxAfterMovingToJapan],
   [filingAJapaneseIncomeTaxReturnMetadata, FilingAJapaneseIncomeTaxReturn],
   [renewingOrChangingYourStatusOfResidenceMetadata, RenewingOrChangingYourStatusOfResidence],
+  [reentryPermissionAndTemporaryTravelMetadata, ReentryPermissionAndTemporaryTravel],
   [leavingJapanAndClosingOutProceduresMetadata, LeavingJapanAndClosingOutProcedures],
 ] as const;
 

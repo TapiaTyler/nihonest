@@ -37,6 +37,7 @@ describe("translation artifacts", () => {
   it("recognizes current and stale artifacts", () => {
     expect(isTranslationCurrent(artifact, identity)).toBe(true);
     expect(isTranslationCurrent(artifact, { ...identity, sourceRevision: "c".repeat(64) })).toBe(false);
+    expect(isTranslationCurrent({ ...artifact, availability: "stale" }, identity)).toBe(false);
   });
 
   it("requires review metadata only for human-reviewed translations", () => {

@@ -18,6 +18,7 @@ const article = (id: string, journeyStageIds: ArticleMetadata["journeyStageIds"]
   contentType: "guide",
   sourceIds: [],
   termIds: [],
+  searchTerms: [],
   residenceStatusIds: [],
   relationships: [],
   status: "draft",

@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "id": "business-and-workforce-programs-discovery",
+  "workstreamId": "business-and-workforce-programs",
+  "preparedAt": "2026-09-12",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Business Manager under the criteria effective October 16, 2025: substantive operation or management, a Japanese business place, at least one qualifying full-time employee, at least 30 million yen in qualifying business assets or capital, Japanese capacity, the applicant's education or experience, a professionally evaluated business plan, compliance, periods, renewal, and transition handling.",
+    "The nationally authorized Start-up program as Designated Activities No. 44: local or private-program plan review, support and monitoring, a maximum two-year preparation period, local variation, and the later but separate Business Manager application.",
+    "Highly Skilled Professional through either the 70-point route or J-Skip, keeping the three activity classes, underlying work fit, remuneration, evidence, benefits, category 1/category 2 transitions, and accelerated permanent-residence rules distinct.",
+    "Cultural Activities as unpaid academic or artistic activity or specialized study of Japanese culture or skills, distinguished from Student, paid work, Training, and hobby-like short visits.",
+    "Training as a non-employment skills-acquisition route with a receiving institution, training plan, treatment, prior training and return-use evidence, and tightly bounded practical-training exceptions.",
+    "Technical Intern Training as a regulated legacy program with approved plans, implementing and supervising organizations, stage transitions, worker protections, transfer situations, employer duties, and transitional rules.",
+    "Employment for Skill Development (育成就労) as the Technical Intern Training successor beginning April 1, 2027, including its three-year development purpose, designated fields, worker transfers, support and supervision, pre-effective applications, prior-program time, and transition to Specified Skilled Worker.",
+    "Specified Skilled Worker as the researched destination and adjacent sector route, preserving its field, test, support, family, period, and employer-change rules rather than repeating them in every workforce article.",
+    "Receiving-organization responsibilities for founders, highly skilled personnel, trainees, technical interns, and developing workers without implying that an organization grants immigration permission."
+  ],
+  "userSituations": [
+    "A founder comparing direct Business Manager eligibility with a supported Start-up preparation program after the October 2025 criteria change.",
+    "An existing Business Manager holder who does not yet meet every revised criterion and needs the transition and renewal discussion stated accurately.",
+    "A startup applicant who assumes a municipality's plan confirmation guarantees Designated Activities or later Business Manager approval.",
+    "A researcher, engineer, specialist, executive, or founder comparing ordinary work status, the Highly Skilled Professional points route, and J-Skip.",
+    "A highly skilled applicant who reaches a points total but has not checked the underlying activity category or applicable remuneration floor.",
+    "A person studying tea ceremony, martial arts, cuisine, architecture, art, or another Japanese cultural practice who needs to distinguish unpaid study from paid work or formal school enrollment.",
+    "An overseas employee sent to Japan for structured training who needs to distinguish Training from ordinary employment, Intra-company Transferee, Technical Intern Training, or a short business visit.",
+    "A prospective technical intern or current participant who needs plain-language information about the program's replacement and whether transitional rules apply to their dates and approved plan.",
+    "A worker considering Employment for Skill Development who needs to understand the route's three-year purpose, field restrictions, transfer rules, support, prior Technical Intern Training time, and later Specified Skilled Worker comparison.",
+    "An employer or supervising or support organization preparing to receive a worker and needing to identify its own approval, plan, support, reporting, labor-law, and recordkeeping duties.",
+    "A Technical Intern Training graduate comparing a direct Specified Skilled Worker transition with the successor program rather than assuming another training cycle is available."
+  ],
+  "edgeCasesAndExceptions": [
+    "Business Manager is not passive investment, nominal directorship, or ordinary freelance production. The applicant must actually operate or manage the qualifying business.",
+    "The 30-million-yen rule is not safely described as cash in a personal account; the current calculation concerns qualifying business assets, capital, contribution, or investment according to the business form.",
+    "The qualifying full-time employee definition excludes workers holding statuses in Immigration Act Appended Table I; staffing structure and employment form matter.",
+    "The Japanese-capacity requirement may be met by the manager or a qualifying full-time employee and is framed at approximately JF Standard B2; it is not universally an applicant-only JLPT rule.",
+    "Existing Business Manager holders have transitional examination through October 16, 2028. Failure to meet one new criterion does not support a categorical statement that renewal is automatically refused during that period.",
+    "A Start-up plan confirmation is one input to a separate ISA application. It does not itself confer a status, guarantee entry, or guarantee a later change to Business Manager.",
+    "Start-up industries, areas, evidence, support, and intake rules vary by approved organization even though the national framework now permits up to two years.",
+    "J-Skip is an alternative threshold route to Highly Skilled Professional, not an additional residence-status category and not a points bonus.",
+    "Highly Skilled Professional category 2 is an unlimited period of stay, not permanent residence. The ordinary points and J-Skip transition timelines must not be merged.",
+    "Cultural Activities is non-remunerative. Outside paid activity requires separate permission and cannot displace the authorized principal activity.",
+    "Training is not ordinary labor. Productive or practical training is restricted and cannot be used to disguise employment.",
+    "The Training page's one-month and 160-hour prior overseas non-practical-training evidence applies in the stated application context; it should not be generalized into a universal rule for every trainee.",
+    "Technical Intern Training remains relevant during transition. People and approved plans already in the legacy system may continue under date-specific rules after April 1, 2027.",
+    "Under current transition guidance, some legacy plan applications made by March 31, 2027 can support starts through June 30, 2027, while successor-program permit applications begin on staged pre-effective dates.",
+    "Time previously spent in Technical Intern Training generally counts when assessing access to Employment for Skill Development; two or more prior years can prevent a fresh successor-program cycle in another field.",
+    "Successful completion of Technical Intern Training stage 2 can continue to support a Specified Skilled Worker (i) transition under transitional handling when the occupational relationship fits.",
+    "A shared workplace or job word does not make Training, Technical Intern Training, Employment for Skill Development, or Specified Skilled Worker interchangeable. Purpose, field, plan, tests, support, employment, and transition rules differ.",
+    "Program approval, immigration permission, labor-law compliance, professional licensing, and sector regulation are separate legal layers."
+  ],
+  "jurisdictionVariables": [
+    "National immigration statutes, landing criteria, ministerial ordinances and notices, and effective-dated ISA procedures.",
+    "The October 16, 2025 Business Manager reform and its transition period through October 16, 2028.",
+    "The approved Start-up promotion organization, geographic area, covered industries, local plan-review process, monitoring, and support conditions.",
+    "The applicable Highly Skilled Professional activity class, current point table or J-Skip threshold, anticipated Japanese remuneration, organization, and evidence date.",
+    "The receiving institution, funding, training content, productive-work component, prior overseas preparation, participant treatment, and intended post-return use for Training.",
+    "The Technical Intern Training plan, occupation, stage, implementing organization, supervising organization, start date, and transition provision.",
+    "The Employment for Skill Development field, plan, accepting organization, supervising support organization, worker-transfer facts, Japanese and skills targets, and prior Technical Intern Training history.",
+    "The Specified Skilled Worker field, category, tests or exemption, employer, registered support arrangement, and occupational relationship to an earlier program.",
+    "Employment, labor, wage, occupational-safety, social-insurance, tax, licensing, and business rules that remain outside immigration approval."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/10_00237.html",
+      "supports": ["Business Manager criteria effective October 16, 2025", "Employee, capital, Japanese, education or experience, plan, office, compliance, and transition rules"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/businessmanager",
+      "supports": ["Business Manager activity boundary", "Current application contexts", "Available periods of stay"]
+    },
+    {
+      "organization": "Ministry of Economy, Trade and Industry",
+      "url": "https://www.meti.go.jp/english/policy/economy/startup_nbp/startup_visa.html",
+      "supports": ["Unified Start-up program", "Approved organization process", "Maximum preparation period and Business Manager transition"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/newimmiact_3_system_index.html",
+      "supports": ["Highly Skilled Professional activity classes", "Points framework and threshold", "Category transitions"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyuukokukanri01_00009.html",
+      "supports": ["J-Skip qualification alternatives", "Benefits", "Category 2 and permanent-residence timing"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/culturalactivities",
+      "supports": ["Cultural Activities boundary", "Representative Japanese cultural study", "Current evidence and periods"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/trainee.html",
+      "supports": ["Training procedure and evidence", "Prior overseas training evidence", "Post-return use and participant treatment"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/titp/nyuukokukanri05_00014.html",
+      "supports": ["Current Technical Intern Training procedures", "Plan and organization framework", "Participant-stage contexts"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/03_00163.html",
+      "supports": ["Employment for Skill Development framework", "April 1, 2027 start", "Purpose and relationship to Specified Skilled Worker"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/faq/ikusei_qa_00002.html",
+      "supports": ["Employment for Skill Development Q&A", "Transfer and prior-program rules", "Technical Intern Training transition"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/03_00174.html",
+      "supports": ["Pre-effective successor-program applications", "Staged permit and plan-application dates"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/ssw/index.html",
+      "supports": ["Specified Skilled Worker framework", "Employer and support responsibilities", "Adjacent transition route"]
+    }
+  ],
+  "contentImpacts": [
+    {"kind":"article","id":"business-manager-status","action":"update","reason":"Replace shorthand with the complete effective-dated 2025 criteria, calculation cautions, transition treatment, periods, renewal, compliance, and founder scenarios."},
+    {"kind":"article","id":"startup-visa","action":"update","reason":"Present Start-up accurately as Designated Activities No. 44, explain the approved-organization workflow and local variation, and separate plan confirmation from immigration and later Business Manager decisions."},
+    {"kind":"article","id":"highly-skilled-professional-status","action":"update","reason":"Compare ordinary points and J-Skip thresholds, activity fit, benefits, periods, category transitions, permanent residence, renewal, and organization changes."},
+    {"kind":"article","id":"cultural-activities-visa","action":"update","reason":"Audit the existing researched guide for precise unpaid-activity, expert-guidance, funding, outside-work, period, renewal, and neighboring-route distinctions."},
+    {"kind":"article","id":"training-visa","action":"update","reason":"Audit the existing researched guide against the exact non-employment, practical-training, prior-training, host, treatment, and return-use requirements."},
+    {"kind":"article","id":"technical-intern-training-status","action":"update","reason":"Explain the current legacy framework, protections, transfer rules, organization duties, stages, periods, and date-specific transition to the successor system."},
+    {"kind":"new-article","id":"employment-for-skill-development-system","action":"create","reason":"Give the April 1, 2027 successor a current standalone guide covering purpose, fields, plans, employment, support, transfers, prior-program time, staged implementation, and the Specified Skilled Worker transition."},
+    {"kind":"new-article","id":"choosing-a-training-or-workforce-development-route-in-japan","action":"create","reason":"Compare Cultural Activities, Student, Training, Technical Intern Training, Employment for Skill Development, Specified Skilled Worker, and ordinary employment by actual purpose, remuneration, plan, institution, field, and intended outcome."},
+    {"kind":"residence-status","id":"business-manager","action":"update","reason":"Populate or refresh structured records across this route batch, beginning with Business Manager, without treating a role or program label as an eligibility decision."},
+    {"kind":"journey","id":"founder-or-highly-skilled-moving-to-japan","action":"update","reason":"Split founder and highly skilled choices into focused route branches and connect Start-up preparation to the later Business Manager decision without implying automatic progression."},
+    {"kind":"journey","id":"skilled-or-sector-worker-moving-to-japan","action":"update","reason":"Add date-aware Technical Intern Training and Employment for Skill Development branches while preserving the already researched Specified Skilled Worker route."},
+    {"kind":"group","id":"business-and-high-skill","action":"update","reason":"Expose the researched founder and HSP comparisons and their distinct route boundaries."},
+    {"kind":"group","id":"culture-and-training","action":"update","reason":"Make the new training and workforce-development comparison reachable without merging paid and unpaid routes."},
+    {"kind":"faq","id":"business-and-workforce-common-questions","action":"create","reason":"Answer ordinary-language founder, high-skill, training, legacy-program, successor-program, transfer, and transition questions with focused links."}
+  ],
+  "scopeBoundaries": [
+    "Do not present capital, salary, points, education, experience, language, test results, plan approval, or a job title as a complete eligibility determination.",
+    "Do not call Start-up a standalone residence status; identify the current national program and Designated Activities No. 44 accurately.",
+    "Do not imply that local Start-up confirmation, employer support, a training plan, or a supervising organization grants or guarantees ISA permission.",
+    "Do not merge Highly Skilled Professional category 2 with permanent residence or merge the ordinary points and J-Skip timelines.",
+    "Do not normalize paid work under Cultural Activities or ordinary labor disguised as Training.",
+    "Do not describe Technical Intern Training as already abolished while transition rules still permit legacy participation, and do not present its successor as available before the relevant effective date.",
+    "Do not duplicate the completed Specified Skilled Worker field catalog; link it and update only the transition and comparison context needed by this batch.",
+    "Do not freeze changing field lists, application dates, or organization lists without an effective date and current primary source.",
+    "Keep labor rights, wages, taxes, insurance, professional licensing, and sector rules visible as separate obligations rather than treating immigration permission as total compliance.",
+    "Keep every materially revised or new guide at needs-review until explicit human editorial approval."
+  ],
+  "unresolvedQuestions": [
+    "Should the existing skilled-sector journey be renamed when Employment for Skill Development is added, or should a distinct workforce-development journey be created to avoid mixing direct workers with training/development participants?",
+    "During 7B, should the new successor system receive a glossary term immediately, while more detailed field terminology remains reserved for the later terminology audit?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-12",
+    "note": "The editor approved both new guides, a distinct workforce-development journey, immediate core successor terminology, and a two-pass Iteration 7B combining founder/high-skill with culture/training before workforce-transition and integration work."
+  }
+}

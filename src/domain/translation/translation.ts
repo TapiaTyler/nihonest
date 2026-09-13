@@ -25,6 +25,8 @@ export const translationArtifactSchema = z.object({
   generator: z.object({ id: stableIdSchema, model: z.string().trim().min(1).max(100) }),
   fields: z.record(fieldIdSchema, z.string()),
   reviewState: z.enum(["machine-translated", "human-reviewed"]),
+  /** Stale artifacts remain historical repository evidence but must never be rendered or indexed. */
+  availability: z.enum(["active", "stale"]).default("active"),
   generatedAt: z.iso.datetime(),
   reviewedAt: z.iso.datetime().optional(),
 }).superRefine((artifact, context) => {
@@ -86,7 +88,8 @@ export function isTranslationCurrent(artifactInput: unknown, identity: Translati
   const parsedIdentity = translationIdentitySchema.safeParse(identity);
   if (!parsed.success || !parsedIdentity.success) return false;
   const artifact = parsed.data;
-  return artifact.contentKind === parsedIdentity.data.contentKind
+  return artifact.availability === "active"
+    && artifact.contentKind === parsedIdentity.data.contentKind
     && artifact.contentId === parsedIdentity.data.contentId
     && canonicalizeLocale(artifact.targetLocale) === canonicalizeLocale(parsedIdentity.data.targetLocale)
     && artifact.sourceRevision === parsedIdentity.data.sourceRevision

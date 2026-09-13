@@ -979,6 +979,8 @@ Keep English as the canonical editorial source and expose machine translation th
 
 Phase 11 validates this architecture with `visa-and-status-of-residence-explained` and `preparing-to-enter-japan`; it does not translate the full catalog. Japanese is the first pilot locale so the experience can also support Japanese-speaking friends or helpers who need a general understanding of unfamiliar immigration procedures. Phase 13 completes the large canonical-English research and editorial pass, and Phase 14 performs catalog-wide localization and multilingual quality review.
 
+An artifact whose canonical revision no longer matches is explicitly marked `stale`, retained for audit history, and excluded from rendering and localized search. Canonical English remains available while the Phase 14 replacement is pending.
+
 Use Codex as the initial offline translation generator. Codex writes repository-cached artifacts through a versioned prompt and terminology mapping; the application never calls Codex during a page request. Record the generation method, model identity, prompt revision, terminology revision, and canonical-source revision. Retain the provider-neutral boundary so a later API generator can replace this workflow without changing artifact consumers. Codex output remains machine translated until a separate qualified reviewer approves it.
 
 Persist the Phase 11 guidance-language choice locally and apply it only where a complete validated artifact exists. Display a machine-translation notice for translated guidance and an explicit canonical-English fallback notice when coverage is unavailable. Do not imply that the English interface, discovery indexes, or untranslated catalog have already been localized.
@@ -1027,6 +1029,106 @@ Nihonest currently has one human editor and no operational editorial team. A CMS
 - a future CMS must provide least-privilege roles, assignments, review discussions, versioned drafts and diffs, previews, approval and publication separation, conflicts, rollback, immutable audit events, backups, and protected administrative hosting;
 - any CMS migration must preserve stable IDs, content relationships, source dependencies, revision history, and an import/export or Git-interoperability strategy; and
 - source detection or AI assistance can inform a review but can never bypass human approval in either workflow.
+
+---
+
+## ADR-057 — Residence-status rules remain source-backed descriptions, not eligibility code
+
+**Status:** Accepted
+
+### Decision
+
+Represent residence-status distinctions through an optional structured-guidance object containing route shape, available periods, work authorization, activity boundaries, alternative qualification pathways, organization conditions, renewal, transitions, evidence categories, search aliases, and effective-dated source assertions. Use `allOf` and `anyOf` only to explain the structure of official criteria. Do not evaluate personal facts or return an eligibility verdict.
+
+Validate the schema against deliberately different draft fixtures before expanding it catalog-wide. Keep occupation names and everyday phrases as reviewed retrieval metadata rather than treating them as an authorization list. Preserve application context, discretion, professional licensing, employer or contract restrictions, tax, and local law as separate questions.
+
+### Reason
+
+Japan's residence routes do not share a single requirements shape. Some use alternative education or experience paths, some require a Japanese professional qualification, some vary by sector or program, and Designated Activities depends on an individual designation. Flattening those rules would either lose material exceptions or create a misleading eligibility calculator.
+
+### Consequences
+
+- status pages can explain complex alternatives consistently while remaining explicit about uncertainty;
+- time-sensitive claims such as revised Business Manager criteria carry their own effective date and source mapping;
+- route-by-route research can populate the model incrementally without blocking unmodeled draft statuses;
+- Explore can retrieve pilot articles through reviewed occupations, abbreviations, and everyday route language;
+- source availability or schema validity alone never changes editorial review state; and
+- any future decision-support feature may cross-reference only sufficiently reviewed assertions and must lead readers to authoritative checks rather than a yes/no conclusion.
+
+---
+
+## ADR-058 — Temporary travel is shared guidance, separate from permanent departure
+
+**Status:** Accepted
+
+### Decision
+
+Create one national re-entry and temporary-travel guide shared across eligible long-term residence journeys. Present it as an optional step in the ongoing-resident journey and link it contextually instead of repeating a complete travel step in every route. Keep permanent departure in a separate close-out guide.
+
+Show a prominent, source-backed pending-application travel warning in both the renewal/change guide and the re-entry guide. Explain special and ordinary re-entry, the underlying period of stay, and the special pending-application period as separate clocks. In employer-change guidance, distinguish the resident's ISA notification, the employer's MHLW report, and the assessment of whether new duties are authorized. Keep the Certificate of Authorized Employment within that guide unless later search evidence supports a standalone reference page.
+
+### Reason
+
+Temporary travel applies across student, work, family, business, and other long-term routes, while permanent departure triggers a different set of close-out decisions. Duplicating legal timing across route articles would make drift likely. Collapsing notification and authorization would wrongly suggest that filing a notice approves new work.
+
+### Consequences
+
+- the shared re-entry guide owns ordinary and special re-entry rules, competing deadlines, exclusions, pending applications, document loss, and changed return plans;
+- route and journey content can link to that guide without reproducing its legal detail;
+- renewal/change and re-entry pages intentionally repeat the same critical pending-travel warning at the point of need;
+- permanent departure remains one article until later tax and municipal research demonstrates a useful reason to split it;
+- a compact responsibility table distinguishes resident, employer, and work-authorization questions while a full status matrix waits for broader structured-status coverage; and
+- all immigration content remains subject to explicit human editorial review regardless of source validation.
+
+---
+
+## ADR-059 — Accepting organizations receive audience-specific guidance
+
+**Status:** Accepted
+
+### Decision
+
+Create separate public guidance and focused journeys for education providers and employers that accept foreign nationals. Education-provider coverage begins with the Student workstream; employer coverage begins with the professional-work workstream. Share terminology and cross-cutting immigration boundaries, but do not merge the organizations' evidence, onboarding, employment, attendance, support, or reporting duties.
+
+Always identify ISA as the authority that issues a Certificate of Eligibility. Describe a school or employer as the accepting organization that prepares or supplies evidence and may support or represent an eligible application. Keep the applicant, expense supporter, organization, authorized representative, diplomatic mission, and landing inspector as distinct roles. Organizational support must never be presented as guaranteed approval.
+
+### Reason
+
+Students and workers need to understand what their accepting organization should do, while schools and employers need a reliable process for accepting them. Calling every participant a “sponsor” hides different legal and operational roles and encourages the false impression that an organization grants immigration permission.
+
+### Consequences
+
+- `education-provider` becomes an Audience value with the first substantive school-facing guide and journey;
+- `employer` is reserved for the professional-work implementation rather than exposed as an empty filter;
+- school and employer guides may link to the same COE and status foundations but retain audience-specific workflows;
+- institutional reports remain separate from the foreign national's personal notifications and applications;
+- paid or otherwise regulated immigration representation must be referred to current official rules and appropriately qualified professionals; and
+- every organization-facing guide remains `needs-review` until explicitly approved through the editorial workflow.
+
+---
+
+## ADR-060 — Legacy and successor workforce programs remain date-aware and separately navigable
+
+**Status:** Accepted
+
+### Decision
+
+Treat Technical Intern Training as a current legacy program with explicit transition rules rather than as either a permanent default or an already abolished route. Give Employment for Skill Development, effective April 1, 2027, its own article, glossary term, residence-status record, structured guidance, content group, and route in a dedicated workforce-development journey.
+
+Keep direct Specified Skilled Worker available in both the skilled-sector context and the workforce comparison because it is a possible direct route and transition destination, not another training stage. Keep Training and Cultural Activities in their own culture-and-training journey while linking them from the shared route comparison.
+
+### Reason
+
+The programs differ in legal purpose, effective date, employment relationship, approved plan, field, organizations, transfer rules, tests, period, and intended outcome. Combining Technical Intern Training with Entertainer and Skilled Labor obscured those distinctions, while automatically replacing it with the future system would mislead current participants protected by transitional rules.
+
+### Consequences
+
+- changing program dates and field lists require effective-dated primary sources;
+- the new workforce journey offers Technical Intern Training, Employment for Skill Development, and direct Specified Skilled Worker as alternatives selected from the person's dates and facts;
+- legacy participants are not described as automatically converted on April 1, 2027;
+- employers, implementing organizations, supervising organizations, and supervising support organizations retain distinct duties;
+- worker-requested transfer under the successor remains conditional and field-specific; and
+- all new and materially revised records remain `needs-review` until explicit human editorial approval.
 
 ---
 

@@ -44,6 +44,7 @@ export const japanesePilotArticleTranslations = [
 
 下記の公式情報を開き、実際に行う手続き（COE、在外公館でのビザ申請、在留資格変更、在留期間更新）について、最新の申請案内を確認してください。要件は、国籍、雇用主や受入機関の区分、家族状況、申請を扱う日本の在外公館などによって異なる場合があります。契約書、申請書、添付資料、説明書類の間で、予定する活動の内容が一貫していることを確認してください。`,
     },
+    availability: "stale",
     reviewState: "machine-translated",
     generatedAt: "2026-09-09T00:00:00.000Z",
   }),
@@ -82,6 +83,7 @@ export const japanesePilotArticleTranslations = [
 
 > **実用的なヒント：** 学校の電話番号、滞在先住所、移動経路、自分の予定を把握している人の連絡先を1枚にまとめてください。携帯電話がつながらない場合にも役立ちます。`,
     },
+    availability: "stale",
     reviewState: "machine-translated",
     generatedAt: "2026-09-09T00:00:00.000Z",
   }),

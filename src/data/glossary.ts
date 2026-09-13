@@ -8,7 +8,7 @@ export const glossaryTerms = [
     detailedExplanation: "The card records core residence information such as name, status of residence, period of stay, expiration date, address, and work-permission notation where applicable. It is separate from a visa, landing permission, and My Number Card.",
     commonContext: "Issued at designated airports or after address registration, then presented during municipal and private procedures.",
     topicIds: ["immigration", "municipal-procedures"], journeyStageIds: ["recently-arrived", "living-in-japan"],
-    relatedArticleIds: ["documents-received-when-entering-japan", "registering-your-address-after-arrival"], relatedTermIds: ["zairyu-shikaku", "zairyu-kikan", "tennyu-todoke"],
+    relatedArticleIds: ["documents-received-when-entering-japan", "registering-your-address-after-arrival", "accepting-foreign-workers-and-supporting-coe-applications"], relatedTermIds: ["zairyu-shikaku", "zairyu-kikan", "tennyu-todoke"],
     sourceIds: ["isa-new-entrant-guidance"], searchTerms: ["residence card", "resident card", "zairyu card", "alien registration card"], status: "needs-review",
   }),
   japaneseTermSchema.parse({
@@ -17,7 +17,7 @@ export const glossaryTerms = [
     detailedExplanation: "A status of residence is determined through immigration procedures and is not the same as the visa used to travel to Japan. Student, Dependent, Cultural Activities, and Business Manager are examples of different statuses with different permitted activities.",
     commonContext: "Shown on landing permission and, for qualifying residents, on the residence card.",
     topicIds: ["immigration"], journeyStageIds: ["planning", "preparing", "living-in-japan"],
-    relatedArticleIds: ["student-visa-and-certificate-of-eligibility", "documents-received-when-entering-japan"], relatedTermIds: ["zairyu-card", "zairyu-kikan", "certificate-of-eligibility"],
+    relatedArticleIds: ["student-visa-and-certificate-of-eligibility", "documents-received-when-entering-japan", "accepting-foreign-workers-and-supporting-coe-applications"], relatedTermIds: ["zairyu-card", "zairyu-kikan", "certificate-of-eligibility"],
     sourceIds: ["immigration-services-status-appendix", "study-in-japan-immigration"], searchTerms: ["residence status", "immigration status", "visa status", "zairyu shikaku"], status: "needs-review",
   }),
   japaneseTermSchema.parse({
@@ -32,11 +32,11 @@ export const glossaryTerms = [
   japaneseTermSchema.parse({
     id: "certificate-of-eligibility", slug: "certificate-of-eligibility", japanese: "在留資格認定証明書", kana: "ざいりゅうしかくにんていしょうめいしょ", romaji: "zairyū shikaku nintei shōmeisho", englishName: "Certificate of Eligibility",
     shortDefinition: "A certificate showing that immigration has pre-examined whether a planned long-term activity meets relevant landing conditions.",
-    detailedExplanation: "A proxy in Japan, often the accepting school for a student, commonly applies for the Certificate of Eligibility. The certificate supports a visa and landing application but is not itself a visa and does not guarantee entry.",
-    commonContext: "Often abbreviated as COE in school, embassy, and immigration instructions.",
+    detailedExplanation: "The Immigration Services Agency issues the Certificate of Eligibility after examining whether the planned activity meets relevant landing conditions. The foreign national is the subject of the application; an eligible accepting school, employer, relative, or other person may act as representative depending on the route. The certificate supports later visa and landing applications but is not itself a visa and does not guarantee either decision.",
+    commonContext: "Often abbreviated as COE in school, employer, diplomatic-mission, and immigration instructions. An accepting organization may support the application but does not issue the certificate.",
     topicIds: ["immigration"], journeyStageIds: ["planning", "preparing"],
-    relatedArticleIds: ["student-visa-and-certificate-of-eligibility", "preparing-to-enter-japan"], relatedTermIds: ["zairyu-shikaku"],
-    sourceIds: ["study-in-japan-immigration", "mofa-student-visa"], searchTerms: ["COE", "eligibility certificate", "zairyu shikaku nintei shomeisho"], status: "needs-review",
+    relatedArticleIds: ["student-visa-and-certificate-of-eligibility", "accepting-international-students-and-supporting-coe-applications", "accepting-foreign-workers-and-supporting-coe-applications", "preparing-to-enter-japan"], relatedTermIds: ["zairyu-shikaku"],
+    sourceIds: ["study-in-japan-immigration", "mofa-student-visa", "isa-coe-application"], searchTerms: ["COE", "eligibility certificate", "school COE", "employer COE", "zairyu shikaku nintei shomeisho"], status: "needs-review",
   }),
   japaneseTermSchema.parse({
     id: "tennyu-todoke", slug: "tennyu-todoke", japanese: "転入届", kana: "てんにゅうとどけ", romaji: "tennyū todoke", englishName: "Moving-in Notification",

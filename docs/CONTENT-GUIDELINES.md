@@ -280,6 +280,8 @@ Not every article must mechanically contain every heading.
 
 For route-specific immigration articles, period of stay, extension or transition limits, covered activities, representative occupations, exclusions, and evidence should be easy to locate even when the precise heading structure varies.
 
+When a comparison article gives a route its own section, place a plainly labeled contextual link to the canonical route guide in that section. Do not require the reader to reach “Continue exploring” or search again after identifying a plausible route. Link text should name the destination, such as “Learn more about Instructor status,” rather than repeat an ambiguous “Learn more” label without context.
+
 Journey order belongs to structured journey data rather than being hard-coded into canonical article prose. When an article is opened with valid journey context, previous and next steps must come from that resolved route. Generic “Continue exploring” links are non-sequential discovery and must not be presented as mandatory next steps.
 
 ---
@@ -301,6 +303,7 @@ geographic scope
 importance
 content type
 glossary terms
+search terms
 sources
 relationships
 review state
@@ -308,6 +311,10 @@ last reviewed date
 ```
 
 Metadata values must use controlled IDs where applicable.
+
+Article `searchTerms` may contain reviewed everyday wording, occupation names, abbreviations, official or informal route names, and useful spelling variants that genuinely lead to the article. They are retrieval metadata, not visible claims or an occupation whitelist. Do not add speculative eligibility language, unrelated popular queries, or repetitive keyword variants merely to increase matches.
+
+Structured residence-status guidance may organize alternative pathways with `allOf` and `anyOf` conditions for faithful explanation. This structure must never be treated as an executable eligibility formula. Every high-stakes pathway, duration, exception, and effective date remains draft until its source mapping and wording receive explicit human review.
 
 ---
 
@@ -328,6 +335,8 @@ Do not pretend to provide exhaustive municipality-specific instructions before t
 Shared resident procedures—such as address registration, My Number, public health insurance, and pension—should remain reusable guidance rather than being duplicated as though they belong only to a Student or work-status journey. Each article and conditional journey step must state the residence, age, coverage, municipal, or other facts controlling applicability.
 
 Temporary Visitor and other short-stay guidance must be kept distinct from procedures that depend on mid- or long-term residence. Student-oriented content must say whether it applies to short-term study as a visitor, study under Student status, or both.
+
+Organization-facing immigration guidance must distinguish the applicant, accepting school or employer, expense supporter, authorized representative, and responsible government authority. Do not say that a school, employer, recruiter, or financial supporter issues, grants, sponsors, guarantees, or approves a Certificate of Eligibility when ISA makes that decision. Explain organization-side evidence, lawful representation, onboarding, recordkeeping, and reporting separately from the foreign national's own applications and notifications.
 
 ---
 
@@ -529,3 +538,9 @@ Phase 13 review should specifically check:
 - whether journey links remain route-relevant while Continue exploring remains non-sequential.
 
 Previously reviewed content is not exempt from this audit when the schema, journey model, terminology behavior, or governing source has changed.
+
+Phase 13 uses `content/editorial/guidance-coverage-plan.json` as its durable coverage inventory. New articles and residence statuses must be assigned to a research batch rather than silently bypassing the audit. Coverage should explicitly consider re-entry after temporary travel, school and program selection, admission and financial requirements, degree or experience alternatives for work routes, licensing, remuneration, employer requirements, evidence, exceptions, and changes of circumstance. “Every case” is a discovery goal, not a claim that generalized guidance can decide every individualized application.
+
+Before implementing any substantive research batch, prepare a discovery record covering plausible topics, user situations, edge cases and exceptions, jurisdiction variables, primary-source candidates, affected content, scope boundaries, and unresolved questions. Review that proposed scope as its own checkpoint. The implementation pass begins only after the scope is accepted, reducing the chance that research discovers an important case after the content structure is already committed.
+
+When Phase 13 changes a canonical article with a repository translation, mark the old artifact `stale`. Stale translations must not render or contribute localized search terms; retain them only as revision history until Phase 14 regeneration.

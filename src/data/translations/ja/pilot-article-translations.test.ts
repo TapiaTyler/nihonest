@@ -29,11 +29,13 @@ describe("Japanese pilot article translations", () => {
     expect(visaTranslation?.fields.body).toContain("在留カード");
   });
 
-  it("matches the current canonical article revisions", async () => {
+  it("marks every artifact active only while it matches the canonical revision", async () => {
     const { createTranslationSourceRevision } = await import("@/lib/translation/source-revision");
     for (const artifact of japanesePilotArticleTranslations) {
       const source = readFileSync(resolve(process.cwd(), sourcePaths[artifact.contentId]), "utf8");
-      expect(artifact.sourceRevision).toBe(createTranslationSourceRevision({ source }));
+      const currentRevision = createTranslationSourceRevision({ source });
+      if (artifact.availability === "active") expect(artifact.sourceRevision).toBe(currentRevision);
+      else expect(artifact.sourceRevision).not.toBe(currentRevision);
     }
   });
 
