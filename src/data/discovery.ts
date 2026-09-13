@@ -55,7 +55,7 @@ export const articleGroups = [
   articleGroupSchema.parse({ id: "culture-and-training", title: "Culture and training", description: "Non-remunerative Cultural Activities and Trainee routes, kept separate from Student and employment-based training.", articleIds: ["visa-and-status-of-residence-explained", "preparing-for-long-term-entry-to-japan", "cultural-activities-visa", "training-visa"] }),
   articleGroupSchema.parse({ id: "workforce-development-programs", title: "Workforce development programs", description: "Compare the legacy Technical Intern Training program, the Employment for Skill Development successor, and direct Specified Skilled Worker employment.", articleIds: ["choosing-a-training-or-workforce-development-route-in-japan", "technical-intern-training-status", "employment-for-skill-development-system", "specified-skilled-worker-status", "accepting-foreign-workers-and-supporting-coe-applications"] }),
   articleGroupSchema.parse({ id: "designated-activities", title: "Designated Activities", description: "An umbrella status containing distinct programs such as working holiday, J-Find, long-stay tourism, digital nomad, and graduate job hunting.", articleIds: ["visa-and-status-of-residence-explained", "designated-activities-status", "working-holiday-in-japan", "long-stay-sightseeing-designated-activities", "future-creation-j-find", "digital-nomad-designated-activities", "continued-job-hunting-after-study", "startup-visa"] }),
-  articleGroupSchema.parse({ id: "short-stay-and-medical", title: "Short stay and medical visits", description: "Temporary Visitor, short-stay visa, and medical-stay guidance for people who are visiting rather than relocating under an ordinary residence route.", articleIds: ["visa-and-status-of-residence-explained", "temporary-visitor-and-short-stay", "medical-stay-visa", "short-term-study-in-japan"] }),
+  articleGroupSchema.parse({ id: "short-stay-and-medical", title: "Short stay and medical visits", description: "Compare visa, exemption, eVISA, Temporary Visitor, short-study, and planned Medical Stay routes without applying ordinary resident-settlement assumptions.", articleIds: ["visa-and-status-of-residence-explained", "temporary-visitor-and-short-stay", "medical-stay-visa", "short-term-study-in-japan"] }),
   articleGroupSchema.parse({ id: "diplomatic-and-official", title: "Diplomatic and official", description: "Special-purpose routes for recognized diplomatic and official government or international-organization activity.", articleIds: ["visa-and-status-of-residence-explained", "diplomatic-visa", "official-visa"] }),
   articleGroupSchema.parse({ id: "taxes-and-resident-responsibilities", title: "Taxes and resident responsibilities", description: "Ongoing obligations after arrival: income and resident tax, side work, immigration notifications, status renewal or change, temporary travel, and departure.", articleIds: ["income-and-resident-tax-after-moving-to-japan", "filing-a-japanese-income-tax-return", "side-work-and-freelancing-on-a-work-status", "notifying-immigration-about-work-contract-changes", "renewing-or-changing-your-status-of-residence", "reentry-permission-and-temporary-travel", "leaving-japan-and-closing-out-procedures"] }),
 ] as const;
@@ -234,7 +234,7 @@ export const guidedJourneys = [
     phases: [
       { id: "understand", title: "Understand the route", steps: [articleStep("visa-and-status-of-residence-explained"), articleStep("designated-activities-status"), articleStep("digital-nomad-designated-activities")] },
       { id: "tax", title: "Check tax treatment", steps: [conditionalStep("income-and-resident-tax-after-moving-to-japan", "If your work or stay creates a Japanese tax question")] },
-      { id: "departure", title: "Prepare to leave", steps: [conditionalStep("leaving-japan-and-closing-out-procedures", "If you established accounts or obligations that require closure")] },
+      { id: "departure", title: "Prepare for the fixed end date", steps: [articleStep("leaving-japan-and-closing-out-procedures")] },
     ],
   }),
   guidedJourneySchema.parse({
@@ -245,7 +245,7 @@ export const guidedJourneys = [
       { id: "understand", title: "Understand the route", steps: [articleStep("visa-and-status-of-residence-explained"), articleStep("designated-activities-status"), articleStep("future-creation-j-find")] },
       { id: "prepare", title: "Prepare for entry", steps: [articleStep("preparing-for-long-term-entry-to-japan")] },
       { id: "settle", title: "Arrive and settle", steps: settlementSteps() },
-      { id: "maintain", title: "Manage ongoing responsibilities", steps: [conditionalStep("income-and-resident-tax-after-moving-to-japan", "If income or activity creates a Japanese tax obligation"), conditionalStep("renewing-or-changing-your-status-of-residence", "If extending the stay or moving to another activity") ] },
+      { id: "maintain", title: "Manage ongoing responsibilities", steps: [conditionalStep("income-and-resident-tax-after-moving-to-japan", "If income or activity creates a Japanese tax obligation"), conditionalStep("reentry-permission-and-temporary-travel", "If leaving Japan temporarily during the permitted period"), conditionalStep("renewing-or-changing-your-status-of-residence", "Before extending within the cumulative maximum or moving to another authorized activity") ] },
     ],
   }),
   guidedJourneySchema.parse({
@@ -254,13 +254,16 @@ export const guidedJourneys = [
     introduction: "This route supports qualifying sightseeing and recreation, not employment or freelancing.",
     phases: [
       { id: "understand", title: "Understand the route", steps: [articleStep("visa-and-status-of-residence-explained"), articleStep("designated-activities-status"), articleStep("long-stay-sightseeing-designated-activities")] },
-      { id: "departure", title: "Prepare to leave", steps: [conditionalStep("leaving-japan-and-closing-out-procedures", "If you established accounts or obligations that require closure")] },
+      { id: "prepare", title: "Prepare for entry", steps: [articleStep("preparing-for-long-term-entry-to-japan")] },
+      { id: "settle", title: "Complete applicable resident procedures", steps: settlementSteps() },
+      { id: "maintain", title: "Manage the one-year maximum", steps: [conditionalStep("renewing-or-changing-your-status-of-residence", "Before the initial six-month period expires, if applying for the permitted extension")] },
+      { id: "departure", title: "Prepare to leave", steps: [articleStep("leaving-japan-and-closing-out-procedures")] },
     ],
   }),
   guidedJourneySchema.parse({
     id: "short-visit-to-japan", groupId: "short-stay-and-medical", title: "Short visit journey",
-    description: "Plan a Temporary Visitor stay without relying on long-term resident or work guidance.",
-    introduction: "Visa requirements depend on nationality and circumstances. Temporary Visitor does not authorize paid work or ordinary resident settlement.",
+    description: "Separate the visa or exemption channel from the Temporary Visitor status and period granted at landing.",
+    introduction: "Passport, nationality, place of residence, purpose, and duration affect the entry channel. Temporary Visitor does not authorize ordinary paid work or resident settlement.",
     phases: [
       { id: "plan", title: "Plan the visit", steps: [articleStep("visa-and-status-of-residence-explained"), articleStep("temporary-visitor-and-short-stay"), conditionalStep("short-term-study-in-japan", "If the visit includes a short course")] },
       { id: "enter", title: "Understand entry records", steps: [articleStep("documents-received-when-entering-japan")] },
@@ -268,11 +271,11 @@ export const guidedJourneys = [
   }),
   guidedJourneySchema.parse({
     id: "medical-visit-to-japan", groupId: "short-stay-and-medical", title: "Medical stay journey",
-    description: "Choose the medical-stay or ordinary short-visit route matching the planned treatment and length of stay.",
-    introduction: "The alternatives have different evidence and duration considerations. Select the route that matches the actual visit.",
+    description: "Choose the planned Medical Stay or ordinary short-visit route, then distinguish treatment of up to ninety days from qualifying longer hospitalization.",
+    introduction: "Treatment duration, hospitalization, repeat visits, coordinator, attendant, and funding affect the route and evidence. Medical arrangements do not themselves grant immigration permission.",
     routes: [
-      { id: "medical-stay", title: "Medical Stay", description: "The specific visa route for planned treatment and related arrangements.", articleId: "medical-stay-visa" },
-      { id: "temporary-visitor", title: "Ordinary short visit", description: "A short visit where the ordinary Temporary Visitor framework is appropriate.", articleId: "temporary-visitor-and-short-stay" },
+      { id: "medical-stay", title: "Medical Stay", description: "Planned treatment coordinated with a Japanese medical institution and registered guarantor, including the longer-hospitalization branch when applicable.", articleId: "medical-stay-visa" },
+      { id: "temporary-visitor", title: "Ordinary short visit", description: "A qualifying short, non-remunerative visit where the ordinary Temporary Visitor framework is appropriate rather than the Medical Stay scheme.", articleId: "temporary-visitor-and-short-stay" },
     ],
     phases: [
       { id: "understand", title: "Understand visit permission", steps: [articleStep("visa-and-status-of-residence-explained")] },
@@ -282,11 +285,11 @@ export const guidedJourneys = [
   }),
   guidedJourneySchema.parse({
     id: "diplomatic-or-official-assignment", groupId: "diplomatic-and-official", title: "Diplomatic and official assignment journey",
-    description: "Choose the recognized Diplomatic or Official route and follow the assignment-specific process.",
-    introduction: "Ordinary work-status and settlement assumptions may not apply to these officially coordinated assignments.",
+    description: "Distinguish recognized Diplomatic and Official assignments from private travel using a diplomatic or official passport.",
+    introduction: "Role, purpose, sending organization, and Japan's recognition control the route. Passport type alone does not, and these statuses sit outside the ordinary residence-card system.",
     routes: [
-      { id: "diplomatic", title: "Diplomatic", description: "Recognized diplomatic activity and qualifying household members.", articleId: "diplomatic-visa" },
-      { id: "official", title: "Official", description: "Recognized official governmental or international-organization activity.", articleId: "official-visa" },
+      { id: "diplomatic", title: "Diplomatic", description: "Recognized diplomatic, consular, or comparable protected activity and qualifying same-household family members.", articleId: "diplomatic-visa" },
+      { id: "official", title: "Official", description: "Recognized foreign-government or international-organization business outside Diplomat status and qualifying same-household family members.", articleId: "official-visa" },
     ],
     phases: [
       { id: "understand", title: "Understand the residence framework", steps: [articleStep("visa-and-status-of-residence-explained")] },

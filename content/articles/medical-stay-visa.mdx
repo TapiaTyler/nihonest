@@ -1,44 +1,90 @@
 export const metadata = {
   id: "medical-stay-visa",
   title: "Visa for Medical Stay",
-  description: "Draft guidance for foreign patients and accompanying persons arranging treatment or medical examinations in Japan.",
+  description: "Choose the short or longer medical route and organize treatment, guarantor, COE, attendant, funding, and repeat-visit evidence.",
   slug: "medical-stay-visa",
   journeyStageIds: ["planning", "preparing", "living-in-japan"],
-  topicIds: ["immigration","healthcare"],
-  audienceIds: ["newcomer","dependent"],
+  topicIds: ["immigration", "healthcare"],
+  audienceIds: ["newcomer", "dependent"],
   geographicScopes: ["national"],
-  importance: "important",
+  importance: "critical",
   contentType: "guide",
-  sourceIds: ["mofa-medical-stay"],
-  termIds: ["tokutei-katsudo", "sasho", "zairyu-shikaku"],
-  residenceStatusIds: ["temporary-visitor","designated-activities"],
-  relationships: [],
-  status: "draft",
+  sourceIds: ["mofa-medical-stay", "isa-medical-stay", "isa-temporary-visitor-hospitalization", "isa-designated-activities", "isa-temporary-visitor-status"],
+  termIds: ["iryo-taizai", "tokutei-katsudo", "tanki-taizai", "sasho", "certificate-of-eligibility", "zairyu-shikaku", "zairyu-kikan"],
+  searchTerms: ["medical visa Japan", "treatment in Japan visa", "hospital stay Japan foreign patient", "health check Japan visa", "dental treatment visa", "medical attendant Japan", "medical stay guarantor", "multiple entry treatment visa", "hospitalization over 90 days Japan"],
+  residenceStatusIds: ["temporary-visitor", "designated-activities"],
+  relationships: [{ type: "prerequisite", articleId: "visa-and-status-of-residence-explained" }, { type: "related", articleId: "temporary-visitor-and-short-stay" }, { type: "related", articleId: "designated-activities-status" }, { type: "next-step", articleId: "documents-received-when-entering-japan" }],
+  status: "needs-review",
   createdAt: "2026-09-06",
-  updatedAt: "2026-09-06",
+  updatedAt: "2026-09-12",
 }
 
-> **Draft coverage:** This article maps the route and the questions to verify. It is not yet a review-ready eligibility or document checklist.
+> **Editorial review needed:** Treatment duration, hospitalization, repeated visits, patient condition, coordinator, mission, and funding determine the correct route and evidence.
 
-## What this route covers
+## What Medical Stay covers
 
-The Visa for Medical Stay supports foreign patients visiting Japan for treatment, medical examinations, or related services, with an accompanying person where needed. The visa form and status used can depend on the planned duration and treatment arrangement. A registered guarantor or coordinating organization is typically central to the process.
+MOFA's Medical Stay ([医療滞在](/glossary/iryo-taizai), **iryō taizai**) visa scheme supports treatment and other services instructed by a Japanese medical institution, including medical examinations, full checkups, dental care, and qualifying recuperation. An accompanying person can be a family member or non-family member when necessary.
 
-## Who should examine it
+The marketing name does not identify the final Status of Residence ([在留資格](/glossary/zairyu-shikaku), **zairyū shikaku**) by itself. The plan can use a short-stay route or, for qualifying longer hospitalization, Designated Activities ([特定活動](/glossary/tokutei-katsudo), **tokutei katsudō**).
 
-- Patients with an accepted treatment plan from a Japanese medical institution
-- Accompanying persons whose presence is medically or practically necessary
+## Begin with a registered guarantor and medical institution
 
-## Evidence to plan for
+The patient generally contacts a guarantor registered for the Medical Stay scheme, such as a listed medical coordinator or travel agency. The guarantor helps identify the host institution and arrange the certificate describing planned medical services and the guarantor's references.
 
-- Medical institution acceptance and treatment plan
-- Guarantor records, schedule, costs, and ability to pay
-- Passport, visa forms, and accompanying-person explanation
+The guarantor coordinates documents; it does not decide the visa, landing permission, medical outcome, price, or immigration extension. Verify fees, refund terms, interpreter arrangements, data sharing, deposits, and responsibility if the treatment plan changes.
 
-## Important boundaries
+## Route for treatment of ninety days or less
 
-Confirm whether the treatment duration requires a short-stay or longer Designated Activities arrangement and whether a multiple-entry request needs an additional physician's plan. This visa does not itself resolve payment or insurance coverage.
+When each stay is ninety days or less, the short-stay medical process may apply. The responsible Japanese mission confirms the nationality-specific forms and evidence. A patient should normally prepare:
 
-## Before relying on this draft
+- passport, application form, photograph, and identity evidence;
+- the Japanese institution's planned-medical-services certificate and guarantor reference;
+- treatment schedule and accommodation arrangements;
+- financial evidence covering treatment, living costs, and departure; and
+- documents for each accompanying person.
 
-Open the official sources linked below and use the current application page for the exact procedure you will file: Certificate of Eligibility, overseas visa, change of status, or extension. Requirements can differ by nationality, employer or host category, family circumstances, and the Japanese mission handling the application. Keep the planned activity consistent across contracts, forms, supporting records, and explanations.
+Temporary Visitor ([短期滞在](/glossary/tanki-taizai), **tanki taizai**) limitations continue to apply where that is the status granted.
+
+[Learn more about short stays →](/articles/temporary-visitor-and-short-stay)
+
+## Longer than ninety days requires the longer-stay analysis
+
+MOFA states that a patient expecting to stay longer than ninety days must be hospitalized at a Japanese medical institution and obtain a Certificate of Eligibility ([在留資格認定証明書](/glossary/certificate-of-eligibility), **zairyū shikaku nintei shōmeisho**). A staff member of the hospital or qualifying family member in Japan can act through the applicable procedure.
+
+ISA's medical Designated Activities route examines the hospitalization and treatment plan, expected period, accommodation, ability to pay all expenses, and insurance or financing evidence. It also has a related designation for an attendant.
+
+The COE supports later visa and landing examination. It does not guarantee admission, treatment, or the period requested.
+
+## Multiple-entry visa is not one continuous stay
+
+A multiple-entry Medical Stay visa can be issued when necessary, but each visit must be ninety days or less. The application requires a Medical Treatment Plan from a physician in Japan, generally obtained through the guarantor.
+
+MOFA lists possible visa validity of up to three years when justified. Visa validity is the period during which the visa can be presented for qualifying trips; it is not permission to remain continuously for three years. Each landing produces its own authorized period.
+
+## The attendant cannot work
+
+An accompanying person is admitted to provide personal care. They cannot use that role to operate an income-generating business or receive remuneration. Necessity, relationship or caregiving explanation, costs, and coordination with the patient should be documented.
+
+Do not assume the attendant can replace professional medical staff, perform regulated care, or use the patient's status after treatment ends.
+
+## Unexpected hospitalization after entry
+
+If an existing Temporary Visitor unexpectedly needs urgent hospitalization beyond the original period, ISA separates the response by required treatment duration:
+
+- when hospitalization and treatment will remain within ninety days, apply for a Temporary Visitor extension; or
+- when it will exceed ninety days, apply to change to the medical Designated Activities route.
+
+The procedure requires evidence that a physician considers prompt hospitalization necessary and that treatment, living, and departure expenses can be paid. This is an emergency pathway, not a routine tourism extension.
+
+## Medical payment and immigration are separate
+
+A visa does not make treatment free or establish Japanese public-insurance eligibility. Confirm estimates, deposits, cancellation terms, complications, medication, rehabilitation, interpreter costs, evacuation, repatriation, and private-insurance exclusions directly with the relevant organizations.
+
+## Before applying
+
+1. Obtain a documented plan and expected duration from the Japanese medical institution.
+2. Select a registered guarantor and understand its contract and fees.
+3. Decide whether each stay is short or requires the longer hospitalization route.
+4. Identify every patient and attendant application separately.
+5. Document treatment, accommodation, funding, insurance, and departure.
+6. Reassess immediately if the medical plan or expected period changes.

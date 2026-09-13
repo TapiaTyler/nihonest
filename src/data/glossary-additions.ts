@@ -140,7 +140,21 @@ export const glossaryAdditions = [
     shortDefinition: "A status under which the permitted activity is designated for the individual or a defined program.",
     detailedExplanation: "The label alone does not explain what work or activity is permitted. The designation and accompanying records must be checked because digital nomad, job-hunting, working holiday, and other routes have different conditions.",
     commonContext: "Shown on residence records together with a designation that defines the actual scope.",
-    topicIds: ["immigration", "employment"], journeyStageIds: ["planning", "preparing", "living-in-japan"], relatedArticleIds: ["designated-activities-status", "digital-nomad-designated-activities", "continued-job-hunting-after-study", "working-holiday-in-japan"], relatedTermIds: ["zairyu-shikaku"], sourceIds: ["isa-designated-activities", "mofa-designated-activities"], searchTerms: ["designated activity", "tokutei katsudo", "special activities visa"], status: "draft",
+    topicIds: ["immigration", "employment"], journeyStageIds: ["planning", "preparing", "living-in-japan"], relatedArticleIds: ["designated-activities-status", "digital-nomad-designated-activities", "continued-job-hunting-after-study", "future-creation-j-find", "long-stay-sightseeing-designated-activities", "working-holiday-in-japan"], relatedTermIds: ["zairyu-shikaku", "keizoku-shushoku-katsudo", "mirai-sozo-jinzai"], sourceIds: ["isa-designated-activities", "mofa-designated-activities"], searchTerms: ["designated activity", "tokutei katsudo", "special activities visa", "individual designation"], status: "needs-review",
+  }),
+  japaneseTermSchema.parse({
+    id: "keizoku-shushoku-katsudo", slug: "keizoku-shushoku-katsudo", japanese: "継続就職活動", kana: "けいぞくしゅうしょくかつどう", romaji: "keizoku shūshoku katsudō", englishName: "Continued Job Hunting",
+    shortDefinition: "Continued employment-seeking activity after completing a qualifying Japanese educational program.",
+    detailedExplanation: "A defined graduate may seek a Designated Activities status to continue job hunting begun before graduation. Institution, credential, course relevance, school recommendation, search evidence, funds, duration, and any outside-activity permission must be checked under the applicable route.",
+    commonContext: "Used in school recommendations, change-of-status applications, job-search records, extensions, and later work-status transitions.",
+    topicIds: ["immigration", "employment"], journeyStageIds: ["planning", "living-in-japan"], relatedArticleIds: ["continued-job-hunting-after-study"], relatedTermIds: ["tokutei-katsudo", "ryugaku", "zairyu-shikaku-henko-kyoka"], sourceIds: ["isa-continued-job-hunting", "isa-job-hunting-outside-activity"], searchTerms: ["job hunting after graduation", "graduate job search", "keizoku shushoku katsudo", "就職活動 visa"], status: "needs-review",
+  }),
+  japaneseTermSchema.parse({
+    id: "mirai-sozo-jinzai", slug: "mirai-sozo-jinzai", japanese: "未来創造人材", kana: "みらいそうぞうじんざい", romaji: "mirai sōzō jinzai", englishName: "Future Creation Individual",
+    shortDefinition: "The named Designated Activities category commonly called J-Find for qualifying recent graduates of highly ranked overseas universities.",
+    detailedExplanation: "The route supports qualifying job hunting or entrepreneurial preparation for up to two years, subject to current age, degree, graduation-recency, institution-ranking, funds, activity, family, and cumulative-period conditions.",
+    commonContext: "Appears in J-Find eligibility material, activity plans, family applications, extensions, and transitions to work or business status.",
+    topicIds: ["immigration", "employment"], journeyStageIds: ["planning", "preparing", "living-in-japan"], relatedArticleIds: ["future-creation-j-find"], relatedTermIds: ["tokutei-katsudo", "zairyu-shikaku-henko-kyoka"], sourceIds: ["isa-j-find", "isa-j-find-outline"], searchTerms: ["J-Find", "future creation individual", "mirai sozo jinzai", "top university graduate visa"], status: "needs-review",
   }),
   japaneseTermSchema.parse({
     id: "kazoku-taizai", slug: "kazoku-taizai", japanese: "家族滞在", kana: "かぞくたいざい", romaji: "kazoku taizai", englishName: "Dependent",
@@ -442,4 +456,11 @@ export const glossaryAdditions = [
   residenceStatusTerm({ id: "eijusha", japanese: "永住者", kana: "えいじゅうしゃ", romaji: "eijūsha", englishName: "Permanent Resident", articleId: "permanent-residence-in-japan", sourceId: "isa-permanent-residence", searchTerms: ["permanent resident", "permanent residency", "PR status", "eijusha"], topicIds: ["immigration"] }),
   residenceStatusTerm({ id: "gaiko", japanese: "外交", kana: "がいこう", romaji: "gaikō", englishName: "Diplomat", articleId: "diplomatic-visa", sourceId: "mofa-diplomatic-visa", searchTerms: ["diplomatic visa", "diplomat status", "embassy official"], topicIds: ["immigration"] }),
   residenceStatusTerm({ id: "koyo", japanese: "公用", kana: "こうよう", romaji: "kōyō", englishName: "Official", articleId: "official-visa", sourceId: "mofa-official-visa", searchTerms: ["official visa", "government official status", "official passport"], topicIds: ["immigration"] }),
+  japaneseTermSchema.parse({
+    id: "iryo-taizai", slug: "iryo-taizai", japanese: "医療滞在", kana: "いりょうたいざい", romaji: "iryō taizai", englishName: "Medical Stay",
+    shortDefinition: "Japan's visa scheme for qualifying planned medical treatment and an accompanying person where necessary.",
+    detailedExplanation: "Medical Stay can cover examinations, treatment, dental care, and recuperation instructed by a Japanese medical institution. The correct immigration route depends on the plan: qualifying stays of up to ninety days and longer hospitalization under Designated Activities do not use identical procedures.",
+    commonContext: "Appears in medical-coordinator, treatment-plan, guarantor, visa, hospitalization, and medical-attendant guidance.",
+    topicIds: ["healthcare", "immigration"], journeyStageIds: ["planning", "preparing"], relatedArticleIds: ["medical-stay-visa"], relatedTermIds: ["tanki-taizai", "tokutei-katsudo", "sasho"], sourceIds: ["mofa-medical-stay", "isa-medical-stay"], searchTerms: ["medical stay visa", "treatment visa", "hospital visa", "medical attendant", "iryo taizai"], status: "needs-review",
+  }),
 ] as const;

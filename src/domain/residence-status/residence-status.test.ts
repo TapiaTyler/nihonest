@@ -53,10 +53,10 @@ describe("residence status domain", () => {
     ).toThrow('references unknown source "missing-source"');
   });
 
-  it("validates twenty-five structurally distinct research-pilot fixtures", () => {
+  it("validates twenty-eight structurally distinct research-pilot fixtures", () => {
     const pilots = residenceStatuses.filter(({ structuredGuidance }) => structuredGuidance);
 
-    expect(pilots).toHaveLength(25);
+    expect(pilots).toHaveLength(28);
     expect(pilots.every(({ structuredGuidance }) => structuredGuidance?.researchState === "draft-pilot")).toBe(true);
     expect(pilots.find(({ id }) => id === "engineer-specialist-humanities-international-services")?.structuredGuidance?.qualificationPathways).toHaveLength(4);
     expect(pilots.find(({ id }) => id === "business-manager")?.structuredGuidance?.sourceAssertions).toContainEqual(expect.objectContaining({ effectiveFrom: "2025-10-16" }));
@@ -76,6 +76,9 @@ describe("residence status domain", () => {
     expect(pilots.find(({ id }) => id === "trainee")?.structuredGuidance?.renewal.mode).toBe("program-limited");
     expect(pilots.find(({ id }) => id === "technical-intern-training")?.structuredGuidance?.transitions).toContainEqual(expect.objectContaining({ targetStatusId: "employment-for-skill-development" }));
     expect(pilots.find(({ id }) => id === "employment-for-skill-development")?.structuredGuidance?.sourceAssertions).toContainEqual(expect.objectContaining({ effectiveFrom: "2027-04-01" }));
+    expect(pilots.find(({ id }) => id === "temporary-visitor")?.structuredGuidance?.workAuthorization.mode).toBe("not-authorized-by-default");
+    expect(pilots.find(({ id }) => id === "diplomat")?.structuredGuidance?.periodsOfStay[0]?.duration).toBe("During mission");
+    expect(pilots.find(({ id }) => id === "official")?.structuredGuidance?.periodsOfStay[0]?.duration).toContain("15 days");
   });
 
   it("keeps every pilot source and transition connected to the canonical catalogs", () => {
