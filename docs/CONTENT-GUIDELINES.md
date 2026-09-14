@@ -282,6 +282,10 @@ Not every article must mechanically contain every heading.
 
 Annotated document examples belong to a versioned document family. Show the latest applicable version by default. Preserve an older version only when readers may realistically possess it or a material field, meaning, or layout changed. Selecting an archived version must replace its complete schematic, field explanations, warnings, applicable dates, review metadata, and sources together; never combine an old visual with current annotations.
 
+When municipalities issue distinct forms or notices for the same document concept, represent municipality as a jurisdiction variant rather than a document version. Let the user choose the municipality first, then choose among the versions retained for that municipality. The issuer, jurisdiction, terminology, explanations, warnings, and sources must change with that selection; never present one municipality's layout as a nationwide form.
+
+Municipality selection must use the canonical geography hierarchy. Present prefecture-level jurisdictions alphabetically, then present only their supported municipalities in alphabetical order. Compatible location controls on one page must share the selected municipality so annotated documents and optional local guidance cannot silently show different places.
+
 Document lifecycle (`current`, `superseded`, or `future`) is distinct from editorial state (`needs-review`, `verified`, or `stale`). Archived documents are aids for interpreting records from their stated period, not recommendations to use an obsolete form for a current submission. Direct archive routes and persistent version preferences are not required.
 
 For route-specific immigration articles, period of stay, extension or transition limits, covered activities, representative occupations, exclusions, and evidence should be easy to locate even when the precise heading structure varies.
@@ -523,6 +527,10 @@ Journey navigation is organizational guidance, not an eligibility assessment. Ar
 ## 27. Document Images and Form Examples
 
 Images of important documents should be sourced, licensed, current, and safe to reproduce. Never expose real personal data.
+
+Whenever a sourced image is displayed, place a concise citation directly beneath it in the figure caption. Identify the source organization and link to the exact official asset or the closest authoritative asset page. Also identify the edition, date, jurisdiction, and any Nihonest modification when applicable. A source appearing only in the article-wide source list is not sufficient for an image, although it may be repeated there for completeness.
+
+Add visual callouts directly to an official image only when the recorded reuse terms permit modification. When modification requires permission or is prohibited, display the official image unmodified and keep Nihonest's numbered annotations in the adjacent accessible interface. Do not describe an interface overlay or separate explanation as an official annotation.
 
 Annotated examples should:
 

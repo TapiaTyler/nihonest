@@ -7,6 +7,9 @@ export const geographyTypeSchema = z.enum([
   "metropolis",
   "special-ward",
   "designated-city",
+  "city",
+  "town",
+  "village",
 ]);
 
 export const supportedGeographySchema = z.object({
@@ -53,6 +56,15 @@ export function validateLocalGuidanceCollection(
     if (geography.parentId && (!geographyIds.has(geography.parentId) || geography.parentId === geography.id)) {
       throw new Error(`Geography "${geography.id}" has an invalid parent.`);
     }
+    if (geography.selectable) {
+      const parent = geographies.find(({ id }) => id === geography.parentId);
+      if (!parent || !["prefecture", "metropolis"].includes(parent.type)) {
+        throw new Error(`Selectable geography "${geography.id}" must belong to a prefecture or metropolis.`);
+      }
+      if (["prefecture", "metropolis"].includes(geography.type)) {
+        throw new Error(`Selectable geography "${geography.id}" must be a municipality.`);
+      }
+    }
   }
 
   const knownArticles = new Set(articleIds);
@@ -68,6 +80,7 @@ export function validateLocalGuidanceCollection(
     articleGeographies.add(articleGeography);
     if (!knownArticles.has(supplement.articleId)) throw new Error(`Local supplement "${supplement.id}" references an unknown article.`);
     if (!geographyIds.has(supplement.geographyId)) throw new Error(`Local supplement "${supplement.id}" references an unknown geography.`);
+    if (!geographies.find(({ id }) => id === supplement.geographyId)?.selectable) throw new Error(`Local supplement "${supplement.id}" must reference a selectable municipality.`);
     for (const sourceId of supplement.sourceIds) {
       if (!knownSources.has(sourceId)) throw new Error(`Local supplement "${supplement.id}" references unknown source "${sourceId}".`);
     }

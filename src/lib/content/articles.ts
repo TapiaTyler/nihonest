@@ -70,6 +70,7 @@ import ForeignIncomeTaxTreatiesAndForeignTaxCredits, { metadata as foreignIncome
 import TaxForSideWorkAndSoleProprietors, { metadata as taxForSideWorkAndSoleProprietorsMetadata } from "../../../content/articles/tax-for-side-work-and-sole-proprietors.mdx";
 import ConsumptionTaxAndTheInvoiceSystem, { metadata as consumptionTaxAndTheInvoiceSystemMetadata } from "../../../content/articles/consumption-tax-and-the-invoice-system.mdx";
 import TaxProceduresBeforeLeavingJapan, { metadata as taxProceduresBeforeLeavingJapanMetadata } from "../../../content/articles/tax-procedures-before-leaving-japan.mdx";
+import UnderstandingLanguageRequirementsAndCertificationsForJobsInJapan, { metadata as understandingLanguageRequirementsAndCertificationsForJobsInJapanMetadata } from "../../../content/articles/understanding-language-requirements-and-certifications-for-jobs-in-japan.mdx";
 import UnderstandingYourEmploymentContractAndWorkingConditions, { metadata as understandingYourEmploymentContractAndWorkingConditionsMetadata } from "../../../content/articles/understanding-your-employment-contract-and-working-conditions.mdx";
 import WagesWorkingHoursOvertimeAndPaidLeave, { metadata as wagesWorkingHoursOvertimeAndPaidLeaveMetadata } from "../../../content/articles/wages-working-hours-overtime-and-paid-leave.mdx";
 import ResigningDismissalAndFixedTermContractEndings, { metadata as resigningDismissalAndFixedTermContractEndingsMetadata } from "../../../content/articles/resigning-dismissal-and-fixed-term-contract-endings.mdx";
@@ -106,6 +107,8 @@ import { glossaryTerms } from "@/data/glossary";
 import { validateGlossaryCollection } from "@/domain/glossary/glossary";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { validateLocalGuidanceCollection } from "@/domain/geography/local-guidance";
+import { annotatedDocumentFamilies } from "@/data/annotated-documents";
+import { validateAnnotatedDocumentCollection } from "@/domain/document/annotated-document";
 
 export type ArticleRecord = Readonly<{
   metadata: ArticleMetadata;
@@ -170,6 +173,7 @@ const entries = [
   [taxForSideWorkAndSoleProprietorsMetadata, TaxForSideWorkAndSoleProprietors],
   [consumptionTaxAndTheInvoiceSystemMetadata, ConsumptionTaxAndTheInvoiceSystem],
   [taxProceduresBeforeLeavingJapanMetadata, TaxProceduresBeforeLeavingJapan],
+  [understandingLanguageRequirementsAndCertificationsForJobsInJapanMetadata, UnderstandingLanguageRequirementsAndCertificationsForJobsInJapan],
   [understandingYourEmploymentContractAndWorkingConditionsMetadata, UnderstandingYourEmploymentContractAndWorkingConditions],
   [wagesWorkingHoursOvertimeAndPaidLeaveMetadata, WagesWorkingHoursOvertimeAndPaidLeave],
   [resigningDismissalAndFixedTermContractEndingsMetadata, ResigningDismissalAndFixedTermContractEndings],
@@ -226,6 +230,13 @@ validateLocalGuidanceCollection(
   localGuidanceSupplements,
   articles.map(({ metadata }) => metadata.id),
   sources.map(({ id }) => id),
+);
+validateAnnotatedDocumentCollection(
+  annotatedDocumentFamilies,
+  articles.map(({ metadata }) => metadata.id),
+  glossaryTerms.map(({ id }) => id),
+  sources.map(({ id }) => id),
+  supportedGeographies.filter(({ selectable }) => selectable).map(({ id }) => id),
 );
 
 export function getAllArticles(): readonly ArticleRecord[] {

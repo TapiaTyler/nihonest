@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import type { ArticleLocalGuidance } from "@/lib/content/local-guidance";
+import { useState, useSyncExternalStore } from "react";
+import type { ArticleLocalGuidance, SelectableLocalGuidanceLocation } from "@/lib/content/local-guidance";
 import {
   getLocalGuidanceLocationSnapshot,
   subscribeToLocalGuidanceLocation,
@@ -11,17 +11,37 @@ import {
 const geographyTypeLabels = {
   "special-ward": "Tokyo special ward",
   "designated-city": "designated city",
+  city: "city",
+  town: "town",
+  village: "village",
   prefecture: "prefecture",
   metropolis: "metropolis",
 } as const;
 
-export function LocalGuidancePanel({ options }: { options: readonly ArticleLocalGuidance[] }) {
+export function LocalGuidancePanel({
+  options,
+  locations,
+}: {
+  options: readonly ArticleLocalGuidance[];
+  locations: readonly SelectableLocalGuidanceLocation[];
+}) {
   const selectedId = useSyncExternalStore(
     subscribeToLocalGuidanceLocation,
     getLocalGuidanceLocationSnapshot,
     () => "",
   );
+  const sortedLocations = [...locations].sort((left, right) => (
+    (left.parentName ?? "").localeCompare(right.parentName ?? "", "en")
+    || left.geography.name.localeCompare(right.geography.name, "en")
+  ));
+  const selectedLocation = sortedLocations.find(({ geography }) => geography.id === selectedId);
   const selected = options.find(({ geography }) => geography.id === selectedId);
+  const [pendingPrefectureId, setPendingPrefectureId] = useState("");
+  const prefectureOptions = sortedLocations.filter((option, index, entries) => (
+    entries.findIndex(({ geography }) => geography.parentId === option.geography.parentId) === index
+  ));
+  const selectedPrefectureId = selectedLocation?.geography.parentId ?? pendingPrefectureId;
+  const municipalityOptions = sortedLocations.filter(({ geography }) => geography.parentId === selectedPrefectureId);
 
   return (
     <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="local-guidance-heading">
@@ -31,23 +51,45 @@ export function LocalGuidancePanel({ options }: { options: readonly ArticleLocal
           <h2 id="local-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Local guidance</h2>
           <p className="mt-2 max-w-xl leading-7 text-slate-600">Choose a pilot location to add its current office route and official sources. The national guidance above remains available for everyone.</p>
         </div>
-        <label className="min-w-56 text-sm font-semibold text-slate-800" htmlFor="local-guidance-location">
-          Your location
-          <select
-            id="local-guidance-location"
-            className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
-            value={selectedId}
-            onChange={(event) => writeLocalGuidanceLocation(event.target.value)}
-          >
-            <option value="">Not selected</option>
-            {options.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>)}
-          </select>
-        </label>
+        <div className="grid gap-4 sm:min-w-96 sm:grid-cols-2">
+          <label className="text-sm font-semibold text-slate-800" htmlFor="local-guidance-prefecture">
+            Prefecture
+            <select
+              id="local-guidance-prefecture"
+              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+              value={selectedPrefectureId}
+              onChange={(event) => {
+                setPendingPrefectureId(event.target.value);
+                if (event.target.value !== selectedLocation?.geography.parentId) writeLocalGuidanceLocation("");
+              }}
+            >
+              <option value="">Not selected</option>
+              {prefectureOptions.map(({ geography, parentName }) => <option key={geography.parentId} value={geography.parentId}>{parentName}</option>)}
+            </select>
+          </label>
+          <label className="text-sm font-semibold text-slate-800" htmlFor="local-guidance-location">
+            Municipality
+            <select
+              id="local-guidance-location"
+              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
+              value={selectedLocation?.geography.parentId === selectedPrefectureId ? selectedId : ""}
+              disabled={!selectedPrefectureId}
+              onChange={(event) => writeLocalGuidanceLocation(event.target.value)}
+            >
+              <option value="">Select municipality</option>
+              {municipalityOptions.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>)}
+            </select>
+          </label>
+        </div>
       </div>
 
-      {!selected ? (
+      {!selectedId ? (
         <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">
           The pilot currently supports Shinjuku City and Nagoya City. Leave this unselected if neither applies.
+        </p>
+      ) : !selected ? (
+        <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">
+          No municipality-specific supplement is available for this guide yet. The national guidance remains available above.
         </p>
       ) : (
         <div className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-6">

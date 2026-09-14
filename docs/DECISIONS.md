@@ -1142,6 +1142,8 @@ Represent supported geography as a hierarchy and attach dated local supplements 
 
 Each supplement identifies applicability, the responsible body, an office route where useful, bounded local actions, current official sources, source language, review state, and a last-checked date. National guidance remains visible regardless of selection. Nihonest does not infer location or describe its summaries as official translations.
 
+Location controls select a prefecture-level jurisdiction first and a municipality second. Both levels are alphabetized by their English display names. The selected municipality is shared across compatible controls on the page—including annotated municipal documents—so local context changes together instead of presenting contradictory cities. A document variant references the canonical geography record rather than maintaining an unrelated location identifier.
+
 ### Reason
 
 Municipal administration materially affects where residents file, which local rules apply, and which support services are available. Duplicating entire articles would allow national explanations to drift, while flattening Shinjuku and Nagoya into the same kind of jurisdiction would misrepresent their government structures.
@@ -1165,6 +1167,8 @@ Municipal administration materially affects where residents file, which local ru
 
 Model changing documents as families of immutable versions. The latest applicable version appears by default. When a materially different historical version remains useful to someone interpreting a document they possess, the canonical article provides an in-context version selector that replaces the complete schematic, annotations, warnings, dates, sources, and metadata together.
 
+Municipality is a separate selection dimension, not a version. A shared document family may contain jurisdiction variants, and each variant owns its own immutable version history and current default. Selecting a jurisdiction replaces the issuer, terminology, explanation, warnings, and source set before the user selects an archived version within that jurisdiction.
+
 Keep document lifecycle (`current`, `superseded`, or `future`) separate from editorial review state. Archived versions explain their applicable period and must not be presented as forms to use for a current submission. The pilot does not require direct version URLs or persisted version selection.
 
 ### Reason
@@ -1174,10 +1178,39 @@ Tax records, residence cards, and municipal forms can remain relevant after thei
 ### Consequences
 
 - versions are complete immutable snapshots rather than visual diffs or mutable annotation overlays;
+- jurisdiction variants remain distinct from version history, preventing one municipality from appearing to supersede another;
 - the application archives only materially useful versions, not every cosmetic revision;
 - current versions remain the default and clearly label superseded examples;
 - source monitoring and editorial review apply independently to every retained version; and
 - archives help interpret older records but do not become a general document repository or submission service.
+
+---
+
+## ADR-063 — Annotated documents use synthetic concept maps with semantic explanations
+
+**Status:** Accepted
+
+### Decision
+
+Render document examples as Nihonest-created, visibly fictional concept maps by default. Store Japanese labels, explanations, warnings, dates, sources, and callout relationships as structured content rather than text baked into an image. Every visual control must connect to a complete semantic explanation, and the artifact must remain understandable without the visual.
+
+Place the complete example in one canonical article. Relevant glossary terms link to that anchored example rather than maintaining copies. An official specimen remains a source link unless the exact asset's reuse basis, attribution, exclusions, and modification disclosure have been recorded.
+
+When a sourced image is eventually displayed, its attribution and exact source link appear directly beneath the image in a semantic figure caption rather than only in the article-wide source list. The caption also identifies the version, jurisdiction, and any modification needed to avoid presenting adapted material as an untouched official artifact.
+
+An official image may be displayed unmodified when its exact asset and attribution-based reuse terms have been recorded. If those terms prohibit modification without permission, Nihonest keeps numbered annotations in its separate semantic interface instead of drawing over or editing the official asset. This preserves the requested visual reference without misrepresenting either the source or the reuse rights.
+
+### Reason
+
+Real documents create privacy and redaction risks, while realistic replicas can facilitate misuse or be mistaken for valid records. Image-only annotations exclude assistive technology, translation, search, and narrow screens. Duplicating the artifact across articles and glossary pages would allow explanations and versions to drift.
+
+### Consequences
+
+- examples omit realistic identity numbers, portraits, signatures, seals, security patterns, barcodes, and QR codes;
+- the visual is labeled as a concept map rather than an exact layout replica;
+- field callouts are keyboard operable and never carry essential meaning by color or position alone;
+- canonical English explanations can later be translated without replacing protected Japanese field labels; and
+- all pilot document content remains `needs-review` until explicit editorial approval.
 
 ---
 

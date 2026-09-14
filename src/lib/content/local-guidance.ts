@@ -2,6 +2,17 @@ import { localGuidanceSupplements, supportedGeographies } from "@/data/local-gui
 import { sources } from "@/data/sources";
 
 export type ArticleLocalGuidance = ReturnType<typeof getLocalGuidanceForArticle>[number];
+export type SelectableLocalGuidanceLocation = ReturnType<typeof getSelectableLocalGuidanceLocations>[number];
+
+export function getSelectableLocalGuidanceLocations() {
+  return supportedGeographies
+    .filter(({ selectable }) => selectable)
+    .map((geography) => {
+      const parent = supportedGeographies.find(({ id }) => id === geography.parentId);
+      if (!parent) throw new Error(`Missing parent geography for "${geography.id}".`);
+      return { geography, parentName: parent.name };
+    });
+}
 
 export function getLocalGuidanceForArticle(articleId: string) {
   return localGuidanceSupplements

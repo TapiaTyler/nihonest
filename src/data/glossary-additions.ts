@@ -45,6 +45,27 @@ function residenceStatusTerm({
 // their wording and translations receive the same editorial review as the guides.
 export const glossaryAdditions = [
   japaneseTermSchema.parse({
+    id: "nihongo-noryoku-shiken", slug: "nihongo-noryoku-shiken", japanese: "日本語能力試験", kana: "にほんごのうりょくしけん", romaji: "Nihongo Nōryoku Shiken", englishName: "Japanese-Language Proficiency Test (JLPT)",
+    shortDefinition: "A standardized test of Japanese language knowledge, reading, and listening for non-native speakers, with levels from N5 through N1.",
+    detailedExplanation: "JLPT results can be useful evidence for an employer, school, points calculation, or named procedure, but the test does not currently assess speaking or writing. The certificate itself does not expire, although the organization receiving it can require a recent result. A level should therefore not be treated as proof that someone can perform every workplace communication task.",
+    commonContext: "Appears in job advertisements, school admissions, immigration procedures, professional-examination rules, and Japanese-language study plans.",
+    topicIds: ["language", "employment"], primaryBrowseGroupId: "language", journeyStageIds: ["planning", "preparing", "living-in-japan"], relatedArticleIds: ["understanding-language-requirements-and-certifications-for-jobs-in-japan"], relatedTermIds: ["jft-basic", "bijinesu-nihongo-noryoku-tesuto"], sourceIds: ["jlpt-official-faq", "jlpt-level-summary"], searchTerms: ["JLPT", "Japanese test", "N1", "N2", "N3", "N4", "N5", "Japanese certificate", "nihongo noryoku shiken"], status: "needs-review",
+  }),
+  japaneseTermSchema.parse({
+    id: "jft-basic", slug: "jft-basic", japanese: "国際交流基金日本語基礎テスト", kana: "こくさいこうりゅうききんにほんごきそテスト", romaji: "Kokusai Kōryū Kikin Nihongo Kiso Tesuto", englishName: "Japan Foundation Test for Basic Japanese (JFT-Basic)",
+    shortDefinition: "A test of the Japanese needed to communicate in everyday situations, used in specified immigration and employment pathways.",
+    detailedExplanation: "JFT-Basic assesses script and vocabulary, conversation and expression, listening, and reading within an everyday-life communication framework. It is accepted in named procedures such as the general Specified Skilled Worker (i) route, subject to current field rules and exemptions. It should not be presented as proof of advanced business, technical, clinical, or managerial communication.",
+    commonContext: "Appears in Specified Skilled Worker guidance, testing information for people preparing to work in Japan, and basic Japanese study plans.",
+    topicIds: ["language", "employment", "immigration"], primaryBrowseGroupId: "language", journeyStageIds: ["planning", "preparing"], relatedArticleIds: ["understanding-language-requirements-and-certifications-for-jobs-in-japan", "specified-skilled-worker-status"], relatedTermIds: ["nihongo-noryoku-shiken", "tokutei-gino"], sourceIds: ["jft-basic-about", "isa-specified-skilled-worker-steps"], searchTerms: ["JFT Basic", "Japan Foundation Japanese test", "SSW Japanese test", "basic Japanese exam", "kokusai koryu kikin nihongo kiso test"], status: "needs-review",
+  }),
+  japaneseTermSchema.parse({
+    id: "bijinesu-nihongo-noryoku-tesuto", slug: "bijinesu-nihongo-noryoku-tesuto", japanese: "ビジネス日本語能力テスト", kana: "ビジネスにほんごのうりょくテスト", romaji: "Bijinesu Nihongo Nōryoku Tesuto", englishName: "Business Japanese Proficiency Test (BJT)",
+    shortDefinition: "A scored test of Japanese communication proficiency in business settings, commonly abbreviated BJT.",
+    detailedExplanation: "BJT reports a score from 0 to 800 and a level from J5 to J1+. It assesses listening, combined listening and reading, and reading in business contexts. Certain immigration frameworks expressly recognize named BJT scores, but a result does not replace the underlying residence-status criteria or an employer's assessment of speaking, writing, negotiation, technical vocabulary, and job-specific communication.",
+    commonContext: "Appears in business-Japanese study, hiring and promotion, university career support, and specific immigration points or evidence frameworks.",
+    topicIds: ["language", "employment", "immigration"], primaryBrowseGroupId: "language", journeyStageIds: ["planning", "preparing", "living-in-japan"], relatedArticleIds: ["understanding-language-requirements-and-certifications-for-jobs-in-japan", "highly-skilled-professional-status"], relatedTermIds: ["nihongo-noryoku-shiken", "jft-basic"], sourceIds: ["bjt-official-overview", "isa-highly-skilled-points-table"], searchTerms: ["BJT", "business Japanese test", "business Japanese proficiency", "J1+", "Japanese for work"], status: "needs-review",
+  }),
+  japaneseTermSchema.parse({
     id: "sasho", slug: "sasho", japanese: "査証", kana: "さしょう", romaji: "sashō", englishName: "Visa",
     shortDefinition: "A document issued by a Japanese embassy or consulate for travel to Japan and an application for landing.",
     detailedExplanation: "A visa is used before and at entry. It is not the status of residence that governs a person's activities after landing, and it does not by itself guarantee admission at the border.",

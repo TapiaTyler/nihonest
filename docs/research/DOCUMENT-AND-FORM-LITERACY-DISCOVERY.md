@@ -1,10 +1,10 @@
 # Document and Form Literacy Discovery
 
 Prepared: 2026-09-13  
-State: Proposed for scope approval  
+State: Scope approved
 Structured record: `content/editorial/discovery/document-and-form-literacy.json`
 
-Approved architecture amendment: document-specific history was approved on 2026-09-13. The implementation must default to the current applicable document while allowing useful immutable historical versions to be selected inside the article.
+Scope approved on 2026-09-13: the six-family pilot, synthetic schematics, semantic HTML explanations, canonical article placement, useful immutable history, and deferral of the full final-return visual were accepted.
 
 ## Recommendation
 
@@ -15,7 +15,7 @@ Build one reusable annotated-document system and validate it with six document f
 3. My Number Card and application or notification context;
 4. notification of change in residence, using Shinjuku and Nagoya to show municipal variation;
 5. Salary Income Withholding Tax Slip for a named tax year; and
-6. municipal and prefectural resident-tax notice, using Nagoya's multilingual explanation as the bounded local example.
+6. resident-tax notice, using Nagoya and Shinjuku as bounded municipal variants.
 
 The default visual should be a Nihonest-created schematic containing obviously synthetic data, not a redacted real document. An official specimen can be used only when its exact reuse terms, excluded elements, attribution, modification disclosure, and version have been recorded.
 
@@ -93,6 +93,8 @@ The same field concept may appear in more than one document, but the rendered ex
 
 Government content is not automatically unrestricted. The [Digital Agency copyright policy](https://www.digital.go.jp/en/copyright-policy) applies the Public Data License unless otherwise stated, requires attribution, requires modification disclosure, prohibits presenting edited material as an unedited government product, and excludes items such as organizational symbols and separately governed content. The [Ministry of Justice terms](https://www.moj.go.jp/EN/hisho/kouhou/m_hisho06_termsofuse.html) also state that site content is copyright protected and directs reuse to its content-use rules. ISA separately states that its publicly released second-generation residence-card specifications are copyright protected and can be revised.
 
+ISA's own [content-use policy](https://www.moj.go.jp/isa/copyright/index2.html) applies the Public Data License 1.0 to site content unless a separate rights notice says otherwise. The public residence-card explanation supplies a direct [official format-comparison image](https://www.moj.go.jp/isa/content/001458498.jpg) without a separate asset-level restriction, so Nihonest may display that file unmodified with immediate source and reuse attribution. The technical second-generation card specification remains excluded from this implementation because that publication carries its own narrower copyright notice. Current COE examples located during this pass were PDF publications rather than a standalone image asset; the semantic COE explanation therefore remains the default until a current, directly reusable image is identified.
+
 Therefore, “official source” and “safe to reproduce” must be separate metadata. The first pilot should link official specimens while drawing its own low-fidelity educational schematic. If an official image is later included, its recorded license decision must identify the exact asset—not merely the agency website.
 
 ## Document findings
@@ -119,7 +121,7 @@ The NTA's [2026 statutory-report instructions](https://www.nta.go.jp/publication
 
 ### Resident-tax notice
 
-Nagoya publishes a [multilingual explanation of its municipal and prefectural resident-tax notice](https://www.city.nagoya.jp/kurashi/zeikin/1012135/1037357/1012136/1012137.html). This is a strong pilot because it provides an official local explanation and exposes the difference between assessed income, deductions, collection method, installments, and inquiry destination. The artifact must be labeled Nagoya-specific and cannot be used as the Shinjuku or nationwide layout.
+Nagoya publishes a [multilingual explanation of its municipal and prefectural resident-tax notice](https://www.city.nagoya.jp/kurashi/zeikin/1012135/1037357/1012136/1012137.html). Shinjuku separately publishes [resident-tax guidance for foreign residents](https://www.foreign.city.shinjuku.lg.jp/en/kurashi/jyuminzei/) and [current notice timing](https://www.city.shinjuku.lg.jp/hoken/zeimu01_000001_00023.html). Together they expose differences in municipal naming, responsible office, collection route, installments, and source availability. The shared artifact must retain separately selectable municipal variants; neither city may be presented as the nationwide layout.
 
 ### Final return and departure documents
 

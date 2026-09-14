@@ -10,6 +10,7 @@ import { getArticleById } from "@/lib/content/articles";
 import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from "@/lib/content/glossary";
 import { PronunciationButton } from "@/components/glossary/pronunciation-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { getAnnotatedDocumentsForGlossaryTerm } from "@/lib/content/annotated-documents";
 
 export const dynamicParams = false;
 
@@ -44,6 +45,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
     const source = getSourceById(id);
     return source ? [source] : [];
   });
+  const documentExamples = getAnnotatedDocumentsForGlossaryTerm(term.id);
 
   return (
     <article className="page-shell py-12 sm:py-20">
@@ -74,6 +76,22 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
             <p className="mt-6 text-sm text-slate-500">Journey stages: {term.journeyStageIds.map((id) => labelFor(id, journeyStages)).join(", ")}</p>
           )}
         </section>
+
+        {documentExamples.length > 0 && (
+          <section className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="document-example-heading">
+            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Visual reference</p>
+            <h2 id="document-example-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">Annotated document example</h2>
+            <p className="mt-3 leading-7 text-slate-600">Open the canonical guide to explore fictional, screen-reader-accessible field explanations.</p>
+            <ul className="mt-4 space-y-3">
+              {documentExamples.map((family) => {
+                const article = getArticleById(family.articleId);
+                return article ? (
+                  <li key={family.id}><Link href={`/articles/${article.metadata.slug}#document-${family.id}`} className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">View {family.title} example →</Link></li>
+                ) : null;
+              })}
+            </ul>
+          </section>
+        )}
 
         {relatedArticles.length > 0 && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="term-articles-heading">
