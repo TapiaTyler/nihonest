@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "id": "profession-retrieval-and-terminology-closure",
+  "workstreamId": "final-catalog-audit",
+  "preparedAt": "2026-09-14",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "A bounded profession-retrieval sweep for regulated or duty-ambiguous veterinary, mental-health, welfare, childcare, architecture, electrical, and laboratory roles.",
+    "Natural inline introduction of glossary terms already declared by existing articles, beginning with single-term mismatches.",
+    "Search routing to comparison guides where an ordinary job title cannot safely determine a residence status."
+  ],
+  "userSituations": [
+    "A veterinarian or veterinary worker assumes that clinical work with animals belongs to Medical Services.",
+    "A psychologist, counselor, or social worker does not know whether the advertised title refers to a protected qualification, licensed act, or general support work.",
+    "A nursery, preschool, or childcare worker needs to separate teaching, childcare, welfare, and support duties.",
+    "An architect, architectural designer, electrician, or electrical engineer searches by an English title that can hide materially different professional, licensed, technical, or sector work.",
+    "A reader sees a Japanese term in an article's terminology section even though the prose never introduced it."
+  ],
+  "edgeCasesAndExceptions": [
+    "Professional licensing and immigration authorization are separate; satisfying one does not establish the other.",
+    "An English profession title can cover protected and unprotected activities, several workplaces, and different contracting structures.",
+    "Veterinary work must not be inferred to be Medical Services merely because it is clinical, while general animal care is not automatically the narrow Skilled Labor animal-training activity.",
+    "Electrician and electrical engineer are not interchangeable retrieval conclusions; technical design, installation, construction, maintenance, supervision, and licensing facts must be separated.",
+    "A metadata term should be introduced only when it assists the explanation; otherwise it should be removed rather than mechanically inserted."
+  ],
+  "jurisdictionVariables": [
+    "The actual duties, time allocation, workplace, organization, contract, education, experience, remuneration, and work location.",
+    "The exact Japanese occupation or protected title, governing regulator, licence or registration, and scope of reserved activity.",
+    "The candidate residence status, sector or program rules, side activities, and any status-based work authorization.",
+    "Whether a declared glossary term is actually taught or used in the canonical article prose."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/medicalservices",
+      "supports": ["Medical Services activity boundary and application route"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/newpage_02912.html",
+      "supports": ["Certified Public Psychologist examination-eligibility recognition for foreign education or qualifications"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/shakai-kaigo-fukushi1/index.html",
+      "supports": ["Certified Social Worker qualification, examination, and registration layer"]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/kouseiroudoushou/shikaku_shiken/hoikushi/index.html",
+      "supports": ["Childcare worker qualification and registration layer"]
+    },
+    {
+      "organization": "Ministry of Land, Infrastructure, Transport and Tourism",
+      "url": "https://www.mlit.go.jp/jutakukentiku/build/architect.html",
+      "supports": ["First-class architect qualification and regulatory starting point"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "article",
+      "id": "choosing-a-work-status-and-coe",
+      "action": "update",
+      "reason": "Route ambiguous profession searches to the general comparison method without assigning a status from a title."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-status-for-medical-and-care-work-in-japan",
+      "action": "update",
+      "reason": "Add a visible comparison boundary for veterinary, mental-health, welfare, and childcare roles."
+    },
+    {
+      "kind": "article",
+      "id": "inline-japanese-terminology-audit",
+      "action": "review",
+      "reason": "Repair the first bounded set of single-term prose mismatches and preserve the remaining manual-review queue."
+    }
+  ],
+  "scopeBoundaries": [
+    "Do not create a standalone guide for every profession or present a search alias as an immigration classification.",
+    "Do not imply that an overseas qualification automatically permits protected practice in Japan.",
+    "Do not map electrician to professional engineering, animal care to Skilled Labor, or a healthcare workplace to Medical Services without the controlling duties and rules.",
+    "Do not mechanically insert every metadata term; use or remove it according to the article's real teaching purpose.",
+    "Do not confer reviewed status through research or implementation."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": {
+    "approvedAt": "2026-09-14",
+    "note": "The editor approved the recommended profession-retrieval sweep and a bounded 16B-2 implementation rather than thin profession-specific articles."
+  }
+}

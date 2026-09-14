@@ -93,6 +93,7 @@ import ConsumerContractsCancellationsAndGettingHelp, { metadata as consumerContr
 import LivingInAJapaneseNeighborhoodAndSharedSpaces, { metadata as livingInAJapaneseNeighborhoodAndSharedSpacesMetadata } from "../../../content/articles/living-in-a-japanese-neighborhood-and-shared-spaces.mdx";
 import FindingJapaneseLanguageAndLocalSupport, { metadata as findingJapaneseLanguageAndLocalSupportMetadata } from "../../../content/articles/finding-japanese-language-and-local-support.mdx";
 import SettingUpElectricityGasWaterAndHomeInternet, { metadata as settingUpElectricityGasWaterAndHomeInternetMetadata } from "../../../content/articles/setting-up-electricity-gas-water-and-home-internet.mdx";
+import UnderstandingJapanGeographyGovernmentAndLanguage, { metadata as understandingJapanGeographyGovernmentAndLanguageMetadata } from "../../../content/articles/understanding-japan-geography-government-and-language.mdx";
 import {
   articleMetadataSchema,
   validateArticleCollection,
@@ -196,6 +197,7 @@ const entries = [
   [livingInAJapaneseNeighborhoodAndSharedSpacesMetadata, LivingInAJapaneseNeighborhoodAndSharedSpaces],
   [findingJapaneseLanguageAndLocalSupportMetadata, FindingJapaneseLanguageAndLocalSupport],
   [settingUpElectricityGasWaterAndHomeInternetMetadata, SettingUpElectricityGasWaterAndHomeInternet],
+  [understandingJapanGeographyGovernmentAndLanguageMetadata, UnderstandingJapanGeographyGovernmentAndLanguage],
 ] as const;
 
 const articles: readonly ArticleRecord[] = entries.map(([metadata, Content]) => ({

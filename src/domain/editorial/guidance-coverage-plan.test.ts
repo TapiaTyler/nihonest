@@ -51,7 +51,7 @@ describe("guidance discovery record", () => {
     expect(guidanceDiscoveryRecordSchema.safeParse({ ...proposedRecord, reviewState: "scope-approved" }).success).toBe(false);
   });
 
-  it.each(["structured-status-model", "immigration-foundations", "student-school-and-arrival", "employment-rights-and-independent-work", "integration-mobility-and-daily-life", "municipal-geography-pilot", "document-and-form-literacy"])(
+  it.each(["structured-status-model", "immigration-foundations", "student-school-and-arrival", "employment-rights-and-independent-work", "integration-mobility-and-daily-life", "municipal-geography-pilot", "document-and-form-literacy", "final-catalog-and-japan-basics-audit", "profession-retrieval-and-terminology-closure"])(
     "validates the proposed %s discovery checkpoint",
     async (fileName) => {
       const record = await readFile(

@@ -27,6 +27,9 @@ export default function ExplorePage() {
           Browse a high-level group or search the complete knowledgebase. Individual guides and Japanese terms remain public and link to the responsible authorities.
         </p>
       </header>
+      <Link href="/articles/understanding-japan-geography-government-and-language" className="mt-6 inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+        New to Japan? Start with the country basics →
+      </Link>
       <aside className="mt-8 max-w-3xl rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
         <div>
           <p className="font-semibold text-teal-950">Not sure which rule or status applies?</p>

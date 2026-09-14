@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "id": "final-catalog-and-japan-basics-audit",
+  "workstreamId": "final-catalog-audit",
+  "preparedAt": "2026-09-13",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "A standalone orientation guide that explains Japan's physical geography, commonly used regions, prefectural and municipal government layers, place-name vocabulary, regional climate and hazard variation, Japanese language variation, and reliable national and local starting points.",
+    "A complete Phase 13 catalog audit covering terminology use in prose, FAQ and search language, content relationships, group and journey coherence, residence-status discovery, activity cross-references, editorial state, and source-review readiness.",
+    "Discoverability for useful standalone orientation that does not become a mandatory journey step or justify a one-article content group."
+  ],
+  "userSituations": [
+    "A newcomer sees prefecture, municipality, ward, city, and region in different guides but does not understand which terms identify a government or service jurisdiction.",
+    "A reader assumes Kanto, Kansai, Chubu, or another commonly used region is one fixed administrative level with one responsible office.",
+    "A person moving between Tokyo, Nagoya, Hokkaido, or Okinawa expects climate, hazards, transport, language, and local procedures to be uniform throughout Japan.",
+    "A learner understands classroom Japanese but encounters a regional dialect, pronunciation, vocabulary, or mixed local common speech and assumes their Japanese is necessarily wrong.",
+    "A user wants a trustworthy overview and useful official links without reading an encyclopedia or mistaking cultural generalizations for rules.",
+    "A reader opens an article's Key Japanese terminology section but never encountered one or more listed terms in the explanation above it.",
+    "A user searches an ordinary question, occupation, place, or unfamiliar administrative word and needs a clear path into an article, FAQ, glossary term, group, or activity check."
+  ],
+  "edgeCasesAndExceptions": [
+    "The four large islands are a physical-geography explanation, not a complete account of Japan's many smaller islands or a reason to erase remote and island communities.",
+    "Common region names are useful for orientation, travel, weather, language, and statistics, but their prefectural membership can vary by agency and purpose; they are not a universal local-government tier.",
+    "Japan has 47 prefectural-level governments, but their Japanese suffixes differ: Tokyo-to, Hokkaido-do, Kyoto-fu and Osaka-fu, and forty-three ken. English 'prefecture' is a convenient umbrella term.",
+    "Tokyo's 23 special wards are municipalities for many purposes; a ward in a designated city such as Nagoya is not the same governmental category and can function as a service-office subdivision.",
+    "National rules, prefectural administration, municipal procedures, school or employer policy, and private contracts must remain separate even when all are described using one place name.",
+    "Regional speech is not a binary split between one standard Japanese and one dialect per prefecture. Variation can cross borders and differ by generation, situation, identity, and community.",
+    "Ainu and Ryukyuan language varieties must not be flattened into novelty dialect examples. Official and scholarly classification language is sensitive, and some languages or varieties are endangered.",
+    "Climate and hazard exposure vary substantially by latitude, elevation, coast, and local terrain; national seasonal slogans do not replace current JMA information or local hazard maps.",
+    "Population, municipality counts, office names, administrative boundaries, and live emergency information change. The guide should link current official data rather than freeze unnecessary figures.",
+    "A glossary term declared in metadata is not meaningfully taught merely because an automatically rendered terminology list exists; useful terms should appear naturally in understandable prose."
+  ],
+  "jurisdictionVariables": [
+    "National, prefectural or metropolitan, municipal or special-ward, designated-city ward, and private-organization responsibility.",
+    "The exact prefecture, municipality, address, island, elevation, coast, hazard type, and current official notice.",
+    "The agency-specific definition of a geographic region.",
+    "The language variety, community, generation, setting, and whether the task requires learning, interpretation, translation, or official communication.",
+    "The content's editorial state, source currency, inline terminology coverage, search aliases, and canonical relationships."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/territory/page1we_000006.html",
+      "supports": ["Physical location, four large islands, land area, forests, and broad climate variation"]
+    },
+    {
+      "organization": "Statistics Bureau of Japan",
+      "url": "https://www.stat.go.jp/english/data/handbook/index.html",
+      "supports": ["Current annual statistical overview, land and climate chapter, and administrative map"]
+    },
+    {
+      "organization": "Council of Local Authorities for International Relations",
+      "url": "https://www.clair.or.jp/j/forum/pub/docs/jichi2024-en.pdf",
+      "supports": ["Prefectural and municipal local-government structure and responsibilities"]
+    },
+    {
+      "organization": "Ministry of Land, Infrastructure, Transport and Tourism",
+      "url": "https://www.mlit.go.jp/totikensangyo/H30kouji05.html",
+      "supports": ["Evidence that region definitions are purpose-specific rather than one universal administrative map"]
+    },
+    {
+      "organization": "Agency for Cultural Affairs",
+      "url": "https://www.bunka.go.jp/seisaku/kokugo_nihongo/kyoiku/seikatsusha/h24_nihongo_program_a/pdf/a_54_2.pdf",
+      "supports": ["Practical distinction and coexistence of common or standard Japanese and regional dialect use"]
+    },
+    {
+      "organization": "Agency for Cultural Affairs",
+      "url": "https://www.bunka.go.jp/seisaku/kokugo_nihongo/kokugo_shisaku/kikigengo/index.html",
+      "supports": ["Careful treatment of endangered languages and dialects, including classification limits"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/support/portal/",
+      "supports": ["Current multilingual foreign-resident orientation and living resources"]
+    },
+    {
+      "organization": "Japan Meteorological Agency",
+      "url": "https://www.jma.go.jp/jma/kokusai/m_multi.html",
+      "supports": ["Current multilingual weather, earthquake, tsunami, and volcano information"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "new-article",
+      "id": "understanding-japan-geography-government-and-language",
+      "action": "create",
+      "reason": "Provide a concise national orientation and explain the geographic and governmental vocabulary used throughout Nihonest."
+    },
+    {
+      "kind": "glossary-term",
+      "id": "japan-geography-and-government-terms",
+      "action": "create",
+      "reason": "Add useful entries for prefectural governments, municipalities, regions, dialects, and common Japanese without turning every place name into a glossary record."
+    },
+    {
+      "kind": "faq",
+      "id": "japan-basics-questions",
+      "action": "create",
+      "reason": "Answer what a prefecture is and whether a learner must speak a local dialect, with direct links to the orientation guide."
+    },
+    {
+      "kind": "group",
+      "id": "explore",
+      "action": "update",
+      "reason": "Expose one compact Japan-basics orientation link without creating a new one-article group or changing the default group hierarchy."
+    },
+    {
+      "kind": "article",
+      "id": "inline-japanese-terminology-audit",
+      "action": "review",
+      "reason": "Review the 55 articles whose declared glossary metadata currently includes at least one term not visibly linked in prose; remove irrelevant metadata or introduce useful terms naturally."
+    },
+    {
+      "kind": "journey",
+      "id": "all-guided-journeys",
+      "action": "review",
+      "reason": "Confirm every step and branch remains route-specific and that standalone or concurrent guidance cannot overwrite the user's primary journey."
+    },
+    {
+      "kind": "residence-status",
+      "id": "all-residence-status-guidance",
+      "action": "review",
+      "reason": "Confirm category, article, profession, duration, renewal, qualification, language, and activity-check coverage before localization."
+    },
+    {
+      "kind": "article",
+      "id": "guidance-coverage-plan",
+      "action": "update",
+      "reason": "Assign the approved Japan-basics article to an implementation batch when it is created so coverage auditing remains complete."
+    }
+  ],
+  "scopeBoundaries": [
+    "Do not present the guide as an encyclopedia, tourism ranking, cultural stereotype catalog, or replacement for focused legal and procedural guidance.",
+    "Do not add the guide as a mandatory journey step or create a one-article content group solely for visibility.",
+    "Do not imply that commonly used regions have one universal boundary or authority.",
+    "Do not imply that one dialect represents every speaker in a prefecture or that a newcomer must imitate local speech to integrate.",
+    "Do not hard-code volatile population, municipality-count, climate, or economic figures unless their edition and source are useful to the explanation.",
+    "Do not promote any article or assertion to reviewed status without explicit human editorial approval.",
+    "Do not treat a passing structural audit as substantive factual review.",
+    "Do not expand every Phase 13 finding in one implementation pass; separate structural repairs from factual and source corrections."
+  ],
+  "unresolvedQuestions": [],
+  "scopeApproval": {
+    "approvedAt": "2026-09-14",
+    "note": "The editor approved a collapsible 47-prefecture reference grouped under qualified common regions, both Explore and footer discovery links, and a concise practical-basics box covering time, currency, metric units, and emergency-guidance handoffs."
+  }
+}

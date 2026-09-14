@@ -18,6 +18,7 @@ export function SiteFooter() {
             <li><Link href="/glossary" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Glossary</Link></li>
             <li><Link href="/residence-statuses" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Statuses</Link></li>
             <li><Link href="/can-i-do-this" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Can I do this?</Link></li>
+            <li><Link href="/articles/understanding-japan-geography-government-and-language" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Japan basics</Link></li>
           </ul>
         </nav>
         <nav aria-label="Personal links" className="hidden sm:block">
