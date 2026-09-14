@@ -4,7 +4,9 @@ import { articleGroupSchema } from "@/domain/discovery/discovery";
 import { glossaryTerms } from "@/data/glossary";
 import {
   defaultKnowledgebaseSearchFilters,
+  buildKnowledgebaseSearchIndex,
   hasActiveKnowledgebaseSearch,
+  searchKnowledgebaseIndex,
   searchKnowledgebase,
 } from "./knowledgebase-search";
 
@@ -44,6 +46,14 @@ describe("knowledgebase search", () => {
 
     expect(articleResults.map(({ kind }) => kind)).toEqual(["group", "article", "glossary"]);
     expect(glossaryResults[0]?.kind).toBe("glossary");
+  });
+
+  it("reuses prepared catalog text and ID lookups across queries", () => {
+    const index = buildKnowledgebaseSearchIndex([arrivalGroup], [bankArticle], glossaryTerms);
+
+    expect(index.articlesById.get(bankArticle.id)?.searchText.haystack).toContain("bank account");
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "bank account" })).not.toEqual([]);
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "juminhyo" })[0]?.kind).toBe("glossary");
   });
 
   it("combines query and structured taxonomy filters", () => {

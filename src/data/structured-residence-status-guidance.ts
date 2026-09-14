@@ -1,4 +1,8 @@
-import { structuredResidenceStatusGuidanceSchema, type StructuredResidenceStatusGuidance } from "@/domain/residence-status/residence-status";
+import {
+  structuredResidenceStatusGuidanceSchema,
+  type StructuredResidenceStatusGuidance,
+  type StructuredResidenceStatusGuidanceInput,
+} from "@/domain/residence-status/residence-status";
 
 type PilotStatusId =
   | "diplomat"
@@ -32,7 +36,7 @@ type PilotStatusId =
 
 const checkedAt = "2026-09-12";
 
-function defineStructuredGuidance(input: StructuredResidenceStatusGuidance) {
+function defineStructuredGuidance(input: StructuredResidenceStatusGuidanceInput) {
   return structuredResidenceStatusGuidanceSchema.parse(input);
 }
 

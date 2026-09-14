@@ -1,24 +1,28 @@
 import type { Faq } from "@/domain/faq/faq";
-import { normalizeSearchText } from "./normalize";
+import { buildSearchTextIndex, searchTextIndexScore, type SearchTextIndex } from "./search-text-index";
+
+export type IndexedFaq = Readonly<{ faq: Faq; searchText: SearchTextIndex }>;
+
+export function buildFaqSearchIndex(faqs: readonly Faq[]): readonly IndexedFaq[] {
+  return faqs.map((faq) => ({
+    faq,
+    searchText: buildSearchTextIndex(faq.question, [faq.question, faq.summary, ...faq.searchTerms]),
+  }));
+}
 
 /** Matches all query tokens while allowing compact user input such as "workvisa" to find spaced wording. */
 export function faqSearchScore(faq: Faq, query: string): number {
-  const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return 0;
-  const question = normalizeSearchText(faq.question);
-  const haystack = [faq.question, faq.summary, ...faq.searchTerms].map(normalizeSearchText).join(" ");
-  const compactHaystack = haystack.replaceAll(" ", "");
-  if (!normalizedQuery.split(" ").every((token) => haystack.includes(token) || compactHaystack.includes(token))) return -1;
-  if (question === normalizedQuery) return 100;
-  if (question.startsWith(normalizedQuery)) return 75;
-  if (question.includes(normalizedQuery)) return 50;
-  return 10;
+  return searchTextIndexScore(buildSearchTextIndex(faq.question, [faq.question, faq.summary, ...faq.searchTerms]), query);
 }
 
-export function searchFaqs(faqs: readonly Faq[], query: string): readonly Faq[] {
-  return faqs
-    .map((faq) => ({ faq, score: faqSearchScore(faq, query) }))
+export function searchFaqIndex(index: readonly IndexedFaq[], query: string): readonly Faq[] {
+  return index
+    .map(({ faq, searchText }) => ({ faq, score: searchTextIndexScore(searchText, query) }))
     .filter(({ score }) => score >= 0)
     .sort((left, right) => right.score - left.score || left.faq.question.localeCompare(right.faq.question, "en", { sensitivity: "base" }))
     .map(({ faq }) => faq);
+}
+
+export function searchFaqs(faqs: readonly Faq[], query: string): readonly Faq[] {
+  return searchFaqIndex(buildFaqSearchIndex(faqs), query);
 }

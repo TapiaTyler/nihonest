@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { faqStatusLabels } from "@/domain/faq/faq";
 import type { FaqEntry } from "@/lib/content/faqs";
+import { activityCrossReferenceHref } from "@/lib/navigation/activity-cross-reference";
 
 const targetKindLabels: Record<FaqEntry["targets"][number]["kind"], string> = {
   guide: "Guide",
@@ -8,9 +9,10 @@ const targetKindLabels: Record<FaqEntry["targets"][number]["kind"], string> = {
   journey: "Guided journey",
   glossary: "Glossary term",
   "residence-status": "Residence status",
+  activity: "Activity check",
 };
 
-export function FaqResult({ entry, headingLevel = 3 }: Readonly<{ entry: FaqEntry; headingLevel?: 2 | 3 }>) {
+export function FaqResult({ entry, headingLevel = 3, returnTo }: Readonly<{ entry: FaqEntry; headingLevel?: 2 | 3; returnTo?: string }>) {
   const headingClassName = "mt-3 text-xl font-semibold tracking-tight text-slate-950 sm:text-2xl";
 
   return (
@@ -28,7 +30,7 @@ export function FaqResult({ entry, headingLevel = 3 }: Readonly<{ entry: FaqEntr
         <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-3">
           {entry.targets.map((target) => (
             <li key={`${target.kind}-${target.id}`}>
-              <Link href={target.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={target.kind === "activity" ? activityCrossReferenceHref(target.id, returnTo) : target.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                 <span><span className="font-normal text-slate-500">{targetKindLabels[target.kind]}:</span> {target.label} →</span>
               </Link>
             </li>

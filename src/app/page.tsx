@@ -47,6 +47,10 @@ export default function Home() {
               </article>
             ))}
           </div>
+          <p className="mt-8 max-w-3xl text-sm leading-6 text-slate-500">
+            <strong className="font-semibold text-slate-700">General information, not legal advice.</strong>{" "}
+            Requirements depend on complete circumstances and can change. Confirm important decisions with the responsible authority or a qualified professional.
+          </p>
         </div>
       </section>
     </>

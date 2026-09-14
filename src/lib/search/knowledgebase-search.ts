@@ -8,8 +8,8 @@ import type {
   JourneyStageId,
   TopicId,
 } from "@/domain/taxonomy/taxonomy";
-import { normalizeSearchText } from "./normalize";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
+import { buildSearchTextIndex, searchRelatedTextIndexesScore, searchTextIndexScore, type SearchTextIndex } from "./search-text-index";
 
 export type ArticleSearchTranslation = Readonly<{
   contentId: string;
@@ -62,29 +62,20 @@ export function hasActiveKnowledgebaseSearch(filters: KnowledgebaseSearchFilters
   );
 }
 
-function queryScore(primary: string, values: readonly (string | undefined)[], query: string) {
-  const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return 0;
+type IndexedArticle = Readonly<{ article: ArticleMetadata; searchText: SearchTextIndex }>;
+type IndexedGroup = Readonly<{ group: ArticleGroup; baseSearchText: SearchTextIndex }>;
+type IndexedFaq = Readonly<{ faq: Faq; searchText: SearchTextIndex }>;
+type IndexedTerm = Readonly<{ term: JapaneseTerm; searchText: SearchTextIndex }>;
 
-  const tokens = normalizedQuery.split(" ");
-  const normalizedValues = values
-    .filter((value): value is string => Boolean(value))
-    .map(normalizeSearchText);
-  const haystack = normalizedValues.join(" ");
-  const compactHaystack = haystack.replaceAll(" ", "");
-  // Requiring every token keeps broad FAQ aliases useful without allowing one common word to flood mixed result types.
-  const matches = tokens.every((token) =>
-    haystack.includes(token) || compactHaystack.includes(token.replaceAll(" ", "")),
-  );
-
-  if (!matches) return -1;
-
-  const normalizedPrimary = normalizeSearchText(primary);
-  if (normalizedPrimary === normalizedQuery) return 100;
-  if (normalizedPrimary.startsWith(normalizedQuery)) return 75;
-  if (normalizedPrimary.includes(normalizedQuery)) return 50;
-  return 10;
-}
+export type KnowledgebaseSearchIndex = Readonly<{
+  locale: ContentLocalePreference;
+  groups: readonly IndexedGroup[];
+  articles: readonly IndexedArticle[];
+  faqs: readonly IndexedFaq[];
+  terms: readonly IndexedTerm[];
+  articlesById: ReadonlyMap<string, IndexedArticle>;
+  translationsByArticleId: ReadonlyMap<string, ArticleSearchTranslation>;
+}>;
 
 function articleMatchesFilters(article: ArticleMetadata, filters: KnowledgebaseSearchFilters) {
   return (
@@ -118,65 +109,90 @@ function glossaryTermMatchesFilters(term: JapaneseTerm, filters: KnowledgebaseSe
   );
 }
 
-export function searchKnowledgebase(
+/** Builds the disposable in-memory catalog used by every Explore query in this page session. */
+export function buildKnowledgebaseSearchIndex(
   groups: readonly ArticleGroup[],
   articles: readonly ArticleMetadata[],
   terms: readonly JapaneseTerm[],
-  filters: KnowledgebaseSearchFilters,
   faqs: readonly Faq[] = [],
   options: KnowledgebaseSearchOptions = {},
-): readonly KnowledgebaseSearchResult[] {
+): KnowledgebaseSearchIndex {
   const locale = options.locale ?? "en";
-  const articleTranslation = (articleId: string) => options.articleTranslations?.find((translation) => (
-    translation.contentId === articleId && translation.targetLocale === locale
-  ));
-  const groupResults: KnowledgebaseSearchResult[] = groups.flatMap((group) => {
+  const translationsByArticleId = new Map<string, ArticleSearchTranslation>();
+  for (const translation of options.articleTranslations ?? []) {
+    if (translation.targetLocale === locale && !translationsByArticleId.has(translation.contentId)) {
+      translationsByArticleId.set(translation.contentId, translation);
+    }
+  }
+  const indexedArticles = articles.map((article) => {
+    const translation = translationsByArticleId.get(article.id);
+    return {
+      article,
+      searchText: buildSearchTextIndex(translation?.title ?? article.title, [
+        translation?.title,
+        translation?.description,
+        ...(translation?.searchTerms ?? []),
+        article.title,
+        article.description,
+        ...article.searchTerms,
+        article.id,
+        ...article.topicIds,
+        ...article.journeyStageIds,
+        ...article.termIds,
+      ]),
+    };
+  });
+  return {
+    locale,
+    groups: groups.map((group) => ({
+      group,
+      baseSearchText: buildSearchTextIndex(group.title, [group.title, group.description, group.id]),
+    })),
+    articles: indexedArticles,
+    faqs: faqs.map((faq) => ({
+      faq,
+      searchText: buildSearchTextIndex(faq.question, [faq.question, faq.summary, ...faq.searchTerms]),
+    })),
+    terms: terms.map((term) => ({
+      term,
+      searchText: buildSearchTextIndex(term.englishName, [term.japanese, term.kana, term.romaji, term.englishName, term.shortDefinition, ...term.searchTerms]),
+    })),
+    articlesById: new Map(indexedArticles.map((article) => [article.article.id, article])),
+    translationsByArticleId,
+  };
+}
+
+export function searchKnowledgebaseIndex(
+  index: KnowledgebaseSearchIndex,
+  filters: KnowledgebaseSearchFilters,
+): readonly KnowledgebaseSearchResult[] {
+  const groupResults: KnowledgebaseSearchResult[] = index.groups.flatMap(({ group, baseSearchText }) => {
     if (filters.kind !== "all" && filters.kind !== "group") return [];
-
-    const memberArticles = articles.filter((article) => group.articleIds.includes(article.id));
-    const matchingMembers = memberArticles.filter((article) => articleMatchesStructuredFilters(article, filters));
+    const matchingMembers = group.articleIds.flatMap((articleId) => {
+      const indexedArticle = index.articlesById.get(articleId);
+      return indexedArticle && articleMatchesStructuredFilters(indexedArticle.article, filters) ? [indexedArticle] : [];
+    });
     if (matchingMembers.length === 0) return [];
-
-    const score = queryScore(
-      group.title,
-      [
-        group.title,
-        group.description,
-        group.id,
-        ...matchingMembers.flatMap((article) => [
-          article.title,
-          article.description,
-          ...article.searchTerms,
-          articleTranslation(article.id)?.title,
-          articleTranslation(article.id)?.description,
-          ...(articleTranslation(article.id)?.searchTerms ?? []),
-          article.id,
-          ...article.topicIds,
-          ...article.journeyStageIds,
-          ...article.termIds,
-        ]),
-      ],
+    const score = searchRelatedTextIndexesScore(
+      baseSearchText,
+      matchingMembers.map(({ searchText }) => searchText),
       filters.query,
     );
     return score >= 0 ? [{ kind: "group" as const, group, score }] : [];
   });
 
-  const articleResults: KnowledgebaseSearchResult[] = articles.flatMap((article) => {
+  const articleResults: KnowledgebaseSearchResult[] = index.articles.flatMap(({ article, searchText }) => {
     if (!articleMatchesFilters(article, filters)) return [];
-    const translation = articleTranslation(article.id);
-    const score = queryScore(
-      translation?.title ?? article.title,
-      [translation?.title, translation?.description, ...(translation?.searchTerms ?? []), article.title, article.description, ...article.searchTerms, article.id, ...article.topicIds, ...article.journeyStageIds, ...article.termIds],
-      filters.query,
-    );
+    const score = searchTextIndexScore(searchText, filters.query);
     return score >= 0 ? [{ kind: "article" as const, article, score }] : [];
   });
 
-  const faqResults: KnowledgebaseSearchResult[] = faqs.flatMap((faq) => {
+  const faqResults: KnowledgebaseSearchResult[] = index.faqs.flatMap(({ faq, searchText }) => {
     if (filters.kind !== "all" && filters.kind !== "faq") return [];
-
-    // Structured filters are inherited from linked guides; FAQ metadata remains retrieval-oriented instead of duplicating article taxonomy.
-    const linkedArticles = articles.filter((article) => faq.relatedArticleIds.includes(article.id));
+    const linkedArticles = faq.relatedArticleIds.flatMap((articleId) => {
+      const indexedArticle = index.articlesById.get(articleId);
+      return indexedArticle ? [indexedArticle.article] : [];
+    });
     const hasStructuredFilter = filters.journeyStageId !== "all"
       || filters.topicId !== "all"
       || filters.audienceId !== "all"
@@ -185,42 +201,40 @@ export function searchKnowledgebase(
       || filters.importance !== "all"
       || filters.residenceStatusId !== "all";
     if (hasStructuredFilter && !linkedArticles.some((article) => articleMatchesStructuredFilters(article, filters))) return [];
-
-    const score = queryScore(faq.question, [faq.question, faq.summary, ...faq.searchTerms], filters.query);
+    const score = searchTextIndexScore(searchText, filters.query);
     return score >= 0 ? [{ kind: "faq" as const, faq, score }] : [];
   });
 
-  const glossaryResults: KnowledgebaseSearchResult[] = terms.flatMap((term) => {
+  const glossaryResults: KnowledgebaseSearchResult[] = index.terms.flatMap(({ term, searchText }) => {
     if (!glossaryTermMatchesFilters(term, filters)) return [];
-    const score = queryScore(
-      term.englishName,
-      [term.japanese, term.kana, term.romaji, term.englishName, term.shortDefinition, ...term.searchTerms],
-      filters.query,
-    );
+    const score = searchTextIndexScore(searchText, filters.query);
     return score >= 0 ? [{ kind: "glossary" as const, term, score }] : [];
   });
 
-  const kindOrder: Record<KnowledgebaseSearchResult["kind"], number> = {
-    group: 0,
-    faq: 1,
-    article: 2,
-    glossary: 3,
-  };
-
-  const collator = new Intl.Collator(locale, { sensitivity: "base" });
+  const kindOrder: Record<KnowledgebaseSearchResult["kind"], number> = { group: 0, faq: 1, article: 2, glossary: 3 };
+  const collator = new Intl.Collator(index.locale, { sensitivity: "base" });
   return [...groupResults, ...faqResults, ...articleResults, ...glossaryResults].sort(
-    (left, right) => kindOrder[left.kind] - kindOrder[right.kind] ||
-      collator.compare(resultTitle(left, options.articleTranslations, locale), resultTitle(right, options.articleTranslations, locale)),
+    (left, right) => kindOrder[left.kind] - kindOrder[right.kind]
+      || collator.compare(indexedResultTitle(left, index), indexedResultTitle(right, index)),
   );
 }
 
-function resultTitle(result: KnowledgebaseSearchResult, translations: readonly ArticleSearchTranslation[] | undefined, locale: ContentLocalePreference) {
+export function searchKnowledgebase(
+  groups: readonly ArticleGroup[],
+  articles: readonly ArticleMetadata[],
+  terms: readonly JapaneseTerm[],
+  filters: KnowledgebaseSearchFilters,
+  faqs: readonly Faq[] = [],
+  options: KnowledgebaseSearchOptions = {},
+): readonly KnowledgebaseSearchResult[] {
+  return searchKnowledgebaseIndex(buildKnowledgebaseSearchIndex(groups, articles, terms, faqs, options), filters);
+}
+
+function indexedResultTitle(result: KnowledgebaseSearchResult, index: KnowledgebaseSearchIndex) {
   if (result.kind === "group") return result.group.title;
   if (result.kind === "faq") return result.faq.question;
-  if (result.kind === "article") return translations?.find((translation) => (
-    translation.contentId === result.article.id && translation.targetLocale === locale
-  ))?.title ?? result.article.title;
-  return locale === "ja"
+  if (result.kind === "article") return index.translationsByArticleId.get(result.article.id)?.title ?? result.article.title;
+  return index.locale === "ja"
     ? result.term.kana ?? result.term.japanese
     : result.term.englishName;
 }

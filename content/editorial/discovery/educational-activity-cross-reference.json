@@ -1,0 +1,274 @@
+{
+  "version": 1,
+  "id": "educational-activity-cross-reference-discovery",
+  "workstreamId": "findability-and-route-consistency",
+  "preparedAt": "2026-09-13",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "An intent-first educational lookup that starts with what a person wants to do, then reveals the separate immigration, employment or contract, professional-licensing, tax, social-insurance, and local-rule questions that may control.",
+    "A bounded pilot covering taking or changing work, adding side work or freelance work, studying or training while resident, starting or managing a business, joining or supporting family, performing a regulated profession, temporarily leaving and re-entering Japan, and receiving or reporting income.",
+    "A progressive question flow using controlled choices for current residence position, proposed activity, whether it is paid, whether it is principal or secondary, organization or contract relationship, work location, professional licensing, and timing. Users should not need to know a residence-status name before beginning.",
+    "A result structure that explains why guidance appears, identifies potentially relevant statuses without recommending one, separates rule layers, lists facts still needing confirmation, exposes important exceptions, and links canonical guidance and current authorities.",
+    "Coverage-state language that describes the reliability and completeness of Nihonest's underlying material rather than expressing confidence that an individual is eligible or an activity is lawful.",
+    "Assertion-level provenance and editorial gates so a public result can use only a sufficiently reviewed claim, while unreviewed or incomplete branches end in an explicit authority handoff rather than a silent omission or inferred answer.",
+    "Search aliases and FAQ bridges for ordinary language such as can I freelance, can I change jobs, can my spouse work, can I study on a work visa, can I work remotely for an overseas client, and do I need to change my visa.",
+    "A deterministic first release driven by reviewed structured records and curated mappings, not generative AI, opaque scoring, keyword-only legal conclusions, or a questionnaire that purports to calculate eligibility.",
+    "An ephemeral and URL-shareable interaction where practical, containing only non-sensitive selections and no account sync by default. Free-text descriptions, passport details, income amounts, employer documents, health information, and identity records should not be collected.",
+    "An authority-routing layer that distinguishes general ISA procedural information, an actual application or permission decision, employment support, tax guidance, professional regulators, and qualified individualized advice."
+  ],
+  "userSituations": [
+    "A sponsored software developer wants to accept occasional freelance web-development work and needs to separate whether the duties fit the current status, whether outside-activity permission is needed, whether the employer permits it, and how the income is reported.",
+    "A worker changes companies but keeps a similar English job title and assumes that filing an affiliated-organization notification proves the new duties are authorized.",
+    "A worker remains with the same company but moves from specialist duties into management, sales, manual production, or another materially different activity.",
+    "A Student-status holder wants a part-time job, an internship, online commissions, or self-employment and assumes every activity falls under the ordinary blanket twenty-eight-hour permission.",
+    "A Dependent-status holder wants to begin paid work and needs to distinguish ordinary outside-activity permission from full-time or principal employment requiring another route.",
+    "A person with unrestricted work authorization wants to practice medicine, law, accounting, or another regulated profession and assumes immigration freedom replaces a Japanese professional licence.",
+    "A university lecturer wants to teach for a private company and needs to compare the new activity with Professor, Engineer/Specialist, and individual outside-activity permission.",
+    "A creative professional has employed design work, independent art commissions, commercial photography, and online content income that may not share one immigration classification.",
+    "A resident wants to open a company while remaining employed and needs to distinguish investment or ownership from personally operating or managing the business.",
+    "A resident wants a spouse or child to join them and needs to identify the relationship, sponsor status, dependency, family member's intended activity, and route-specific restrictions.",
+    "A resident plans temporary travel and assumes a valid residence card, visa sticker, re-entry permission, passport, and unexpired period of stay are interchangeable.",
+    "A remote worker receives money from an overseas employer or client and assumes foreign payment means the activity and income fall outside Japanese immigration and tax rules.",
+    "A person has not yet selected a status and wants to explore possible routes from actual duties, institution, contract, qualifications, family relationship, or program instead of guessing from a job title.",
+    "An employer or school wants to help but must distinguish its evidence and notifications from the resident's application, permission, tax, licensing, or personal reporting duties."
+  ],
+  "edgeCasesAndExceptions": [
+    "A job title is neither an occupation whitelist nor an immigration conclusion. Principal duties, subordinate duties, organization, contract, remuneration, and the complete activity determine which routes deserve examination.",
+    "Work authorization can be status-limited, unrestricted by immigration status, prohibited by default, or controlled by an individual Designated Activities document. The umbrella status name may be insufficient.",
+    "Permission for activity outside the status has blanket and individual forms. The ordinary twenty-eight-hour pattern is not a universal allowance for every resident, work status, business, freelance arrangement, or activity.",
+    "Work performed for an overseas client, paid abroad, performed online, described as volunteering, or completed from home can still require immigration, contract, tax, and licensing analysis.",
+    "A notification about an employer, school, contract, spouse, or organization does not grant permission, approve duties, extend a period of stay, or complete another party's reporting duty.",
+    "A Certificate of Authorized Employment can describe permitted remunerative activity but is not itself the permission and generally is not mandatory merely to work where authorization is otherwise clear.",
+    "Changing employers within an apparently similar field can remain within the current status, require a change, or require closer verification; the feature must not decide this from titles or industry labels.",
+    "Employer approval, a permissive work rule, or an employment contract does not create immigration permission. Immigration permission does not override a contract restriction, working-time rule, conflict duty, intellectual-property term, or professional licence.",
+    "Unrestricted immigration work authorization does not remove tax, employment, company, licensing, municipal, or sector obligations.",
+    "Professional regulation varies by occupation and authority. A foreign licence, degree, credential, portfolio, or immigration status may not authorize reserved practice in Japan.",
+    "Tax residence and taxable-income scope differ from immigration status. Payment location, client location, remittance, treaty treatment, withholding, employment classification, and filing obligations can require separate analysis.",
+    "Owning shares or investing in a company is not necessarily the same activity as operating or managing it, while a small amount of hands-on work does not automatically establish a Business Manager route.",
+    "Family routes depend on the exact relationship and principal holder's route; some statuses do not support ordinary Dependent sponsorship, and a family member's work question remains separate.",
+    "Temporary departure requires the passport, residence status, period of stay, re-entry route, departure procedure, and return timing to work together. A school vacation or employer approval does not preserve status.",
+    "Future-dated law or program changes must never be mixed into a current answer. Effective dates and archived rules need explicit handling.",
+    "An absent or unreviewed rule is not evidence that no restriction exists. The result must disclose limited coverage and direct the user to the responsible authority."
+  ],
+  "jurisdictionVariables": [
+    "The person's current immigration position: outside Japan, Temporary Visitor, a named activity-based status, status-based residence, an exact Designated Activities program, or no selected route.",
+    "The proposed principal and secondary activities, actual duties, frequency, hours, duration, compensation, payer, worksite, and whether the activity has begun.",
+    "The employer, client, school, host, family sponsor, Japanese organization, overseas organization, contract type, and every concurrent relationship.",
+    "Whether the current status is activity-limited, unrestricted for immigration purposes, not work-authorized by default, or designation-specific.",
+    "Any existing outside-activity permission, its exact wording, individual or blanket form, restrictions, validity, and interaction with the principal activity.",
+    "Education, experience, examinations, language evidence, remuneration, institutional classification, program criteria, and route-specific exceptions.",
+    "Any Japanese professional licence, registration, reserved scope of practice, supervising body, or foreign-credential recognition process.",
+    "Employer work rules, consent requirements, working-time aggregation, confidentiality, conflict, intellectual-property, and health or safety concerns.",
+    "Tax residence, income category, source, payment location, remittance, withholding, treaty position, business registration, consumption-tax position, and national or resident-tax filing duties.",
+    "Family relationship, dependency, age, cohabitation, sponsor status, intended work or study, and any change to the supporting relationship.",
+    "Application context, current period of stay, expiry date, intended start date, notification deadline, departure date, return date, passport validity, and re-entry permission.",
+    "Current effective law, program version, official checklist, local jurisdiction, and whether Nihonest has a reviewed assertion for the exact branch."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/status/qaq5.html",
+      "supports": [
+        "Canonical status categories and authorized activities",
+        "Representative activities and periods of stay",
+        "Activity-based and status-based route distinctions"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/guide/nyuukokukanri07_00045.html",
+      "supports": [
+        "General requirements for permission to engage in activity outside the status",
+        "Blanket and individual permission distinctions",
+        "Freelance, difficult-to-measure, and cross-status examples"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/syuurou_00001.html",
+      "supports": [
+        "Purpose and limits of a Certificate of Authorized Employment",
+        "Ways to confirm work authorization",
+        "Certificate is evidence rather than the underlying permission"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-2.html",
+      "supports": [
+        "Change-of-status procedure",
+        "Requirement to examine the proposed activity",
+        "Application-specific evidence and review"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/resources/nyuukokukanri07_00058.html",
+      "supports": [
+        "Discretionary extension and change review",
+        "Activity fit, residence conduct, tax, social-insurance, and notification considerations",
+        "No guarantee from satisfying a simplified checklist"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001453131.pdf",
+      "supports": [
+        "Resident and accepting-organization notification routes",
+        "Organization and contract change context",
+        "Need to keep separate parties' filings distinct"
+      ]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000192188.html",
+      "supports": [
+        "Employment-side side-job and concurrent-work guidance",
+        "Model work-rule context",
+        "Working-time and health-management considerations"
+      ]
+    },
+    {
+      "organization": "National Tax Agency",
+      "url": "https://www.nta.go.jp/english/taxes/individual/12011.htm",
+      "supports": [
+        "General individual final-return framework",
+        "Need for a separate tax analysis",
+        "Limits of a simplified filing answer"
+      ]
+    },
+    {
+      "organization": "National Tax Agency",
+      "url": "https://www.nta.go.jp/english/taxes/individual/",
+      "supports": [
+        "Current individual-income-tax guidance",
+        "Tax-residence and taxable-income distinctions",
+        "Period-specific official instructions"
+      ]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/consultation/center/",
+      "supports": [
+        "Multilingual general immigration information channels",
+        "Boundary between general procedural guidance and predictions about an individual decision",
+        "Authority handoff when the cross-reference cannot resolve a case"
+      ]
+    },
+    {
+      "organization": "Ministry of Health, Labour and Welfare",
+      "url": "https://www.mhlw.go.jp/stf/otoiawase/index_en.html",
+      "supports": [
+        "Multilingual labour consultation routes",
+        "Foreign-worker consultation services",
+        "Employment-law authority handoff"
+      ]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "residence-status",
+      "id": "structured-residence-status-guidance",
+      "action": "pilot",
+      "reason": "Add an explicit assertion-level editorial state and cross-reference eligibility gate before structured claims can drive public decision support. Preserve effective dates and source provenance."
+    },
+    {
+      "kind": "residence-status",
+      "id": "residence-status-exploration",
+      "action": "update",
+      "reason": "Offer an activity-first handoff for users who do not know a status name while keeping category browsing and direct status search available."
+    },
+    {
+      "kind": "article",
+      "id": "side-work-and-freelancing-on-a-work-status",
+      "action": "review",
+      "reason": "Use as the canonical high-value pilot for separating immigration permission, employer rules, contracts, tax, and professional regulation."
+    },
+    {
+      "kind": "article",
+      "id": "renewing-or-changing-your-status-of-residence",
+      "action": "review",
+      "reason": "Support activity and employer changes without treating notification, a similar title, or a pending application as permission."
+    },
+    {
+      "kind": "article",
+      "id": "working-part-time-on-student-status",
+      "action": "review",
+      "reason": "Represent the blanket-permission pattern and its limits without generalizing it to every status or every form of work."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-work-status-and-coe",
+      "action": "review",
+      "reason": "Provide the canonical activity-first route comparison and evidence handoff for users who have not selected a status."
+    },
+    {
+      "kind": "article",
+      "id": "tax-for-side-work-and-sole-proprietors",
+      "action": "review",
+      "reason": "Keep tax obligations separate from immigration and contract authorization in paid-activity results."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-status-for-medical-and-care-work-in-japan",
+      "action": "review",
+      "reason": "Pilot the independent professional-licensing layer rather than implying that unrestricted work permission or a foreign credential authorizes regulated practice."
+    },
+    {
+      "kind": "article",
+      "id": "reentry-permission-and-temporary-travel",
+      "action": "review",
+      "reason": "Support travel questions without conflating a visa, residence card, period of stay, passport, and re-entry permission."
+    },
+    {
+      "kind": "article",
+      "id": "choosing-a-family-or-personal-status-in-japan",
+      "action": "review",
+      "reason": "Give family questions a relationship-first comparison without promising sponsorship or work authorization."
+    },
+    {
+      "kind": "faq",
+      "id": "educational-activity-cross-reference-questions",
+      "action": "update",
+      "reason": "Connect ordinary-language and zero-result queries to the controlled activity flow and existing canonical guidance instead of generating unsupported answers."
+    },
+    {
+      "kind": "group",
+      "id": "explore",
+      "action": "update",
+      "reason": "Expose the tool as optional decision support alongside content groups, not as a replacement for Explore search, My Journey, or the homepage onboarding entrance."
+    },
+    {
+      "kind": "journey",
+      "id": "guided-journeys",
+      "action": "review",
+      "reason": "Allow contextual handoffs to a relevant journey without changing or overwriting a user's saved journey preference."
+    }
+  ],
+  "scopeBoundaries": [
+    "Do not return eligible, ineligible, legal, illegal, approved, safe, guaranteed, best visa, or a probability or score for an individual.",
+    "Do not infer authorization from a job title, occupation search term, industry, salary, employer assurance, contract, notification, visa sticker, residence card, or one isolated answer.",
+    "Do not use generative AI, semantic guessing, or an opaque ranking model to create legal conclusions in the first release. Use curated mappings whose assertions and sources are inspectable.",
+    "Do not expose a claim through the cross-reference unless its editorial state meets the approved gate. Missing, stale, future-dated, conflicting, or incomplete coverage must produce a visible authority handoff.",
+    "Do not collect free-text personal narratives, identity-document values, passport or residence-card numbers, exact income, health facts, employer documents, or other sensitive evidence.",
+    "Do not save cross-reference answers to an account by default. Any later persistence must be optional, minimal, erasable, and reviewed as a privacy decision.",
+    "Do not treat immigration permission as permission under employment, tax, licensing, company, intellectual-property, consumer, social-insurance, or local law, or vice versa.",
+    "Do not duplicate full article explanations or official checklists in results. Provide concise orientation, explain why each link appears, and lead to canonical content and official sources.",
+    "Do not overwrite the user's selected journey. Journey links are optional next steps and the tool remains useful without an account or saved onboarding preference.",
+    "Do not launch every possible activity, status, profession, municipality, or tax case at once. Validate a bounded high-value pilot and expand through reviewed mappings.",
+    "Do not imply that ISA's general information channel can predict an application outcome; distinguish procedural information from individualized professional advice and the responsible decision-maker.",
+    "Keep new mappings and materially revised content at needs-review until explicit human editorial approval."
+  ],
+  "unresolvedQuestions": [
+    "Should the first public pilot be linked from Explore and Residence statuses through a dedicated Can I do this route, while remaining secondary to Find my starting point on the homepage?",
+    "Should Iteration 15B first implement four deepest activity families—take or change work, side work or freelancing, study or training, and start or manage a business—while family, regulated-profession, re-entry, and tax-only entry points follow after the interaction is validated?",
+    "Should a result be allowed to use a needs-review structured assertion with an explicit editorial warning, or should the cross-reference expose only approved assertions and replace every other branch with canonical links plus an authority-check message?",
+    "Should non-sensitive selections be encoded in the URL for browser history and sharing, with no local or account persistence unless a later user need justifies it?",
+    "Should search and FAQ results link directly into a preselected activity while preserving the original query in browser history?",
+    "Should the interface call its reliability label Coverage status—Reviewed coverage, Limited coverage, or Authority check required—to avoid resembling an eligibility confidence score?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-13",
+    "note": "The editor approved the recommended dedicated route, four deep pilot activities plus four focused handoffs, strict assertion-level public-use gate, non-persistent URL state, search and FAQ preselection direction, and coverage-status language."
+  }
+}

@@ -1,12 +1,13 @@
 import { faqs } from "@/data/faqs";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { residenceStatuses } from "@/data/residence-statuses";
+import { activityCrossReferences } from "@/data/activity-cross-references";
 import { validateFaqCollection, type Faq } from "@/domain/faq/faq";
 import { getAllArticles } from "./articles";
 import { getAllGlossaryTerms } from "./glossary";
 
 export type FaqTarget = Readonly<{
-  kind: "guide" | "group" | "journey" | "glossary" | "residence-status";
+  kind: "guide" | "group" | "journey" | "glossary" | "residence-status" | "activity";
   id: string;
   label: string;
   href: string;
@@ -23,6 +24,7 @@ validateFaqCollection(faqs, {
   journeyIds: guidedJourneys.map(({ id }) => id),
   glossaryTermIds: glossaryTerms.map(({ id }) => id),
   residenceStatusIds: residenceStatuses.map(({ id }) => id),
+  activityIds: activityCrossReferences.map(({ id }) => id),
 });
 
 /** Resolves stable FAQ relationships at the content boundary so UI components receive display-ready links. */
@@ -47,6 +49,10 @@ function resolveTargets(faq: Faq): readonly FaqTarget[] {
     ...faq.relatedResidenceStatusIds.flatMap((id) => {
       const status = residenceStatuses.find((candidate) => candidate.id === id);
       return status ? [{ kind: "residence-status" as const, id, label: `${status.englishName} status`, href: `/residence-statuses/${status.slug}` }] : [];
+    }),
+    ...faq.relatedActivityIds.flatMap((id) => {
+      const activity = activityCrossReferences.find((candidate) => candidate.id === id);
+      return activity ? [{ kind: "activity" as const, id, label: activity.shortLabel, href: `/can-i-do-this?activity=${activity.id}` }] : [];
     }),
   ];
 }

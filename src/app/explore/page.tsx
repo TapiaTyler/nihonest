@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ExploreDiscovery } from "@/components/discovery/explore-discovery";
 import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { residenceStatuses } from "@/data/residence-statuses";
@@ -26,6 +27,13 @@ export default function ExplorePage() {
           Browse a high-level group or search the complete knowledgebase. Individual guides and Japanese terms remain public and link to the responsible authorities.
         </p>
       </header>
+      <aside className="mt-8 max-w-3xl rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div>
+          <p className="font-semibold text-teal-950">Not sure which rule or status applies?</p>
+          <p className="mt-1 text-sm leading-6 text-teal-900">Start with an activity and see the separate facts, guidance, and authorities you need to check.</p>
+        </div>
+        <Link href="/can-i-do-this" className="mt-4 inline-flex min-h-11 shrink-0 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:mt-0">Explore an activity →</Link>
+      </aside>
       <StageRecommendations articles={articles} journeys={getAllGuidedJourneys()} location="explore" />
       <ExploreDiscovery
         groups={getAllArticleGroups()}

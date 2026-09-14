@@ -1,8 +1,9 @@
 "use client";
 
-import { type ReactNode, useEffect, useId, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { ArticleCard } from "@/components/content/article-card";
+import { ActivitySearchSuggestion } from "@/components/activity-cross-reference/activity-search-suggestion";
 import { FaqResult } from "@/components/faq/faq-result";
 import { GlossaryCard } from "@/components/glossary/glossary-card";
 import { ArticleGroupCard } from "./article-group-card";
@@ -13,10 +14,11 @@ import type { FaqEntry } from "@/lib/content/faqs";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
-import { defaultKnowledgebaseSearchFilters, hasActiveKnowledgebaseSearch, searchKnowledgebase, type ArticleSearchTranslation, type KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
+import { buildKnowledgebaseSearchIndex, defaultKnowledgebaseSearchFilters, hasActiveKnowledgebaseSearch, searchKnowledgebaseIndex, type ArticleSearchTranslation, type KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
 import { useContentLocale } from "@/components/localization/content-locale-provider";
 import { contentLocalePreferenceSchema } from "@/domain/localization/content-locale";
 import { writeContentLocale } from "@/lib/storage/content-locale";
+import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
 
 const contentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
   guide: "Guide", reference: "Reference", checklist: "Checklist", glossary: "Glossary", "official-procedure": "Official procedure",
@@ -76,12 +78,17 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
 }>) {
   const { locale } = useContentLocale();
   const searchId = useId();
+  const [searchIsPending, startSearchTransition] = useTransition();
   const [filters, setFilters] = useState<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
   const filtersRef = useRef<KnowledgebaseSearchFilters>(defaultKnowledgebaseSearchFilters);
   const isSearching = hasActiveKnowledgebaseSearch(filters);
+  const knowledgebaseIndex = useMemo(
+    () => buildKnowledgebaseSearchIndex(groups, articles, terms, faqEntries.map(({ faq }) => faq), { locale, articleTranslations }),
+    [articleTranslations, articles, faqEntries, groups, locale, terms],
+  );
   const results = useMemo(
-    () => searchKnowledgebase(groups, articles, terms, filters, faqEntries.map(({ faq }) => faq), { locale, articleTranslations }),
-    [articleTranslations, articles, faqEntries, filters, groups, locale, terms],
+    () => searchKnowledgebaseIndex(knowledgebaseIndex, filters),
+    [filters, knowledgebaseIndex],
   );
   const groupResults = results.flatMap((result) => result.kind === "group" ? [result.group] : []);
   const faqResults = results.flatMap((result) => {
@@ -133,6 +140,15 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
     sessionStorage.setItem(exploreReturnStorageKey, search ? `/explore?${search}` : "/explore");
   }
 
+  function commitQuery(value: string) {
+    const next = { ...filtersRef.current, query: value };
+    filtersRef.current = next;
+    startSearchTransition(() => setFilters(next));
+    const search = searchForFilters(next, locale);
+    window.history.replaceState(null, "", search ? `/explore?${search}` : "/explore");
+    sessionStorage.setItem(exploreReturnStorageKey, search ? `/explore?${search}` : "/explore");
+  }
+
   function clearSearch() {
     filtersRef.current = defaultKnowledgebaseSearchFilters;
     setFilters(defaultKnowledgebaseSearchFilters);
@@ -147,11 +163,10 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
         <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">Search every guide and term</h2>
         <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-slate-900">What do you need help with?</label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <input
+          <DebouncedSearchInput
             id={searchId}
-            type="search"
             value={filters.query}
-            onChange={(event) => updateFilter("query", event.target.value)}
+            onCommit={commitQuery}
             placeholder={locale === "ja" ? "例：在留資格、ビザ、日本へ入国" : "Try bank account, Student status, or juminhyo"}
             className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
           />
@@ -179,7 +194,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
       </section>
 
       {isSearching ? (
-        <section className="mt-12" aria-labelledby="search-results-heading">
+        <section className="mt-12" aria-labelledby="search-results-heading" aria-busy={searchIsPending}>
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="eyebrow">Search results</p>
@@ -187,6 +202,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
             </div>
             <p className="text-sm text-slate-500" aria-live="polite">{results.length} {results.length === 1 ? "result" : "results"}</p>
           </div>
+          {filters.query.trim() && <ActivitySearchSuggestion query={filters.query} returnTo={returnTo} />}
           {results.length > 0 ? (
             <div className="mt-7">
               <nav aria-label="Jump to result type" className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -205,16 +221,14 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
               {faqResults.length > 0 && (
                 <ResultSection id="result-faqs" title="Frequently asked questions" count={faqResults.length} layout="list">
                   <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                    {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} />)}
+                    {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} returnTo={returnTo} />)}
                   </div>
                 </ResultSection>
               )}
               {articleResults.length > 0 && (
                 <ResultSection id="result-guides" title="Guides" count={articleResults.length}>
                   {articleResults.map((article) => {
-                    const translation = articleTranslations.find((candidate) => (
-                      candidate.contentId === article.id && candidate.targetLocale === locale
-                    ));
+                    const translation = knowledgebaseIndex.translationsByArticleId.get(article.id);
                     const presentedArticle = translation
                       ? { ...article, title: translation.title, description: translation.description }
                       : article;

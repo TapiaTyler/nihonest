@@ -71,6 +71,12 @@ function renderDiscovery(articleTranslations: readonly ArticleSearchTranslation[
   );
 }
 
+function enterSearch(value: string) {
+  const input = screen.getByRole("searchbox");
+  fireEvent.change(input, { target: { value } });
+  fireEvent.blur(input);
+}
+
 describe("ExploreDiscovery", () => {
   beforeEach(() => {
     window.history.replaceState(null, "", "/explore");
@@ -92,7 +98,7 @@ describe("ExploreDiscovery", () => {
       "All", "Banking", "Daily life", "Employment", "Healthcare", "Housing", "Immigration", "Language", "Municipal procedures", "Taxes", "Transportation",
     ]);
     expect(Array.from(screen.getByRole("combobox", { name: "Audience" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
-      "All", "Newcomer", "Student", "Employee", "Freelancer", "Business owner", "Spouse", "Dependent", "Parent",
+      "All", "Newcomer", "Student", "Education provider", "Employer", "Employee", "Freelancer", "Business owner", "Spouse", "Dependent", "Parent",
     ]);
     expect(Array.from(screen.getByRole("combobox", { name: "Content type" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
       "All", "Checklist", "Glossary", "Guide", "Official procedure", "Reference",
@@ -130,7 +136,7 @@ describe("ExploreDiscovery", () => {
 
   it("returns individual articles without opening a group", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "bank account" } });
+    enterSearch("bank account");
 
     expect(screen.getByRole("link", { name: "Opening a bank account" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
@@ -150,7 +156,7 @@ describe("ExploreDiscovery", () => {
       title: "銀行口座を開設する",
       description: "銀行の審査に備えて住所と本人確認書類を準備します。",
     }]);
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "銀行口座" } });
+    enterSearch("銀行口座");
 
     expect(screen.getByRole("link", { name: "銀行口座を開設する" })).toBeInTheDocument();
     expect(screen.getByText("Japanese pilot translation")).toBeInTheDocument();
@@ -159,7 +165,7 @@ describe("ExploreDiscovery", () => {
 
   it("returns FAQ questions and their compact canonical links", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "rent needs bank account" } });
+    enterSearch("rent needs bank account");
 
     expect(screen.getByRole("heading", { name: "How do I handle the address, apartment, and bank-account loop after arriving?" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "FAQs (1)" })).toHaveAttribute("href", "#result-faqs");
@@ -168,7 +174,7 @@ describe("ExploreDiscovery", () => {
 
   it("hands an unsuccessful Explore query to FAQ search without carrying filters", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "software developer" } });
+    enterSearch("software developer");
     fireEvent.change(screen.getByRole("combobox", { name: "Topic" }), { target: { value: "healthcare" } });
 
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
@@ -180,7 +186,7 @@ describe("ExploreDiscovery", () => {
 
   it("can limit results to matching groups", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "bank account" } });
+    enterSearch("bank account");
     fireEvent.click(screen.getByRole("button", { name: "Groups" }));
 
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
@@ -189,7 +195,7 @@ describe("ExploreDiscovery", () => {
 
   it("integrates glossary results and macron-free romanization", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "juminhyo" } });
+    enterSearch("juminhyo");
 
     expect(screen.getByRole("link", { name: "Certificate of Residence" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Glossary terms (1)" })).toHaveAttribute("href", "#result-terms");
@@ -198,7 +204,7 @@ describe("ExploreDiscovery", () => {
 
   it("persists active discovery state in result links", () => {
     renderDiscovery();
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "bank account" } });
+    enterSearch("bank account");
 
     expect(window.location.search).toBe("?q=bank+account");
     expect(screen.getByRole("link", { name: "Opening a bank account" })).toHaveAttribute(

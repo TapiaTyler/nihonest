@@ -2,6 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
+import { activityCrossReferences } from "@/data/activity-cross-references";
 import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { validateFaqCollection } from "@/domain/faq/faq";
@@ -22,6 +23,7 @@ describe("FAQ catalog", () => {
       journeyIds: guidedJourneys.map(({ id }) => id),
       glossaryTermIds: glossaryTerms.map(({ id }) => id),
       residenceStatusIds: residenceStatuses.map(({ id }) => id),
+      activityIds: activityCrossReferences.map(({ id }) => id),
     })).not.toThrow();
   });
 });

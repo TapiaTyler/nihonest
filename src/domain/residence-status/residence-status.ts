@@ -85,8 +85,18 @@ export const structuredResidenceStatusGuidanceSchema = z.object({
   sourceAssertions: z.array(z.object({
     sourceId: stableIdSchema,
     supports: z.array(z.string().min(1)).min(1),
+    editorialState: z.enum(["researched", "approved"]).default("researched"),
+    approvedAt: z.iso.date().optional(),
     effectiveFrom: z.iso.date().optional(),
     lastCheckedAt: z.iso.date(),
+  }).superRefine((assertion, context) => {
+    if ((assertion.editorialState === "approved") !== Boolean(assertion.approvedAt)) {
+      context.addIssue({
+        code: "custom",
+        path: ["approvedAt"],
+        message: "Decision-support assertion approval requires a matching approval date.",
+      });
+    }
   })).min(1),
 });
 
@@ -125,6 +135,17 @@ export const residenceStatusSchema = z.object({
 export type ResidenceStatus = z.infer<typeof residenceStatusSchema>;
 export type ResidenceStatusCategory = z.infer<typeof residenceStatusCategorySchema>;
 export type StructuredResidenceStatusGuidance = z.infer<typeof structuredResidenceStatusGuidanceSchema>;
+export type StructuredResidenceStatusGuidanceInput = z.input<typeof structuredResidenceStatusGuidanceSchema>;
+
+/** Only explicitly approved, already-effective assertions may drive public decision-support claims. */
+export function assertionCanDriveDecisionSupport(
+  assertion: StructuredResidenceStatusGuidance["sourceAssertions"][number],
+  asOf = new Date(),
+): boolean {
+  if (assertion.editorialState !== "approved" || !assertion.approvedAt) return false;
+  if (!assertion.effectiveFrom) return true;
+  return assertion.effectiveFrom <= asOf.toISOString().slice(0, 10);
+}
 
 export function validateResidenceStatusCollection(
   residenceStatuses: readonly ResidenceStatus[],

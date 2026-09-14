@@ -1214,6 +1214,33 @@ Real documents create privacy and redaction risks, while realistic replicas can 
 
 ---
 
+## ADR-064 — Activity cross-references explain rule layers without deciding eligibility
+
+**Status:** Accepted
+
+### Decision
+
+Implement “Can I do this?” as a deterministic educational cross-reference over curated activities and controlled non-sensitive answers. Results identify potentially relevant residence routes, independent legal or practical layers, facts still requiring confirmation, canonical guidance, and responsible authorities. They do not rank routes, calculate eligibility, predict permission, or declare an activity legal.
+
+Only an assertion carrying explicit human editorial approval may appear as a substantive public rule statement. Researched, stale, future-dated, missing, or conflicting assertions may provide editorial preview context but public results must stop at orientation, canonical reading, and an authority check. Describe the state of Nihonest's material as coverage, never confidence in a person's outcome.
+
+Keep selections in URL state for refresh, browser navigation, and optional sharing. Do not persist them to device or account storage, collect free-text personal narratives or documents, or alter a user's saved journey. Use four deep initial activities and focused handoffs for the remaining categories rather than attempting every case at once.
+
+### Reason
+
+One proposed activity can engage immigration, employment or contract, professional-licensing, tax, social-insurance, and local rules independently. A conventional eligibility questionnaire would imply that a finite set of answers can replace full facts, current law, discretion, and the responsible authority. Curated mappings and an assertion gate keep every displayed relationship inspectable while giving users a useful starting point.
+
+### Consequences
+
+- the tool remains available without an account and stores no cross-reference profile;
+- job titles, search aliases, and user selections are retrieval inputs rather than authorization facts;
+- general orientation may explain which layer to inspect, but unapproved detailed claims are not rendered;
+- FAQ and Explore integrations may preselect an activity but must preserve browser history and the user's original discovery context;
+- journey links are optional handoffs and never overwrite personalization; and
+- future activity expansion requires reviewed mappings and sources rather than generative legal inference.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

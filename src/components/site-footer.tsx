@@ -8,6 +8,7 @@ export function SiteFooter() {
           <Link href="/" className="text-base font-semibold text-white hover:text-teal-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300">Nihonest</Link>
           <p className="mt-3 leading-6">Public-first guidance for finding your place in Japan.</p>
           <p className="mt-3 leading-6 text-slate-400">All public guidance is available without an account.</p>
+          <p className="mt-3 leading-6 text-slate-400">General educational information, not legal advice. Confirm important decisions with the responsible authority or a qualified professional.</p>
         </div>
         <nav aria-label="Guidance links" className="hidden sm:block">
           <h2 className="font-semibold text-white">Find guidance</h2>
@@ -16,6 +17,7 @@ export function SiteFooter() {
             <li><Link href="/faq" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">FAQ</Link></li>
             <li><Link href="/glossary" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Glossary</Link></li>
             <li><Link href="/residence-statuses" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Statuses</Link></li>
+            <li><Link href="/can-i-do-this" className="inline-flex min-h-11 items-center px-3 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-300">Can I do this?</Link></li>
           </ul>
         </nav>
         <nav aria-label="Personal links" className="hidden sm:block">

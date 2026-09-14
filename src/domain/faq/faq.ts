@@ -35,6 +35,7 @@ export const faqSchema = z.object({
   relatedJourneyIds: z.array(stableIdSchema).default([]),
   relatedGlossaryTermIds: z.array(stableIdSchema).default([]),
   relatedResidenceStatusIds: z.array(stableIdSchema).default([]),
+  relatedActivityIds: z.array(stableIdSchema).default([]),
   status: z.enum(["draft", "verified", "needs-review"]),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
@@ -50,7 +51,8 @@ export const faqSchema = z.object({
     + faq.relatedGroupIds.length
     + faq.relatedJourneyIds.length
     + faq.relatedGlossaryTermIds.length
-    + faq.relatedResidenceStatusIds.length;
+    + faq.relatedResidenceStatusIds.length
+    + faq.relatedActivityIds.length;
   if (targetCount === 0) {
     context.addIssue({ code: "custom", message: "FAQ entries must point to at least one canonical resource." });
   }
@@ -71,6 +73,7 @@ type FaqTargetCatalog = Readonly<{
   journeyIds: readonly string[];
   glossaryTermIds: readonly string[];
   residenceStatusIds: readonly string[];
+  activityIds?: readonly string[];
 }>;
 
 /** Validates FAQ-to-content links so a discovery question cannot silently lead to a removed resource. */
@@ -86,6 +89,7 @@ export function validateFaqCollection(faqs: readonly Faq[], targets: FaqTargetCa
     relatedJourneyIds: new Set(targets.journeyIds),
     relatedGlossaryTermIds: new Set(targets.glossaryTermIds),
     relatedResidenceStatusIds: new Set(targets.residenceStatusIds),
+    relatedActivityIds: new Set(targets.activityIds ?? []),
   } as const;
 
   for (const faq of faqs) {
