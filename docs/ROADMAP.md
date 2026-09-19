@@ -519,6 +519,7 @@ Objectives:
 - compare education routes and school types—including Japanese-language schools, universities, graduate schools, professional training colleges, exchange programs, and short courses—together with academic, language, financial, admission, institutional, and Student-status requirements;
 - add organization-facing guidance for education providers and employers that explains lawful recruitment or admission, activity and status fit, organization-side evidence, authorized COE representation, onboarding, recordkeeping, and applicable post-acceptance reporting; clearly state that ISA—not the accepting organization—issues the COE and that organizational support never guarantees approval;
 - distinguish work-status qualification paths such as a relevant bachelor's degree or other education, professional experience alternatives, Japanese professional licensing, remuneration, employer or contracting-organization requirements, route-specific exceptions, and supporting evidence;
+- audit material government fees and other foreseeable costs across the catalog; publish nationally fixed official amounts with effective dates, charged events, payment channels, transition rules, and material exemptions while keeping municipal, consular, school, agency, and private charges explicitly variable;
 - explain common employment language expectations and credentials, including JLPT levels, occupation-specific Japanese needs, business communication, English-teaching requirements, and other relevant tests or evidence; distinguish immigration criteria, regulated-profession rules, employer preferences, and demonstrated workplace ability, and do not present “native English” wording as a universal legal requirement;
 - expand carefully sourced practical-law and compliance guidance, including acquiring or converting a driver's license and understanding rules for driving in Japan;
 - build a practical tax curriculum covering tax residence, national income tax, resident tax, payroll withholding and year-end adjustment, final returns, side income and self-employment, tax treaties and foreign tax credits, consumption-tax and invoice-system questions, departure filings, and appointing a tax agent;
@@ -730,12 +731,48 @@ Discovery is exploratory and may expand or divide the implementation batch. It m
 
 **Iteration 16B-2 first bounded pass complete locally:** the profession-retrieval sweep confirms that the remaining risk is ambiguous or regulated work rather than a need for thin articles for every job title. Veterinary, psychology/counseling, social-work, childcare, architecture, electrical, and laboratory searches now route into duty-based comparison guidance; the medical/care chooser explains the principal qualification and activity questions without assigning a status from a title. The research record is preserved in `content/editorial/discovery/profession-retrieval-and-terminology-closure.json` and `docs/research/PROFESSION-RETRIEVAL-AND-TERMINOLOGY-CLOSURE.md`. Twelve high-confidence single-term mismatches were repaired naturally in existing prose, reducing the conservative terminology queue from 55 to 43 articles (115 unmatched references). Focused discovery and retrieval-metadata tests pass. The next closure pass reviews that bounded remainder, then runs the coverage, editorial, and source workflows for the Phase 13 human-review handoff.
 
+**Iteration 16B-2 second bounded pass complete locally:** seven connected arrival-and-settlement guides now teach their declared Japanese terminology in context: address registration, My Number, National Health Insurance, National Pension, housing, mobile service, and banking. The pass adds the Japanese terms where they clarify actual documents, offices, verification, accounts, or contract costs rather than inserting them solely to satisfy metadata. The conservative queue is reduced to 36 articles and 91 unmatched references. The remaining status-heavy set stays reserved for further contextual review.
+
+**Iteration 16B-2 third bounded pass complete locally:** six student-entry and school-transition guides now introduce their declared Japanese terms in the passages that distinguish Student and Temporary Visitor routes, visa and COE records, landing permission, residence documentation, and outside-activity permission. The conservative queue is reduced to 30 articles and 70 unmatched references. The remaining queue is primarily residence-status guidance and will continue in bounded route families.
+
+**Iteration 16B-2 fourth bounded pass complete locally:** six professional-work guides now introduce every declared Japanese term in context: Engineer/Specialist in Humanities/International Services, Instructor, Professor, Researcher, Intra-company Transferee, and Legal/Accounting Services. Status of Residence, Certificate of Eligibility, and applicable extension terminology now appear where the route, first-entry evidence, and renewal distinctions are explained. The conservative queue is reduced to 24 articles and 55 unmatched references.
+
+**Iteration 16B-2 fifth bounded pass complete locally:** six connected Designated Activities guides now introduce their declared status, period, permission, visa, change, and residence-card terminology in context. The post-employment sequence also teaches Designated Activities and Employment Continuation Support in Japanese across the job-ending, notification, and renewal/change guides. This preserves the distinction between graduate continued job hunting, ordinary job loss, and the narrow employment-continuation route. After including the terminology newly declared for that sequence, the conservative queue is reduced to 18 articles and 41 unmatched references.
+
+**Iteration 16B-2 sixth bounded pass complete locally:** five family and personal-status guides now introduce every declared Japanese term in context: Dependent, Long-Term Resident, Permanent Residence, Spouse or Child of Japanese National, and Spouse or Child of Permanent Resident. Status of Residence, Certificate of Eligibility, Permanent Resident, and Residence Card terminology now appears where the route, overseas-entry evidence, or continuing documentation is explained. The conservative queue is reduced to 13 articles and 31 unmatched references.
+
+**Iteration 16B-2 seventh bounded pass complete locally:** the Training, Technical Intern Training, Employment for Skill Development, and Specified Skilled Worker guides now introduce every declared Japanese term in context. Status of Residence and Certificate of Eligibility appear in route and entry explanations, while the SSW guide teaches Technical Intern Training and Employment for Skill Development where it distinguishes the two transition paths. The conservative queue is reduced to 9 articles and 21 unmatched references.
+
+**Iteration 16B-2 eighth bounded pass complete locally:** Business Manager, Start-up, Highly Skilled Professional, Cultural Activities, Religious Activities, and Skilled Labor now introduce every declared Japanese term in context. Status of Residence and Certificate of Eligibility appear where route scope and entry evidence are explained, while Start-up also distinguishes the consular Visa term from the COE and residence permission. The conservative queue is reduced to 3 articles and 8 unmatched references.
+
+**Iteration 16B-2 route-field terminology supplement complete locally:** all nineteen distinct fields represented across Specified Skilled Worker and Employment for Skill Development and all nine Skilled Labor occupational categories now have glossary-backed Japanese, kana, and romaji explanations. Shared fields reuse one glossary record without implying that the two workforce routes have identical requirements. Training and Cultural Activities also link each named neighboring route directly within their comparison sections. The additions introduce every newly declared term in prose, so the remaining conservative queue stays at 3 articles and 8 unmatched references.
+
+**Iteration 16B-2 ninth and final bounded pass complete locally:** Diplomatic and Official now introduce Status of Residence, Visa, and Landing Permission in the application sequence, while Consumption Tax and the Invoice System introduces Taxable Business and Licensed Tax Accountant where they affect registration and advice. The conservative static terminology queue is now empty: every glossary term declared by an article has a visible contextual link in that article's prose. This closes the bounded inline-terminology portion of Phase 13; broader prose quality and human editorial review remain separate requirements.
+
+**Iteration 16B-3 official-fee and cost-disclosure discovery approved; external-research pilot prepared:** `content/editorial/discovery/official-fees-and-cost-disclosure.json` and `docs/research/OFFICIAL-FEES-AND-COST-DISCLOSURE.md` identify a material gap in immigration and adjacent practical guidance. The implementation pass will first cover the current and October 1, 2026 immigration-fee regimes, the July 1, 2026 consular-visa revision, no-fee COE applications, re-entry permits, and employment-authorization certificates. It will then audit the remaining catalog for useful official charges while separating taxes and contributions, variable municipal charges, and private costs. The reusable context, evidence standard, JSON return schema, and independent comparison brief in `docs/research-handoff` allow ChatGPT web research to be returned for structural validation and targeted Codex verification before implementation. Amounts must be effective-dated and source-maintained; a copied price without its charged event, payment channel, transition rule, and variability boundary is not acceptable.
+
+**Iteration 16B-4 — Final Phase 13 closure:** finish the bounded inline-terminology review, run coverage, editorial, relationship, and source workflows, record unresolved human-review items, and prepare the canonical-English catalog for the structural refactor and subsequent localization rollout.
+
 Do not attempt every municipality simultaneously.
 
 Suggested checkpoint:
 
 ```text
 content: research visa guidance and add municipality coverage
+```
+
+---
+
+# Post–Phase 13 Structural Refactor Checkpoint
+
+Before multiplying the canonical catalog through Phase 14 localization, perform the behavior-preserving organization work described in `docs/refactor.md`. Priorities are to split oversized registries by domain, preserve stable IDs and public behavior, clarify module ownership and cross-module contracts, and add concise comments only where intent, state transitions, or non-obvious relationships are not clear from names and types.
+
+This checkpoint does not authorize a CMS, article database, monorepo, native client, or broad UI rewrite. Run it as small reviewable moves with focused validation so localization begins from stable content and domain boundaries.
+
+Suggested checkpoint:
+
+```text
+refactor: organize content and domain modules before localization
 ```
 
 ---

@@ -553,7 +553,7 @@ Phase 13 review should specifically check:
 - visa/status terminology and current program names;
 - periods of stay, renewal limits, transition paths, and important deadlines;
 - occupation and activity coverage, including commonly searched job titles and meaningful exclusions;
-- required evidence, financial thresholds, exceptions, and recent rule changes;
+- required evidence, financial thresholds, official fees and other material costs, exceptions, and recent rule changes;
 - national versus local scope;
 - whether Japanese terms are actually introduced in context;
 - whether conditional steps explain their conditions; and
@@ -565,4 +565,25 @@ Phase 13 uses `content/editorial/guidance-coverage-plan.json` as its durable cov
 
 Before implementing any substantive research batch, prepare a discovery record covering plausible topics, user situations, edge cases and exceptions, jurisdiction variables, primary-source candidates, affected content, scope boundaries, and unresolved questions. Review that proposed scope as its own checkpoint. The implementation pass begins only after the scope is accepted, reducing the chance that research discovers an important case after the content structure is already committed.
 
+Research may be conducted outside the repository when the researcher receives the bounded context, evidence standard, and return contract in `docs/research-handoff`. Returned evidence must preserve claim-to-source mappings and pass structural and identifier review before use. External research remains an input to editorial work; it cannot edit canonical guidance, confer review status, or replace targeted verification of consequential, conflicting, or newly changed claims.
+
 When Phase 13 changes a canonical article with a repository translation, mark the old artifact `stale`. Stale translations must not render or contribute localized search terms; retain them only as revision history until Phase 14 regeneration.
+
+---
+
+## 29. Fees, Charges, and Other Costs
+
+Do not present every amount a user may pay as a generic “fee.” Distinguish:
+
+- a government application, permission, issuance, or certificate fee;
+- a tax, insurance contribution, premium, or other liability calculated from the user's circumstances;
+- a municipal or prefectural charge whose amount varies locally;
+- a consular amount collected in local currency and affected by nationality, purpose, or exemption;
+- a school, agency, professional, housing, banking, utility, transport, or other private charge; and
+- a deposit, refundable payment, estimate, budget, or financial-eligibility threshold.
+
+When a precise official amount materially helps the reader, give the amount only with its currency, responsible authority, charged event, effective date, application-date or transition rule, payment channel, material exemptions or reductions, and a source that supports those details. If counter and online amounts differ, show both and identify any separate payment-processing charge rather than implying one universal total.
+
+Future-dated changes must be presented alongside the rule that remains current until the effective date. Archived amounts may explain an already-filed application, but must be visibly dated and must not appear to be the current default. A source change affecting an amount, effective date, or transition rule is a material editorial event and should enter source review and, when appropriate, the critical-update workflow.
+
+For volatile local or private prices, prefer the current official or provider page over a copied number unless a dated example is essential to understanding the process. Never imply that an example school tuition figure, housing estimate, municipal certificate charge, professional-service price, or exchange-rate conversion is universal.

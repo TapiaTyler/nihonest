@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nihonest.example/schemas/external-research-result.schema.json",
+  "title": "Nihonest external research result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "researchId",
+    "researchedAt",
+    "scope",
+    "claims",
+    "sources",
+    "conflicts",
+    "unresolvedQuestions",
+    "contentImpacts",
+    "followUpCandidates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "researchId": { "type": "string", "minLength": 1 },
+    "researchedAt": { "$ref": "#/$defs/date" },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["included", "excluded"],
+      "properties": {
+        "included": { "$ref": "#/$defs/nonEmptyStringArray" },
+        "excluded": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/claim" }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/conflict" }
+    },
+    "unresolvedQuestions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unresolvedQuestion" }
+    },
+    "contentImpacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contentImpact" }
+    },
+    "followUpCandidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "nullableDate": {
+      "anyOf": [
+        { "$ref": "#/$defs/date" },
+        { "type": "null" }
+      ]
+    },
+    "amount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "currency", "value", "minimum", "maximum", "unit", "qualifier"],
+      "properties": {
+        "kind": {
+          "enum": ["fixed", "range", "approximate", "variable", "none", "not-applicable"]
+        },
+        "currency": {
+          "type": ["string", "null"]
+        },
+        "value": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "minimum": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "maximum": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "unit": {
+          "type": ["string", "null"]
+        },
+        "qualifier": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "locator", "supportSummary"],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/nonEmptyString" },
+        "locator": { "$ref": "#/$defs/nonEmptyString" },
+        "supportSummary": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement",
+        "evidenceState",
+        "financialClassification",
+        "amount",
+        "jurisdiction",
+        "responsibleBody",
+        "chargedEvent",
+        "effectiveFrom",
+        "effectiveUntil",
+        "controllingDate",
+        "paymentChannels",
+        "exceptions",
+        "sourceReferences",
+        "affectedContentIds",
+        "researcherNotes"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "evidenceState": {
+          "enum": ["confirmed", "conflicting", "incomplete", "not-found"]
+        },
+        "financialClassification": {
+          "enum": [
+            "government-fee",
+            "tax-liability",
+            "insurance-or-social-contribution",
+            "local-variable-charge",
+            "consular-local-currency-fee",
+            "private-or-institutional-price",
+            "deposit",
+            "financial-eligibility-threshold",
+            "estimate-or-budget-example",
+            "no-fee-procedure",
+            "not-applicable"
+          ]
+        },
+        "amount": { "$ref": "#/$defs/amount" },
+        "jurisdiction": { "$ref": "#/$defs/nonEmptyString" },
+        "responsibleBody": { "type": ["string", "null"] },
+        "chargedEvent": { "type": ["string", "null"] },
+        "effectiveFrom": { "$ref": "#/$defs/nullableDate" },
+        "effectiveUntil": { "$ref": "#/$defs/nullableDate" },
+        "controllingDate": { "type": ["string", "null"] },
+        "paymentChannels": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "sourceReferences": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceReference" }
+        },
+        "affectedContentIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "researcherNotes": { "type": ["string", "null"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "organization",
+        "title",
+        "url",
+        "authorityLevel",
+        "language",
+        "publishedOrUpdatedAt",
+        "accessedAt",
+        "supportsClaimIds",
+        "notes"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "organization": { "$ref": "#/$defs/nonEmptyString" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "url": { "type": "string", "format": "uri" },
+        "authorityLevel": {
+          "enum": ["law-or-regulation", "government", "public-institution", "official-provider", "secondary"]
+        },
+        "language": { "$ref": "#/$defs/nonEmptyString" },
+        "publishedOrUpdatedAt": { "$ref": "#/$defs/nullableDate" },
+        "accessedAt": { "$ref": "#/$defs/date" },
+        "supportsClaimIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "claimIds", "description", "recommendedResolution"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "claimIds": { "$ref": "#/$defs/nonEmptyStringArray" },
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "recommendedResolution": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "unresolvedQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "whyItMatters", "researchAttempted"],
+      "properties": {
+        "question": { "$ref": "#/$defs/nonEmptyString" },
+        "whyItMatters": { "$ref": "#/$defs/nonEmptyString" },
+        "researchAttempted": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "contentImpact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contentType", "contentId", "proposedTitle", "action", "reason", "claimIds"],
+      "properties": {
+        "contentType": {
+          "enum": ["article", "glossary", "faq", "residence-status", "journey", "source", "local-supplement", "annotated-document", "other"]
+        },
+        "contentId": { "type": ["string", "null"] },
+        "proposedTitle": { "type": ["string", "null"] },
+        "action": { "enum": ["create", "update", "review", "remove", "no-change"] },
+        "reason": { "$ref": "#/$defs/nonEmptyString" },
+        "claimIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      }
+    }
+  }
+}

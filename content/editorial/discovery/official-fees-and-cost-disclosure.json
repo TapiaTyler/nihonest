@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "id": "official-fees-and-cost-disclosure",
+  "workstreamId": "final-catalog-audit",
+  "preparedAt": "2026-09-18",
+  "reviewState": "scope-approved",
+  "topicCandidates": [
+    "Effective-dated immigration fees for change of status, extension of stay, permanent residence, re-entry permission, and certificates of authorized employment.",
+    "Consular visa issuance fees, nationality or purpose exceptions, local-currency collection, and separate approved-agency handling charges.",
+    "No-fee procedures that users may reasonably assume carry a charge, beginning with Certificate of Eligibility applications.",
+    "Material national, prefectural, municipal, school, housing, transport, document, tax, insurance, and private costs already implicated by canonical guidance.",
+    "A maintainable presentation contract that separates official fees, liabilities, variable charges, deposits, financial thresholds, estimates, and private prices."
+  ],
+  "userSituations": [
+    "A permanent-residence applicant needs to know whether the current fee or the October 1, 2026 fee applies to an application already filed.",
+    "A resident comparing online and counter procedures needs to see the correct government fee, any processing charge, payment method, and when payment becomes due.",
+    "A visa applicant needs to distinguish a Japanese consular issuance fee from an agency handling charge and understand that nationality or purpose may change the amount.",
+    "A student or worker needs to know that the COE application itself has no government application fee while school, agent, translation, mailing, or professional charges may still exist.",
+    "A reader budgeting for a municipal, driving, housing, school, tax-document, or daily-life procedure needs a current official handoff when no national fixed price exists."
+  ],
+  "edgeCasesAndExceptions": [
+    "The application acceptance date, not only the decision date, controls which immigration fee regime applies during a transition.",
+    "From October 1, 2026, change-of-status and extension fees vary by granted period; counter and online totals differ, and online payments include a separate processing charge.",
+    "Permanent residence is not an online procedure in the same way as eligible change or extension applications, and its fee must not be inferred from the online duration table.",
+    "Fee reductions or exemptions may apply in defined circumstances and require separate source-backed explanation.",
+    "Special re-entry permission and an ordinary re-entry permit are different procedures; a fee for one must not be attributed to the other.",
+    "A visa fee may be waived or differ by nationality or purpose, is collected in local currency, and may be accompanied by a separate approved-agency handling charge.",
+    "Taxes, health-insurance premiums, pension contributions, tuition, rent-related charges, and proof-of-funds thresholds are not application fees and often cannot be reduced to one national amount."
+  ],
+  "jurisdictionVariables": [
+    "Application acceptance date, permission type, granted period of stay, counter or online channel, payment method, and any reduction or exemption.",
+    "Consular post, country or region, local currency, nationality, purpose of visit, visa entries, and approved-agency use.",
+    "Prefecture or municipality, issuing office, document type, service channel, and current local fee schedule.",
+    "Institution, provider, contract, refund terms, deposit treatment, tax status, insurance enrollment, and the user's individual circumstances."
+  ],
+  "primarySourceCandidates": [
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/01_00644.html",
+      "supports": ["October 1, 2026 immigration-fee revision, transition rule, reductions or exemptions, and payment-channel changes"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/01_00646.html",
+      "supports": ["October 1, 2026 counter fees, including the 200,000-yen permanent-residence fee"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/11_00107.html",
+      "supports": ["October 1, 2026 online fee schedule, processing charges, payment methods, and unchanged online re-entry and employment-certificate base fees"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/content/001433809.pdf",
+      "supports": ["Fees applying to applications accepted from April 1, 2025 through September 30, 2026"]
+    },
+    {
+      "organization": "Ministry of Foreign Affairs of Japan",
+      "url": "https://www.mofa.go.jp/j_info/visit/visa/procedure/pagewe_000001_00391.html",
+      "supports": ["Consular visa fees for applications accepted from July 1, 2026, local-currency collection, exceptions, and agency handling charges"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/applications/procedures/16-1.html",
+      "supports": ["No government fee for a Certificate of Eligibility application"]
+    }
+  ],
+  "contentImpacts": [
+    {
+      "kind": "article",
+      "id": "permanent-residence-in-japan",
+      "action": "update",
+      "reason": "Explain the current 10,000-yen fee, the 200,000-yen fee for covered applications from October 1, 2026, the application-date transition rule, payment timing, and applicable relief boundary."
+    },
+    {
+      "kind": "article",
+      "id": "renewing-or-changing-your-status-of-residence",
+      "action": "update",
+      "reason": "Present current and future duration-based fees without collapsing counter, online, processing-charge, transition, or reduction distinctions."
+    },
+    {
+      "kind": "article",
+      "id": "reentry-permission-and-temporary-travel",
+      "action": "update",
+      "reason": "Distinguish free special re-entry handling from paid ordinary single or multiple re-entry permits and identify channel differences."
+    },
+    {
+      "kind": "article",
+      "id": "visa-and-status-of-residence-explained",
+      "action": "update",
+      "reason": "Separate COE, consular visa, landing, and residence-procedure fee concepts and route readers to the applicable current schedule."
+    },
+    {
+      "kind": "article",
+      "id": "student-visa-and-certificate-of-eligibility",
+      "action": "update",
+      "reason": "State that the COE application itself has no government fee while distinguishing school, agent, translation, delivery, and consular costs."
+    },
+    {
+      "kind": "article",
+      "id": "catalog-cost-audit",
+      "action": "review",
+      "reason": "Audit remaining guidance for material official charges and useful current handoffs without manufacturing universal amounts for variable costs."
+    }
+  ],
+  "scopeBoundaries": [
+    "Do not calculate an individual's taxes, insurance premiums, pension contributions, school budget, professional fees, or total relocation cost.",
+    "Do not copy volatile municipal or private prices merely to make an article appear complete; link to the responsible current schedule when a stable national amount does not exist.",
+    "Do not mix government charges, approved-agency handling fees, deposits, financial thresholds, and private prices in one unlabeled amount.",
+    "Do not show a future amount as already in force or hide the application-date transition rule.",
+    "Do not confer editorial-review status through this discovery or implementation pass."
+  ],
+  "unresolvedQuestions": [
+    "Should effective-dated fees become a reusable typed content component in this pass, or remain carefully formatted article content until repeated use proves the schema necessary?",
+    "Which locally variable charges are important enough for pilot municipality supplements, and which should remain official-link handoffs?",
+    "Should source monitoring classify an amount or effective-date change as its own high-priority review reason before the broader critical-update workflow is used?"
+  ],
+  "scopeApproval": {
+    "approvedAt": "2026-09-18",
+    "note": "The editor approved the official-fee and cost-disclosure workstream and a structured ChatGPT web research handoff pilot for independent comparison before implementation."
+  }
+}
