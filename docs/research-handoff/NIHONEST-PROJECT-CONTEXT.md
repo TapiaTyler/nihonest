@@ -29,7 +29,7 @@ The repository currently stores canonical English guidance in version-controlled
 - local supplements; and
 - annotated document examples.
 
-Research findings must reference only IDs supplied by the active brief. Suggested new content may use a descriptive proposed title, but must not invent a final repository ID.
+Formal research findings must reference only IDs supplied by the active brief. Topic-discovery suggestions may use a descriptive proposed title, but must not invent a final repository ID.
 
 ## Editorial states
 
@@ -70,4 +70,4 @@ Nihonest supports ordinary-language discovery, but search aliases are routing me
 
 ## Current sequencing
 
-Canonical English research and review occur before catalog-wide localization. A behavior-preserving structural refactor is planned after Phase 13 closes and before Phase 14 localization. External research should not propose a CMS, database migration, native application, or broad architectural rewrite unless the active brief expressly requests it.
+Canonical English research and review occur before catalog-wide localization. A behavior-preserving structural refactor is planned after Phase 13 closes and before Phase 14 localization. External topic discovery should concentrate on overlooked coverage, edge cases, and useful source leads. Codex is responsible for primary-source verification and repository implementation. Neither workflow should propose a CMS, database migration, native application, or broad architectural rewrite unless the active brief expressly requests it.

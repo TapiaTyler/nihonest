@@ -5,8 +5,8 @@
   "preparedAt": "2026-09-18",
   "reviewState": "scope-approved",
   "topicCandidates": [
-    "Effective-dated immigration fees for change of status, extension of stay, permanent residence, re-entry permission, and certificates of authorized employment.",
-    "Consular visa issuance fees, nationality or purpose exceptions, local-currency collection, and separate approved-agency handling charges.",
+    "Effective-dated immigration fees for change of status, extension of stay, permanent residence, re-entry permission, and certificates of authorized employment, including the separate 2026 online processing charges.",
+    "Consular visa issuance fees, MOFA reference amounts, nationality or purpose exceptions, local-currency collection, non-issuance treatment, and separate approved-agency handling charges.",
     "No-fee procedures that users may reasonably assume carry a charge, beginning with Certificate of Eligibility applications.",
     "Material national, prefectural, municipal, school, housing, transport, document, tax, insurance, and private costs already implicated by canonical guidance.",
     "A maintainable presentation contract that separates official fees, liabilities, variable charges, deposits, financial thresholds, estimates, and private prices."
@@ -24,6 +24,8 @@
     "Permanent residence is not an online procedure in the same way as eligible change or extension applications, and its fee must not be inferred from the online duration table.",
     "Fee reductions or exemptions may apply in defined circumstances and require separate source-backed explanation.",
     "Special re-entry permission and an ordinary re-entry permit are different procedures; a fee for one must not be attributed to the other.",
+    "From October 1, 2026, eligible online ordinary re-entry and authorized-employment-certificate applications keep their base fees but add a separate 220-yen processing charge.",
+    "MOFA states that no visa fee is charged if a visa is not issued; this does not resolve every private agency, courier, withdrawal, or non-collection charge.",
     "A visa fee may be waived or differ by nationality or purpose, is collected in local currency, and may be accompanied by a separate approved-agency handling charge.",
     "Taxes, health-insurance premiums, pension contributions, tuition, rent-related charges, and proof-of-funds thresholds are not application fees and often cannot be reduced to one national amount."
   ],
@@ -57,7 +59,17 @@
     {
       "organization": "Ministry of Foreign Affairs of Japan",
       "url": "https://www.mofa.go.jp/j_info/visit/visa/procedure/pagewe_000001_00391.html",
-      "supports": ["Consular visa fees for applications accepted from July 1, 2026, local-currency collection, exceptions, and agency handling charges"]
+      "supports": ["Consular visa reference fees for applications accepted from July 1, 2026, local-currency collection, exceptions, no fee when a visa is not issued, and separate agency handling charges"]
+    },
+    {
+      "organization": "Embassy of Japan in the United States of America",
+      "url": "https://www.us.emb-japan.go.jp/itpr_en/travel_and_visa.html",
+      "supports": ["A bounded mission-specific example of July 2026 local-currency visa fees, exemptions, payment timing, and payment method"]
+    },
+    {
+      "organization": "Immigration Services Agency of Japan",
+      "url": "https://www.moj.go.jp/isa/10_00273.html",
+      "supports": ["Reduction and exemption measures applying from October 1, 2026 and the counter-application boundary"]
     },
     {
       "organization": "Immigration Services Agency of Japan",
@@ -98,6 +110,18 @@
     },
     {
       "kind": "article",
+      "id": "side-work-and-freelancing-on-a-work-status",
+      "action": "update",
+      "reason": "State that an ISA application for permission to engage in activity outside the current status carries no application fee, without implying that a particular activity qualifies."
+    },
+    {
+      "kind": "article",
+      "id": "documents-received-when-entering-japan",
+      "action": "update",
+      "reason": "Distinguish routine and qualifying no-fee residence-card procedures from the paid optional exchange and the more complex integrated-card cases."
+    },
+    {
+      "kind": "article",
       "id": "catalog-cost-audit",
       "action": "review",
       "reason": "Audit remaining guidance for material official charges and useful current handoffs without manufacturing universal amounts for variable costs."
@@ -113,10 +137,11 @@
   "unresolvedQuestions": [
     "Should effective-dated fees become a reusable typed content component in this pass, or remain carefully formatted article content until repeated use proves the schema necessary?",
     "Which locally variable charges are important enough for pilot municipality supplements, and which should remain official-link handoffs?",
-    "Should source monitoring classify an amount or effective-date change as its own high-priority review reason before the broader critical-update workflow is used?"
+    "Should the integrated residence and My Number Card cases receive a maintained visible table or remain a current-official-link handoff?",
+    "Should source monitoring classify a change to an amount, effective date, processor charge, payment channel, or anti-fraud sender domain as its own high-priority review reason before the broader critical-update workflow is used?"
   ],
   "scopeApproval": {
     "approvedAt": "2026-09-18",
-    "note": "The editor approved the official-fee and cost-disclosure workstream and a structured ChatGPT web research handoff pilot for independent comparison before implementation."
+    "note": "The editor approved the official-fee and cost-disclosure workstream. The September 19 external-research pilot was reconciled with the repository record before implementation; future ChatGPT web passes will primarily suggest overlooked topics and edge cases for Codex to verify."
   }
 }

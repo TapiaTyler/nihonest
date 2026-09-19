@@ -1,5 +1,7 @@
 # Nihonest external research standard
 
+> This is the optional formal evidence standard. The default ChatGPT web workflow is the lighter topic-discovery process in `TOPIC-DISCOVERY.md`; Codex performs the consequential primary-source research. Use this standard only when the editor explicitly requests a structured independent evidence return.
+
 ## 1. Work only within the brief
 
 Answer the supplied research questions and respect its exclusions. Record a potentially important out-of-scope issue under `followUpCandidates`; do not silently expand the workstream.

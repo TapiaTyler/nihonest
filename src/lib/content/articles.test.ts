@@ -1,8 +1,21 @@
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("article catalog", () => {
+  it("does not use unsupported pipe-table syntax in article MDX", async () => {
+    const directory = resolve(process.cwd(), "content/articles");
+    const files = (await readdir(directory)).filter((file) => file.endsWith(".mdx"));
+    const invalidFiles: string[] = [];
+
+    for (const file of files) {
+      const content = await readFile(resolve(directory, file), "utf8");
+      if (/^\s*\|.*\|\s*$/m.test(content)) invalidFiles.push(file);
+    }
+
+    expect(invalidFiles).toEqual([]);
+  });
+
   it("registers the temporary-travel MDX module used by article and journey relationships", async () => {
     const catalog = await readFile(resolve(process.cwd(), "src/lib/content/articles.ts"), "utf8");
 

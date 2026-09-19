@@ -565,13 +565,15 @@ Phase 13 uses `content/editorial/guidance-coverage-plan.json` as its durable cov
 
 Before implementing any substantive research batch, prepare a discovery record covering plausible topics, user situations, edge cases and exceptions, jurisdiction variables, primary-source candidates, affected content, scope boundaries, and unresolved questions. Review that proposed scope as its own checkpoint. The implementation pass begins only after the scope is accepted, reducing the chance that research discovers an important case after the content structure is already committed.
 
-Research may be conducted outside the repository when the researcher receives the bounded context, evidence standard, and return contract in `docs/research-handoff`. Returned evidence must preserve claim-to-source mappings and pass structural and identifier review before use. External research remains an input to editorial work; it cannot edit canonical guidance, confer review status, or replace targeted verification of consequential, conflicting, or newly changed claims.
+External ChatGPT web work should normally be used as a bounded topic-discovery pass: ask it to identify overlooked user situations, edge cases, adjacent procedures, occupations, journeys, fees, documents, terminology, jurisdiction variables, and promising official-source leads. Codex then compares those suggestions with the repository and performs the consequential primary-source research. The optional structured evidence-return contract in `docs/research-handoff` may still be used when explicitly requested, but it is not the default. External output cannot edit canonical guidance, confer review status, or replace targeted verification of consequential, conflicting, or newly changed claims.
 
 When Phase 13 changes a canonical article with a repository translation, mark the old artifact `stale`. Stale translations must not render or contribute localized search terms; retain them only as revision history until Phase 14 regeneration.
 
 ---
 
 ## 29. Fees, Charges, and Other Costs
+
+Article MDX does not enable GitHub pipe-table syntax. When a table materially improves comparison, use an accessible semantic JSX table with column headers, row headers where appropriate, a screen-reader caption, and horizontal overflow for narrow viewports. Otherwise use headings and lists. Never paste a pipe table into an article because it will render as literal text.
 
 Do not present every amount a user may pay as a generic “fee.” Distinguish:
 

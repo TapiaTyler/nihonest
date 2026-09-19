@@ -1,5 +1,7 @@
 # External research return contract
 
+> Optional workflow: this contract is retained for workstreams that explicitly require a structured independent evidence return. The default external workflow uses `TOPIC-DISCOVERY.md` and returns concise suggestions in chat.
+
 The returned JSON must validate against `external-research-result.schema.json`. Use UTF-8 and ISO `YYYY-MM-DD` dates.
 
 ## Required concepts

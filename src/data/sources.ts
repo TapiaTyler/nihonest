@@ -3,6 +3,20 @@ import { sourceMonitoringStateSchema } from "@/domain/source/source-monitoring";
 import sourceMonitoringStateJson from "../../content/source-monitoring/state.json";
 
 const declaredSources = [
+  officialSourceSchema.parse({ id: "isa-fee-revision-2026", organization: "Immigration Services Agency of Japan", title: "Revision of residence permission fees effective October 1, 2026", url: "https://www.moj.go.jp/isa/01_00644.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-online-fees-2026", organization: "Immigration Services Agency of Japan", title: "Online application fees and payment methods from October 1, 2026", url: "https://www.moj.go.jp/isa/11_00107.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-fee-relief-2026", organization: "Immigration Services Agency of Japan", title: "Residence permission fee reduction and exemption measures from October 1, 2026", url: "https://www.moj.go.jp/isa/10_00273.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "mofa-visa-fees-2026", organization: "Ministry of Foreign Affairs of Japan", title: "Visa fees for applications accepted from July 1, 2026", url: "https://www.mofa.go.jp/j_info/visit/visa/procedure/pagewe_000001_00391.html", authorityLevel: "national-government", language: "en", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "embassy-us-visa-fees-2026", organization: "Embassy of Japan in the United States of America", title: "Washington, DC visa and travel information", url: "https://www.us.emb-japan.go.jp/itpr_en/travel_and_visa.html", authorityLevel: "national-government", language: "en", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-card-loss-reissue", organization: "Immigration Services Agency of Japan", title: "Residence-card reissuance after loss", url: "https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00010.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-card-damage-reissue", organization: "Immigration Services Agency of Japan", title: "Residence-card reissuance after damage", url: "https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00012.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-card-optional-exchange", organization: "Immigration Services Agency of Japan", title: "Optional residence-card exchange", url: "https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00013.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-card-validity-renewal", organization: "Immigration Services Agency of Japan", title: "Residence-card validity-period renewal", url: "https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00011.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "isa-status-acquisition", organization: "Immigration Services Agency of Japan", title: "Application to acquire a status of residence", url: "https://www.moj.go.jp/isa/applications/procedures/16-10.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "jlis-convenience-certificate-service", organization: "Japan Agency for Local Authority Information Systems", title: "Convenience-store certificate issuance service", url: "https://www.lg-waps.go.jp/01-01.html", authorityLevel: "public-institution", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "nta-tax-payment-certificate", organization: "National Tax Agency", title: "Requesting a tax payment certificate", url: "https://www.nta.go.jp/taxes/nozei/nozei-shomei/01.htm", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "mhlw-national-health-insurance", organization: "Ministry of Health, Labour and Welfare", title: "National Health Insurance system overview", url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryouhoken/kokumin/index.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-19" }),
+  officialSourceSchema.parse({ id: "jps-national-pension-premiums", organization: "Japan Pension Service", title: "National Pension contribution amounts", url: "https://www.nenkin.go.jp/service/kokunen/hokenryo/20150313-02.html", authorityLevel: "public-institution", language: "ja", lastCheckedAt: "2026-09-19" }),
   officialSourceSchema.parse({ id: "mhlw-certified-psychologist-foreign-qualification", organization: "Ministry of Health, Labour and Welfare", title: "Recognition of examination eligibility under the Certified Public Psychologists Act", url: "https://www.mhlw.go.jp/stf/newpage_02912.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-14" }),
   officialSourceSchema.parse({ id: "mhlw-certified-social-worker-overview", organization: "Ministry of Health, Labour and Welfare", title: "Certified Social Workers and Certified Care Workers", url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/hukushi_kaigo/seikatsuhogo/shakai-kaigo-fukushi1/index.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-14" }),
   officialSourceSchema.parse({ id: "mhlw-childcare-worker-registration", organization: "Ministry of Health, Labour and Welfare", title: "Childcare worker examination and registration", url: "https://www.mhlw.go.jp/kouseiroudoushou/shikaku_shiken/hoikushi/index.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-14" }),
@@ -99,15 +113,6 @@ const declaredSources = [
   officialSourceSchema.parse({ id: "mhlw-employment-insurance-act", organization: "Ministry of Health, Labour and Welfare", title: "Employment Insurance Act", url: "https://www.mhlw.go.jp/web/t_doc?dataId=75161000&dataType=0&pageNo=1", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-12" }),
   officialSourceSchema.parse({ id: "jftc-freelance-act", organization: "Japan Fair Trade Commission", title: "Freelance Act portal", url: "https://www.jftc.go.jp/freelancelaw_2025/", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-12" }),
   officialSourceSchema.parse({ id: "jftc-freelance-act-qa", organization: "Japan Fair Trade Commission", title: "Freelance Act Q&A", url: "https://www.jftc.go.jp/fllaw_limited/fllaw_qa.html", authorityLevel: "national-government", language: "ja", lastCheckedAt: "2026-09-12" }),
-  officialSourceSchema.parse({
-    id: "japan-government-portal",
-    organization: "Government of Japan",
-    title: "JapanGov",
-    url: "https://www.japan.go.jp/",
-    authorityLevel: "national-government",
-    language: "en",
-    lastCheckedAt: "2026-09-05",
-  }),
   officialSourceSchema.parse({
     id: "immigration-services-status-appendix",
     organization: "Immigration Services Agency of Japan",
