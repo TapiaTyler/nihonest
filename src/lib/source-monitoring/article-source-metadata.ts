@@ -1,19 +1,14 @@
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { z } from "zod";
-import { importanceSchema, topicIdSchema } from "@/domain/taxonomy/taxonomy";
+import {
+  articleSourceMetadataSchema,
+  type ArticleSourceMetadata,
+} from "@/domain/source/article-source-metadata";
 
-const stableIdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-
-export const articleSourceMetadataSchema = z.object({
-  id: stableIdSchema,
-  title: z.string().min(1),
-  sourceIds: z.array(stableIdSchema).min(1),
-  importance: importanceSchema,
-  topicIds: z.array(topicIdSchema).min(1),
-});
-
-export type ArticleSourceMetadata = z.infer<typeof articleSourceMetadataSchema>;
+export {
+  articleSourceMetadataSchema,
+  type ArticleSourceMetadata,
+} from "@/domain/source/article-source-metadata";
 
 function quotedValue(source: string, field: string): string | undefined {
   return source.match(new RegExp(`\\b${field}\\s*:\\s*"([^"]+)"`))?.[1];

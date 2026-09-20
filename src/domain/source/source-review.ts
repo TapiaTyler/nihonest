@@ -5,7 +5,7 @@ import {
   sourceMonitoringStateSchema,
   type SourceMonitoringState,
 } from "@/domain/source/source-monitoring";
-import type { ArticleSourceMetadata } from "@/lib/source-monitoring/article-source-metadata";
+import type { ArticleSourceMetadata } from "@/domain/source/article-source-metadata";
 
 const stableIdSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const fingerprintSchema = z.string().regex(/^[a-f0-9]{64}$/);
@@ -109,8 +109,10 @@ function assessPriority(
   dependency: SourceDependencyEntry,
   articles: readonly ArticleSourceMetadata[],
 ) {
-  const directArticleIds = new Set(dependency.dependents.filter(({ kind }) => kind === "article").map(({ id }) => id));
-  const relevantArticles = articles.filter(({ id }) => directArticleIds.has(id));
+  const relatedArticleIds = new Set(dependency.dependents.flatMap((dependent) => (
+    dependent.kind === "article" ? [dependent.id, ...dependent.viaArticleIds] : dependent.viaArticleIds
+  )));
+  const relevantArticles = articles.filter(({ id }) => relatedArticleIds.has(id));
   const maxImportance = Math.max(0, ...relevantArticles.map(({ importance }) => importanceScores[importance]));
   const risky = relevantArticles.some(({ topicIds }) => topicIds.some((topicId) => highRiskTopics.has(topicId)));
   const breadth = Math.min(15, dependency.dependents.length * 2);
@@ -129,8 +131,10 @@ function assessPriority(
 }
 
 function affectedClaims(articles: readonly ArticleSourceMetadata[], dependency: SourceDependencyEntry): readonly string[] {
-  const directArticleIds = new Set(dependency.dependents.filter(({ kind }) => kind === "article").map(({ id }) => id));
-  const topics = new Set(articles.filter(({ id }) => directArticleIds.has(id)).flatMap(({ topicIds }) => topicIds));
+  const relatedArticleIds = new Set(dependency.dependents.flatMap((dependent) => (
+    dependent.kind === "article" ? [dependent.id, ...dependent.viaArticleIds] : dependent.viaArticleIds
+  )));
+  const topics = new Set(articles.filter(({ id }) => relatedArticleIds.has(id)).flatMap(({ topicIds }) => topicIds));
   const claims = new Set<string>();
   if (topics.has("immigration")) ["eligibility and route scope", "permitted activities and exclusions", "periods, renewals, deadlines, and evidence"].forEach((claim) => claims.add(claim));
   if (topics.has("employment")) ["work permissions and activity limits", "employer, contract, and notification obligations"].forEach((claim) => claims.add(claim));

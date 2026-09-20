@@ -9,6 +9,17 @@ const articleIds = [...new Set(annotatedDocumentFamilies.map(({ articleId }) => 
 const selectableGeographyIds = supportedGeographies.filter(({ selectable }) => selectable).map(({ id }) => id);
 
 describe("annotated document model", () => {
+  it("assembles every document family in the established presentation order", () => {
+    expect(annotatedDocumentFamilies.map(({ id }) => id)).toEqual([
+      "residence-card",
+      "certificate-of-eligibility",
+      "salary-income-withholding-tax-slip",
+      "resident-tax-notice",
+      "my-number-card-and-notice",
+      "notification-of-change-in-residence",
+    ]);
+  });
+
   it("validates version, glossary, article, and source references", () => {
     expect(() => validateAnnotatedDocumentCollection(
       annotatedDocumentFamilies,

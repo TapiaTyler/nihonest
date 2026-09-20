@@ -19,6 +19,7 @@
     "editorial:audit": "tsx scripts/audit-editorial-state.ts",
     "editorial:record": "tsx scripts/record-editorial-review.ts",
     "editorial:coverage:audit": "tsx scripts/audit-guidance-coverage.ts",
+    "architecture:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/check-architecture.ts",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",

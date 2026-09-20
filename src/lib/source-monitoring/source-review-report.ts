@@ -52,6 +52,8 @@ const dependentLabels: Record<SourceDependentKind, string> = {
   article: "Articles",
   "glossary-term": "Glossary terms",
   "residence-status": "Residence statuses",
+  "annotated-document": "Annotated documents",
+  "local-guidance": "Local guidance",
   "article-group": "Content groups",
   "guided-journey": "Guided journeys",
 };

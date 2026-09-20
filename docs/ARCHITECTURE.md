@@ -117,6 +117,8 @@ from React/Next.js-specific rendering.
 
 This supports later reuse from React Native.
 
+The repository enforces the current layer boundary with `npm run architecture:check`. Production modules under `src/domain` may not import application, component, canonical-data, or infrastructure modules, nor React, Next.js, or Supabase. Modules under `src/data` may depend on domain contracts but not application or component code. The same check rejects circular dependencies across the production TypeScript graph; test files are excluded because integration tests intentionally assemble several layers.
+
 ---
 
 ## 3.4 External providers should be abstracted
@@ -226,6 +228,12 @@ status: draft
 ```
 
 Exact schema should be defined with TypeScript and Zod.
+
+## 5.2 Registry assembly
+
+Large canonical registries are split by durable ownership boundaries and reassembled through one public compatibility module. The compatibility module defines module order once; record order within a module is the local editorial order. IDs and slugs remain globally unique and are validated after assembly.
+
+Do not assign globally unique sequence numbers merely to reconstruct file insertion history. A registry may use a local `displayOrder` only when curated presentation order has domain meaning. Search relevance, active-language alphabetization, review urgency, and other consumer-specific orders belong to those consumers rather than the canonical storage registry.
 
 ---
 
@@ -851,6 +859,8 @@ It should not:
 Human review remains necessary for critical information. A detected revision is stored as a candidate and does not replace the accepted baseline until the editor resolves it. Codex may summarize the difference and prepare a patch, but only an explicit human decision may mark content `verified`, accept a substantive source revision, or authorize publication.
 
 Repository review records use validated JSON as the canonical audit artifact and generate adjacent Markdown for human reading. They retain the official URL and candidate fingerprint, deterministic impact priority, potential claim categories, dependencies, labeled notes, the human outcome, examined dependencies, associated content changes, unresolved uncertainty, and focused validation. Local normalized source snapshots remain ignored working data; accepted fingerprints and resolved review records are version-controlled. The resolution command fails closed unless the editor explicitly asserts approval and accounts for every registered dependency.
+
+Direct source dependencies include articles, glossary terms, residence statuses, annotated-document families, and local-guidance supplements. Document and local records retain their associated canonical article in the dependency graph so a source review inherits the article's topic and importance context. Content groups and guided journeys remain derived dependencies through their article membership. This prevents official images, reuse terms, document editions, and municipal instructions from disappearing from impact reports merely because they are stored outside article MDX.
 
 Content approval uses a separate immutable repository ledger because accepting a source revision does not prove that dependent guidance was reviewed. Each `verified` article, glossary term, residence status, or FAQ must have `lastReviewedAt` metadata and a human-approved ledger record for the exact current SHA-256 content revision. The repository audit rejects missing, stale, duplicate, future-dated, or date-inconsistent approvals. Any content change creates a new revision and therefore requires a new approval before the record may remain verified.
 

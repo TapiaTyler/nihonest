@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "./site-header";
 import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
@@ -9,6 +9,8 @@ const accountMocks = vi.hoisted(() => ({
   endSession: vi.fn(),
 }));
 
+let desktopBreakpointListener: ((event: MediaQueryListEvent) => void) | undefined;
+
 vi.mock("next/navigation", () => ({ usePathname: () => "/roadmap", useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/components/account/account-session-provider", () => ({
   useAccountSession: accountMocks.useAccountSession,
@@ -17,6 +19,22 @@ vi.mock("@/components/account/account-session-provider", () => ({
 describe("SiteHeader", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    desktopBreakpointListener = undefined;
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (query === "(min-width: 64rem)") desktopBreakpointListener = listener;
+        },
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
     accountMocks.endSession.mockReset().mockResolvedValue({ ok: true });
     accountMocks.useAccountSession.mockReturnValue({
       status: "signed-out",
@@ -96,5 +114,17 @@ describe("SiteHeader", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
     fireEvent.click(within(screen.getByRole("navigation", { name: "Mobile navigation" })).getByRole("link", { name: "Saved" }));
     await waitFor(() => expect(screen.queryByRole("navigation", { name: "Mobile navigation" })).not.toBeInTheDocument());
+  });
+
+  it("dismisses the mobile drawer and releases scroll locking at the desktop breakpoint", async () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation menu" }));
+    expect(document.documentElement.style.overflow).toBe("hidden");
+
+    act(() => desktopBreakpointListener?.({ matches: true } as MediaQueryListEvent));
+
+    await waitFor(() => expect(screen.queryByRole("navigation", { name: "Mobile navigation" })).not.toBeInTheDocument());
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(document.documentElement.style.scrollbarGutter).toBe("");
   });
 });

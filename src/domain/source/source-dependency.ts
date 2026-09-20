@@ -2,6 +2,8 @@ export const SOURCE_DEPENDENT_KINDS = [
   "article",
   "glossary-term",
   "residence-status",
+  "annotated-document",
+  "local-guidance",
   "article-group",
   "guided-journey",
 ] as const;
@@ -9,7 +11,7 @@ export const SOURCE_DEPENDENT_KINDS = [
 export type SourceDependentKind = (typeof SOURCE_DEPENDENT_KINDS)[number];
 export type DirectSourceDependentKind = Extract<
   SourceDependentKind,
-  "article" | "glossary-term" | "residence-status"
+  "article" | "glossary-term" | "residence-status" | "annotated-document" | "local-guidance"
 >;
 export type DerivedSourceDependentKind = Extract<
   SourceDependentKind,
@@ -20,6 +22,8 @@ export type SourceReferenceRecord = Readonly<{
   kind: DirectSourceDependentKind;
   id: string;
   sourceIds: readonly string[];
+  /** Related canonical articles let non-article records inherit risk and claim context. */
+  viaArticleIds?: readonly string[];
 }>;
 
 export type SourceArticleContainer = Readonly<{
@@ -31,7 +35,7 @@ export type SourceArticleContainer = Readonly<{
 export type SourceDependent = Readonly<{
   kind: SourceDependentKind;
   id: string;
-  /** Indirect group and journey dependencies retain the articles that created the relationship. */
+  /** Retains the canonical articles that expose or contextualize this dependency. */
   viaArticleIds: readonly string[];
 }>;
 
@@ -87,7 +91,12 @@ export function buildSourceDependencyGraph({
   for (const reference of references) {
     const uniqueSourceIds = new Set(reference.sourceIds);
     if (reference.kind === "article") articleSources.set(reference.id, uniqueSourceIds);
-    for (const sourceId of uniqueSourceIds) addDependency(sourceId, reference.kind, reference.id);
+    for (const sourceId of uniqueSourceIds) {
+      addDependency(sourceId, reference.kind, reference.id);
+      for (const articleId of new Set(reference.viaArticleIds ?? [])) {
+        addDependency(sourceId, reference.kind, reference.id, articleId);
+      }
+    }
   }
 
   for (const container of containers) {

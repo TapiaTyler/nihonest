@@ -13,7 +13,9 @@ test("keeps accounts optional without blocking the public knowledgebase", async 
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Keep useful preferences, not unnecessary personal data.");
   await expect(page.getByText("Every public guide, journey, FAQ, status, and glossary entry remains available without signing in.")).toBeVisible();
-  await page.getByRole("link", { name: "Explore" }).click();
+  await page.getByRole("navigation", { name: "Primary navigation" })
+    .getByRole("link", { name: "Explore" })
+    .click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Find the guidance that fits your situation.");
 });
 
@@ -57,6 +59,7 @@ test("searches articles across groups without opening a group first", async ({ p
 test("carries an unsuccessful Explore query into FAQ search", async ({ page }) => {
   await page.goto("/explore");
   await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("software developer");
+  await expect(page).toHaveURL(/q=software\+developer/);
   await page.getByText("More filters").click();
   await page.getByRole("combobox", { name: "Topic" }).selectOption("healthcare");
 
@@ -68,13 +71,13 @@ test("carries an unsuccessful Explore query into FAQ search", async ({ page }) =
 });
 
 test("carries an unsuccessful FAQ query into the complete Explore search", async ({ page }) => {
-  await page.goto("/faq?q=teacher");
+  await page.goto("/faq?q=juminhyo");
 
   await expect(page.getByRole("heading", { name: "No matching FAQ found" })).toBeVisible();
   await page.getByRole("link", { name: "Search all guidance for this question →" }).click();
-  await expect(page).toHaveURL(/\/explore\?q=teacher$/);
-  await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("teacher");
-  await expect(page.getByRole("link", { name: "Instructor" })).toBeVisible();
+  await expect(page).toHaveURL(/\/explore\?q=juminhyo$/);
+  await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("juminhyo");
+  await expect(page.getByRole("link", { name: "Certificate of Residence" })).toBeVisible();
 });
 
 test("resolves one professional route without treating alternatives as later steps", async ({ page }) => {
@@ -84,10 +87,14 @@ test("resolves one professional route without treating alternatives as later ste
   await expect(page.getByRole("link", { name: /Legal \/ Accounting Services/ })).toBeVisible();
   await page.getByRole("link", { name: /Legal \/ Accounting Services/ }).click();
   await expect(page).toHaveURL(/route=legal-accounting-services$/);
-  await expect(page.getByRole("link", { name: "Legal/Accounting Services work visa and status of residence" })).toBeVisible();
+  const selectedRoute = page.getByRole("link", {
+    name: "Legal/Accounting Services status for regulated professionals",
+    exact: true,
+  });
+  await expect(selectedRoute).toBeVisible();
   await expect(page.getByRole("link", { name: "Medical Services work visa and status of residence" })).toHaveCount(0);
 
-  await page.getByRole("link", { name: "Legal/Accounting Services work visa and status of residence" }).click();
+  await selectedRoute.click();
   const journeyContext = page.getByRole("region", { name: "Professional worker journey" });
   const nextGuide = journeyContext.getByRole("link", { name: "Preparing for long-term entry to Japan →" });
   await expect(nextGuide).toHaveAttribute("href", /journey=professional-worker-moving-to-japan&route=legal-accounting-services/);
@@ -232,7 +239,7 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
   await page.goto("/glossary");
 
   await page.getByRole("searchbox", { name: "Search Japanese or English" }).fill("juminhyo");
-  await expect(page.getByText("Showing 1 of 67 terms")).toBeVisible();
+  await expect(page.getByText(/Showing 1 of \d+ terms/)).toBeVisible();
   const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
   const glossaryCta = glossaryCard.getByText("View term and context →");
   await expect(glossaryCta).toHaveCSS("cursor", "pointer");
@@ -244,7 +251,7 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
   await expect(page.getByRole("searchbox", { name: "Search Japanese or English" })).toHaveValue(
     "juminhyo",
   );
-  await expect(page.getByText("Showing 1 of 67 terms")).toBeVisible();
+  await expect(page.getByText(/Showing 1 of \d+ terms/)).toBeVisible();
   await page.getByRole("link", { name: "Certificate of Residence" }).click();
   await page.getByRole("link", { name: "Registering your address after arrival" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Registering your address after arrival");
@@ -260,7 +267,7 @@ test("filters and opens a residence status", async ({ page }) => {
   await page.goto("/residence-statuses");
 
   await page.getByRole("button", { name: "Study, culture, and training" }).click();
-  await expect(page.getByText("Showing 3 of 29 draft statuses")).toBeVisible();
+  await expect(page.getByText("Showing 3 of 30 draft statuses")).toBeVisible();
   const statusCard = page.getByRole("article").filter({ hasText: "Student" });
   const statusCta = statusCard.getByText("View status and related guidance →");
   await expect(statusCta).toHaveCSS("cursor", "pointer");

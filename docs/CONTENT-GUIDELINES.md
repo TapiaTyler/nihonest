@@ -94,6 +94,8 @@ When an article links a glossary term, introduce the Japanese term naturally in 
 
 Keep the consolidated Key Japanese terminology section after the main guidance so terminology supports rather than blocks the task explanation. Inline term interactions may expose kana and romaji, but the prose must remain understandable without hovering, tapping, opening a tooltip, or visiting the glossary.
 
+List `termIds` in the order their glossary links first appear in the article body. Every linked inline term belongs in `termIds`, and every declared term must be introduced inline. Repository validation enforces this exact membership and order so the consolidated section follows the reader's path through the article rather than glossary-catalog insertion history.
+
 ---
 
 ## 6. Machine Translation

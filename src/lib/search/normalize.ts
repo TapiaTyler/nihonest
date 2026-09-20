@@ -1,13 +1,6 @@
-export function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFKC")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLocaleLowerCase("en")
-    .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
-    .trim()
-    .replace(/\s+/g, " ");
-}
+import { normalizeSearchText } from "@/domain/search/normalize";
+
+export { normalizeSearchText } from "@/domain/search/normalize";
 
 const naturalQuestionWords = new Set([
   "a", "an", "and", "can", "could", "do", "does", "for", "how", "i", "in", "is", "it", "my", "of", "on", "or", "please", "should", "the", "this", "to", "what", "where", "with", "would",

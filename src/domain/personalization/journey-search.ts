@@ -1,6 +1,6 @@
 import type { ArticleMetadata } from "@/domain/article/article";
 import { getJourneyArticleIds, getJourneyRouteForArticle, type ArticleGroup, type GuidedJourney, type JourneyRoute } from "@/domain/discovery/discovery";
-import { normalizeSearchText } from "@/lib/search/normalize";
+import { normalizeSearchText } from "@/domain/search/normalize";
 
 export type JourneySearchResult = Readonly<{
   journey: GuidedJourney;

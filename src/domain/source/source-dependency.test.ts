@@ -32,6 +32,8 @@ describe("source dependency graph", () => {
         { kind: "article", id: "article-b", sourceIds: ["source-a", "source-b"] },
         { kind: "glossary-term", id: "term-a", sourceIds: ["source-a"] },
         { kind: "residence-status", id: "status-a", sourceIds: ["source-b"] },
+        { kind: "annotated-document", id: "document-a", sourceIds: ["source-a"], viaArticleIds: ["article-b"] },
+        { kind: "local-guidance", id: "local-a", sourceIds: ["source-b"], viaArticleIds: ["article-a"] },
       ],
       containers: [
         { kind: "article-group", id: "group-a", articleIds: ["article-a", "article-b"] },
@@ -43,8 +45,25 @@ describe("source dependency graph", () => {
       { kind: "article", id: "article-a", viaArticleIds: [] },
       { kind: "article", id: "article-b", viaArticleIds: [] },
       { kind: "glossary-term", id: "term-a", viaArticleIds: [] },
+      { kind: "annotated-document", id: "document-a", viaArticleIds: ["article-b"] },
       { kind: "article-group", id: "group-a", viaArticleIds: ["article-a", "article-b"] },
       { kind: "guided-journey", id: "journey-a", viaArticleIds: ["article-b"] },
+    ]);
+  });
+
+  it("retains canonical article context for non-article dependencies", () => {
+    const graph = buildSourceDependencyGraph({
+      sourceIds: ["local-source"],
+      references: [{
+        kind: "local-guidance",
+        id: "city-procedure",
+        sourceIds: ["local-source"],
+        viaArticleIds: ["national-guide"],
+      }],
+    });
+
+    expect(graph[0]?.dependents).toEqual([
+      { kind: "local-guidance", id: "city-procedure", viaArticleIds: ["national-guide"] },
     ]);
   });
 });
@@ -56,7 +75,7 @@ describe("source registry audit", () => {
       references: [
         { kind: "article", id: "missing", sourceIds: [] },
         { kind: "glossary-term", id: "duplicate", sourceIds: ["source-a", "source-a"] },
-        { kind: "residence-status", id: "unknown", sourceIds: ["unknown-source"] },
+        { kind: "local-guidance", id: "unknown", sourceIds: ["unknown-source"] },
       ],
     });
 

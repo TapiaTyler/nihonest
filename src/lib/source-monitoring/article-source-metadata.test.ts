@@ -29,6 +29,6 @@ describe("article source metadata reader", () => {
     const registry = buildRepositorySourceRegistry(articles);
 
     expect(articles.length).toBeGreaterThan(0);
-    expect(registry.findings.filter(({ severity }) => severity === "error")).toEqual([]);
+    expect(registry.findings).toEqual([]);
   });
 });

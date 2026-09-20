@@ -63,6 +63,39 @@ describe("source review records", () => {
     expect(record.potentiallyAffectedClaims).toContain("work permissions and activity limits");
   });
 
+  it("inherits article risk and claims through a structured-content dependency", () => {
+    const record = createSourceReviewRecord({
+      source: {
+        id: "official-immigration",
+        organization: "Example Ministry",
+        title: "Immigration guidance",
+        url: "https://example.go.jp/immigration",
+        authorityLevel: "national-government",
+        language: "en",
+        checkMethod: "automated",
+      },
+      dependency: {
+        sourceId: "official-immigration",
+        dependents: [{ kind: "annotated-document", id: "residence-card", viaArticleIds: ["work-permission"] }],
+      },
+      articles: [{
+        id: "work-permission",
+        title: "Work permission",
+        sourceIds: ["official-immigration"],
+        importance: "critical",
+        topicIds: ["immigration"],
+      }],
+      candidateFingerprint: fingerprintB,
+      detectedAs: "changed",
+      detectedAt: candidate.capturedAt,
+      createdAt: "2026-09-11T11:00:00.000Z",
+      difference: { basis: "fingerprint-only", summary: "The source changed.", beforeExcerpts: [], afterExcerpts: [] },
+    });
+
+    expect(record.priority.level).toBe("critical");
+    expect(record.potentiallyAffectedClaims).toContain("eligibility and route scope");
+  });
+
   it("accepts the candidate only with an explicit, dependency-aware resolution", () => {
     const record = openRecord();
     const result = resolveSourceReview({

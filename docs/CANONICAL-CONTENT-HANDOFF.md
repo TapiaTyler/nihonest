@@ -61,18 +61,20 @@ Review housing, banking, phone, utilities, waste, transportation, language suppo
 
 The core source dependency graph contains 286 registered source entries and has no blocking errors. Three previously unattached official sources are now connected to the Legal/Accounting Services, Start-up, and Skilled Labor guides. A generic government portal with no claim-level evidentiary purpose has been removed.
 
-Nineteen sources still appear as `unused-source` warnings in the core graph even though they are used by annotated-document or local-guidance data. The structural refactor should extend dependency registration to those content types before source monitoring is activated. The affected sources cover:
+The first structural-refactor iteration closes the remaining nineteen `unused-source` warnings by registering annotated-document families and local-guidance supplements as direct source dependents. The affected sources cover:
 
 - Residence Card and My Number sample-image rights and assets;
 - withholding-slip and resident-tax document examples;
 - Nagoya moving, tax, waste, disaster, and international-support guidance; and
 - Shinjuku tax, waste, disaster, consultation, and language-support guidance.
 
+Each of these structured records retains its associated canonical article in the graph. Source-review priority and potentially affected claims therefore use the article's topic and importance instead of treating auxiliary content as unrelated low-risk data.
+
 `content/source-monitoring/state.json` has no human-accepted source baselines. Do not run a bulk live check and accept the resulting candidates automatically. Establish baselines in deliberate, risk-based batches under `docs/SOURCE-REVIEW.md`; a successful fetch is not editorial approval.
 
-## Structural-refactor constraints
+## Structural-refactor closure
 
-The next checkpoint is the behavior-preserving organization work in `docs/refactor.md`. It must preserve:
+The behavior-preserving organization checkpoint in `docs/STRUCTURAL-REFACTOR-PLAN.md` is complete. It preserves:
 
 - every stable content ID, slug, relationship, and public route;
 - metadata and revision semantics used by editorial approval;
@@ -81,10 +83,12 @@ The next checkpoint is the behavior-preserving organization work in `docs/refact
 - canonical-English article output and Japanese pilot fallback behavior; and
 - the distinction between repository-owned canonical content and account data stored through Supabase.
 
-The refactor should also make annotated documents and local guidance first-class source-dependency containers. It does not authorize a CMS, article database, monorepo, native client, or broad UI redesign.
+Annotated documents and local guidance are now first-class source-dependency records. Large source, glossary, FAQ, residence-status, discovery, article-registration, document, and local-guidance registries are assembled behind their established compatibility entry points. Navigation, Explore, onboarding, and annotated-document workflows retain one state owner while focused components own presentation.
+
+`npm run architecture:check` rejects production import cycles and prohibited domain/data dependencies. At closure, it passes across 267 production modules; the optimized build generates all 402 static pages, the bounded non-browser closure batch passes 113 tests across 36 files, and all 17 public Playwright flows pass without Supabase. This checkpoint does not authorize a CMS, article database, monorepo, native client, or broad UI redesign.
 
 ## Localization readiness
 
-Phase 14 may begin only after the structural refactor preserves the canonical content contracts. Translation artifacts must remain revision-addressed so an English change deterministically invalidates its dependent translation. A locale must not be presented as complete while catalog coverage or high-risk human review remains partial.
+Phase 14 may now begin from the preserved canonical-content contracts and compatibility modules. Translation artifacts must remain revision-addressed so an English change deterministically invalidates its dependent translation. A locale must not be presented as complete while catalog coverage or high-risk human review remains partial.
 
 Human editorial review can continue across the refactor and localization work, but no record should be changed to `verified` without explicit review of its exact current revision and a matching immutable approval record.
