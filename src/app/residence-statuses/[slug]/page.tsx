@@ -1,24 +1,30 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OfficialSourceList } from "@/components/content/official-source-list";
-import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
 import { getArticleById, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
 import { journeyHref } from "@/lib/navigation/journey-context";
 import { getResidenceStatusBySlug, residenceStatuses } from "@/data/residence-statuses";
 import { getSourceById } from "@/data/sources";
-import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { getGlossaryTermById } from "@/lib/content/glossary";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
 import { StructuredStatusGuidance } from "@/components/residence-status/structured-status-guidance";
 import { LocalizedResidenceStatusActivities, LocalizedResidenceStatusPurpose, LocalizedResidenceStatusSummary } from "@/components/localization/localized-residence-status-fields";
-import { getResidenceStatusGuidanceTranslation, getResidenceStatusTranslations } from "@/lib/content/translations";
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  dateStyle: "long",
-  timeZone: "UTC",
-});
+import {
+  LocalizedLastReviewed,
+  LocalizedRelatedGuidance,
+  LocalizedStatusBackLink,
+  LocalizedStatusBadges,
+  LocalizedStatusContext,
+  LocalizedStatusHeading,
+} from "@/components/localization/localized-residence-status-chrome";
+import {
+  getArticleGroupSearchTranslations,
+  getJapaneseArticleTranslation,
+  getJourneyTranslations,
+  getResidenceStatusGuidanceTranslation,
+  getResidenceStatusTranslations,
+} from "@/lib/content/translations";
 
 export const dynamicParams = false;
 
@@ -75,36 +81,36 @@ export default async function ResidenceStatusPage({
   const glossaryTerm = getGlossaryTermById(residenceStatus.glossaryTermId);
   if (!glossaryTerm) notFound();
   const translation = getResidenceStatusTranslations().find(({ contentId }) => contentId === residenceStatus.id);
+  // Only the Japanese titles this page links to are sent to the client chrome.
+  const groupTitles = Object.fromEntries(getArticleGroupSearchTranslations()
+    .filter(({ contentId }) => relatedGroups.some(({ id }) => id === contentId))
+    .map(({ contentId, title }) => [contentId, title]));
+  const journeyTitles = Object.fromEntries(getJourneyTranslations()
+    .filter(({ contentId }) => relatedJourneys.some(({ id }) => id === contentId))
+    .map(({ contentId, title }) => [contentId, title]));
+  const articleTitles = Object.fromEntries(relatedArticles.flatMap(({ id }) => {
+    const title = getJapaneseArticleTranslation(id)?.fields.title;
+    return title ? [[id, title]] : [];
+  }));
 
   return (
     <article className="page-shell py-12 sm:py-20">
       <div className="mx-auto max-w-3xl">
-        <Link
+        <LocalizedStatusBackLink
           href={returnTo}
           className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
-        >
-          ← Back to {returnTo === "/saved" ? "Saved" : "residence statuses"}
-        </Link>
+        />
 
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="residence-status" contentId={residenceStatus.id} /></div>
           <div className="flex flex-wrap items-center gap-3 pr-14">
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
-              Draft
-            </span>
-            <span className="text-sm text-slate-500">{residenceStatusCategoryLabels[residenceStatus.category]}</span>
+            <LocalizedStatusBadges category={residenceStatus.category} />
           </div>
-          <h1 className="mt-5 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            {residenceStatus.englishName}
-          </h1>
-          <p className="mt-3 text-2xl text-slate-600">
-            <InlineGlossaryTerm term={glossaryTerm}>
-              <span lang="ja">{residenceStatus.japaneseName}</span>
-            </InlineGlossaryTerm>
-          </p>
-          <p className="mt-2 text-sm text-slate-500">
-            <JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />
-          </p>
+          <LocalizedStatusHeading
+            status={residenceStatus}
+            glossaryTerm={glossaryTerm}
+            reading={<JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />}
+          />
           <LocalizedResidenceStatusSummary status={residenceStatus} translation={translation} />
         </header>
 
@@ -117,64 +123,28 @@ export default async function ResidenceStatusPage({
         <LocalizedResidenceStatusActivities status={residenceStatus} translation={translation} />
 
         {(relatedGroups.length > 0 || relatedJourneys.length > 0) && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="explore-paths-heading">
-            <h2 id="explore-paths-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-              Explore this status in context
-            </h2>
-            <p className="mt-3 leading-7 text-slate-600">Browse the wider subject group or follow a mapped journey that includes this status.</p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {relatedGroups.map((group) => (
-                <ContextLink key={`group-${group.id}`} href={`/explore/${group.id}`} eyebrow="Content group" title={group.title} />
-              ))}
-              {relatedJourneys.map((journey) => (
-                <ContextLink
-                  key={`journey-${journey.id}`}
-                  href={journeyHref(journey.id, journey.routes.find(({ articleId }) => residenceStatus.relatedArticleIds.includes(articleId))?.id)}
-                  eyebrow="Guided journey"
-                  title={journey.title}
-                />
-              ))}
-            </div>
-          </section>
+          <LocalizedStatusContext
+            groups={relatedGroups.map((group) => ({ id: group.id, href: `/explore/${group.id}`, title: group.title }))}
+            journeys={relatedJourneys.map((journey) => ({
+              id: journey.id,
+              href: journeyHref(journey.id, journey.routes.find(({ articleId }) => residenceStatus.relatedArticleIds.includes(articleId))?.id),
+              title: journey.title,
+            }))}
+            groupTitles={groupTitles}
+            journeyTitles={journeyTitles}
+          />
         )}
 
         {relatedArticles.length > 0 && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-guidance-heading">
-            <h2 id="related-guidance-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-              Related guidance
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {relatedArticles.map((article) => (
-                <li key={article.id}>
-                  <Link
-                    href={`/articles/${article.slug}`}
-                    className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-                  >
-                    {article.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <LocalizedRelatedGuidance
+            articles={relatedArticles.map((article) => ({ id: article.id, href: `/articles/${article.slug}`, title: article.title }))}
+            articleTitles={articleTitles}
+          />
         )}
 
-        <p className="mt-10 text-sm text-slate-500">
-          Last reviewed:{" "}
-          <time dateTime={residenceStatus.lastReviewedAt}>
-            {dateFormatter.format(new Date(`${residenceStatus.lastReviewedAt}T00:00:00Z`))}
-          </time>
-        </p>
+        <LocalizedLastReviewed date={residenceStatus.lastReviewedAt} />
         <OfficialSourceList sources={statusSources} />
       </div>
     </article>
-  );
-}
-
-function ContextLink({ href, eyebrow, title }: Readonly<{ href: string; eyebrow: string; title: string }>) {
-  return (
-    <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{eyebrow}</span>
-      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{title} →</span>
-    </Link>
   );
 }
