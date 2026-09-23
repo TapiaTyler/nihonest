@@ -97,9 +97,9 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
       {savedTerms.length > 0 && (
         <section id="saved-glossary-review" aria-labelledby="saved-terms-heading" className="scroll-mt-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Saved glossary terms</h2>
+            <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950"><InterfaceText id="saved.glossaryHeading" /></h2>
             <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review-panel" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center rounded-full border border-teal-700 bg-white px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-              {studyOpen ? "Hide review" : "Review saved terms"}
+              <InterfaceText id={studyOpen ? "saved.hideReview" : "saved.reviewTerms"} />
             </button>
           </div>
           {studyOpen && <div id="saved-glossary-review-panel"><GlossaryStudyPanel terms={savedTerms} /></div>}

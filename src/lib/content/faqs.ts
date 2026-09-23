@@ -5,18 +5,33 @@ import { activityCrossReferences } from "@/data/activity-cross-references";
 import { validateFaqCollection, type Faq } from "@/domain/faq/faq";
 import { getAllArticles } from "./articles";
 import { getAllGlossaryTerms } from "./glossary";
+import {
+  getArticleGroupSearchTranslations,
+  getArticleSearchTranslations,
+  getJourneyTranslations,
+} from "./translations";
 
 export type FaqTarget = Readonly<{
   kind: "guide" | "group" | "journey" | "glossary" | "residence-status" | "activity";
   id: string;
   label: string;
   href: string;
+  japaneseLabel?: string;
 }>;
 
 export type FaqEntry = Readonly<{ faq: Faq; targets: readonly FaqTarget[] }>;
 
 const articles = getAllArticles().map(({ metadata }) => metadata);
 const glossaryTerms = getAllGlossaryTerms();
+const japaneseArticleTitles = new Map(getArticleSearchTranslations()
+  .filter(({ targetLocale }) => targetLocale === "ja")
+  .map(({ contentId, title }) => [contentId, title] as const));
+const japaneseGroupTitles = new Map(getArticleGroupSearchTranslations()
+  .filter(({ targetLocale }) => targetLocale === "ja")
+  .map(({ contentId, title }) => [contentId, title] as const));
+const japaneseJourneyTitles = new Map(getJourneyTranslations()
+  .filter(({ targetLocale }) => targetLocale === "ja")
+  .map(({ contentId, title }) => [contentId, title] as const));
 
 validateFaqCollection(faqs, {
   articleIds: articles.map(({ id }) => id),
@@ -32,23 +47,23 @@ function resolveTargets(faq: Faq): readonly FaqTarget[] {
   return [
     ...faq.relatedArticleIds.flatMap((id) => {
       const article = articles.find((candidate) => candidate.id === id);
-      return article ? [{ kind: "guide" as const, id, label: article.title, href: `/articles/${article.slug}` }] : [];
+      return article ? [{ kind: "guide" as const, id, label: article.title, japaneseLabel: japaneseArticleTitles.get(id), href: `/articles/${article.slug}` }] : [];
     }),
     ...faq.relatedGroupIds.flatMap((id) => {
       const group = articleGroups.find((candidate) => candidate.id === id);
-      return group ? [{ kind: "group" as const, id, label: group.title, href: `/explore/${group.id}` }] : [];
+      return group ? [{ kind: "group" as const, id, label: group.title, japaneseLabel: japaneseGroupTitles.get(id), href: `/explore/${group.id}` }] : [];
     }),
     ...faq.relatedJourneyIds.flatMap((id) => {
       const journey = guidedJourneys.find((candidate) => candidate.id === id);
-      return journey ? [{ kind: "journey" as const, id, label: journey.title, href: `/explore/journeys/${journey.id}` }] : [];
+      return journey ? [{ kind: "journey" as const, id, label: journey.title, japaneseLabel: japaneseJourneyTitles.get(id), href: `/explore/journeys/${journey.id}` }] : [];
     }),
     ...faq.relatedGlossaryTermIds.flatMap((id) => {
       const term = glossaryTerms.find((candidate) => candidate.id === id);
-      return term ? [{ kind: "glossary" as const, id, label: `${term.englishName} (${term.japanese})`, href: `/glossary/${term.slug}` }] : [];
+      return term ? [{ kind: "glossary" as const, id, label: `${term.englishName} (${term.japanese})`, japaneseLabel: term.japanese, href: `/glossary/${term.slug}` }] : [];
     }),
     ...faq.relatedResidenceStatusIds.flatMap((id) => {
       const status = residenceStatuses.find((candidate) => candidate.id === id);
-      return status ? [{ kind: "residence-status" as const, id, label: `${status.englishName} status`, href: `/residence-statuses/${status.slug}` }] : [];
+      return status ? [{ kind: "residence-status" as const, id, label: `${status.englishName} status`, japaneseLabel: status.japaneseName, href: `/residence-statuses/${status.slug}` }] : [];
     }),
     ...faq.relatedActivityIds.flatMap((id) => {
       const activity = activityCrossReferences.find((candidate) => candidate.id === id);

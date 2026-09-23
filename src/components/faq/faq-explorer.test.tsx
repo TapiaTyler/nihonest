@@ -4,6 +4,7 @@ import { ContentLocaleProvider } from "@/components/localization/content-locale-
 import { faqSchema } from "@/domain/faq/faq";
 import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import { FaqExplorer } from "./faq-explorer";
+import { FaqResult } from "./faq-result";
 
 const faq = faqSchema.parse({
   id: "phone-or-bank-first",
@@ -40,9 +41,33 @@ describe("FAQ localization", () => {
 
     expect(screen.getByRole("heading", { name: translation.question })).toBeInTheDocument();
     expect(screen.getByText(translation.summary)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /ガイド: Canonical guide/ })).toBeInTheDocument();
     const search = screen.getByRole("searchbox", { name: "何について確認したいですか？" });
     fireEvent.change(search, { target: { value: "銀行口座" } });
     fireEvent.blur(search);
     expect(screen.getByRole("heading", { name: translation.question })).toBeInTheDocument();
+  });
+
+  it("uses a Japanese target label and marks an untranslated activity name as English", () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    const localizedTargetsEntry = {
+      ...entry,
+      targets: [
+        { ...entry.targets[0], japaneseLabel: "永住許可の案内" },
+        { kind: "activity" as const, id: "take-or-change-work", label: "Take or change work", href: "/can-i-do-this" },
+      ],
+    };
+
+    render(
+      <ContentLocaleProvider>
+        <FaqResult entry={localizedTargetsEntry} />
+      </ContentLocaleProvider>,
+    );
+
+    const guideLink = screen.getByRole("link", { name: "ガイド: 永住許可の案内 →" });
+    expect(guideLink).toHaveAttribute("lang", "ja");
+    const activityLink = screen.getByRole("link", { name: "活動を確認: Take or change work →" });
+    expect(activityLink).toHaveAttribute("lang", "ja");
+    expect(screen.getByText("Take or change work").closest("span")).toHaveAttribute("lang", "en");
   });
 });

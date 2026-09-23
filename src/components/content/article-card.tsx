@@ -1,8 +1,8 @@
 import Link, { type LinkProps } from "next/link";
 import type { ReactNode } from "react";
-import { articleStatusLabels, type ArticleMetadata } from "@/domain/article/article";
-import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
+import type { ArticleMetadata } from "@/domain/article/article";
 import { InterfaceText } from "@/components/localization/interface-text";
+import { ArticleCardBadges, ArticleCardRelevance } from "@/components/content/article-card-metadata";
 
 type ArticleCardProps = Readonly<{
   article: ArticleMetadata;
@@ -13,14 +13,7 @@ type ArticleCardProps = Readonly<{
   contentLanguage?: string;
 }>;
 
-function labelsFor(ids: readonly string[], options: readonly { id: string; label: string }[]) {
-  return ids.map((id) => options.find((option) => option.id === id)?.label ?? id);
-}
-
 export function ArticleCard({ article, returnTo, href, notice, headerAction, contentLanguage }: ArticleCardProps) {
-  const topicLabels = labelsFor(article.topicIds, topics);
-  const stageLabels = labelsFor(article.journeyStageIds, journeyStages);
-
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md">
       {notice && (
@@ -30,12 +23,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
       )}
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
-              {articleStatusLabels[article.status]}
-            </span>
-            <span className="text-teal-700">{topicLabels.join(" · ")}</span>
-          </div>
+          <ArticleCardBadges status={article.status} topicIds={article.topicIds} />
           {headerAction && <div className="relative z-10 shrink-0">{headerAction}</div>}
         </div>
         <h2 lang={contentLanguage} className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
@@ -49,7 +37,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
         </h2>
         <p lang={contentLanguage} className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
-          <p className="text-slate-500">Relevant to: {stageLabels.join(", ")}</p>
+          <ArticleCardRelevance journeyStageIds={article.journeyStageIds} />
           <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
             <InterfaceText id="content.readGuide" />
           </span>

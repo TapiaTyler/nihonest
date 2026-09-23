@@ -3,22 +3,29 @@
 import { useMemo, useState } from "react";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { GlossaryReviewOutcome } from "@/domain/glossary-study/glossary-study";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { useGlossaryStudy } from "./glossary-study-provider";
 
-const stateLabels = { new: "New", learning: "Learning", reviewed: "Reviewed" } as const;
-const promptModeLabels = {
-  japanese: "Japanese → English",
-  kana: "Kana → Japanese and English",
-  english: "English → Japanese",
+const reviewStates = ["new", "learning", "reviewed"] as const;
+const reviewStateMessageIds = {
+  new: "glossaryStudy.stateNew",
+  learning: "glossaryStudy.stateLearning",
+  reviewed: "glossaryStudy.stateReviewed",
 } as const;
-type PromptMode = keyof typeof promptModeLabels;
+const promptModes = ["japanese", "kana", "english"] as const;
+const promptModeMessageIds = {
+  japanese: "glossaryStudy.promptJapanese",
+  kana: "glossaryStudy.promptKana",
+  english: "glossaryStudy.promptEnglish",
+} as const;
+type PromptMode = typeof promptModes[number];
 const promptModeStorageKey = "nihonest:glossary-review-prompt-mode";
 
 function preferredPromptMode(): PromptMode {
   if (typeof window === "undefined") return "japanese";
   try {
     const stored = window.localStorage.getItem(promptModeStorageKey);
-    return stored && stored in promptModeLabels ? stored as PromptMode : "japanese";
+    return stored && stored in promptModeMessageIds ? stored as PromptMode : "japanese";
   } catch {
     return "japanese";
   }
@@ -31,6 +38,7 @@ function termPromptLabel(term: JapaneseTerm, mode: PromptMode): string {
 }
 
 export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly JapaneseTerm[] }>) {
+  const { message } = useInterfaceMessages();
   const { isReady, records, recordReview, setReviewState } = useGlossaryStudy();
   const [activeTermId, setActiveTermId] = useState<string>();
   const [promptMode, setPromptMode] = useState<PromptMode>(preferredPromptMode);
@@ -62,7 +70,7 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
 
   function completeReview(outcome: GlossaryReviewOutcome) {
     recordReview(activeTerm.id, outcome);
-    setAnnouncement(outcome === "understood" ? "Marked as reviewed." : "Kept in learning for another review.");
+    setAnnouncement(outcome === "understood" ? message("glossaryStudy.announcementUnderstood") : message("glossaryStudy.announcementAgain"));
     setAnswerVisible(false);
     if (orderedTerms.length > 1) setActiveTermId(orderedTerms[(currentIndex + 1) % orderedTerms.length].id);
   }
@@ -82,38 +90,38 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
     <section className="mt-5 rounded-3xl border border-teal-200 bg-teal-50/60 p-5 sm:p-7" aria-labelledby="glossary-study-heading">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Optional review</p>
-          <h3 id="glossary-study-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">Review your saved terms</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Use this lightweight check to remember administrative vocabulary. It does not schedule lessons or score proficiency.</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("glossaryStudy.eyebrow")}</p>
+          <h3 id="glossary-study-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">{message("glossaryStudy.heading")}</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{message("glossaryStudy.description")}</p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
-          <span className="rounded-full bg-white px-3 py-2 text-slate-700">New {counts.new}</span>
-          <span className="rounded-full bg-white px-3 py-2 text-amber-800">Learning {counts.learning}</span>
-          <span className="rounded-full bg-white px-3 py-2 text-teal-800">Reviewed {counts.reviewed}</span>
+          <span className="rounded-full bg-white px-3 py-2 text-slate-700">{message("glossaryStudy.stateNew")} {counts.new}</span>
+          <span className="rounded-full bg-white px-3 py-2 text-amber-800">{message("glossaryStudy.stateLearning")} {counts.learning}</span>
+          <span className="rounded-full bg-white px-3 py-2 text-teal-800">{message("glossaryStudy.stateReviewed")} {counts.reviewed}</span>
         </div>
       </div>
 
       <fieldset className="mt-5 flex flex-wrap gap-x-6 gap-y-3 rounded-2xl border border-teal-200 bg-white px-4 py-3">
-        <legend className="px-1 text-sm font-semibold text-slate-900">Reading aids</legend>
+        <legend className="px-1 text-sm font-semibold text-slate-900">{message("glossaryStudy.readingAids")}</legend>
         <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700">
           <input type="checkbox" checked={showKana} onChange={(event) => setShowKana(event.target.checked)} className="size-4 accent-teal-700" />
-          Show kana
+          {message("glossaryStudy.showKana")}
         </label>
         <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700">
           <input type="checkbox" checked={showRomaji} onChange={(event) => setShowRomaji(event.target.checked)} className="size-4 accent-teal-700" />
-          Show romaji
+          {message("glossaryStudy.showRomaji")}
         </label>
       </fieldset>
 
       <div className="mt-4 grid gap-4 rounded-2xl border border-teal-200 bg-white p-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-slate-900">
-          Prompt side
+          {message("glossaryStudy.promptSide")}
           <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
-            {Object.entries(promptModeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            {promptModes.map((value) => <option key={value} value={value}>{message(promptModeMessageIds[value])}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-slate-900">
-          Jump to term
+          {message("glossaryStudy.jumpToTerm")}
           <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
             {orderedTerms.map((term) => <option key={term.id} value={term.id}>{termPromptLabel(term, promptMode)}</option>)}
           </select>
@@ -122,16 +130,16 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
 
       <div className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-slate-500">
-          <span>Term {currentIndex + 1} of {terms.length}</span>
+          <span>{message("glossaryStudy.termPosition").replace("{current}", String(currentIndex + 1)).replace("{total}", String(terms.length))}</span>
           <label className="flex items-center gap-2 font-semibold text-slate-700">
-            Progress status
+            {message("glossaryStudy.progressStatus")}
             <select
               value={activeState}
               disabled={!isReady}
-              onChange={(event) => setReviewState(activeTerm.id, event.target.value as keyof typeof stateLabels)}
+              onChange={(event) => setReviewState(activeTerm.id, event.target.value as typeof reviewStates[number])}
               className="app-select min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-wait disabled:opacity-50"
             >
-              {Object.entries(stateLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              {reviewStates.map((value) => <option key={value} value={value}>{message(reviewStateMessageIds[value])}</option>)}
             </select>
           </label>
         </div>
@@ -161,17 +169,17 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
             {promptMode !== "english" && <p className="mt-2 text-lg font-semibold text-slate-950">{activeTerm.englishName}</p>}
             <p className="mt-2 leading-7 text-slate-600">{activeTerm.shortDefinition}</p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <button type="button" disabled={!isReady} onClick={() => completeReview("again")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 hover:border-amber-500 hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-wait disabled:opacity-50">Review again</button>
-              <button type="button" disabled={!isReady} onClick={() => completeReview("understood")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-50">I understand this</button>
+              <button type="button" disabled={!isReady} onClick={() => completeReview("again")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 hover:border-amber-500 hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-wait disabled:opacity-50">{message("glossaryStudy.reviewAgain")}</button>
+              <button type="button" disabled={!isReady} onClick={() => completeReview("understood")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-50">{message("glossaryStudy.understood")}</button>
             </div>
           </div>
         ) : (
-          <button type="button" onClick={() => setAnswerVisible(true)} className="mx-auto mt-6 flex min-h-11 items-center justify-center rounded-full bg-teal-800 px-6 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Show meaning</button>
+          <button type="button" onClick={() => setAnswerVisible(true)} className="mx-auto mt-6 flex min-h-11 items-center justify-center rounded-full bg-teal-800 px-6 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("glossaryStudy.showMeaning")}</button>
         )}
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-200 pt-4">
-          <button type="button" onClick={() => move(-1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">← Previous</button>
-          <button type="button" onClick={() => move(1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">Next →</button>
+          <button type="button" onClick={() => move(-1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.previous")}</button>
+          <button type="button" onClick={() => move(1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.next")}</button>
         </div>
         <p className="sr-only" aria-live="polite">{announcement}</p>
       </div>

@@ -1,12 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { glossaryTerms } from "@/data/glossary";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { writeContentLocale } from "@/lib/storage/content-locale";
 import { GlossaryExplorer } from "./glossary-explorer";
 
 describe("GlossaryExplorer", () => {
   beforeEach(() => {
     window.history.replaceState(null, "", "/glossary");
     sessionStorage.clear();
+    writeContentLocale("en");
   });
 
   it("searches across Japanese and macron-free romaji", () => {
@@ -63,5 +66,16 @@ describe("GlossaryExplorer", () => {
       "href",
       "/glossary/juminhyo?returnTo=%2Fglossary%3Fq%3Djuminhyo%26topic%3Dmunicipal-procedures",
     );
+  });
+
+  it("localizes the index controls and counts in Japanese", () => {
+    writeContentLocale("ja");
+    render(<ContentLocaleProvider><GlossaryExplorer terms={glossaryTerms} /></ContentLocaleProvider>);
+
+    expect(screen.getByRole("searchbox", { name: "日本語または英語で検索" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "トピックで用語集を絞り込む" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "自治体の手続き" })).toBeInTheDocument();
+    expect(screen.getByText(`全${glossaryTerms.length}件中${glossaryTerms.length}件`)).toBeInTheDocument();
+    expect([...document.querySelectorAll("details summary")].some((summary) => summary.textContent?.includes("自治体の手続き"))).toBe(true);
   });
 });

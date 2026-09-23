@@ -6,6 +6,7 @@ import { faqSchema } from "@/domain/faq/faq";
 import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { ExploreDiscovery } from "./explore-discovery";
+import { ActivitySearchSuggestion } from "@/components/activity-cross-reference/activity-search-suggestion";
 import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
 import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import type { ArticleGroupSearchTranslation, ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
@@ -182,6 +183,24 @@ describe("ExploreDiscovery", () => {
     expect(Array.from(screen.getByRole("combobox", { name: "トピック" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
       "すべて", "銀行", "日常生活", "仕事", "医療・健康", "住居", "出入国在留管理", "言語", "自治体の手続き", "税金", "交通",
     ]);
+
+    enterSearch("query-with-no-matches");
+    expect(screen.getByRole("heading", { name: "一致する情報が見つかりません" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "すべてのグループを見る" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "この質問をFAQで検索する →" })).toBeInTheDocument();
+  });
+
+  it("localizes the activity-search wrapper while retaining canonical activity labels", () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    render(
+      <ContentLocaleProvider>
+        <ActivitySearchSuggestion query="developer" returnTo="/explore" />
+      </ContentLocaleProvider>,
+    );
+
+    expect(screen.getByRole("heading", { name: "予定している活動から確認する" })).toBeInTheDocument();
+    expect(screen.getByText("この情報確認では、在留資格、雇用、免許、税金などの論点を分けて整理します。要件を満たすかどうかの判断は行いません。")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /活動を確認： Take or change work/ })).toBeInTheDocument();
   });
 
   it("returns FAQ questions and their compact canonical links", () => {

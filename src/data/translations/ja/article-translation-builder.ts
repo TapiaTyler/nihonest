@@ -1,4 +1,4 @@
-import { translationArtifactSchema } from "@/domain/translation/translation";
+import { translationArtifactSchema, type TranslationArtifact } from "@/domain/translation/translation";
 
 export const japaneseArticleTerminologyRevision = "74c46a91ccec5c9de19e65a60b89acd0bde3f837a042c3fe08a6ce6f1899f5cf";
 export const japaneseArticlePromptRevision = "5a8fc2cd3c7bc572297b89a72c5fa44c6b5ee6057bb96d714ee45c05defdccaa";
@@ -11,7 +11,7 @@ export function defineJapaneseArticleTranslation(
   title: string,
   description: string,
   body: string,
-  generator = japaneseArticleGenerator,
+  generator: TranslationArtifact["generator"] = japaneseArticleGenerator,
 ) {
   return translationArtifactSchema.parse({
     schemaVersion: 1,

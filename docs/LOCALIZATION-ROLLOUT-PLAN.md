@@ -36,6 +36,64 @@ Initial Phase 14 baseline:
 
 The Japanese option must continue to identify itself as a pilot while interface and catalog coverage remain incomplete.
 
+### Post-article audit snapshot (September 2026)
+
+The initial baseline above is historical. After the article-translation push, the focused `npm run localization:audit` reports **95/95 current Japanese article artifacts**, all machine translated, none human reviewed, no missing or incorrectly active outdated article artifacts, and two retained historical stale pilot artifacts. This command measures **articles only**; it does not establish complete Japanese site coverage.
+
+The structured-artifact inventory at this checkpoint is 15/15 content groups, 20/20 journeys, 104/104 FAQs, 18/225 glossary terms, and 12/30 residence statuses. These counts describe records present in the Japanese translation catalogs; the article audit does not validate their revisions. The annotated-document presentation, Shinjuku/Nagoya local supplements, and page-level interface copy need independent coverage tracking. Interface coverage has no meaningful percentage yet because many routes mix translated shared controls with English static text.
+
+Representative UI gaps found in the original route/component audit (some have since been addressed in the local batches below):
+
+- Shared chrome: navigation and footer have Japanese interface messages, but common feedback, accessible announcements, and error states still need a string-level audit.
+- Public discovery: Home, Explore, the FAQ question catalog, and the Glossary index/review controls have since gained Japanese coverage. Substantial residence-status page chrome remains English; FAQ and other related-link labels still need a complete target-by-target audit.
+- Personal tools: Roadmap, Saved, Reminders, and Account/authentication contain substantial English instructions, actions, feedback, and empty/error states. Journey records are translated, but page chrome and progress controls still need review.
+- Detail and adjacent content: glossary-term and status pages translate only supported record fields; related links, section headings, sources, annotated documents, and local-guidance modules require separate localization. Document values and official links must remain anchored to canonical evidence.
+
+Treat this as an inventory, not a claim that every English string has been identified. The next implementation pass should build a route-and-state checklist, including metadata, loading, validation, empty/error states, and screen-reader text, before marking any page family complete.
+
+#### Route-and-state checklist
+
+Use this list when closing each page family. “Partial” means translated record fields or shared controls already exist, **not** that the route is fully localized. For every route check default, selected/personalized, search/filter, empty, loading, error, confirmation, and keyboard/screen-reader states where applicable. Also check document titles/descriptions, visible link text, `aria-label`/live announcements, and mobile layout.
+
+| Page family | Routes | Audit status / next focus |
+| --- | --- | --- |
+| Shared chrome | Global header, mobile navigation, footer, language control | Partial; footer and feedback strings remain. |
+| Entry and discovery | `/`, `/explore`, `/explore/[groupId]`, `/can-i-do-this` | Partial; Home/Explore entry copy first, then group/activity details and search-result states. |
+| Public knowledge | `/articles/[slug]`, `/faq`, `/glossary`, `/glossary/[slug]`, `/residence-statuses`, `/residence-statuses/[slug]` | Partial; finish structured catalogs, related-link labels, article-adjacent components, glossary review, status chrome, and sources. |
+| Journey selection | `/onboarding`, `/explore/journeys/[journeyId]`, `/my-journey` | Partial; journey records translated, but preference-dependent UI and progress/navigation states need closure. |
+| Personal tools | `/roadmap`, `/saved`, `/reminders` | Pending full string-and-state audit; substantial English remains. |
+| Account | `/account` and authentication/management flows | Pending full string-and-state audit; include provider failures, validation, deletion, and synchronization notices. |
+
+Mark a row complete only after its routes and applicable states pass manual locale review and focused automated checks. Track English fallback separately from a translated state rather than counting it as Japanese coverage.
+
+**First entry-point pass implemented locally; manual review pending:** the footer, Home's principle/legal sections and preference-dependent hero/recommendation copy, and Explore's entry header and activity prompts use the typed English/Japanese interface catalog. Journey-stage labels follow the existing locale taxonomy. Canonical journey, route, and guide titles may still appear in English in personalized Home areas; Explore search results, group/activity detail pages, document metadata, and other interaction states remain on the checklist. This pass is not a declaration that Home or Explore is fully localized.
+
+**Explore result-state pass implemented locally; manual review pending:** the result headings and counts, conditional jump navigation, section headings, Japanese-translation notice, no-result recovery, FAQ query handoff, and related-activity suggestion wrapper use the interface catalog. The query and canonical result destinations are unchanged. Canonical activity names, group and activity detail routes, and some card content remain open items. Explore is therefore still partial, not complete.
+
+**Shared article-card metadata pass implemented locally; manual review pending:** article cards now localize editorial status, topic tags, and relevant journey stages through a small client boundary while retaining their existing single full-card link and canonical IDs. The English equivalent displayed on glossary cards is intentional term content, not an untranslated UI label; glossary index controls and detail pages remain separate work. Canonical activity names and deeper Explore routes remain open items.
+
+**FAQ related-link pass implemented locally; manual review pending:** the FAQ page's visible search and browse copy already used locale-aware messages. Related links now use active Japanese guide, group, and journey titles or canonical Japanese glossary and residence-status names; the original English label, stable ID, and href remain intact. Activity names have no translated catalog and remain marked English fallback. The remaining FAQ questions without Japanese artifacts and locale-specific document metadata are separate work.
+
+**Second balanced FAQ batch implemented locally; manual review pending:** twelve additional machine-translated question/summary artifacts—two in each of the six browse groups—raise Japanese FAQ coverage from 20 to 32 of 104. This batch covers residence renewal and re-entry, school choice and post-graduation job hunting, municipal waste and local-language support, language requirements and employer hiring duties, spouse-status changes and permanent-residence preparation, and resident/foreign-income tax questions. Revision tests bind each artifact to its canonical question and summary; the remaining 72 FAQs retain explicit English fallback.
+
+**Third FAQ batch implemented locally; manual review pending:** twelve more machine-translated question/summary artifacts raise coverage from 32 to 44 of 104. The Study group is now fully covered at 5 of 5; other groups remain partial. The batch adds short-visit and paid-work distinctions, school COE support, waste and internet services, consumer help, software and English-teaching work routes, minimum-wage protection, the limits of Dependent status, and payroll-tax records. The date-sensitive 2027 permanent-residence-period question remains untranslated pending a separate source and wording check. The remaining 60 questions retain canonical-English fallback.
+
+**Fourth FAQ batch implemented locally; manual review pending:** twelve more machine-translated question/summary artifacts raise coverage from 44 to 56 of 104. The batch covers foreign-license driving, evacuation destinations, Japanese-only contracts, overtime and social-insurance boundaries, harassment-related threats, Designated Activities, diplomatic and official travel, tax residence and departure, and side-job rules. Duplicate IDs discovered during selection were replaced before translation. Study remains fully translated; Family has only the separately deferred 2027 permanent-residence-period question outstanding. The other 48 questions retain canonical-English fallback.
+
+**Fifth FAQ batch implemented locally; manual review pending:** twelve new machine-translated question/summary artifacts raise coverage from 56 to 68 of 104. The batch covers foreign-license conversion, neighbors and neighborhood associations, J-Find and Working Holiday, longer medical stays, software-language expectations, creative and nursing-care routes, Business Manager versus Start-up criteria, and the ¥200,000 and 183-day tax misconceptions. The translated Business Manager summary deliberately contains no outdated capital amount. The remaining 36 questions retain canonical-English fallback, including the separately deferred 2027 permanent-residence-period item.
+
+**Sixth FAQ batch implemented locally; manual review pending:** twelve new machine-translated question/summary artifacts raise coverage from 68 to 80 of 104. This batch covers Digital Nomad employment, a second Working Holiday participation, medical-stay attendants, compulsory vehicle insurance and bicycle enforcement, Japanese-language tests and transition rules for skills-based work routes, dismissal, side-work income classification, and invoice registration. Date-sensitive statements preserve the canonical qualifications; they are not independent legal updates. The remaining 24 questions retain canonical-English fallback, including the separately deferred 2027 permanent-residence-period item.
+
+**Seventh FAQ batch implemented locally; manual review pending:** twelve new machine-translated question/summary artifacts raise coverage from 80 to 92 of 104. They cover religious-worker dispatch, Skilled Labor versus Specified Skilled Worker, training-route decisions, the Technical Intern Training transition, job-change notices, fixed-term contract conversion, work injuries, combined working hours, and freelance-law coverage and payment timing. The remaining 12 questions retain canonical-English fallback, including the separately deferred 2027 permanent-residence-period item.
+
+**Eighth FAQ batch implemented locally; manual review pending:** eleven new machine-translated question/summary artifacts raise coverage from 92 to 103 of 104. They cover bicycle sidewalk rules, cooling-off, long-stay sightseeing limits, job-language expectations, creative work, foreign medical qualifications, pending care-worker registration, and legal/accounting qualifications and support roles. The sole remaining English-fallback question is the separately deferred, date-sensitive 2027 permanent-residence-period item; its source and transitional wording require a focused check before translation.
+
+**Final FAQ artifact implemented locally; manual review pending:** after checking the Immigration Services Agency's February 24, 2026 permanent-residence guideline and its transition notice, the English FAQ summary now states the March 31/April 1, 2027 boundary and the limited treatment for a person holding a three-year period on March 31, 2027 whose application is decided within that period. A matching Japanese artifact raises question/summary coverage to 104 of 104. Complete artifact coverage does not imply qualified editorial approval or complete Japanese FAQ-page/interface localization; the effective-date guidance must be rechecked before the 2027 change takes effect.
+
+**Glossary index interface pass implemented locally; manual review pending:** the index introduction, search and topic controls, counts, browse headings, and empty states now use the typed bilingual interface catalog. Topic labels follow the existing Japanese taxonomy map. This does not change the partial 18/225 Japanese glossary-definition coverage; saved-term study/review controls and individual term pages remain separate passes.
+
+**Saved-term review interface pass implemented locally; manual review pending:** the saved glossary heading and review-panel opener, progress labels, reading aids, prompt mode, jump control, reveal/assessment actions, navigation, and accessible review announcements now use bilingual interface messages. Term headwords, kana, romaji, English definitions, progress IDs, storage, and the Roadmap hash deep link remain canonical and behaviorally unchanged. The rest of the Saved page and the 18/225 partial glossary-definition catalog remain separate localization work.
+
 ## Bounded implementation sequence
 
 ### 1. Readiness and coverage
@@ -140,7 +198,19 @@ The Japanese option must continue to identify itself as a pilot while interface 
 
 **Iteration 5V complete locally:** Japanese article coverage rises from 75 to 78 of 95 with Cultural Activities, Training, and the Designated Activities umbrella guide. The translations preserve the distinct unpaid, non-employment, and individually designated activity boundaries; required plan, host, funding, and evidence distinctions; the 2027 successor-system effective date; and the rule that no work, family, period, residence-card, or renewal condition transfers automatically between different Designated Activities programs. All three remain revision-addressed machine translations requiring qualified immigration review.
 
-### 6. Localization closure
+### 6. Remaining UI and structured-content rollout
+
+Work in short, independently reviewable passes after the article milestone. Preserve the current English fallback and Japanese pilot label throughout.
+
+1. **Shared chrome and public entry points:** finish the message catalog and localize footer, Home, Explore, common cards/links, notices, metadata, and accessible names. Create the route-and-state checklist so partially translated pages are visible rather than counted as complete.
+2. **FAQ discovery and answers:** translate remaining FAQ records in bounded risk-ordered batches; localize related-content labels from the translated target when current, and fall back to English when absent or stale. Verify FAQ/Explore search, filters, sorting, and query handoffs in both languages.
+3. **Glossary, study, and residence statuses:** translate remaining glossary and status records in bounded batches while localizing the index, individual detail pages, review controls, progress feedback, source sections, and cross-links. Preserve Japanese headwords, kana, romaji, audio, IDs, and URLs as distinct canonical fields.
+4. **Personal and account surfaces:** localize My Journey, Roadmap, Saved, Reminders, and Account/authentication in page-family passes, including mutation feedback, validation and provider errors, confirmation flows, and accessible announcements. Do not accidentally translate persisted state IDs or notification payload contracts.
+5. **Documents and geography:** localize annotated-document chrome/field explanations while keeping numeric values and official evidence canonical; implement the bilingual prefecture finder, then translate the Shinjuku/Nagoya supplement UI and current source-backed prose. Pair later local research batches with their own translations and explicit fallback.
+
+Each pass should provide direct manual-review links and run only focused validation. Track current, stale, missing, and human-reviewed status separately for each structured catalog; do not infer site readiness from the article-only audit.
+
+### 7. Localization closure
 
 - Verify translated links, filters, sorting, query handoffs, responsive layout, screen-reader language boundaries, notices, and fallback.
 - Confirm no stale artifact renders or contributes search text.

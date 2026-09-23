@@ -8,6 +8,8 @@ import type { TopicId } from "@/domain/taxonomy/taxonomy";
 import { topics } from "@/domain/taxonomy/taxonomy";
 import { searchGlossary } from "@/lib/search/glossary-search";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { GlossaryCard } from "./glossary-card";
 import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 
@@ -40,6 +42,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
   translations?: readonly GlossarySearchTranslation[];
 }>) {
   const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
+  const { message } = useInterfaceMessages();
   const searchId = useId();
   const [filters, setFilters] = useState<GlossaryFilters>(defaultGlossaryFilters);
   const filtersRef = useRef<GlossaryFilters>(defaultGlossaryFilters);
@@ -94,10 +97,10 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
     <div className="mt-10">
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
         <label htmlFor={searchId} className="block text-sm font-semibold text-slate-900">
-          Search Japanese or English
+          {message("glossaryIndex.searchLabel")}
         </label>
         <p id={`${searchId}-hint`} className="mt-1 text-sm leading-6 text-slate-600">
-          Try Japanese characters, kana, romaji with or without macrons, or an English meaning.
+          {message("glossaryIndex.searchHint")}
         </p>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
           <input
@@ -106,7 +109,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
             value={query}
             onChange={(event) => updateFilters({ query: event.target.value })}
             aria-describedby={`${searchId}-hint`}
-            placeholder="Example: 住民票, juminhyo, residence certificate"
+            placeholder={message("glossaryIndex.searchPlaceholder")}
             className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
           />
           {hasFilters && (
@@ -115,13 +118,16 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
               onClick={clearFilters}
               className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
             >
-              Clear search and filters
+              {message("glossaryIndex.clear")}
             </button>
           )}
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filter glossary by topic">
-          {[{ id: "all" as const, label: "All topics" }, ...availableTopics].map((topic) => (
+        <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label={message("glossaryIndex.filterByTopic")}>
+          {[{ id: "all" as const, label: message("glossaryIndex.allTopics") }, ...availableTopics.map((topic) => ({
+            ...topic,
+            label: locale === "ja" ? japaneseTaxonomyLabels.topic[topic.id] : topic.label,
+          }))].map((topic) => (
             <button
               key={topic.id}
               type="button"
@@ -136,7 +142,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
       </div>
 
       <p className="mt-6 text-sm text-slate-500" aria-live="polite">
-        Showing {visibleTerms.length} of {terms.length} terms
+        {message("glossaryIndex.resultCount").replace("{count}", String(visibleTerms.length)).replace("{total}", String(terms.length))}
       </p>
 
       {visibleTerms.length > 0 && hasFilters ? (
@@ -155,9 +161,13 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
           {browseGroups.map(({ topic, terms: groupedTerms }) => (
             <details key={topic.id} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
-                <span>{topic.label}</span>
+                <span>{locale === "ja" ? japaneseTaxonomyLabels.topic[topic.id] : topic.label}</span>
                 <span className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-500">{groupedTerms.length} {groupedTerms.length === 1 ? "term" : "terms"}</span>
+                  <span className="text-sm font-medium text-slate-500">{locale === "ja"
+                    ? message("glossaryIndex.groupCount").replace("{count}", String(groupedTerms.length))
+                    : message("glossaryIndex.groupCount")
+                      .replace("{count}", String(groupedTerms.length))
+                      .replace("{label}", message(groupedTerms.length === 1 ? "glossaryIndex.term" : "glossaryIndex.terms"))}</span>
                   <DisclosureChevron />
                 </span>
               </summary>
@@ -169,14 +179,14 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
         </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
-          <h2 className="text-xl font-semibold text-slate-950">No glossary terms found</h2>
-          <p className="mt-2 text-slate-600">Check the spelling, try the English meaning, or clear the topic filter.</p>
+          <h2 className="text-xl font-semibold text-slate-950">{message("glossaryIndex.noResults")}</h2>
+          <p className="mt-2 text-slate-600">{message("glossaryIndex.noResultsHelp")}</p>
           <button
             type="button"
             onClick={clearFilters}
             className="mt-5 min-h-11 rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
           >
-            Show all terms
+            {message("glossaryIndex.showAll")}
           </button>
         </div>
       )}
