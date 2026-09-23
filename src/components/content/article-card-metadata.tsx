@@ -41,6 +41,26 @@ export function ArticleCardBadges({ status, topicIds }: Pick<ArticleMetadata, "s
   );
 }
 
+/** Article-page header pills: editorial status and one pill per topic. */
+export function ArticleHeaderBadges({ status, topicIds }: Pick<ArticleMetadata, "status" | "topicIds">) {
+  const { locale, message } = useInterfaceMessages();
+  return (
+    <div lang={locale} className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
+      <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">{message(articleStatusMessage[status])}</span>
+      {topicIds.map((id) => <span key={id} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">{topicLabel(id, locale)}</span>)}
+    </div>
+  );
+}
+
+export function ArticleHeaderStages({ journeyStageIds }: Pick<ArticleMetadata, "journeyStageIds">) {
+  const { locale, message } = useInterfaceMessages();
+  return (
+    <p lang={locale} className="mt-5 text-sm text-slate-500">
+      {message("article.journeyStages")} {journeyStageIds.map((id) => journeyStageLabel(id, locale)).join(locale === "ja" ? "、" : ", ")}
+    </p>
+  );
+}
+
 export function ArticleCardRelevance({ journeyStageIds }: Pick<ArticleMetadata, "journeyStageIds">) {
   const { locale, message } = useInterfaceMessages();
   const stageSeparator = locale === "ja" ? "、" : ", ";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 import type { SavedContentReference } from "@/domain/saved-content/saved-content";
 import { useSavedContent } from "./saved-content-provider";
 
@@ -10,11 +11,9 @@ export function SaveContentButton({ kind, contentId, deferRemoval = false }: Sav
   const { isReady, isSaved, setSaved } = useSavedContent();
   const reference = { kind, contentId } as const;
   const saved = isSaved(reference);
-  const contentLabel = {
-    article: "guide",
-    "glossary-term": "term",
-    "residence-status": "residence status",
-  }[kind];
+  const { message, format } = useInterfaceMessages();
+  const contentLabel = message(`save.kind.${kind}`);
+  // Capitalizes English sentence starts; Japanese labels are unaffected.
   const feedbackLabel = contentLabel.charAt(0).toUpperCase() + contentLabel.slice(1);
   const [feedback, setFeedback] = useState<string>();
   const [removalPending, setRemovalPending] = useState(false);
@@ -36,14 +35,14 @@ export function SaveContentButton({ kind, contentId, deferRemoval = false }: Sav
     if (saved && deferRemoval) {
       // Keep Saved-page cards mounted briefly so the nearby confirmation remains visible.
       setRemovalPending(true);
-      showFeedback(`${feedbackLabel} removed from saved list`);
+      showFeedback(format("save.removed", { item: feedbackLabel }));
       removalTimer.current = setTimeout(() => setSaved(reference, false), 900);
       return;
     }
 
     const nextSaved = !saved;
     setSaved(reference, nextSaved);
-    showFeedback(`${feedbackLabel} ${nextSaved ? "added to saved list" : "removed from saved list"}`);
+    showFeedback(format(nextSaved ? "save.added" : "save.removed", { item: feedbackLabel }));
   }
 
   return (
@@ -51,7 +50,7 @@ export function SaveContentButton({ kind, contentId, deferRemoval = false }: Sav
       <button
         type="button"
         aria-pressed={saved}
-        aria-label={saved ? `Remove ${contentLabel} from saved content` : `Save ${contentLabel}`}
+        aria-label={format(saved ? "save.remove" : "save.save", { item: contentLabel })}
         disabled={!isReady || removalPending}
         onClick={toggleSaved}
         className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-pink-300 bg-white text-pink-600 shadow-sm transition-colors hover:border-pink-500 hover:bg-pink-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600 disabled:cursor-wait disabled:opacity-50 aria-pressed:border-pink-600 aria-pressed:bg-pink-600 aria-pressed:text-white"

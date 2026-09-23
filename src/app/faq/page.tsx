@@ -3,6 +3,8 @@ import { FaqExplorer } from "@/components/faq/faq-explorer";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllFaqEntries } from "@/lib/content/faqs";
 import { getFaqSearchTranslations } from "@/lib/content/translations";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | Nihonest",
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
 export default function FaqPage() {
   return (
     <div className="page-shell py-16 sm:py-24">
+      <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.faq")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="faq.pageEyebrow" /></p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="faq.pageTitle" /></h1>

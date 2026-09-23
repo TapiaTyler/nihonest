@@ -1,7 +1,10 @@
 import { defineConfig } from "vitest/config";
 import { fileURLToPath } from "node:url";
+import { mdxMetadataPlugin } from "./src/test/mdx-metadata-plugin";
 
 export default defineConfig({
+  // Article MDX is imported for metadata only; Vitest has no MDX compiler.
+  plugins: [mdxMetadataPlugin()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

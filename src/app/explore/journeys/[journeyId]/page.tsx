@@ -5,6 +5,8 @@ import { guidedJourneys } from "@/data/discovery";
 import { getJourneyRouteById } from "@/domain/discovery/discovery";
 import { getArticleGroupById, getGuidedJourneyById, getJourneySteps } from "@/lib/content/articles";
 import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const dynamicParams = false;
 
@@ -34,6 +36,7 @@ export default async function GuidedJourneyPage({ params, searchParams }: PagePr
 
   return (
     <div className="page-shell py-12 sm:py-20">
+      <LocalizedDocumentTitle japanese={translation ? formatInterfaceMessage("ja", "pageTitle.withSite", { title: translation.title }) : undefined} />
       <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} requestedRouteId={requestedRouteId} steps={steps} translation={translation} groupTranslation={groupTranslation} />
     </div>
   );

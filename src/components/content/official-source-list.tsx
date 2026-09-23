@@ -1,6 +1,7 @@
 import type { OfficialSource } from "@/domain/source/source";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { OfficialSourceMetadata } from "./official-source-metadata";
+import { OfficialSourceItems } from "./official-source-items";
 
 type OfficialSourceListProps = Readonly<{
   sources: readonly OfficialSource[];
@@ -17,7 +18,7 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
         <InterfaceText id="sources.heading" />
       </h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><InterfaceText id="sources.description" /></p>
-      <ul className="mt-5 space-y-3">
+      <OfficialSourceItems>
         {sources.map((source) => (
           <li key={source.id} className="rounded-xl border border-slate-200 bg-white p-4">
             <a
@@ -37,7 +38,7 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
             }} />
           </li>
         ))}
-      </ul>
+      </OfficialSourceItems>
     </section>
   );
 }

@@ -15,7 +15,7 @@ export const contentLocaleSchema = z.string().trim().min(2).max(35).refine((loca
 
 export const translationArtifactSchema = z.object({
   schemaVersion: z.literal(1),
-  contentKind: z.enum(["article", "article-group", "faq", "glossary-term", "residence-status", "journey", "interface"]),
+  contentKind: z.enum(["article", "article-group", "faq", "glossary-term", "residence-status", "journey", "activity-cross-reference", "interface"]),
   contentId: stableIdSchema,
   sourceLocale: z.literal("en"),
   targetLocale: contentLocaleSchema,

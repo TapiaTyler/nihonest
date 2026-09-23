@@ -68,7 +68,7 @@ export function GuidedJourneyView({
       </header>
 
       {requestedRouteId && !selectedRoute && mode === "catalog" && (
-        <p className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">That route is not part of this journey. Choose one of the available routes below.</p>
+        <p className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">{message("journey.routeNotInJourney")}</p>
       )}
 
       <nav className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="journey-outline-heading">

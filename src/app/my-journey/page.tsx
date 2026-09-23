@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { InterfaceText } from "@/components/localization/interface-text";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 import { MyJourney } from "@/components/journey/my-journey";
-import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
+import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { getAllArticles } from "@/lib/content/articles";
 
@@ -13,8 +16,11 @@ export const metadata: Metadata = {
 
 export default function MyJourneyPage() {
   return (
-    <Suspense fallback={<div className="page-shell py-12 sm:py-20"><p className="text-slate-600">Loading your journey…</p></div>}>
-      <MyJourney journeys={guidedJourneys} groups={articleGroups} articles={getAllArticles().map(({ metadata }) => metadata)} translations={getJourneyTranslations()} groupTranslations={getArticleGroupSearchTranslations()} />
-    </Suspense>
+    <>
+      <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.myJourney")} />
+      <Suspense fallback={<div className="page-shell py-12 sm:py-20"><p className="text-slate-600"><InterfaceText id="myJourney.loading" /></p></div>}>
+        <MyJourney journeys={guidedJourneys} groups={articleGroups} articles={getAllArticles().map(({ metadata }) => metadata)} translations={getJourneyTranslations()} groupTranslations={getArticleGroupSearchTranslations()} articleTranslations={getArticleSearchTranslations()} />
+      </Suspense>
+    </>
   );
 }

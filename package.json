@@ -24,6 +24,7 @@
     "glossary:check": "tsx scripts/check-glossary-draft.ts",
     "status:draft": "tsx scripts/draft-status-translations.ts",
     "status:guidance:draft": "tsx scripts/draft-status-guidance-translations.ts",
+    "activity:draft": "tsx scripts/draft-activity-translations.ts",
     "architecture:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/check-architecture.ts",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",

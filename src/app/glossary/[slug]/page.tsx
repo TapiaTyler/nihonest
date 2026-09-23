@@ -13,6 +13,8 @@ import { InterfaceText } from "@/components/localization/interface-text";
 import { getAnnotatedDocumentsForGlossaryTerm } from "@/lib/content/annotated-documents";
 import { getArticleSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
 import { LocalizedGlossaryDetailSections, LocalizedGlossaryExplanation, LocalizedGlossarySummary, LocalizedGlossaryTopics } from "@/components/localization/localized-glossary-fields";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const dynamicParams = false;
 
@@ -56,6 +58,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
 
   return (
     <article className="page-shell py-12 sm:py-20">
+      <LocalizedDocumentTitle japanese={formatInterfaceMessage("ja", "pageTitle.glossaryTerm", { term: term.japanese, english: term.englishName })} />
       <div className="mx-auto max-w-3xl">
         <BackToGlossaryLink />
         <header className="relative mt-8 border-b border-slate-200 pb-8">

@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 
 export const reminderReturnStorageKey = "nihonest:reminder-return-to:v1";
 
 export function ReminderLink({ targetId, title, returnTo }: Readonly<{ targetId: string; title: string; returnTo: string }>) {
+  const { message, format } = useInterfaceMessages();
   return (
     <Link
       href={{ pathname: "/reminders", query: { target: "checklist", targetId, title, returnTo } }}
-      aria-label={`Set reminder for ${title}`}
-      title="Set reminder"
+      aria-label={format("reminders.setFor", { title })}
+      title={message("reminders.set")}
       onClick={() => sessionStorage.setItem(reminderReturnStorageKey, returnTo)}
       className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 bg-slate-50 text-teal-800 hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
     >

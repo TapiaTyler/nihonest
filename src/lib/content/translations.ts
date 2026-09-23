@@ -1,3 +1,4 @@
+import { japaneseActivityTranslations } from "@/data/translations/ja/activity-translations";
 import { japaneseArticleTranslations } from "@/data/translations/ja/article-translations";
 import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article-group-translations";
 import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
@@ -112,6 +113,11 @@ export function getResidenceStatusTranslations(): readonly ResidenceStatusTransl
 /** Path-keyed Japanese overlay for one status's structured guidance, or undefined when none is active. */
 export function getResidenceStatusGuidanceTranslation(contentId: string): Readonly<Record<string, string>> | undefined {
   return getActiveTranslations(japaneseResidenceStatusGuidanceTranslations).find((artifact) => artifact.contentId === contentId)?.fields;
+}
+
+/** Path-keyed Japanese overlays for "Can I do this?" activities, keyed by activity ID. */
+export function getActivityTranslations(): Readonly<Record<string, Readonly<Record<string, string>>>> {
+  return Object.fromEntries(getActiveTranslations(japaneseActivityTranslations).map((artifact) => [artifact.contentId, artifact.fields]));
 }
 
 export function getJourneyTranslations(): readonly JourneyTranslation[] {

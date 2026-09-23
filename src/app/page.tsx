@@ -2,6 +2,8 @@ import { HomeHero } from "@/components/personalization/home-hero";
 import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/articles";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 
 const principles = [
   {
@@ -27,6 +29,7 @@ export default function Home() {
 
   return (
     <>
+      <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.home")} />
       <HomeHero journeys={journeys} articles={articles} />
       <StageRecommendations articles={articles} journeys={journeys} location="home" />
 

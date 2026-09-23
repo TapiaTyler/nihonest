@@ -25,6 +25,8 @@ import {
   getResidenceStatusGuidanceTranslation,
   getResidenceStatusTranslations,
 } from "@/lib/content/translations";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const dynamicParams = false;
 
@@ -95,6 +97,7 @@ export default async function ResidenceStatusPage({
 
   return (
     <article className="page-shell py-12 sm:py-20">
+      <LocalizedDocumentTitle japanese={formatInterfaceMessage("ja", "pageTitle.withSite", { title: residenceStatus.japaneseName })} />
       <div className="mx-auto max-w-3xl">
         <LocalizedStatusBackLink
           href={returnTo}

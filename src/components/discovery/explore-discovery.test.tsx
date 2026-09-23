@@ -164,7 +164,8 @@ describe("ExploreDiscovery", () => {
     enterSearch("銀行口座");
 
     expect(screen.getByRole("link", { name: "銀行口座を開設する" })).toBeInTheDocument();
-    expect(screen.getByText("Japanese pilot translation")).toBeInTheDocument();
+    // Japanese mode shows the pilot notice in Japanese, like the rest of the localized interface.
+    expect(screen.getByText("日本語試験版")).toBeInTheDocument();
     expect(window.location.search).toBe("?q=%E9%8A%80%E8%A1%8C%E5%8F%A3%E5%BA%A7&lang=ja");
   });
 

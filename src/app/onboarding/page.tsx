@@ -4,6 +4,8 @@ import { OnboardingForm } from "@/components/personalization/onboarding-form";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
 import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const metadata: Metadata = {
   title: "Find your starting point | Nihonest",
@@ -17,6 +19,7 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
 
   return (
     <div className="page-shell py-12 sm:py-20">
+      <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.onboarding")} />
       <Link href={returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
         <InterfaceText id={returnTo === "/roadmap" ? "onboarding.backRoadmap" : returnTo === "/my-journey" ? "onboarding.backMyJourney" : "onboarding.backHome"} />
       </Link>

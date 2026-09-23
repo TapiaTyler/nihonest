@@ -1,6 +1,7 @@
 "use client";
 
 import { Children, type ReactNode, useState } from "react";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 
 const batchSize = 4;
 
@@ -12,6 +13,7 @@ export function ContinueExploringList({ cards, guides }: Readonly<{
   const guideItems = Children.toArray(guides);
   const totalCount = cardItems.length + guideItems.length;
   const [visibleCount, setVisibleCount] = useState(batchSize);
+  const { format } = useInterfaceMessages();
   const visibleCards = cardItems.slice(0, visibleCount);
   const visibleGuides = guideItems.slice(0, Math.max(0, visibleCount - cardItems.length));
   const remainingCount = Math.max(0, totalCount - visibleCount);
@@ -28,11 +30,11 @@ export function ContinueExploringList({ cards, guides }: Readonly<{
             onClick={() => setVisibleCount((current) => Math.min(current + batchSize, totalCount))}
             className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-5 text-sm font-semibold text-teal-800 transition-colors hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
           >
-            Show {nextBatchCount} more
+            {format("article.showMore", { count: nextBatchCount })}
           </button>
         </div>
       )}
-      <p className="sr-only" aria-live="polite">Showing {Math.min(visibleCount, totalCount)} of {totalCount} recommendations.</p>
+      <p className="sr-only" aria-live="polite">{format("article.showingRecommendations", { visible: Math.min(visibleCount, totalCount), total: totalCount })}</p>
     </>
   );
 }

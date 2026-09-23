@@ -21,7 +21,7 @@ type ResidenceStatusExplorerProps = Readonly<{
 
 export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }: ResidenceStatusExplorerProps) {
   const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
-  const { message } = useInterfaceMessages();
+  const { message, format } = useInterfaceMessages();
   const [activeFilter, setActiveFilter] = useState<"all" | ResidenceStatusCategory>("all");
   const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
     { id: "all", label: message("status.all") },
@@ -82,7 +82,7 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
       </div>
 
       <p className="mt-5 text-sm text-slate-500" aria-live="polite">
-        Showing {visibleStatuses.length} of {residenceStatuses.length} draft statuses
+        {format("statusExplorer.showing", { visible: visibleStatuses.length, count: residenceStatuses.length })}
       </p>
 
       {activeFilter === "all" ? (

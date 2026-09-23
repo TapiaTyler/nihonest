@@ -8,6 +8,8 @@ import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { getAllFaqEntries } from "@/lib/content/faqs";
 import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getFaqSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
+import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const metadata: Metadata = {
   title: "Explore | Nihonest",
@@ -19,6 +21,7 @@ export default function ExplorePage() {
 
   return (
     <div className="page-shell py-16 sm:py-24">
+      <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.explore")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="explore.eyebrow" /></p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
