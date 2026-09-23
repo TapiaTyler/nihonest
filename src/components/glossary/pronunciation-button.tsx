@@ -1,18 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 
 type PlaybackState = "ready" | "speaking" | "stopped" | "finished" | "error";
 type PresentedState = PlaybackState | "unavailable";
-
-const stateLabels: Readonly<Record<PresentedState, string>> = {
-  ready: "Play pronunciation",
-  speaking: "Stop pronunciation",
-  stopped: "Replay pronunciation",
-  finished: "Replay pronunciation",
-  error: "Try pronunciation again",
-  unavailable: "Pronunciation unavailable",
-};
 
 function subscribeToSpeechSupport() {
   return () => undefined;
@@ -32,6 +24,7 @@ export function PronunciationButton({
   kana?: string;
   englishName: string;
 }>) {
+  const { locale, message } = useInterfaceMessages();
   const speechSupported = useSyncExternalStore(subscribeToSpeechSupport, browserSupportsSpeech, () => false);
   const [playbackState, setPlaybackState] = useState<PlaybackState>("ready");
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -74,7 +67,17 @@ export function PronunciationButton({
   }
 
   const presentedState: PresentedState = speechSupported ? playbackState : "unavailable";
-  const label = stateLabels[presentedState];
+  const label = message(presentedState === "ready" ? "glossary.pronunciation.play"
+    : presentedState === "speaking" ? "glossary.pronunciation.stop"
+      : presentedState === "stopped" || presentedState === "finished" ? "glossary.pronunciation.replay"
+        : presentedState === "error" ? "glossary.pronunciation.tryAgain"
+          : "glossary.pronunciation.unavailable");
+  const announcement = playbackState === "speaking" ? message("glossary.pronunciation.playing")
+    : playbackState === "stopped" ? message("glossary.pronunciation.stopped")
+      : playbackState === "error" ? message("glossary.pronunciation.error") : "";
+  const accessibleLabel = message("glossary.pronunciation.forTerm")
+    .replace("{action}", label)
+    .replace("{name}", locale === "ja" ? japanese : englishName);
 
   return (
     <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -82,7 +85,7 @@ export function PronunciationButton({
         type="button"
         disabled={!speechSupported}
         onClick={handlePlayback}
-        aria-label={`${label} for ${englishName}`}
+        aria-label={accessibleLabel}
         className="inline-flex min-h-11 items-center gap-2 rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 transition-colors hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
       >
         {playbackState === "speaking" ? (
@@ -93,7 +96,7 @@ export function PronunciationButton({
         <span>{label}</span>
       </button>
       <span className="text-sm text-slate-500" aria-live="polite">
-        {playbackState === "speaking" ? "Playing Japanese pronunciation." : playbackState === "stopped" ? "Pronunciation stopped." : playbackState === "error" ? "Your browser could not play this pronunciation." : ""}
+        {announcement}
       </span>
     </div>
   );

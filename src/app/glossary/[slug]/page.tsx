@@ -5,14 +5,14 @@ import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToGlossaryLink } from "@/components/navigation/back-to-glossary-link";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { getSourceById } from "@/data/sources";
-import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { getArticleById } from "@/lib/content/articles";
 import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from "@/lib/content/glossary";
 import { PronunciationButton } from "@/components/glossary/pronunciation-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { InterfaceText } from "@/components/localization/interface-text";
 import { getAnnotatedDocumentsForGlossaryTerm } from "@/lib/content/annotated-documents";
-import { getGlossarySearchTranslations } from "@/lib/content/translations";
-import { LocalizedGlossaryExplanation, LocalizedGlossarySummary } from "@/components/localization/localized-glossary-fields";
+import { getArticleSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
+import { LocalizedGlossaryDetailSections, LocalizedGlossaryExplanation, LocalizedGlossarySummary, LocalizedGlossaryTopics } from "@/components/localization/localized-glossary-fields";
 
 export const dynamicParams = false;
 
@@ -24,10 +24,6 @@ export async function generateMetadata({ params }: PageProps<"/glossary/[slug]">
   const { slug } = await params;
   const term = getGlossaryTermBySlug(slug);
   return term ? { title: `${term.japanese} — ${term.englishName} | Nihonest`, description: term.shortDefinition } : {};
-}
-
-function labelFor(id: string, options: readonly { id: string; label: string }[]) {
-  return options.find((option) => option.id === id)?.label ?? id;
 }
 
 export default async function GlossaryTermPage({ params }: PageProps<"/glossary/[slug]">) {
@@ -49,6 +45,14 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
   });
   const documentExamples = getAnnotatedDocumentsForGlossaryTerm(term.id);
   const translation = getGlossarySearchTranslations().find(({ contentId }) => contentId === term.id);
+  const relatedArticleIds = new Set(relatedArticles.map(({ id }) => id));
+  const japaneseArticleTitles = Object.fromEntries(getArticleSearchTranslations()
+    .filter(({ contentId }) => relatedArticleIds.has(contentId))
+    .map(({ contentId, title }) => [contentId, title]));
+  const localizedDocuments = documentExamples.flatMap((family) => {
+    const article = getArticleById(family.articleId);
+    return article ? [{ id: family.id, title: family.title, href: `/articles/${article.metadata.slug}#document-${family.id}` }] : [];
+  });
 
   return (
     <article className="page-shell py-12 sm:py-20">
@@ -56,11 +60,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
         <BackToGlossaryLink />
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="glossary-term" contentId={term.id} /></div>
-          <div className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
-            {term.topicIds.map((topicId) => (
-              <span key={topicId} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">{labelFor(topicId, topics)}</span>
-            ))}
-          </div>
+          <LocalizedGlossaryTopics topicIds={term.topicIds} />
           <h1 lang="ja" className="mt-5 text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl">{term.japanese}</h1>
           <p className="mt-4 text-lg text-slate-500">
             <JapaneseReading kana={term.kana} romaji={term.romaji} />
@@ -70,42 +70,11 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
         </header>
 
         <LocalizedGlossaryExplanation term={term} translation={translation} />
-        <section>
-          {term.journeyStageIds.length > 0 && (
-            <p className="mt-6 text-sm text-slate-500">Journey stages: {term.journeyStageIds.map((id) => labelFor(id, journeyStages)).join(", ")}</p>
-          )}
-        </section>
-
-        {documentExamples.length > 0 && (
-          <section className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="document-example-heading">
-            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Visual reference</p>
-            <h2 id="document-example-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">Annotated document example</h2>
-            <p className="mt-3 leading-7 text-slate-600">Open the canonical guide to explore fictional, screen-reader-accessible field explanations.</p>
-            <ul className="mt-4 space-y-3">
-              {documentExamples.map((family) => {
-                const article = getArticleById(family.articleId);
-                return article ? (
-                  <li key={family.id}><Link href={`/articles/${article.metadata.slug}#document-${family.id}`} className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">View {family.title} example →</Link></li>
-                ) : null;
-              })}
-            </ul>
-          </section>
-        )}
-
-        {relatedArticles.length > 0 && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="term-articles-heading">
-            <h2 id="term-articles-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Guides using this term</h2>
-            <ul className="mt-4 space-y-3">
-              {relatedArticles.map((article) => (
-                <li key={article.id}><Link href={`/articles/${article.slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{article.title}</Link></li>
-              ))}
-            </ul>
-          </section>
-        )}
+        <LocalizedGlossaryDetailSections journeyStageIds={term.journeyStageIds} documents={localizedDocuments} articles={relatedArticles} japaneseArticleTitles={japaneseArticleTitles} />
 
         {relatedTerms.length > 0 && (
           <section className="mt-10" aria-labelledby="related-terms-heading">
-            <h2 id="related-terms-heading" className="text-xl font-semibold tracking-tight text-slate-950">Related terms</h2>
+            <h2 id="related-terms-heading" className="text-xl font-semibold tracking-tight text-slate-950"><InterfaceText id="glossary.relatedTerms" /></h2>
             <ul className="mt-4 flex flex-wrap gap-2">
               {relatedTerms.map((relatedTerm) => (
                 <li key={relatedTerm.id}><Link href={`/glossary/${relatedTerm.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span lang="ja">{relatedTerm.japanese}</span><span className="ml-2 text-slate-500">{relatedTerm.englishName}</span></Link></li>

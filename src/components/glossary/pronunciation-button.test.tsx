@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import { PronunciationButton } from "./pronunciation-button";
 
 class MockUtterance {
@@ -19,7 +21,10 @@ class MockUtterance {
 }
 
 describe("PronunciationButton", () => {
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
 
   it("speaks the kana with a requested Japanese voice and exposes playback states", () => {
     let utterance: MockUtterance | undefined;
@@ -53,5 +58,13 @@ describe("PronunciationButton", () => {
     vi.stubGlobal("speechSynthesis", undefined);
     render(<PronunciationButton japanese="在留資格" englishName="Status of residence" />);
     expect(screen.getByRole("button", { name: "Pronunciation unavailable for Status of residence" })).toBeDisabled();
+  });
+
+  it("localizes the accessible pronunciation label in Japanese", () => {
+    localStorage.setItem(contentLocaleStorageKey, "ja");
+    vi.stubGlobal("SpeechSynthesisUtterance", undefined);
+    vi.stubGlobal("speechSynthesis", undefined);
+    render(<ContentLocaleProvider><PronunciationButton japanese="在留資格" englishName="Status of residence" /></ContentLocaleProvider>);
+    expect(screen.getByRole("button", { name: "在留資格：発音を再生できません" })).toBeDisabled();
   });
 });

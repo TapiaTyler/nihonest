@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 
 function subscribe() {
   return () => undefined;
@@ -15,6 +16,7 @@ function glossaryHrefFromLocation() {
 }
 
 export function BackToGlossaryLink() {
+  const { message } = useInterfaceMessages();
   const href = useSyncExternalStore(subscribe, glossaryHrefFromLocation, () => "/glossary");
 
   return (
@@ -22,7 +24,7 @@ export function BackToGlossaryLink() {
       href={href}
       className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
     >
-      ← Back to {href === "/saved" ? "Saved" : "Glossary"}
+      {href === "/saved" ? message("glossary.backToSaved") : message("glossary.backToGlossary")}
     </Link>
   );
 }

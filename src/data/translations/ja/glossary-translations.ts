@@ -1,10 +1,14 @@
-import { translationArtifactSchema } from "@/domain/translation/translation";
+import { translationArtifactSchema, type TranslationArtifact } from "@/domain/translation/translation";
 
 const terminologyRevision = "74c46a91ccec5c9de19e65a60b89acd0bde3f837a042c3fe08a6ce6f1899f5cf";
 const promptRevision = "4c275d0982deb5cef4ad5c05b49c900bd2f71e8065991ff32aec2ba5739c1486";
 const generator = { id: "codex-assisted", model: "gpt-5" } as const;
+const claudeGenerator = { id: "claude-code-codex-reviewed", model: "claude-sonnet-5" } as const;
+const opusGenerator = { id: "claude-code-codex-reviewed", model: "claude-opus-5-5" } as const;
+const taxBatchGeneratedAt = "2026-09-23T13:07:23.000Z";
+const opusBatchGeneratedAt = "2026-09-23T13:20:36.000Z";
 
-function defineGlossaryTranslation(contentId: string, sourceRevision: string, shortDefinition: string, detailedExplanation: string, commonContext: string) {
+function defineGlossaryTranslation(contentId: string, sourceRevision: string, shortDefinition: string, detailedExplanation: string, commonContext: string, artifactGenerator: TranslationArtifact["generator"] = generator, generatedAt = "2026-09-19T00:00:00.000Z") {
   return translationArtifactSchema.parse({
     schemaVersion: 1,
     contentKind: "glossary-term",
@@ -14,7 +18,7 @@ function defineGlossaryTranslation(contentId: string, sourceRevision: string, sh
     sourceRevision,
     terminologyRevision,
     promptRevision,
-    generator,
+    generator: artifactGenerator,
     fields: {
       "short-definition": shortDefinition,
       "detailed-explanation": detailedExplanation,
@@ -22,7 +26,7 @@ function defineGlossaryTranslation(contentId: string, sourceRevision: string, sh
     },
     availability: "active",
     reviewState: "machine-translated",
-    generatedAt: "2026-09-19T00:00:00.000Z",
+    generatedAt,
   });
 }
 
@@ -30,11 +34,17 @@ function defineGlossaryTranslation(contentId: string, sourceRevision: string, sh
 export const japaneseGlossaryTranslations = [
   defineGlossaryTranslation("zairyu-card", "b66a4f5c4cbe04f9a0fe397dbb0b90a2642dcef9f3021df0b90ed67153b907bb", "対象となる中長期在留者に交付される、身分と在留に関する書類です。", "氏名、在留資格、在留期間、満了日、住所、該当する場合の就労制限など、在留に関する基本情報が記載されます。査証、上陸許可、マイナンバーカードとは別のものです。", "指定された空港で、または住居地の届出後に交付され、自治体や民間事業者の手続きで提示します。"),
   defineGlossaryTranslation("zairyu-shikaku", "be3e14092fbf679fcde243dfbbe310d16219c107e7af5e9200701438ecc8b908", "外国人が日本に在留する間に認められる活動または身分・地位を定める法的な区分です。", "在留資格は出入国在留管理上の手続きによって決まり、日本へ渡航するために使う査証とは異なります。「留学」「家族滞在」「文化活動」「経営・管理」などは、認められる活動が異なる別々の在留資格です。", "上陸許可に記載され、対象となる在留者には在留カードにも表示されます。"),
+  defineGlossaryTranslation("juminhyo", "dde6edf72339cc3e170b3826b4016f92165a45ea2cbf06c5e694ca4f4f664801", "住民登録情報を示す自治体の記録、またはその写し（住民票の写し）です。", "住民記録は自治体が管理します。行政手続きや民間の手続きでは、その写し（住民票の写し）を求められることがあります。写しに記載される項目は、請求内容と適用される規則によって異なります。提出先が必要とする項目だけを確認して請求してください。", "自治体の窓口、または利用可能な自治体の証明書発行サービスで請求します。"),
   defineGlossaryTranslation("certificate-of-eligibility", "76d67951c7dad01b8c2f34641b3f55c05a64988bc225570ff57630cc33c2b29f", "予定する長期在留の活動が、関係する上陸条件に適合するかを出入国在留管理庁が事前に審査したことを示す証明書です。", "出入国在留管理庁が、予定する活動が関係する上陸条件に適合するかを審査した後に交付します。申請の対象者は外国人本人ですが、経路によっては、要件を満たす学校、雇用主、親族などが代理人として手続きできます。その後の査証申請と上陸申請を支える書類ですが、査証そのものではなく、どちらの決定も保証しません。", "学校、雇用主、在外公館、出入国在留管理庁の案内では、COEと略されることがあります。受入機関が申請を支援することはありますが、証明書を交付する機関ではありません。"),
   defineGlossaryTranslation("my-number", "2665d0ccb883669ea083af7c42f9c4023bd10d5f059c60352444dca4c3f5417c", "日本の住民票に記録された一人ひとりに指定される12桁の個人番号です。", "マイナンバーは、法令で定められた社会保障、税、災害対策の行政手続きに使われます。番号そのもの、番号を知らせる通知、任意で申請する顔写真付きのマイナンバーカードは、それぞれ別のものです。", "法令に基づいて番号を使用する手続きでのみ求められます。必要のない相手に開示しないよう、安全に管理する必要があります。"),
   defineGlossaryTranslation("sasho", "cd4e3dd49cd580b8bcabaccaa3cafb1dd01e7fae5c10daf4da7057f481e0d98c", "日本の大使館または領事館が、日本への渡航と上陸申請のために発給する書類です。", "査証は渡航前と入国時に使います。上陸後の活動を定める在留資格とは異なり、査証だけで国境での上陸が保証されるわけではありません。", "大使館や領事館の案内に記載されます。日常会話では在留資格を指して「ビザ」と呼ぶこともありますが、正確には別の概念です。"),
   defineGlossaryTranslation("joriku-kyoka", "81225474c9c8ecc167294e9a8273f5dcdc26aade517ac0f112737791dbe7c096", "日本への入国を認めるときに、出入国在留管理の審査によって与えられる許可です。", "上陸許可には、認められた在留資格と在留期間が記録されます。上陸を求めるために使う査証や、対象となる在留者に交付される在留カードとは別のものです。", "通常、入国審査の後に、旅券へ上陸許可の証印または記録として示されます。"),
   defineGlossaryTranslation("zairyu-kikan", "5884327debd239d158fe954f94206f6b9800aa4f22e7fa334160e5499406ec2d", "認められた在留資格に基づいて、日本に在留できる期間です。", "在留期間は個々の事情を審査して決定され、上陸許可と、交付対象者の在留カードに記載されます。旅券の有効期間や学校の課程の長さとは異なります。", "日本への入国時や、在留期間の更新または在留資格の変更を計画するときに確認します。"),
+  defineGlossaryTranslation("tennyu-todoke", "f87ebf3f11db5898ae49baaa2f89d2dcfb01d5f400d2f21772a76c7073687046", "市区町村への転入を届け出るための手続きです。", "要件を満たす住民は、居住地を定めた後、その市区町村に転入届を提出します。新たに来日した中長期在留の外国人にとっては、日本国内の住所を記録し、在留情報を更新する手続きの一部となります。", "市役所・区役所・町村役場の窓口で提出します。必要書類や窓口での手続きは自治体によって異なります。", claudeGenerator),
+  defineGlossaryTranslation("shiyakusho", "d99b1e4c9881cf3e8daf85620786be6c6902bcf5c5cfec4b02ce3614825301ce", "市の行政事務を扱う役所です。", "市役所では住民登録などの市区町村の手続きを扱い、国民健康保険、年金、税金などの窓口が設けられている場合があります。組織の詳細や対応言語は市によって異なります。", "住所表記、案内板、市のウェブサイト、届け出先を案内する説明などで使われます。", claudeGenerator),
+  defineGlossaryTranslation("kuyakusho", "77116e85825d82f526f02a305dbe98191d77b8df6a66e6f66acb7f338b40341b", "区の行政事務を扱う役所です。", "区役所は、その区に住む人の住民登録、保険、年金などの手続きを扱う場合があります。担当業務や出張所の体制は自治体によって異なります。", "政令指定都市や東京都の特別区でよく見られ、担当窓口は自治体の公式な案内で確認できます。", claudeGenerator),
+  defineGlossaryTranslation("kokumin-kenko-hoken", "65dc9abcbb6918816e0b45bd9fdbdfb42f8a73b16766d64b6f1bf24e2b8f0ebf", "他の適用対象となる公的医療保険に加入していない、要件を満たす住民を対象に、市区町村が運営する公的医療保険です。", "加入資格は居住状況や他の保険への加入状況によって決まります。加入手続きや保険料の算定・徴収は市区町村が担当します。旅行保険、学校の傷害保険、被用者の健康保険とは異なります。", "自治体の案内や会話の中では「国保（こくほ）」と略されることがよくあります。", claudeGenerator),
+  defineGlossaryTranslation("kokumin-nenkin", "2bc225412dbb37c2037084c88ea52bae6ae4e02bccf0aa10cd15a5da38f573ce", "学生を含め、年齢や加入条件に応じて要件を満たす住民が加入する、日本の基礎的な公的年金制度です。", "国民年金は、老齢・障害・遺族に関する基礎的な給付を提供します。加入手続きと保険料の負担軽減は別のものです。要件を満たす学生は、自動的に免除されると考えるのではなく、まず加入した上で学生納付特例制度を申請する必要がある場合があります。", "手続きの内容に応じて、市区町村の年金窓口または日本年金機構で取り扱われます。", claudeGenerator),
   defineGlossaryTranslation("tanki-taizai", "beb8e7f5552985e4282cf50be525055cfe0e1029231a198937a6d0ec97f477f1", "観光、訪問、報酬を受けない要件を満たす短期留学など、認められた短期の活動のための在留資格です。", "「短期滞在」は「留学」の在留資格とは異なり、通常、中長期在留者が行う住民手続きの対象にはなりません。認められる期間と査証の要否は、渡航者の入国経路や国籍によって異なります。", "多くの短期訪問では、認められた期間内に終わる一部の留学プログラムを含め、上陸許可の記録に表示されます。"),
   defineGlossaryTranslation("ryugaku", "50737d8889b07f3bef58ad6e97046a1873eeaaf3bb088026a082a02d04f8cd56", "日本の対象となる教育機関で、要件を満たす教育を受けるための在留資格です。", "「留学」は、認められた課程で学ぶ活動を許可します。「短期滞在」で行う短期留学とは異なり、それ自体では報酬を受ける仕事を許可しません。", "対象となる留学生の上陸許可や在留カードには、「留学」と表示されます。"),
   defineGlossaryTranslation("shikakugai-katsudo-kyoka", "186171d767bae415b8747acf1b8a227cd1f2b0565243fa805cbb9c46f2001d61", "現在の在留資格で認められた活動の範囲外で、指定された収入を伴う活動を行うための出入国在留管理上の許可です。", "現在の在留資格の範囲外で、収入を伴う事業を運営したり報酬を受ける活動を行ったりするときに必要となる許可です。許可の種類と条件は在留者と活動によって異なるため、留学生に一般的な許可を就労資格の専門職にも当てはめることはできません。", "留学生がアルバイトを始める前や、就労資格を持つ人が現在の資格の範囲外の有償活動を引き受ける前によく確認されます。"),
@@ -46,4 +56,26 @@ export const japaneseGlossaryTranslations = [
   defineGlossaryTranslation("eiju-kyoka", "cff48efcf4033fb7950f183d52d7e1b795b2d7d820825b517757f11d85ff026b", "在留期間の定めがない「永住者」として日本に在留するための許可です。", "永住は独自の審査を伴う別の出入国在留管理上の許可です。日本国籍ではなく、在留カードや再入国の手続きを適切に維持する義務などがなくなるわけでもありません。", "一定期間の在留を続けた後、経路ごとの要件や素行に関する基準を検討するときに扱われます。"),
   defineGlossaryTranslation("shotoku-zei", "2bc5e1ce5eb499c2e938bd37f43cbdf98076f2c3901644c2a5c0d7b849db5702", "法律で定められた課税範囲にある個人の所得に対する日本の国税です。", "税法上の居住者区分、所得の源泉、所得区分、控除、源泉徴収によって計算が変わります。出入国在留資格と税法上の居住者区分は別の法的区分です。", "給与明細、源泉徴収票、確定申告書、国税庁の案内などに記載されます。"),
   defineGlossaryTranslation("jumin-zei", "2887863d00f471827c1a1b46551e3475d89396ea07c5a37fe43826f6f83635cf", "通常、前年の所得と住民情報を基に都道府県と市区町村が課す地方税です。", "請求と徴収は、所得を得た年より後になることがあります。担当する自治体、1月1日時点の状況、徴収方法によって、実際の手続きが変わります。", "自治体の通知書に記載され、給与から差し引かれる場合と、別に届く納付書で支払う場合があります。"),
+  defineGlossaryTranslation("jumin-toroku", "f531eae1d23f506f917ba7a701d7b5ec54048eb32ae0f39f9d146c1b61aaab53", "対象となる住民とその住所を、自治体の住民記録に登録することです。", "住民登録は、対象となる住民を自治体の手続きにつなぎます。査証や上陸許可を受けること、または民間の契約書に住所を記入することとは異なります。", "担当する自治体の窓口で、転入・転居などの届出を通じて登録または更新します。"),
+  defineGlossaryTranslation("tenshutsu-todoke", "b7c71188f5f271077401532b7e3b1c7ae77d9e7993252aa989d0e6f9c382a1cf", "自治体から転出するなど、その自治体に登録した住所を終了するときの届出です。", "別の自治体へ引っ越す住民は、通常、新しい住所を登録する前に、転出元で該当する手続きを行います。期限、オンラインでの対応、必要書類は自治体や状況によって異なります。", "転出元の自治体に届け出ます。該当する場合は、転入先での転入届と組み合わせて手続きします。"),
+  defineGlossaryTranslation("tenkyo-todoke", "54149dc3fb95e263fd0155cac4617721f853a0e3289f3f56906ed2d12717045c", "同じ自治体の中で新しい住所に引っ越したとき、通常使う届出です。", "自治体をまたぐ引っ越しで必要となる別々の転出・転入手続きとは異なり、登録住所を更新します。担当窓口と必要な記録は自治体によって異なります。", "同じ市区町村内で引っ越した後、その自治体の期限と案内に従って届け出ます。"),
+  defineGlossaryTranslation("kojin-bango", "0f7279b22f6a03260617ab7d4245cf986ad7913a8b4cdcf04a448c7cb6e032a7", "一般に「マイナンバー」と呼ばれる12桁の番号の正式な日本語名称です。", "住民票の仕組みを通じて指定され、法律で定められた行政事務にのみ使われます。番号そのものであり、顔写真付きのマイナンバーカードや在留カードの番号とは異なります。", "税、社会保障、自治体、マイナンバーに関する書類に記載されます。"),
+  defineGlossaryTranslation("my-number-card", "cdef4c5334c44ce2549a68b79c6ffac71fa6844799003fefc241ad8416a29c50", "住民の個人番号に結び付いた、任意で申請する顔写真付きの本人確認書類です。", "住民がカードを申請します。個人番号を受け取っても、カードが自動的に発行されるわけではありません。最初に番号を知らせる通知とも、外国人住民の在留カードとも異なります。", "本人確認や、対応する行政・自治体サービスに使われます。利用方法と有効期限は、その時点で適用される手続きによります。"),
+  defineGlossaryTranslation("gakusei-nofu-tokurei-seido", "d50b4d82ec85208124dceb4bcc881d19651d455c4cc4ce04624fb45cd691a5ec", "対象となる学生が、承認を受けた期間の国民年金保険料の納付を先送りできる制度です。", "学生であるだけで年金保険料が自動的に免除されるわけではありません。対象となる学生は申請が必要で、承認は期間ごとに判断されます。猶予された期間は、制度に従って後から納付しない限り、納付済み期間とは異なる形で年金記録に反映されます。", "自治体の年金窓口や、学生に届く日本年金機構の案内で扱われます。"),
+  defineGlossaryTranslation("todofuken", "fdc9062b51b162b48a2ac130871d875a6d7945d75fce1034748221979cb5266b", "日本の47の都道府県レベルの自治体をまとめて指す言葉です。", "東京都、北海道、京都府・大阪府、43の県をまとめて「都道府県」と呼びます。都道府県の役割は、国の機関、市区町村、民間の組織の役割とは異なります。", "都道府県庁、都道府県警察、免許を扱う機関、学校制度、地方税の区分、所在地などを確認するときに使われます。"),
+  defineGlossaryTranslation("shichoson", "6f9d07c6915f76212d3fd9d541b6c20212971022ccbd5fe0f5c419e3fe797013", "都道府県の下にある、市・町・村という地方自治体を指します。", "市町村は、住民記録、住所に関係する保険手続き、ごみ収集などの地域サービスを一般に担います。東京の特別区は別の自治体の区分で、名古屋市などの政令指定都市の区は、その市の一部です。", "住所、住民票、地方税、保険窓口、ごみ収集日、地域サービスなどの担当自治体を確認するときに使われます。"),
+  defineGlossaryTranslation("tokubetsu-ku", "8083eb4ad4cd6904f4ccf9cc992c5e2192bd0ec169016636ffa27f0a0fe4b7fc", "多くの地方自治体の業務について自治体としての地位を持つ、東京23区の一区です。", "東京の特別区と、名古屋市などの政令指定都市の内部に置かれる行政区は、同じ仕組みではありません。正確な自治体と担当窓口を確認してください。", "東京での住所登録、地方税、保険、ごみ収集、選挙など、区が担う地域サービスについて使われます。"),
+  defineGlossaryTranslation("honnin-kakunin", "086444f66daf4f7d9eb2525751869a6ae2b415959fbd4bd194ed7e7f4f343bc9", "その人が申告したとおりの人物であるかを確認する手続きです。", "銀行、携帯電話会社、賃貸物件の貸主、および役所では、それぞれ有効とされる書類や、一致が必要な氏名・住所・連絡先の情報が異なる場合があります。ある機関の確認に通ったとしても、別の機関が同じ要件を用いるとは限りません。", "口座開設、携帯電話契約、決済、各種契約、行政手続きの申請案内などに記載されています。", claudeGenerator),
+  defineGlossaryTranslation("futsu-yokin", "3d269e31934bb5611bc115890e46d1075adb53bfaba809a0a4045f0502d4db56", "日常的な預入、引き出し、振込、支払いに使われる、一般的な日本の銀行預金口座です。", "利用できる機能、審査、手数料、カード、オンラインアクセス、振込限度額は、銀行や利用者の状況によって異なります。この用語は口座の種類を表すものであり、来日したばかりの人が誰でもすぐに開設できることを保証するものではありません。", "口座開設申込書、通帳、インターネットバンキング、給与振込に関する書類、口座振替の申込書などに記載されています。", claudeGenerator),
+  defineGlossaryTranslation("daigaku", "9352e6fbd9344f9b69b4ed1f46906ee2684048d89fa95a84e56092d48207f6d4", "一般的に学士号を取得できる学部課程を提供する高等教育機関です。", "日本の大学には国立、公立、私立があります。修業年限、入学経路、試験、使用言語、編入制度、学位取得要件は大学ごとに異なるため、この用語自体が特定の入学要件や在留資格上の要件を示すものではありません。", "学校名、入学案内、学位の説明、大学進学に関する案内などに記載されています。", claudeGenerator),
+  defineGlossaryTranslation("tanki-daigaku", "cd439e6b4262f0e99310ffc39e5adc33c5fc79f8f09c91225ad6582eededc83a", "一般的に2年または3年の課程で短期大学士の学位を取得できる高等教育機関です。", "短期大学は、通常の4年制大学や専門学校とは区別されるものです。入学、編入学の単位認定、使用言語、課程に関する規定については、各機関に確認する必要があります。", "学校名や入学に関する案内では「短大（たんだい）」と略されることがよくあります。", claudeGenerator),
+  defineGlossaryTranslation("daigakuin", "909990c0319ea9b341973ea1e272df891cb9a6cd5fd6dbfece4a15bc8e62bfff", "学部課程に続く高度な教育や研究を行う大学の組織です。", "大学院では、修士号・博士号・専門職学位につながる課程のほか、学位取得を目的としない研究の機会が設けられる場合もあります。入学の可否は、それまでの学歴、研究内容との適合性、研究計画書、指導教員との連絡、試験、大学による出願資格などの審査によって左右されることがあります。", "大学院の入学案内、指導教員の検索、学位名称、研究生に関する情報などに記載されています。", claudeGenerator),
+  defineGlossaryTranslation("kakutei-shinkoku", "ed33951e27850db08cd2ceef86099238b227432cdaf8bcd84ffb13f6ad3aa753", "個人のその年の所得税（国税）を計算し、精算するための申告書です。", "申告が必要かどうかは、所得、源泉徴収、控除、税務上の居住者区分など、さまざまな事実によって異なります。勤務先による年末調整は、すべての納税者やすべての種類の所得を対象とするものではありません。", "毎年の確定申告の時期や、居住者がフリーランス所得、複数の勤務先からの給与、海外所得、その他年末調整で処理されない所得を有する場合に議論されます。", claudeGenerator, taxBatchGeneratedAt),
+  defineGlossaryTranslation("gensen-choshu", "17b44abd29afb8f15be840add8cd46b503c5d9f00cbf8f0c3557213b225bdbe4", "支払者が支払いから該当する税額を差し引き、税務当局に納付する制度です。", "源泉徴収はあくまで納付の仕組みであり、必ずしも最終的な税額計算を意味するものではありません。年末調整や確定申告によって、その金額が改めて精算される場合があります。", "給与、報酬、源泉徴収に関する記録でよく見られます。", claudeGenerator, taxBatchGeneratedAt),
+  defineGlossaryTranslation("nenmatsu-chosei", "3a95483a3e1d90e235fb0ac51f7c9a9b9247e735cfbb070a7eec6689506ed58e", "年末に、対象となる給与所得について源泉徴収された所得税を精算する勤務先による手続きです。", "すべての人、控除、または所得の種類を対象とするものではありません。納税者は、該当する規定に基づき、なお確定申告が必要となる場合、または確定申告を選択する場合があります。", "暦年の年末に近づくと、勤務先が従業員に申告書や控除証明書の提出を求めます。", claudeGenerator, taxBatchGeneratedAt),
+  defineGlossaryTranslation("kyojusha", "c2d39f1327916e9e5ea5852e071803e21e49637e110254a8cf2bbfd4d775d9b2", "住所または居所の事実に基づき、日本の所得税法上、居住者として扱われる個人です。", "この税務上の区分は、国籍、在留カード、出入国在留管理上の在留資格とは別です。居住者には非永住者とそれ以外の居住者があり、課税対象となる所得の範囲が異なります。", "所得税に関するガイド、申告書、租税条約の分析、国境を越えた所得に関する助言の中で使用されます。", claudeGenerator, taxBatchGeneratedAt),
+  defineGlossaryTranslation("hi-eijusha", "e023beeff3bc2d307a8e539f791e4a32a233d973806a508fb6c60a2e9dff54b3", "日本国籍がなく、過去10年以内に日本国内に住所または居所を有していた期間の合計が5年以下である、税務上の居住者の区分です。", "非永住者は税務上の居住者です。出入国在留管理上の「永住者」の在留資格とは別の区分であり、国外で支払われた国外源泉所得について、日本への送金が課税範囲に影響する場合があります。", "国際的な個人所得税に関するガイダンスや、国境を越えた申告に関する記録の中で使用されます。", claudeGenerator, taxBatchGeneratedAt),
+  defineGlossaryTranslation("kyuyo-shotoku-no-gensen-choshu-hyo", "66c32d2c77d23759a1ff86ad005d2c51ebe355bed4a8b3009d6d9ca6ede39f8b", "雇用主が年間分または退職時に発行する、給与、控除、源泉徴収された所得税を記載した書類です。", "従業員は、年末調整の内容の確認、対象となる前職分の給与の合算、確定申告の準備、その他の手続きの裏付けに使います。従業員に交付される控えには、本人のマイナンバーを記載してはいけません。", "年末後または退職後に発行され、確定申告のときや、年の途中で勤務先が変わるときによく求められます。", opusGenerator, opusBatchGeneratedAt),
+  defineGlossaryTranslation("tokubetsu-choshu", "c8b1a713c8a19d79d4d01d4fb5f835e7ddcb619586805490f4380b4de3a8ff1f", "個人住民税を、雇用主が給与から分割で差し引いて徴収する方法です。", "市区町村が税額を計算して決定し、雇用主に徴収額を通知します。転職、出国、給与の支払いがなくなった場合などには、未徴収の税額の徴収方法が変わることがありますが、納税義務がなくなるわけではありません。", "住民税の通知書、給与関係の記録、市区町村の案内などに記載されています。", opusGenerator, opusBatchGeneratedAt),
+  defineGlossaryTranslation("futsu-choshu", "7961422fe8cef1af5ed4b27fd2bd82494d3f0e21054a56cdc5869743833510a5", "個人住民税を、給与からの差し引きではなく、納税者から直接徴収する方法です。", "市区町村が通知書を送付するか、認められた納付手段を提供します。納期限、納付方法、救済措置、転職や住所変更後の取扱いについては、お住まいの自治体で確認する必要があります。", "市区町村の住民税の納付書や、給与からの特別徴収が適用されない場合、または終了した場合に見られます。", opusGenerator, opusBatchGeneratedAt),
 ] as const;
