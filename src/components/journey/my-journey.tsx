@@ -10,11 +10,15 @@ import { getJourneyRouteById, resolveJourneySteps } from "@/domain/discovery/dis
 import { recommendationsForStage } from "@/domain/personalization/preferences";
 import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { GuidedJourneyView } from "./guided-journey-view";
+import type { JourneyTranslation } from "@/domain/localization/journey-presentation";
+import type { ArticleGroupSearchTranslation } from "@/lib/search/knowledgebase-search";
 
-export function MyJourney({ journeys, groups, articles }: Readonly<{
+export function MyJourney({ journeys, groups, articles, translations = [], groupTranslations = [] }: Readonly<{
   journeys: readonly GuidedJourney[];
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
+  translations?: readonly JourneyTranslation[];
+  groupTranslations?: readonly ArticleGroupSearchTranslation[];
 }>) {
   const searchParams = useSearchParams();
   const { isReady, preferences } = usePersonalization();
@@ -33,7 +37,7 @@ export function MyJourney({ journeys, groups, articles }: Readonly<{
     });
     return (
       <div className="page-shell py-12 sm:py-20">
-        <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} steps={steps} mode="personal" />
+        <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} steps={steps} translation={translations.find(({ contentId }) => contentId === journey.id)} groupTranslation={groupTranslations.find(({ contentId }) => contentId === group.id)} mode="personal" />
       </div>
     );
   }

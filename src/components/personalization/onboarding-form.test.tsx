@@ -5,6 +5,9 @@ import { PersonalizationProvider } from "./personalization-provider";
 import { OnboardingForm } from "./onboarding-form";
 import { anonymousPreferencesStorageKey } from "@/lib/storage/anonymous-preferences";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
+import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 
 const push = vi.fn();
 
@@ -15,15 +18,19 @@ vi.mock("next/navigation", () => ({
 describe("OnboardingForm", () => {
   function renderForm(returnTo: "/" | "/roadmap" | "/my-journey" = "/") {
     render(
-      <PersonalizationProvider>
-        <Link href="/home">Back home</Link>
-        <OnboardingForm
-          journeys={guidedJourneys}
-          groups={articleGroups}
-          articles={[]}
-          returnTo={returnTo}
-        />
-      </PersonalizationProvider>,
+      <ContentLocaleProvider>
+        <PersonalizationProvider>
+          <Link href="/home">Back home</Link>
+          <OnboardingForm
+            journeys={guidedJourneys}
+            groups={articleGroups}
+            articles={[]}
+            returnTo={returnTo}
+            journeyTranslations={getJourneyTranslations()}
+            groupTranslations={getArticleGroupSearchTranslations()}
+          />
+        </PersonalizationProvider>
+      </ContentLocaleProvider>,
     );
   }
 
@@ -65,6 +72,17 @@ describe("OnboardingForm", () => {
       onboardingCompleted: true,
     });
     expect(push).toHaveBeenCalledWith("/explore");
+  });
+
+  it("presents and searches translated journey choices without changing their stable selection IDs", () => {
+    localStorage.setItem(contentLocaleStorageKey, "ja");
+    renderForm();
+
+    expect(screen.getByText("留学生のためのジャーニー")).toBeInTheDocument();
+    const search = screen.getByRole("searchbox", { name: "ジャーニーと経路を検索" });
+    fireEvent.change(search, { target: { value: "短期留学" } });
+    expect(screen.getByText("留学生のためのジャーニー")).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: /留学生のためのジャーニー/ })).toHaveAttribute("value", "student-moving-to-japan");
   });
 
   it("warns before an internal navigation would discard changed selections", () => {

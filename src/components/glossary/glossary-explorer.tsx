@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useOptionalContentLocale } from "@/components/localization/content-locale-provider";
+import { defaultContentLocale } from "@/domain/localization/content-locale";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { TopicId } from "@/domain/taxonomy/taxonomy";
 import { topics } from "@/domain/taxonomy/taxonomy";
 import { searchGlossary } from "@/lib/search/glossary-search";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { GlossaryCard } from "./glossary-card";
+import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 
 type TopicFilter = "all" | TopicId;
 type GlossaryFilters = Readonly<{ query: string; topicId: TopicFilter }>;
@@ -32,7 +35,11 @@ function searchForFilters({ query, topicId }: GlossaryFilters) {
   return params.toString();
 }
 
-export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseTerm[] }>) {
+export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
+  terms: readonly JapaneseTerm[];
+  translations?: readonly GlossarySearchTranslation[];
+}>) {
+  const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
   const searchId = useId();
   const [filters, setFilters] = useState<GlossaryFilters>(defaultGlossaryFilters);
   const filtersRef = useRef<GlossaryFilters>(defaultGlossaryFilters);
@@ -40,8 +47,12 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
   const availableTopics = topics.filter((topic) =>
     terms.some((term) => term.topicIds.includes(topic.id)),
   );
-  const visibleTerms = [...searchGlossary(terms, { query, topicId })]
-    .sort((left, right) => left.englishName.localeCompare(right.englishName));
+  const translationsById = useMemo(() => new Map(translations
+    .filter(({ targetLocale }) => targetLocale === locale)
+    .map((translation) => [translation.contentId, translation])), [locale, translations]);
+  const visibleTerms = [...searchGlossary(terms, { query, topicId }, { locale, translations })]
+    .sort((left, right) => (locale === "ja" ? left.kana ?? left.japanese : left.englishName)
+      .localeCompare(locale === "ja" ? right.kana ?? right.japanese : right.englishName, locale, { sensitivity: "base" }));
   const hasFilters = Boolean(query.trim()) || topicId !== "all";
   const browseGroups = availableTopics.flatMap((topic) => {
     const groupedTerms = visibleTerms.filter((term) => term.primaryBrowseGroupId === topic.id);
@@ -134,6 +145,7 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
             <GlossaryCard
               key={term.id}
               term={term}
+              translation={translationsById.get(term.id)}
               returnTo={hasFilters ? returnTo : undefined}
             />
           ))}
@@ -150,7 +162,7 @@ export function GlossaryExplorer({ terms }: Readonly<{ terms: readonly JapaneseT
                 </span>
               </summary>
               <div className="grid gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3">
-                {groupedTerms.map((term) => <GlossaryCard key={term.id} term={term} />)}
+                {groupedTerms.map((term) => <GlossaryCard key={term.id} term={term} translation={translationsById.get(term.id)} />)}
               </div>
             </details>
           ))}

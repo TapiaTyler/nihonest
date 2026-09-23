@@ -9,6 +9,8 @@ import type {
   TopicId,
 } from "@/domain/taxonomy/taxonomy";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
+import type { FaqSearchTranslation } from "@/lib/search/faq-search";
+import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 import { buildSearchTextIndex, searchRelatedTextIndexesScore, searchTextIndexScore, type SearchTextIndex } from "./search-text-index";
 
 export type ArticleSearchTranslation = Readonly<{
@@ -19,9 +21,19 @@ export type ArticleSearchTranslation = Readonly<{
   searchTerms?: readonly string[];
 }>;
 
+export type ArticleGroupSearchTranslation = Readonly<{
+  contentId: string;
+  targetLocale: string;
+  title: string;
+  description: string;
+}>;
+
 export type KnowledgebaseSearchOptions = Readonly<{
   locale?: ContentLocalePreference;
   articleTranslations?: readonly ArticleSearchTranslation[];
+  groupTranslations?: readonly ArticleGroupSearchTranslation[];
+  faqTranslations?: readonly FaqSearchTranslation[];
+  glossaryTranslations?: readonly GlossarySearchTranslation[];
 }>;
 
 type AllOption = "all";
@@ -75,6 +87,9 @@ export type KnowledgebaseSearchIndex = Readonly<{
   terms: readonly IndexedTerm[];
   articlesById: ReadonlyMap<string, IndexedArticle>;
   translationsByArticleId: ReadonlyMap<string, ArticleSearchTranslation>;
+  translationsByGroupId: ReadonlyMap<string, ArticleGroupSearchTranslation>;
+  translationsByFaqId: ReadonlyMap<string, FaqSearchTranslation>;
+  translationsByGlossaryId: ReadonlyMap<string, GlossarySearchTranslation>;
 }>;
 
 function articleMatchesFilters(article: ArticleMetadata, filters: KnowledgebaseSearchFilters) {
@@ -124,6 +139,24 @@ export function buildKnowledgebaseSearchIndex(
       translationsByArticleId.set(translation.contentId, translation);
     }
   }
+  const translationsByGroupId = new Map<string, ArticleGroupSearchTranslation>();
+  for (const translation of options.groupTranslations ?? []) {
+    if (translation.targetLocale === locale && !translationsByGroupId.has(translation.contentId)) {
+      translationsByGroupId.set(translation.contentId, translation);
+    }
+  }
+  const translationsByFaqId = new Map<string, FaqSearchTranslation>();
+  for (const translation of options.faqTranslations ?? []) {
+    if (translation.targetLocale === locale && !translationsByFaqId.has(translation.contentId)) {
+      translationsByFaqId.set(translation.contentId, translation);
+    }
+  }
+  const translationsByGlossaryId = new Map<string, GlossarySearchTranslation>();
+  for (const translation of options.glossaryTranslations ?? []) {
+    if (translation.targetLocale === locale && !translationsByGlossaryId.has(translation.contentId)) {
+      translationsByGlossaryId.set(translation.contentId, translation);
+    }
+  }
   const indexedArticles = articles.map((article) => {
     const translation = translationsByArticleId.get(article.id);
     return {
@@ -144,21 +177,55 @@ export function buildKnowledgebaseSearchIndex(
   });
   return {
     locale,
-    groups: groups.map((group) => ({
-      group,
-      baseSearchText: buildSearchTextIndex(group.title, [group.title, group.description, group.id]),
-    })),
+    groups: groups.map((group) => {
+      const translation = translationsByGroupId.get(group.id);
+      return {
+        group,
+        baseSearchText: buildSearchTextIndex(translation?.title ?? group.title, [
+          translation?.title,
+          translation?.description,
+          group.title,
+          group.description,
+          group.id,
+        ]),
+      };
+    }),
     articles: indexedArticles,
-    faqs: faqs.map((faq) => ({
-      faq,
-      searchText: buildSearchTextIndex(faq.question, [faq.question, faq.summary, ...faq.searchTerms]),
-    })),
-    terms: terms.map((term) => ({
-      term,
-      searchText: buildSearchTextIndex(term.englishName, [term.japanese, term.kana, term.romaji, term.englishName, term.shortDefinition, ...term.searchTerms]),
-    })),
+    faqs: faqs.map((faq) => {
+      const translation = translationsByFaqId.get(faq.id);
+      return {
+        faq,
+        searchText: buildSearchTextIndex(translation?.question ?? faq.question, [
+          translation?.question,
+          translation?.summary,
+          faq.question,
+          faq.summary,
+          ...faq.searchTerms,
+        ]),
+      };
+    }),
+    terms: terms.map((term) => {
+      const translation = translationsByGlossaryId.get(term.id);
+      return {
+        term,
+        searchText: buildSearchTextIndex(locale === "ja" ? term.kana ?? term.japanese : term.englishName, [
+          term.japanese,
+          term.kana,
+          term.romaji,
+          term.englishName,
+          term.shortDefinition,
+          translation?.shortDefinition,
+          translation?.detailedExplanation,
+          translation?.commonContext,
+          ...term.searchTerms,
+        ]),
+      };
+    }),
     articlesById: new Map(indexedArticles.map((article) => [article.article.id, article])),
     translationsByArticleId,
+    translationsByGroupId,
+    translationsByFaqId,
+    translationsByGlossaryId,
   };
 }
 
@@ -231,8 +298,8 @@ export function searchKnowledgebase(
 }
 
 function indexedResultTitle(result: KnowledgebaseSearchResult, index: KnowledgebaseSearchIndex) {
-  if (result.kind === "group") return result.group.title;
-  if (result.kind === "faq") return result.faq.question;
+  if (result.kind === "group") return index.translationsByGroupId.get(result.group.id)?.title ?? result.group.title;
+  if (result.kind === "faq") return index.translationsByFaqId.get(result.faq.id)?.question ?? result.faq.question;
   if (result.kind === "article") return index.translationsByArticleId.get(result.article.id)?.title ?? result.article.title;
   return index.locale === "ja"
     ? result.term.kana ?? result.term.japanese

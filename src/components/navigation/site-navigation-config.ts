@@ -1,34 +1,36 @@
+import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
+
 export const siteDestinations = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Explore" },
-  { href: "/my-journey", label: "My Journey" },
-  { href: "/roadmap", label: "Roadmap" },
-  { href: "/onboarding", label: "Adjust Starting Point" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/glossary", label: "Glossary" },
-  { href: "/residence-statuses", label: "Residence Statuses" },
-  { href: "/saved", label: "Saved" },
-  { href: "/reminders", label: "Reminders" },
-  { href: "/account", label: "Account" },
+  { href: "/", labelId: "navigation.home" },
+  { href: "/explore", labelId: "navigation.explore" },
+  { href: "/my-journey", labelId: "navigation.myJourney" },
+  { href: "/roadmap", labelId: "navigation.roadmap" },
+  { href: "/onboarding", labelId: "navigation.adjustStartingPoint" },
+  { href: "/faq", labelId: "navigation.faq" },
+  { href: "/glossary", labelId: "navigation.glossary" },
+  { href: "/residence-statuses", labelId: "navigation.residenceStatuses" },
+  { href: "/saved", labelId: "navigation.saved" },
+  { href: "/reminders", labelId: "navigation.reminders" },
+  { href: "/account", labelId: "navigation.account" },
 ] as const;
 
 export type SiteDestinationHref = (typeof siteDestinations)[number]["href"];
 
 export const journeyNavigationLinks = [
-  { href: "/my-journey", label: "My Journey", description: "Follow your selected route step by step." },
-  { href: "/roadmap", label: "Roadmap", description: "See your progress and next recommended action." },
-  { href: "/onboarding", label: "Adjust Starting Point", description: "Change your stage, journey, or route." },
-] as const;
+  { href: "/my-journey", labelId: "navigation.myJourney", descriptionId: "navigation.journeyDescription" },
+  { href: "/roadmap", labelId: "navigation.roadmap", descriptionId: "navigation.roadmapDescription" },
+  { href: "/onboarding", labelId: "navigation.adjustStartingPoint", descriptionId: "navigation.startingPointDescription" },
+] as const satisfies readonly { href: SiteDestinationHref; labelId: InterfaceMessageId; descriptionId: InterfaceMessageId }[];
 
 export const resourceNavigationLinks = [
-  { href: "/faq", label: "FAQ", description: "Find answers to common questions." },
-  { href: "/glossary", label: "Glossary", description: "Understand Japanese terms in context." },
-  { href: "/residence-statuses", label: "Residence Statuses", description: "Browse immigration status categories." },
-] as const;
+  { href: "/faq", labelId: "navigation.faq", descriptionId: "navigation.faqDescription" },
+  { href: "/glossary", labelId: "navigation.glossary", descriptionId: "navigation.glossaryDescription" },
+  { href: "/residence-statuses", labelId: "navigation.residenceStatuses", descriptionId: "navigation.statusesDescription" },
+] as const satisfies readonly { href: SiteDestinationHref; labelId: InterfaceMessageId; descriptionId: InterfaceMessageId }[];
 
 export const mobileNavigationGroups = [
-  { label: "Journey", links: journeyNavigationLinks },
-  { label: "Resources", links: resourceNavigationLinks },
+  { id: "journey", labelId: "navigation.journey", links: journeyNavigationLinks },
+  { id: "resources", labelId: "navigation.resources", links: resourceNavigationLinks },
 ] as const;
 
 /** Centralizes route matching so desktop and mobile navigation expose identical active states. */

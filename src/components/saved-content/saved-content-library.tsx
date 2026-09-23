@@ -10,6 +10,7 @@ import { visibleSavedContent } from "@/domain/saved-content/saved-content";
 import { SaveContentButton } from "./save-content-button";
 import { useSavedContent } from "./saved-content-provider";
 import { GlossaryStudyPanel } from "@/components/glossary-study/glossary-study-panel";
+import { InterfaceText } from "@/components/localization/interface-text";
 
 export function SavedContentLibrary({ articles, residenceStatuses, terms }: Readonly<{
   articles: readonly ArticleMetadata[];
@@ -65,7 +66,7 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
                 <Link href={{ pathname: `/articles/${article.slug}`, query: { returnTo: "/saved" } }} aria-label={article.title} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                   <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700">{article.title}</span>
                   <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{article.description}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800">Read guide →</span>
+                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.readGuide" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="article" contentId={article.id} deferRemoval /></span>
               </li>
@@ -84,7 +85,7 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
                   <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700">{status.englishName}</span>
                   <p className="mt-1 text-sm text-slate-500"><span lang="ja">{status.japaneseName}</span> · <JapaneseReading kana={status.japaneseKana} romaji={status.romaji} /></p>
                   <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{status.summary}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800">View status and related guidance →</span>
+                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.viewStatus" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="residence-status" contentId={status.id} deferRemoval /></span>
               </li>
@@ -108,7 +109,7 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms }: Read
                 <Link href={{ pathname: `/glossary/${term.slug}`, query: { returnTo: "/saved" } }} aria-label={`${term.japanese} — ${term.englishName}`} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                   <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700"><span lang="ja">{term.japanese}</span> — {term.englishName}</span>
                   <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{term.shortDefinition}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800">View term and context →</span>
+                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.viewTerm" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="glossary-term" contentId={term.id} deferRemoval /></span>
               </li>

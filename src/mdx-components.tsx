@@ -1,8 +1,17 @@
 import type { MDXComponents } from "mdx/types";
 import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
+import { ResidenceApplicationFeeSection } from "@/components/content/residence-application-fee-section";
+import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
+import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
+import { JapanPrefectureRegionGrid, JapanPracticalBasics } from "@/components/content/japan-geography-reference";
 import { getGlossaryTermBySlug } from "@/lib/content/glossary";
 
 const components = {
+  ResidenceApplicationFeeSection,
+  TaxResidenceScopeTable,
+  TrainingRouteComparisonTable,
+  JapanPrefectureRegionGrid,
+  JapanPracticalBasics,
   h2: ({ children }) => (
     <h2 className="mt-10 text-2xl font-semibold tracking-tight text-slate-950">{children}</h2>
   ),

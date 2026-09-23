@@ -12,6 +12,8 @@ import { getGlossaryTermById } from "@/lib/content/glossary";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
 import { StructuredStatusGuidance } from "@/components/residence-status/structured-status-guidance";
+import { LocalizedResidenceStatusActivities, LocalizedResidenceStatusPurpose, LocalizedResidenceStatusSummary } from "@/components/localization/localized-residence-status-fields";
+import { getResidenceStatusTranslations } from "@/lib/content/translations";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "long",
@@ -72,6 +74,7 @@ export default async function ResidenceStatusPage({
   const relatedJourneys = getGuidedJourneysByArticleIds(residenceStatus.relatedArticleIds);
   const glossaryTerm = getGlossaryTermById(residenceStatus.glossaryTermId);
   if (!glossaryTerm) notFound();
+  const translation = getResidenceStatusTranslations().find(({ contentId }) => contentId === residenceStatus.id);
 
   return (
     <article className="page-shell py-12 sm:py-20">
@@ -102,55 +105,16 @@ export default async function ResidenceStatusPage({
           <p className="mt-2 text-sm text-slate-500">
             <JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />
           </p>
-          <p className="mt-5 text-lg leading-8 text-slate-600">{residenceStatus.summary}</p>
+          <LocalizedResidenceStatusSummary status={residenceStatus} translation={translation} />
         </header>
 
-        <section className="mt-10" aria-labelledby="purpose-heading">
-          <h2 id="purpose-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-            General purpose
-          </h2>
-          <p className="mt-4 leading-8 text-slate-700">{residenceStatus.purpose}</p>
-        </section>
+        <LocalizedResidenceStatusPurpose status={residenceStatus} translation={translation} />
 
         {residenceStatus.structuredGuidance && (
           <StructuredStatusGuidance guidance={residenceStatus.structuredGuidance} />
         )}
 
-        <section className="mt-10" aria-labelledby="activities-heading">
-          <h2 id="activities-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-            Typical activities
-          </h2>
-          <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-slate-700">
-            {residenceStatus.typicalActivities.map((activity) => (
-              <li key={activity}>{activity}</li>
-            ))}
-          </ul>
-          {residenceStatus.examples.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Examples in official summaries
-              </h3>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {residenceStatus.examples.map((example) => (
-                  <li key={example} className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
-                    {example}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
-
-        <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50 p-6" aria-labelledby="verify-heading">
-          <h2 id="verify-heading" className="text-xl font-semibold tracking-tight text-amber-950">
-            What to verify
-          </h2>
-          <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-amber-950">
-            {residenceStatus.considerations.map((consideration) => (
-              <li key={consideration}>{consideration}</li>
-            ))}
-          </ul>
-        </section>
+        <LocalizedResidenceStatusActivities status={residenceStatus} translation={translation} />
 
         {(relatedGroups.length > 0 || relatedJourneys.length > 0) && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="explore-paths-heading">

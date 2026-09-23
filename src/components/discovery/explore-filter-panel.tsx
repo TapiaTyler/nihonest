@@ -1,27 +1,21 @@
 "use client";
 
 import { useId, useMemo } from "react";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
+import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
 import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels, type ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import type { KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
 import type { UpdateExploreFilter } from "@/components/discovery/explore-search-state";
 
-const contentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
+const englishContentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
   guide: "Guide", reference: "Reference", checklist: "Checklist", glossary: "Glossary", "official-procedure": "Official procedure",
 };
-const importanceLabels: Record<(typeof IMPORTANCE_IDS)[number], string> = {
+const englishImportanceLabels: Record<(typeof IMPORTANCE_IDS)[number], string> = {
   informational: "Informational", recommended: "Recommended", important: "Important", critical: "Critical",
 };
-const kindOptions = [
-  { id: "all", label: "Everything" },
-  { id: "group", label: "Groups" },
-  { id: "faq", label: "FAQs" },
-  { id: "article", label: "Guides" },
-  { id: "glossary", label: "Glossary terms" },
-] as const;
-
 export function ExploreFilterPanel({
   filters,
   isSearching,
@@ -39,22 +33,35 @@ export function ExploreFilterPanel({
   commitQuery: (value: string) => void;
   clearSearch: () => void;
 }>) {
+  const { message } = useInterfaceMessages();
   const searchId = useId();
+  const kindOptions = [
+    { id: "all", label: message("explore.everything") },
+    { id: "group", label: message("explore.groups") },
+    { id: "faq", label: message("explore.faqs") },
+    { id: "article", label: message("explore.guides") },
+    { id: "glossary", label: message("explore.glossaryTerms") },
+  ] as const;
   const residenceStatusOptionGroups = useMemo(
     () => RESIDENCE_STATUS_CATEGORY_IDS.map((category) => ({
-      label: residenceStatusCategoryLabels[category],
+      label: locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[category] : residenceStatusCategoryLabels[category],
       options: residenceStatuses
         .filter((status) => status.category === category)
-        .map(({ id, englishName }) => ({ id, label: englishName }))
-        .sort((left, right) => left.label.localeCompare(right.label, "en", { sensitivity: "base" })),
+        .map(({ id, englishName, japaneseName }) => ({ id, label: locale === "ja" ? japaneseName : englishName }))
+        .sort((left, right) => left.label.localeCompare(right.label, locale, { sensitivity: "base" })),
     })).filter(({ options }) => options.length > 0),
-    [residenceStatuses],
+    [locale, residenceStatuses],
   );
+
+  const optionsFor = <OptionId extends string>(
+    options: readonly { id: OptionId; label: string }[],
+    labels: Readonly<Record<OptionId, string>>,
+  ) => locale === "ja" ? options.map(({ id }) => ({ id, label: labels[id] })) : options;
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
-      <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">Search every guide and term</h2>
-      <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-slate-900">What do you need help with?</label>
+      <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("explore.searchHeading")}</h2>
+      <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-slate-900">{message("explore.searchQuestion")}</label>
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
         <DebouncedSearchInput
           id={searchId}
@@ -63,32 +70,33 @@ export function ExploreFilterPanel({
           placeholder={locale === "ja" ? "例：在留資格、ビザ、日本へ入国" : "Try bank account, Student status, or juminhyo"}
           className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
         />
-        {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Clear search and filters</button>}
+        {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("explore.clearSearch")}</button>}
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filter by content kind">
+      <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label={message("explore.filterByKind")}>
         {kindOptions.map((option) => (
           <button key={option.id} type="button" aria-pressed={filters.kind === option.id} onClick={() => updateFilter("kind", option.id)} className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:border-teal-800 aria-pressed:bg-teal-800 aria-pressed:text-white">{option.label}</button>
         ))}
       </div>
 
       <details className="mt-5 border-t border-slate-200 pt-5">
-        <summary className="min-h-11 cursor-pointer select-none font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">More filters</summary>
+        <summary className="min-h-11 cursor-pointer select-none font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("explore.moreFilters")}</summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <FilterSelect label="Journey stage" value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={journeyStages} />
-          <FilterSelect label="Topic" value={filters.topicId} onChange={(value) => updateFilter("topicId", value)} options={topics} />
-          <FilterSelect label="Audience" value={filters.audienceId} onChange={(value) => updateFilter("audienceId", value)} options={audiences} />
-          <FilterSelect label="Geographic scope" value={filters.geographicScopeId} onChange={(value) => updateFilter("geographicScopeId", value)} options={geographicScopes} />
-          <FilterSelect label="Content type" value={filters.contentType} onChange={(value) => updateFilter("contentType", value)} options={CONTENT_TYPE_IDS.map((id) => ({ id, label: contentTypeLabels[id] }))} />
-          <FilterSelect label="Importance" value={filters.importance} onChange={(value) => updateFilter("importance", value)} options={IMPORTANCE_IDS.map((id) => ({ id, label: importanceLabels[id] }))} />
-          <FilterSelect label="Residence status" value={filters.residenceStatusId} onChange={(value) => updateFilter("residenceStatusId", value)} optionGroups={residenceStatusOptionGroups} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.journeyStage")} value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage)} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.topic")} value={filters.topicId} onChange={(value) => updateFilter("topicId", value)} options={optionsFor(topics, japaneseTaxonomyLabels.topic)} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.audience")} value={filters.audienceId} onChange={(value) => updateFilter("audienceId", value)} options={optionsFor(audiences, japaneseTaxonomyLabels.audience)} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.geographicScope")} value={filters.geographicScopeId} onChange={(value) => updateFilter("geographicScopeId", value)} options={optionsFor(geographicScopes, japaneseTaxonomyLabels.geographicScope)} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.contentType")} value={filters.contentType} onChange={(value) => updateFilter("contentType", value)} options={CONTENT_TYPE_IDS.map((id) => ({ id, label: locale === "ja" ? japaneseTaxonomyLabels.contentType[id] : englishContentTypeLabels[id] }))} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.importance")} value={filters.importance} onChange={(value) => updateFilter("importance", value)} options={IMPORTANCE_IDS.map((id) => ({ id, label: locale === "ja" ? japaneseTaxonomyLabels.importance[id] : englishImportanceLabels[id] }))} />
+          <FilterSelect allLabel={message("explore.all")} label={message("explore.residenceStatus")} value={filters.residenceStatusId} onChange={(value) => updateFilter("residenceStatusId", value)} optionGroups={residenceStatusOptionGroups} />
         </div>
       </details>
     </section>
   );
 }
 
-function FilterSelect<OptionId extends string>({ label, value, onChange, options = [], optionGroups = [] }: Readonly<{
+function FilterSelect<OptionId extends string>({ allLabel, label, value, onChange, options = [], optionGroups = [] }: Readonly<{
+  allLabel: string;
   label: string;
   value: "all" | OptionId;
   onChange: (value: "all" | OptionId) => void;
@@ -100,7 +108,7 @@ function FilterSelect<OptionId extends string>({ label, value, onChange, options
     <label htmlFor={id} className="text-sm font-semibold text-slate-800">
       {label}
       <select id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 font-normal text-slate-800 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20">
-        <option value="all">All</option>
+        <option value="all">{allLabel}</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
         {optionGroups.map((group) => (
           <optgroup key={group.label} label={group.label}>

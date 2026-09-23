@@ -12,29 +12,48 @@ import { useContentLocale } from "@/components/localization/content-locale-provi
 import { contentLocalePreferenceSchema } from "@/domain/localization/content-locale";
 import { writeContentLocale } from "@/lib/storage/content-locale";
 import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
+import type { FaqSearchTranslation } from "@/lib/search/faq-search";
 
-export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[] }>) {
+export function FaqExplorer({ entries, translations = [] }: Readonly<{
+  entries: readonly FaqEntry[];
+  translations?: readonly FaqSearchTranslation[];
+}>) {
   const { locale } = useContentLocale();
+  const { message } = useInterfaceMessages();
   const searchId = useId();
   const [searchIsPending, startSearchTransition] = useTransition();
   const [query, setQuery] = useState("");
   const hasQuery = Boolean(query.trim());
-  const searchIndex = useMemo(() => buildFaqSearchIndex(entries.map(({ faq }) => faq)), [entries]);
+  const translationsById = useMemo(() => new Map(translations
+    .filter(({ targetLocale }) => targetLocale === locale)
+    .map((translation) => [translation.contentId, translation])), [locale, translations]);
+  const searchIndex = useMemo(
+    () => buildFaqSearchIndex(entries.map(({ faq }) => faq), { locale, translations }),
+    [entries, locale, translations],
+  );
   const returnParams = new URLSearchParams();
   if (hasQuery) returnParams.set("q", query);
   if (locale !== "en") returnParams.set("lang", locale);
   const returnTo = returnParams.size ? `/faq?${returnParams}` : "/faq";
   const results = useMemo(() => {
-    const matches = searchFaqIndex(searchIndex, query);
+    const matches = searchFaqIndex(searchIndex, query, locale);
     return matches.flatMap((faq) => {
       const entry = entries.find((candidate) => candidate.faq.id === faq.id);
       return entry ? [entry] : [];
     });
-  }, [entries, query, searchIndex]);
+  }, [entries, locale, query, searchIndex]);
   const browseGroups = FAQ_BROWSE_GROUP_IDS.flatMap((groupId) => {
     const groupedEntries = results
       .filter(({ faq }) => faq.primaryBrowseGroupId === groupId)
-      .sort((left, right) => left.faq.question.localeCompare(right.faq.question));
+      .sort((left, right) => (
+        translationsById.get(left.faq.id)?.question ?? left.faq.question
+      ).localeCompare(
+        translationsById.get(right.faq.id)?.question ?? right.faq.question,
+        locale,
+        { sensitivity: "base" },
+      ));
     return groupedEntries.length > 0 ? [{ groupId, entries: groupedEntries }] : [];
   });
 
@@ -63,42 +82,42 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
   return (
     <div className="mt-10">
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="faq-search-heading">
-        <h2 id="faq-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">Search questions</h2>
-        <label htmlFor={searchId} className="mt-4 block text-sm font-semibold text-slate-900">What would you like to understand?</label>
+        <h2 id="faq-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("faq.searchHeading")}</h2>
+        <label htmlFor={searchId} className="mt-4 block text-sm font-semibold text-slate-900">{message("faq.searchPrompt")}</label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder="Try bank needs address, part-time work, or developer visa" className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" />
-          {query && <button type="button" onClick={() => updateQuery("")} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Clear search</button>}
+          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder={message("faq.searchPlaceholder")} className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" />
+          {query && <button type="button" onClick={() => updateQuery("")} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("faq.clearSearch")}</button>}
         </div>
       </section>
 
       <section className="mt-12" aria-labelledby="faq-results-heading" aria-busy={searchIsPending}>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="eyebrow">FAQ knowledgebase</p>
-            <h2 id="faq-results-heading" className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{query ? "Matching questions" : "Browse common questions"}</h2>
+            <p className="eyebrow">{message("faq.knowledgebase")}</p>
+            <h2 id="faq-results-heading" className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{message(query ? "faq.matchingQuestions" : "faq.browseCommon")}</h2>
           </div>
-          <p className="text-sm text-slate-500" aria-live="polite">{results.length} {results.length === 1 ? "question" : "questions"}</p>
+          <p className="text-sm text-slate-500" aria-live="polite">{results.length} {message(results.length === 1 ? "faq.question" : "faq.questions")}</p>
         </div>
         {hasQuery && <ActivitySearchSuggestion query={query} returnTo={returnTo} />}
         {results.length > 0 && hasQuery ? (
           <div className="mt-7 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            {results.map((entry) => <FaqResult key={entry.faq.id} entry={entry} headingLevel={3} returnTo={returnTo} />)}
+            {results.map((entry) => <FaqResult key={entry.faq.id} entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} />)}
           </div>
         ) : results.length > 0 ? (
           <div className="mt-7 space-y-4">
             {browseGroups.map(({ groupId, entries: groupedEntries }) => (
               <details key={groupId} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
                 <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
-                  <span>{faqBrowseGroupLabels[groupId]}</span>
+                  <span>{locale === "ja" ? japaneseTaxonomyLabels.faqBrowseGroup[groupId] : faqBrowseGroupLabels[groupId]}</span>
                   <span className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-slate-500">{groupedEntries.length} {groupedEntries.length === 1 ? "question" : "questions"}</span>
+                    <span className="text-sm font-medium text-slate-500">{groupedEntries.length} {message(groupedEntries.length === 1 ? "faq.question" : "faq.questions")}</span>
                     <DisclosureChevron />
                   </span>
                 </summary>
                 <div className="space-y-4 border-t border-slate-200 bg-slate-50 p-5">
                   {groupedEntries.map((entry) => (
                     <div key={entry.faq.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <FaqResult entry={entry} headingLevel={3} returnTo={returnTo} />
+                      <FaqResult entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} />
                     </div>
                   ))}
                 </div>
@@ -107,13 +126,13 @@ export function FaqExplorer({ entries }: Readonly<{ entries: readonly FaqEntry[]
           </div>
         ) : (
           <div className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
-            <h3 className="text-xl font-semibold text-slate-950">No matching FAQ found</h3>
-            <p className="mt-2 text-slate-600">Try fewer words, browse all questions, or search the complete guidance catalog with the same wording.</p>
+            <h3 className="text-xl font-semibold text-slate-950">{message("faq.noMatch")}</h3>
+            <p className="mt-2 text-slate-600">{message("faq.noMatchHelp")}</p>
             <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
               <Link href={{ pathname: "/explore", query: { q: query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                Search all guidance for this question →
+                {message("faq.searchAll")}
               </Link>
-              <button type="button" onClick={() => updateQuery("")} className="min-h-11 rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">Browse all questions</button>
+              <button type="button" onClick={() => updateQuery("")} className="min-h-11 rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("faq.browseAll")}</button>
             </div>
           </div>
         )}

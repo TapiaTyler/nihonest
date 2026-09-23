@@ -8,24 +8,36 @@ import type {
 import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { ResidenceStatusCard } from "./residence-status-card";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
-
-const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
-  { id: "all", label: "All statuses" },
-  ...RESIDENCE_STATUS_CATEGORY_IDS
-    .map((id) => ({ id, label: residenceStatusCategoryLabels[id] }))
-    .sort((left, right) => left.label.localeCompare(right.label)),
-];
+import { useOptionalContentLocale } from "@/components/localization/content-locale-provider";
+import { defaultContentLocale } from "@/domain/localization/content-locale";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
+import type { ResidenceStatusTranslation } from "@/lib/content/translations";
 
 type ResidenceStatusExplorerProps = Readonly<{
   residenceStatuses: readonly ResidenceStatus[];
+  translations?: readonly ResidenceStatusTranslation[];
 }>;
 
-export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusExplorerProps) {
+export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }: ResidenceStatusExplorerProps) {
+  const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
+  const { message } = useInterfaceMessages();
   const [activeFilter, setActiveFilter] = useState<"all" | ResidenceStatusCategory>("all");
+  const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
+    { id: "all", label: message("status.all") },
+    ...RESIDENCE_STATUS_CATEGORY_IDS.map((id) => ({
+      id,
+      label: locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[id] : residenceStatusCategoryLabels[id],
+    })).sort((left, right) => left.label.localeCompare(right.label, locale, { sensitivity: "base" })),
+  ];
+  const translationsById = new Map(translations
+    .filter(({ targetLocale }) => targetLocale === locale)
+    .map((translation) => [translation.contentId, translation]));
   const returnTo = activeFilter === "all" ? "/residence-statuses" : `/residence-statuses?category=${activeFilter}`;
   const visibleStatuses = residenceStatuses
     .filter((status) => activeFilter === "all" || status.category === activeFilter)
-    .sort((left, right) => left.englishName.localeCompare(right.englishName));
+    .sort((left, right) => (locale === "ja" ? left.japaneseName : left.englishName)
+      .localeCompare(locale === "ja" ? right.japaneseName : right.englishName, locale, { sensitivity: "base" }));
   const statusGroups = filters.slice(1).flatMap((filter) => {
     const groupedStatuses = visibleStatuses.filter((status) => status.category === filter.id);
     return groupedStatuses.length > 0 ? [{ filter, statuses: groupedStatuses }] : [];
@@ -55,7 +67,7 @@ export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusEx
 
   return (
     <div className="mt-10">
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Filter residence statuses by category">
+      <div className="flex flex-wrap gap-2" role="group" aria-label={message("status.filterByCategory")}>
         {filters.map((filter) => (
           <button
             key={filter.id}
@@ -80,19 +92,19 @@ export function ResidenceStatusExplorer({ residenceStatuses }: ResidenceStatusEx
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
                 <span>{filter.label}</span>
                 <span className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-500">{statuses.length} {statuses.length === 1 ? "status" : "statuses"}</span>
+                  <span className="text-sm font-medium text-slate-500">{statuses.length} {message(statuses.length === 1 ? "status.status" : "status.statuses")}</span>
                   <DisclosureChevron />
                 </span>
               </summary>
               <div className="grid min-w-0 grid-cols-1 gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3">
-                {statuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} />)}
+                {statuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} />)}
               </div>
             </details>
           ))}
         </div>
       ) : (
         <div className="mt-6 grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {visibleStatuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} returnTo={returnTo} />)}
+          {visibleStatuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[residenceStatus.category] : residenceStatusCategoryLabels[residenceStatus.category]} returnTo={returnTo} />)}
         </div>
       )}
     </div>

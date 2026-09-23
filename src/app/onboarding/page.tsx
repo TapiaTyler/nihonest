@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OnboardingForm } from "@/components/personalization/onboarding-form";
+import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
+import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 
 export const metadata: Metadata = {
   title: "Find your starting point | Nihonest",
@@ -16,15 +18,15 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
   return (
     <div className="page-shell py-12 sm:py-20">
       <Link href={returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-        ← Back to {returnTo === "/roadmap" ? "Roadmap" : returnTo === "/my-journey" ? "My Journey" : "Home"}
+        <InterfaceText id={returnTo === "/roadmap" ? "onboarding.backRoadmap" : returnTo === "/my-journey" ? "onboarding.backMyJourney" : "onboarding.backHome"} />
       </Link>
       <header className="mt-8 max-w-3xl">
-        <p className="eyebrow">Optional personalization</p>
+        <p className="eyebrow"><InterfaceText id="onboarding.eyebrow" /></p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-          Where are you in your Japan journey?
+          <InterfaceText id="onboarding.title" />
         </h1>
         <p className="mt-6 text-lg leading-8 text-slate-600">
-          Choose your timing and, if useful, a route-aware journey. Nihonest will adjust a few starting points without hiding public information or treating your choices as an eligibility decision.
+          <InterfaceText id="onboarding.description" />
         </p>
       </header>
       <OnboardingForm
@@ -32,6 +34,8 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
         groups={getAllArticleGroups()}
         articles={articles}
         returnTo={returnTo}
+        journeyTranslations={getJourneyTranslations()}
+        groupTranslations={getArticleGroupSearchTranslations()}
       />
     </div>
   );

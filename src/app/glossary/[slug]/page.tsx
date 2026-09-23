@@ -11,6 +11,8 @@ import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from 
 import { PronunciationButton } from "@/components/glossary/pronunciation-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
 import { getAnnotatedDocumentsForGlossaryTerm } from "@/lib/content/annotated-documents";
+import { getGlossarySearchTranslations } from "@/lib/content/translations";
+import { LocalizedGlossaryExplanation, LocalizedGlossarySummary } from "@/components/localization/localized-glossary-fields";
 
 export const dynamicParams = false;
 
@@ -46,6 +48,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
     return source ? [source] : [];
   });
   const documentExamples = getAnnotatedDocumentsForGlossaryTerm(term.id);
+  const translation = getGlossarySearchTranslations().find(({ contentId }) => contentId === term.id);
 
   return (
     <article className="page-shell py-12 sm:py-20">
@@ -63,15 +66,11 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
             <JapaneseReading kana={term.kana} romaji={term.romaji} />
           </p>
           <PronunciationButton japanese={term.japanese} kana={term.kana} englishName={term.englishName} />
-          <p className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">{term.englishName}</p>
-          <p className="mt-4 text-lg leading-8 text-slate-600">{term.shortDefinition}</p>
+          <LocalizedGlossarySummary term={term} translation={translation} />
         </header>
 
-        <section className="mt-8" aria-labelledby="meaning-heading">
-          <h2 id="meaning-heading" className="text-2xl font-semibold tracking-tight text-slate-950">What it means</h2>
-          <p className="mt-4 leading-8 text-slate-700">{term.detailedExplanation}</p>
-          <h2 className="mt-10 text-2xl font-semibold tracking-tight text-slate-950">Where you may encounter it</h2>
-          <p className="mt-4 leading-8 text-slate-700">{term.commonContext}</p>
+        <LocalizedGlossaryExplanation term={term} translation={translation} />
+        <section>
           {term.journeyStageIds.length > 0 && (
             <p className="mt-6 text-sm text-slate-500">Journey stages: {term.journeyStageIds.map((id) => labelFor(id, journeyStages)).join(", ")}</p>
           )}

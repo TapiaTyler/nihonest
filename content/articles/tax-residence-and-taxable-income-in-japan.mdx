@@ -56,31 +56,7 @@ Preserve entry, departure, domicile, residence, and nationality records across t
 
 The broad NTA framework is:
 
-<div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200">
-  <table className="min-w-full border-collapse text-left text-sm">
-    <caption className="sr-only">Broad Japanese income-tax scope by tax-residence classification</caption>
-    <thead className="bg-slate-100 text-slate-950">
-      <tr>
-        <th scope="col" className="min-w-56 px-4 py-3 font-semibold">Tax-residence classification</th>
-        <th scope="col" className="min-w-80 px-4 py-3 font-semibold">Broad taxable scope</th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-      <tr>
-        <th scope="row" className="px-4 py-3 font-medium text-slate-950">Resident other than a non-permanent resident</th>
-        <td className="px-4 py-3">Generally subject to Japanese income tax on worldwide income.</td>
-      </tr>
-      <tr>
-        <th scope="row" className="px-4 py-3 font-medium text-slate-950">Non-permanent resident</th>
-        <td className="px-4 py-3">Generally taxed on income other than foreign-source income, plus foreign-source income paid in Japan or treated as remitted to Japan.</td>
-      </tr>
-      <tr>
-        <th scope="row" className="px-4 py-3 font-medium text-slate-950">Non-resident</th>
-        <td className="px-4 py-3">Generally taxed on Japanese domestic-source income under the rules for that income.</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<TaxResidenceScopeTable />
 
 The source of income is a legal classification. It is not always the payer's country, the bank-account location, the currency, or where a contract was signed. Work physically performed in Japan, overseas employment, remote work, investments, rent, stock compensation, pensions, and business income can each require different source and timing analysis.
 

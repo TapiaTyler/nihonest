@@ -39,16 +39,18 @@ describe("Japanese pilot article translations", () => {
     }
   });
 
-  it("matches the current terminology and translation-prompt revisions", async () => {
+  it("requires active artifacts to match the current terminology and translation-prompt revisions", async () => {
     const { createTranslationSourceRevision } = await import("@/lib/translation/source-revision");
-    const terminology = readFileSync(resolve(process.cwd(), "src/data/translations/pilot-terminology.ts"), "utf8");
+    const terminology = readFileSync(resolve(process.cwd(), "src/data/translations/ja/protected-terminology.ts"), "utf8");
     const prompt = readFileSync(resolve(process.cwd(), "content/translations/PILOT-PROMPT.md"), "utf8");
     const expectedTerminologyRevision = createTranslationSourceRevision({ source: terminology });
     const expectedPromptRevision = createTranslationSourceRevision({ source: prompt });
 
-    expect(japanesePilotArticleTranslations.every((artifact) => (
-      artifact.terminologyRevision === expectedTerminologyRevision
-      && artifact.promptRevision === expectedPromptRevision
-    ))).toBe(true);
+    expect(japanesePilotArticleTranslations
+      .filter(({ availability }) => availability === "active")
+      .every((artifact) => (
+        artifact.terminologyRevision === expectedTerminologyRevision
+        && artifact.promptRevision === expectedPromptRevision
+      ))).toBe(true);
   });
 });

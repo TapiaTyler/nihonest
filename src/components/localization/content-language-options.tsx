@@ -1,13 +1,15 @@
 "use client";
 
 import { contentLocaleOptions } from "@/domain/localization/content-locale";
+import { useInterfaceMessages } from "./interface-text";
 import { useContentLocale } from "./content-locale-provider";
 
 export function ContentLanguageOptions({ onSelect }: Readonly<{ onSelect?: () => void }>) {
   const { locale, setLocale } = useContentLocale();
+  const { message } = useInterfaceMessages();
 
   return (
-    <div role="radiogroup" aria-label="Guide language" className="space-y-1">
+    <div role="radiogroup" aria-label={message("language.guideLanguage")} className="space-y-1">
       {contentLocaleOptions.map((option) => {
         const selected = option.id === locale;
         return (
@@ -27,6 +29,7 @@ export function ContentLanguageOptions({ onSelect }: Readonly<{ onSelect?: () =>
           </button>
         );
       })}
+      <p className="px-3 pt-1 text-xs text-slate-500">{message("language.cycleShortcut")}</p>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { GuidedJourneyView } from "@/components/journey/guided-journey-view";
 import { guidedJourneys } from "@/data/discovery";
 import { getJourneyRouteById } from "@/domain/discovery/discovery";
 import { getArticleGroupById, getGuidedJourneyById, getJourneySteps } from "@/lib/content/articles";
+import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 
 export const dynamicParams = false;
 
@@ -27,11 +28,13 @@ export default async function GuidedJourneyPage({ params, searchParams }: PagePr
   if (!group) notFound();
 
   const selectedRoute = getJourneyRouteById(journey, requestedRouteId);
+  const translation = getJourneyTranslations().find(({ contentId }) => contentId === journey.id);
+  const groupTranslation = getArticleGroupSearchTranslations().find(({ contentId }) => contentId === group.id);
   const steps = getJourneySteps(journey.id, selectedRoute?.id).map(({ step, article }) => ({ step, article: article.metadata }));
 
   return (
     <div className="page-shell py-12 sm:py-20">
-      <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} requestedRouteId={requestedRouteId} steps={steps} />
+      <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} requestedRouteId={requestedRouteId} steps={steps} translation={translation} groupTranslation={groupTranslation} />
     </div>
   );
 }

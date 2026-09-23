@@ -8,7 +8,7 @@ import { residenceStatuses } from "@/data/residence-statuses";
 import { ExploreDiscovery } from "./explore-discovery";
 import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
 import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
-import type { ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
+import type { ArticleGroupSearchTranslation, ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 const bankArticle = articleMetadataSchema.parse({
   id: "opening-bank-account",
@@ -56,7 +56,10 @@ const faqEntry = {
   targets: [{ kind: "guide" as const, id: bankArticle.id, label: "Finding housing and moving in", href: "/articles/finding-housing-and-moving-in" }],
 };
 
-function renderDiscovery(articleTranslations: readonly ArticleSearchTranslation[] = []) {
+function renderDiscovery(
+  articleTranslations: readonly ArticleSearchTranslation[] = [],
+  groupTranslations: readonly ArticleGroupSearchTranslation[] = [],
+) {
   render(
     <ContentLocaleProvider>
       <ExploreDiscovery
@@ -66,6 +69,7 @@ function renderDiscovery(articleTranslations: readonly ArticleSearchTranslation[
         residenceStatuses={residenceStatuses}
         faqEntries={[faqEntry]}
         articleTranslations={articleTranslations}
+        groupTranslations={groupTranslations}
       />
     </ContentLocaleProvider>,
   );
@@ -161,6 +165,23 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("link", { name: "銀行口座を開設する" })).toBeInTheDocument();
     expect(screen.getByText("Japanese pilot translation")).toBeInTheDocument();
     expect(window.location.search).toBe("?q=%E9%8A%80%E8%A1%8C%E5%8F%A3%E5%BA%A7&lang=ja");
+  });
+
+  it("localizes content groups and stable taxonomy labels in Japanese", () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    renderDiscovery([], [{
+      contentId: group.id,
+      targetLocale: "ja",
+      title: "来日後の生活手続き",
+      description: "来日直後の共通手続きです。",
+    }]);
+
+    expect(screen.getByRole("link", { name: "見る： 来日後の生活手続き" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "すべてのガイドと用語を検索" })).toBeInTheDocument();
+    fireEvent.click(screen.getByText("その他の絞り込み"));
+    expect(Array.from(screen.getByRole("combobox", { name: "トピック" }).querySelectorAll("option"), (option) => option.textContent)).toEqual([
+      "すべて", "銀行", "日常生活", "仕事", "医療・健康", "住居", "出入国在留管理", "言語", "自治体の手続き", "税金", "交通",
+    ]);
   });
 
   it("returns FAQ questions and their compact canonical links", () => {

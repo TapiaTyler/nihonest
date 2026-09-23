@@ -39,7 +39,7 @@ describe("ResidenceStatusExplorer", () => {
         name: "Engineer/Specialist in Humanities/International Services",
       }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText("Showing 3 of 29 draft statuses")).toBeInTheDocument();
+    expect(screen.getByText("Showing 3 of 30 draft statuses")).toBeInTheDocument();
     expect(screen.getAllByText("View status and related guidance →")).toHaveLength(3);
   });
 });

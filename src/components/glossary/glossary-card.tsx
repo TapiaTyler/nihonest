@@ -1,8 +1,14 @@
 import Link from "next/link";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { InterfaceText } from "@/components/localization/interface-text";
+import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 
-export function GlossaryCard({ term, returnTo }: Readonly<{ term: JapaneseTerm; returnTo?: string }>) {
+export function GlossaryCard({ term, translation, returnTo }: Readonly<{
+  term: JapaneseTerm;
+  translation?: GlossarySearchTranslation;
+  returnTo?: string;
+}>) {
   return (
     <article className="h-full">
       <Link
@@ -21,10 +27,10 @@ export function GlossaryCard({ term, returnTo }: Readonly<{ term: JapaneseTerm; 
         <h2 className="mt-5 text-xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
           {term.englishName}
         </h2>
-        <p className="mt-3 flex-1 leading-7 text-slate-600">{term.shortDefinition}</p>
+        <p lang={translation ? "ja" : "en"} className="mt-3 flex-1 leading-7 text-slate-600">{translation?.shortDefinition ?? term.shortDefinition}</p>
         <div className="mt-6 border-t border-slate-100 pt-4">
           <span aria-hidden="true" className="inline-flex min-h-11 select-none items-center text-sm font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
-            View term and context →
+            <InterfaceText id="content.viewTerm" />
           </span>
         </div>
       </Link>

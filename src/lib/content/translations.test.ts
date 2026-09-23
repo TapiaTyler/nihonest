@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { translationArtifactSchema } from "@/domain/translation/translation";
-import { getActiveArticleTranslations } from "@/lib/content/translations";
+import { getActiveTranslations } from "@/lib/content/translations";
 
 const artifact = translationArtifactSchema.parse({
   schemaVersion: 1,
@@ -19,7 +19,7 @@ const artifact = translationArtifactSchema.parse({
 
 describe("repository article translations", () => {
   it("excludes explicitly stale artifacts from application consumers", () => {
-    expect(getActiveArticleTranslations([artifact, { ...artifact, contentId: "old-guide", availability: "stale" }]))
+    expect(getActiveTranslations([artifact, { ...artifact, contentId: "old-guide", availability: "stale" }]))
       .toEqual([artifact]);
   });
 });

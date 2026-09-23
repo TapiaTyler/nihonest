@@ -74,6 +74,19 @@ describe("SiteHeader", () => {
     expect(within(navigation).getByRole("link", { name: /Residence Statuses/ })).toHaveAttribute("href", "/residence-statuses");
   });
 
+  it("localizes shared navigation after Japanese is selected", () => {
+    renderHeader();
+
+    fireEvent.click(screen.getByRole("button", { name: "Guide language: English" }));
+    fireEvent.click(screen.getByRole("radio", { name: "日本語（試験版）" }));
+
+    const navigation = screen.getByRole("navigation", { name: "メインナビゲーション" });
+    expect(within(navigation).getByRole("link", { name: "ホーム" })).toHaveAttribute("href", "/");
+    expect(within(navigation).getByRole("link", { name: "ガイドを探す" })).toHaveAttribute("href", "/explore");
+    expect(within(navigation).getByRole("link", { name: "保存済み" })).toHaveAttribute("href", "/saved");
+    expect(within(navigation).getByRole("link", { name: "ログイン" })).toHaveAttribute("href", "/account");
+  });
+
   it("shows account actions and signs out from the desktop account menu", async () => {
     accountMocks.useAccountSession.mockReturnValue({
       status: "signed-in",

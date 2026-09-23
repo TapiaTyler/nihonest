@@ -18,8 +18,9 @@ import {
   LocalizedArticleBody,
   LocalizedArticleHeading,
 } from "@/components/localization/localized-article";
-import { getJapanesePilotArticleTranslation } from "@/lib/content/translations";
+import { getJapaneseArticleTranslation } from "@/lib/content/translations";
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
+import { InterfaceText } from "@/components/localization/interface-text";
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
 import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
@@ -65,7 +66,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   }
 
   const { Content, metadata } = article;
-  const japaneseTranslation = getJapanesePilotArticleTranslation(metadata.id);
+  const japaneseTranslation = getJapaneseArticleTranslation(metadata.id);
   const localGuidance = getLocalGuidanceForArticle(metadata.id);
   const localGuidanceLocations = getSelectableLocalGuidanceLocations();
   const annotatedDocuments = getAnnotatedDocumentsForArticle(metadata.id);
@@ -196,7 +197,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
         {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
             <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
-              Continue exploring
+              <InterfaceText id="content.continueExploring" />
             </h2>
             <p className="mt-3 leading-7 text-slate-600">Continue with an ordered journey, browse the wider subject, or move to the next connected guide.</p>
             <ContinueExploringList

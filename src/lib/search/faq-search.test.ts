@@ -59,4 +59,17 @@ describe("FAQ search", () => {
     expect(searchFaqIndex(index, "Can I do freelancing on my visa?")[0]?.id).toBe("freelance-work");
     expect(searchFaqIndex(index, "where can i file taxes?")[0]?.id).toBe("file-taxes");
   });
+
+  it("searches Japanese FAQ fields while retaining canonical English fallback", () => {
+    const translations = [{
+      contentId: faq.id,
+      targetLocale: "ja",
+      question: "住所と銀行口座の順序はどうすればよいですか？",
+      summary: "実用的な来日後の順序を確認します。",
+    }];
+    const index = buildFaqSearchIndex([faq], { locale: "ja", translations });
+
+    expect(searchFaqIndex(index, "銀行口座", "ja")).toEqual([faq]);
+    expect(searchFaqIndex(index, "bank-account", "ja")).toEqual([faq]);
+  });
 });

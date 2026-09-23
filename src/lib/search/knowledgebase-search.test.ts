@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { articleGroupSchema } from "@/domain/discovery/discovery";
+import { faqSchema } from "@/domain/faq/faq";
 import { glossaryTerms } from "@/data/glossary";
 import {
   defaultKnowledgebaseSearchFilters,
@@ -122,6 +123,51 @@ describe("knowledgebase search", () => {
 
     expect(japaneseResults.map(({ kind }) => kind)).toEqual(["group", "article"]);
     expect(englishFallbackResults.map(({ kind }) => kind)).toEqual(["group", "article"]);
+  });
+
+  it("indexes localized group fields while retaining canonical English fallback", () => {
+    const groupTranslations = [{
+      contentId: arrivalGroup.id,
+      targetLocale: "ja",
+      title: "来日後の生活手続き",
+      description: "住居、銀行、その他の来日後の手続きを確認します。",
+    }];
+    const index = buildKnowledgebaseSearchIndex([arrivalGroup], [bankArticle], [], [], {
+      locale: "ja",
+      groupTranslations,
+    });
+
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "生活手続き" })[0]?.kind).toBe("group");
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "arrival essentials" })[0]?.kind).toBe("group");
+    expect(index.translationsByGroupId.get(arrivalGroup.id)?.title).toBe("来日後の生活手続き");
+  });
+
+  it("indexes localized FAQ fields while retaining canonical English fallback", () => {
+    const localizedFaq = faqSchema.parse({
+      id: "phone-or-bank-first",
+      slug: "phone-or-bank-first",
+      question: "Should I get a Japanese phone number or bank account first?",
+      summary: "Provider requirements vary.",
+      primaryBrowseGroupId: "arrival-and-daily-life",
+      relatedArticleIds: [bankArticle.id],
+      status: "needs-review",
+      createdAt: "2026-09-06",
+      updatedAt: "2026-09-06",
+    });
+    const faqTranslations = [{
+      contentId: localizedFaq.id,
+      targetLocale: "ja",
+      question: "日本の電話番号と銀行口座は、どちらを先に取得すべきですか？",
+      summary: "事業者によって要件が異なります。",
+    }];
+    const index = buildKnowledgebaseSearchIndex([arrivalGroup], [bankArticle], [], [localizedFaq], {
+      locale: "ja",
+      faqTranslations,
+    });
+
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "電話番号" })[0]?.kind).toBe("faq");
+    expect(searchKnowledgebaseIndex(index, { ...defaultKnowledgebaseSearchFilters, query: "phone number" })[0]?.kind).toBe("faq");
+    expect(index.translationsByFaqId.get(localizedFaq.id)?.question).toBe(faqTranslations[0].question);
   });
 
   it("orders groups, articles, and glossary terms by type and then title", () => {

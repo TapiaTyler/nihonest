@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GlossaryExplorer } from "@/components/glossary/glossary-explorer";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
+import { getGlossarySearchTranslations } from "@/lib/content/translations";
 
 export const metadata: Metadata = {
   title: "Japanese Glossary | Nihonest",
@@ -24,7 +25,7 @@ export default function GlossaryPage() {
         This is a practical administrative glossary, not a general dictionary. Term pages explain where a word appears and connect it to the relevant guide and official sources.
       </aside>
 
-      <GlossaryExplorer terms={getAllGlossaryTerms()} />
+      <GlossaryExplorer terms={getAllGlossaryTerms()} translations={getGlossarySearchTranslations()} />
     </div>
   );
 }

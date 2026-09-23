@@ -26,7 +26,7 @@ const glossaryEntries = [
 
 describe("glossary addition assembly", () => {
   it("assembles every topic-owned term exactly once in deterministic module order", () => {
-    expect(glossaryEntries).toHaveLength(213);
+    expect(glossaryEntries).toHaveLength(224);
     expect(glossaryAdditions.map(({ id }) => id)).toEqual(glossaryEntries.map(({ id }) => id));
     expect(new Set(glossaryAdditions.map(({ id }) => id)).size).toBe(glossaryAdditions.length);
   });

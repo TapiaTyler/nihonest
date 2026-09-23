@@ -11,22 +11,27 @@ import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import type { FaqEntry } from "@/lib/content/faqs";
-import { buildKnowledgebaseSearchIndex, searchKnowledgebaseIndex, type ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
+import type { FaqSearchTranslation } from "@/lib/search/faq-search";
+import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
+import { buildKnowledgebaseSearchIndex, searchKnowledgebaseIndex, type ArticleGroupSearchTranslation, type ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 /** Coordinates the search index with independently owned state, controls, and result presentation. */
-export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [], articleTranslations = [] }: Readonly<{
+export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [], articleTranslations = [], groupTranslations = [], faqTranslations = [], glossaryTranslations = [] }: Readonly<{
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
   terms: readonly JapaneseTerm[];
   residenceStatuses: readonly ResidenceStatus[];
   faqEntries?: readonly FaqEntry[];
   articleTranslations?: readonly ArticleSearchTranslation[];
+  groupTranslations?: readonly ArticleGroupSearchTranslation[];
+  faqTranslations?: readonly FaqSearchTranslation[];
+  glossaryTranslations?: readonly GlossarySearchTranslation[];
 }>) {
   const { locale } = useContentLocale();
   const searchState = useExploreSearchState(residenceStatuses, locale);
   const knowledgebaseIndex = useMemo(
-    () => buildKnowledgebaseSearchIndex(groups, articles, terms, faqEntries.map(({ faq }) => faq), { locale, articleTranslations }),
-    [articleTranslations, articles, faqEntries, groups, locale, terms],
+    () => buildKnowledgebaseSearchIndex(groups, articles, terms, faqEntries.map(({ faq }) => faq), { locale, articleTranslations, groupTranslations, faqTranslations, glossaryTranslations }),
+    [articleTranslations, articles, faqEntries, faqTranslations, glossaryTranslations, groupTranslations, groups, locale, terms],
   );
   const results = useMemo(
     () => searchKnowledgebaseIndex(knowledgebaseIndex, searchState.filters),
@@ -56,7 +61,7 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
           clearSearch={searchState.clearSearch}
         />
       ) : (
-        <ExploreGroupBrowser groups={groups} />
+        <ExploreGroupBrowser groups={groups} translations={groupTranslations} locale={locale} />
       )}
     </div>
   );

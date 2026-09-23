@@ -2,6 +2,7 @@ import Link, { type LinkProps } from "next/link";
 import type { ReactNode } from "react";
 import { articleStatusLabels, type ArticleMetadata } from "@/domain/article/article";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
+import { InterfaceText } from "@/components/localization/interface-text";
 
 type ArticleCardProps = Readonly<{
   article: ArticleMetadata;
@@ -50,7 +51,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
           <p className="text-slate-500">Relevant to: {stageLabels.join(", ")}</p>
           <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
-            Read guide →
+            <InterfaceText id="content.readGuide" />
           </span>
         </div>
       </div>

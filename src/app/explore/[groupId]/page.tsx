@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleCard } from "@/components/content/article-card";
+import { LocalizedArticleGroupHeading } from "@/components/localization/localized-article-group";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
 import { getAllArticleGroups, getArticleGroupById, getArticlesByGroup, getJourneysByGroup } from "@/lib/content/articles";
+import { getArticleGroupSearchTranslations } from "@/lib/content/translations";
 
 export const dynamicParams = false;
 
@@ -27,12 +29,7 @@ export default async function ArticleGroupPage({ params }: PageProps<"/explore/[
   return (
     <div className="page-shell py-12 sm:py-20">
       <BackToExploreLink />
-      <header className="mt-8 max-w-3xl">
-        <p className="eyebrow">Content group</p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">{group.title}</h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">{group.description}</p>
-        <p className="mt-4 text-sm font-medium text-slate-500">{articles.length} {articles.length === 1 ? "guide" : "guides"}</p>
-      </header>
+      <LocalizedArticleGroupHeading group={group} guideCount={articles.length} translations={getArticleGroupSearchTranslations()} />
 
       {journeys.length > 0 && (
         <section className="mt-10 rounded-2xl border border-teal-200 bg-teal-50 p-6" aria-labelledby="guided-journeys-heading">

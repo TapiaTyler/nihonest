@@ -6,6 +6,7 @@ import { OnboardingActions } from "@/components/personalization/onboarding-actio
 import { OnboardingJourneySelector } from "@/components/personalization/onboarding-journey-selector";
 import { OnboardingRouteSelector } from "@/components/personalization/onboarding-route-selector";
 import { OnboardingStageSelector } from "@/components/personalization/onboarding-stage-selector";
+import { useOptionalContentLocale } from "@/components/localization/content-locale-provider";
 import { usePersonalization } from "@/components/personalization/personalization-provider";
 import { useUnsavedChangesWarning } from "@/components/personalization/use-unsaved-changes-warning";
 import type { ArticleMetadata } from "@/domain/article/article";
@@ -14,6 +15,8 @@ import { getJourneyArticleIds, getJourneyRouteForArticle } from "@/domain/discov
 import { routeOptionsForJourney, searchFocusedGuides, searchJourneyOptions, type JourneySearchResult } from "@/domain/personalization/journey-search";
 import type { JourneyStageId } from "@/domain/taxonomy/taxonomy";
 import { queueJourneyUpdateNotice } from "@/lib/storage/journey-update-notice";
+import { localizeJourney, type JourneyTranslation } from "@/domain/localization/journey-presentation";
+import type { ArticleGroupSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 /** Owns onboarding selection derivation, persistence, warnings, and return routing. */
 export function OnboardingForm({
@@ -21,13 +24,18 @@ export function OnboardingForm({
   groups,
   articles,
   returnTo,
+  journeyTranslations = [],
+  groupTranslations = [],
 }: Readonly<{
   journeys: readonly GuidedJourney[];
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
   returnTo: "/" | "/roadmap" | "/my-journey";
+  journeyTranslations?: readonly JourneyTranslation[];
+  groupTranslations?: readonly ArticleGroupSearchTranslation[];
 }>) {
   const router = useRouter();
+  const locale = useOptionalContentLocale()?.locale ?? "en";
   const { preferences, isReady, saveStartingPoint, chooseGeneralExperience } = usePersonalization();
   const [stageSelection, setStageSelection] = useState<JourneyStageId>();
   const [journeySelection, setJourneySelection] = useState<string | null>();
@@ -37,7 +45,14 @@ export function OnboardingForm({
 
   const selectedStage = stageSelection ?? (isReady ? preferences.journeyStage : undefined);
   const selectedJourneyId = journeySelection === undefined ? preferences.journeyId : journeySelection ?? undefined;
-  const selectedJourney = journeys.find(({ id }) => id === selectedJourneyId);
+  const presentedJourneys = useMemo(() => locale === "ja"
+    ? journeys.map((journey) => localizeJourney(journey, journeyTranslations.find(({ contentId }) => contentId === journey.id)))
+    : journeys, [journeyTranslations, journeys, locale]);
+  const presentedGroups = useMemo(() => locale === "ja" ? groups.map((group) => {
+    const translation = groupTranslations.find(({ contentId, targetLocale }) => contentId === group.id && targetLocale === "ja");
+    return translation ? { ...group, title: translation.title, description: translation.description } : group;
+  }) : groups, [groupTranslations, groups, locale]);
+  const selectedJourney = presentedJourneys.find(({ id }) => id === selectedJourneyId);
   const selectedRouteId = routeSelection === undefined && preferences.journeyId === selectedJourneyId
     ? preferences.routeId
     : routeSelection ?? undefined;
@@ -45,8 +60,8 @@ export function OnboardingForm({
     ? preferences.focusedArticleId
     : focusedArticleSelection ?? undefined;
   const journeyResults = useMemo(
-    () => searchJourneyOptions(query, journeys, groups, articles),
-    [articles, groups, journeys, query],
+    () => searchJourneyOptions(query, presentedJourneys, presentedGroups, articles, { fallbackJourneys: journeys, fallbackGroups: groups }),
+    [articles, groups, journeys, presentedGroups, presentedJourneys, query],
   );
   const focusedGuideResults = useMemo(() => searchFocusedGuides(query, articles), [articles, query]);
   const routeOptions = routeOptionsForJourney(selectedJourney, articles);
@@ -67,7 +82,7 @@ export function OnboardingForm({
   }
 
   function selectFocusedGuide(article: ArticleMetadata) {
-    const containingJourneys = journeys.filter((journey) => getJourneyArticleIds(journey).includes(article.id));
+    const containingJourneys = presentedJourneys.filter((journey) => getJourneyArticleIds(journey).includes(article.id));
     const containingJourney = containingJourneys.length === 1
       ? containingJourneys[0]
       : containingJourneys.find((journey) => getJourneyRouteForArticle(journey, article.id));

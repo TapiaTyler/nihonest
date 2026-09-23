@@ -6,7 +6,7 @@ import { residenceStatuses } from "@/data/residence-statuses";
 import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { getAllFaqEntries } from "@/lib/content/faqs";
-import { getPilotArticleSearchTranslations } from "@/lib/content/translations";
+import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getFaqSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
 
 export const metadata: Metadata = {
   title: "Explore | Nihonest",
@@ -44,7 +44,10 @@ export default function ExplorePage() {
         terms={getAllGlossaryTerms()}
         residenceStatuses={residenceStatuses}
         faqEntries={getAllFaqEntries()}
-        articleTranslations={getPilotArticleSearchTranslations()}
+        articleTranslations={getArticleSearchTranslations()}
+        groupTranslations={getArticleGroupSearchTranslations()}
+        faqTranslations={getFaqSearchTranslations()}
+        glossaryTranslations={getGlossarySearchTranslations()}
       />
     </div>
   );

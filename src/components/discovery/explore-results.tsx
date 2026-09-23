@@ -59,13 +59,19 @@ export function ExploreResults({
 
           {groupResults.length > 0 && (
             <ResultSection id="result-groups" title="Content groups" count={groupResults.length}>
-              {groupResults.map((group) => <ArticleGroupCard key={group.id} group={group} returnTo={returnTo} />)}
+              {groupResults.map((group) => {
+                const translation = index.translationsByGroupId.get(group.id);
+                const presentedGroup = translation
+                  ? { ...group, title: translation.title, description: translation.description }
+                  : group;
+                return <ArticleGroupCard key={group.id} group={presentedGroup} returnTo={returnTo} contentLanguage={translation ? locale : "en"} />;
+              })}
             </ResultSection>
           )}
           {faqResults.length > 0 && (
             <ResultSection id="result-faqs" title="Frequently asked questions" count={faqResults.length} layout="list">
               <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} returnTo={returnTo} />)}
+                {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} translation={index.translationsByFaqId.get(entry.faq.id)} returnTo={returnTo} />)}
               </div>
             </ResultSection>
           )}
@@ -90,7 +96,7 @@ export function ExploreResults({
           )}
           {glossaryResults.length > 0 && (
             <ResultSection id="result-terms" title="Glossary terms" count={glossaryResults.length}>
-              {glossaryResults.map((term) => <GlossaryCard key={term.id} term={term} />)}
+              {glossaryResults.map((term) => <GlossaryCard key={term.id} term={term} translation={index.translationsByGlossaryId.get(term.id)} />)}
             </ResultSection>
           )}
         </div>

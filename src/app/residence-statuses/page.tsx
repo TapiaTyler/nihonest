@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ResidenceStatusExplorer } from "@/components/residence-status/residence-status-explorer";
 import { residenceStatuses } from "@/data/residence-statuses";
+import { getResidenceStatusTranslations } from "@/lib/content/translations";
 
 export const metadata: Metadata = {
   title: "Residence Statuses | Nihonest",
@@ -34,7 +35,7 @@ export default function ResidenceStatusesPage() {
         <Link href="/can-i-do-this" className="mt-4 inline-flex min-h-11 shrink-0 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:mt-0">Start with an activity →</Link>
       </aside>
 
-      <ResidenceStatusExplorer residenceStatuses={residenceStatuses} />
+      <ResidenceStatusExplorer residenceStatuses={residenceStatuses} translations={getResidenceStatusTranslations()} />
     </div>
   );
 }

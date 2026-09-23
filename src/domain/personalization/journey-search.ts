@@ -33,10 +33,16 @@ export function searchJourneyOptions(
   journeys: readonly GuidedJourney[],
   groups: readonly ArticleGroup[],
   articles: readonly ArticleMetadata[],
+  options: Readonly<{
+    fallbackJourneys?: readonly GuidedJourney[];
+    fallbackGroups?: readonly ArticleGroup[];
+  }> = {},
 ): readonly JourneySearchResult[] {
   const queryTokens = normalizeSearchText(query).split(" ").filter(Boolean);
   const groupsById = new Map(groups.map((group) => [group.id, group]));
   const articlesById = new Map(articles.map((article) => [article.id, article]));
+  const fallbackJourneysById = new Map((options.fallbackJourneys ?? journeys).map((journey) => [journey.id, journey]));
+  const fallbackGroupsById = new Map((options.fallbackGroups ?? groups).map((group) => [group.id, group]));
 
   return journeys.flatMap((journey) => {
     const group = groupsById.get(journey.groupId);
@@ -47,8 +53,11 @@ export function searchJourneyOptions(
     const matchingArticles = queryTokens.length === 0
       ? []
       : matchingArticlesByRelevance(journeyArticles, queryTokens);
+    const fallbackJourney = fallbackJourneysById.get(journey.id);
+    const fallbackGroup = fallbackGroupsById.get(journey.groupId);
+    const fallbackSearchText = `${fallbackJourney?.title ?? ""} ${fallbackJourney?.description ?? ""} ${fallbackJourney?.introduction ?? ""} ${fallbackJourney?.routes.flatMap(({ title, description }) => [title, description]).join(" ") ?? ""} ${fallbackGroup?.title ?? ""} ${fallbackGroup?.description ?? ""}`;
     const journeyMatches = queryTokens.length === 0 || matchesQuery(
-      `${journey.title} ${journey.description} ${journey.introduction} ${group?.title ?? ""} ${group?.description ?? ""}`,
+      `${journey.title} ${journey.description} ${journey.introduction} ${journey.routes.flatMap(({ title, description }) => [title, description]).join(" ")} ${group?.title ?? ""} ${group?.description ?? ""} ${fallbackSearchText}`,
       queryTokens,
     );
 

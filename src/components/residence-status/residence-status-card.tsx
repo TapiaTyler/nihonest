@@ -2,13 +2,17 @@ import Link from "next/link";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { InterfaceText } from "@/components/localization/interface-text";
+import type { ResidenceStatusTranslation } from "@/lib/content/translations";
 
 type ResidenceStatusCardProps = Readonly<{
   residenceStatus: ResidenceStatus;
   returnTo?: string;
+  translation?: ResidenceStatusTranslation;
+  categoryLabel?: string;
 }>;
 
-export function ResidenceStatusCard({ residenceStatus, returnTo }: ResidenceStatusCardProps) {
+export function ResidenceStatusCard({ residenceStatus, returnTo, translation, categoryLabel }: ResidenceStatusCardProps) {
   return (
     <article className="h-full min-w-0">
       <Link
@@ -20,7 +24,7 @@ export function ResidenceStatusCard({ residenceStatus, returnTo }: ResidenceStat
       >
         <div className="flex items-start justify-between gap-4">
           <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
-            Draft
+            <InterfaceText id="status.draft" />
           </span>
           <span className="min-w-0 text-right text-slate-500">
             <span lang="ja" className="block break-words text-lg font-medium">{residenceStatus.japaneseName}</span>
@@ -32,11 +36,11 @@ export function ResidenceStatusCard({ residenceStatus, returnTo }: ResidenceStat
         <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
           {residenceStatus.englishName}
         </h2>
-        <p className="mt-4 flex-1 leading-7 text-slate-600">{residenceStatus.summary}</p>
+        <p lang={translation ? "ja" : "en"} className="mt-4 flex-1 leading-7 text-slate-600">{translation?.summary ?? residenceStatus.summary}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
-          <p className="text-slate-500">Category: {residenceStatusCategoryLabels[residenceStatus.category]}</p>
+          <p className="text-slate-500"><InterfaceText id="status.category" /> {categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</p>
           <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
-            View status and related guidance →
+            <InterfaceText id="content.viewStatus" />
           </span>
         </div>
       </Link>

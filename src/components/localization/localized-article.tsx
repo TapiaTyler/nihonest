@@ -1,8 +1,14 @@
 "use client";
 
 import { Fragment, type ReactNode } from "react";
+import Link from "next/link";
+import { ResidenceApplicationFeeSection } from "@/components/content/residence-application-fee-section";
+import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
+import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
+import { JapanPrefectureRegionGrid, JapanPracticalBasics } from "@/components/content/japan-geography-reference";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
+import { useInterfaceMessages } from "./interface-text";
 
 type ArticleTranslation = Pick<TranslationArtifact, "fields" | "reviewState" | "sourceLocale" | "targetLocale">;
 
@@ -16,11 +22,21 @@ function completeJapaneseTranslation(translation?: ArticleTranslation) {
 }
 
 function InlineMarkdown({ children }: Readonly<{ children: string }>) {
-  return children.split(/(\*\*[^*]+\*\*)/g).map((part, index) => (
-    part.startsWith("**") && part.endsWith("**")
-      ? <strong key={index} className="font-semibold text-slate-950">{part.slice(2, -2)}</strong>
-      : <Fragment key={index}>{part}</Fragment>
-  ));
+  return children.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\\?\((?:\/|https?:\/\/)[^)\s]+\))/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index} className="font-semibold text-slate-950">
+          <InlineMarkdown>{part.slice(2, -2)}</InlineMarkdown>
+        </strong>
+      );
+    }
+    const link = part.match(/^\[([^\]]+)\]\\?\(((?:\/|https?:\/\/)[^)\s]+)\)$/);
+    if (!link) return <Fragment key={index}>{part}</Fragment>;
+    const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
+    return link[2].startsWith("/")
+      ? <Link key={index} href={link[2]} className={className}>{link[1]}</Link>
+      : <a key={index} href={link[2]} className={className}>{link[1]}</a>;
+  });
 }
 
 type MarkdownBlock =
@@ -28,7 +44,12 @@ type MarkdownBlock =
   | Readonly<{ kind: "paragraph"; text: string }>
   | Readonly<{ kind: "blockquote"; text: string }>
   | Readonly<{ kind: "unordered-list"; items: readonly string[] }>
-  | Readonly<{ kind: "ordered-list"; items: readonly string[] }>;
+  | Readonly<{ kind: "ordered-list"; items: readonly string[] }>
+  | Readonly<{ kind: "residence-application-fees" }>
+  | Readonly<{ kind: "tax-residence-scope" }>
+  | Readonly<{ kind: "training-route-comparison" }>
+  | Readonly<{ kind: "japan-prefecture-regions" }>
+  | Readonly<{ kind: "japan-practical-basics" }>;
 
 /** Parses the deliberately small Markdown subset accepted by repository translation artifacts. */
 export function parseTranslatedArticleMarkdown(markdown: string): readonly MarkdownBlock[] {
@@ -45,6 +66,36 @@ export function parseTranslatedArticleMarkdown(markdown: string): readonly Markd
     const line = lines[index].trim();
     if (!line) {
       flushParagraph();
+      index += 1;
+      continue;
+    }
+    if (line === ":::residence-application-fees") {
+      flushParagraph();
+      blocks.push({ kind: "residence-application-fees" });
+      index += 1;
+      continue;
+    }
+    if (line === ":::tax-residence-scope") {
+      flushParagraph();
+      blocks.push({ kind: "tax-residence-scope" });
+      index += 1;
+      continue;
+    }
+    if (line === ":::training-route-comparison") {
+      flushParagraph();
+      blocks.push({ kind: "training-route-comparison" });
+      index += 1;
+      continue;
+    }
+    if (line === ":::japan-prefecture-regions") {
+      flushParagraph();
+      blocks.push({ kind: "japan-prefecture-regions" });
+      index += 1;
+      continue;
+    }
+    if (line === ":::japan-practical-basics") {
+      flushParagraph();
+      blocks.push({ kind: "japan-practical-basics" });
       index += 1;
       continue;
     }
@@ -91,6 +142,21 @@ export function parseTranslatedArticleMarkdown(markdown: string): readonly Markd
 
 export function TranslatedArticleBody({ markdown }: Readonly<{ markdown: string }>) {
   return parseTranslatedArticleMarkdown(markdown).map((block, index) => {
+    if (block.kind === "residence-application-fees") {
+      return <ResidenceApplicationFeeSection key={index} locale="ja" />;
+    }
+    if (block.kind === "tax-residence-scope") {
+      return <TaxResidenceScopeTable key={index} locale="ja" />;
+    }
+    if (block.kind === "training-route-comparison") {
+      return <TrainingRouteComparisonTable key={index} locale="ja" />;
+    }
+    if (block.kind === "japan-prefecture-regions") {
+      return <JapanPrefectureRegionGrid key={index} locale="ja" />;
+    }
+    if (block.kind === "japan-practical-basics") {
+      return <JapanPracticalBasics key={index} locale="ja" />;
+    }
     if (block.kind === "heading") {
       return block.level === 2
         ? <h2 key={index} className="mt-10 text-2xl font-semibold tracking-tight text-slate-950"><InlineMarkdown>{block.text}</InlineMarkdown></h2>
@@ -109,19 +175,20 @@ export function TranslatedArticleBody({ markdown }: Readonly<{ markdown: string 
 
 export function ArticleTranslationNotice({ translation }: Readonly<{ translation?: ArticleTranslation }>) {
   const { locale, setLocale } = useContentLocale();
+  const { message } = useInterfaceMessages();
   if (locale === "en") return null;
 
   const activeTranslation = completeJapaneseTranslation(translation);
   return (
     <aside aria-live="polite" className={`mt-6 rounded-2xl border p-4 text-sm leading-6 ${activeTranslation ? "border-sky-200 bg-sky-50 text-sky-950" : "border-amber-200 bg-amber-50 text-amber-950"}`}>
-      <p className="font-semibold">{activeTranslation ? "Machine-translated Japanese" : "Japanese translation unavailable"}</p>
+      <p className="font-semibold">{message(activeTranslation ? "translation.machineTitle" : "translation.unavailableTitle")}</p>
       <p className="mt-1">
         {activeTranslation
-          ? "This Japanese version was generated from the canonical English guide and has not yet received independent human translation review. Compare important details with the English guide and official sources."
-          : "This guide has not been translated into Japanese yet, so its canonical English version is shown instead."}
+          ? message("translation.machineBody")
+          : message("translation.unavailableBody")}
       </p>
       <button type="button" onClick={() => setLocale("en")} className="mt-2 rounded-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-        Read in English
+        {message("translation.readEnglish")}
       </button>
     </aside>
   );
