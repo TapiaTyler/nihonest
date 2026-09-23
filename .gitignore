@@ -18,6 +18,7 @@
 !.env.example
 /supabase/.temp/
 /.source-monitoring/
+/.glossary-drafts/
 
 # logs and system files
 npm-debug.log*

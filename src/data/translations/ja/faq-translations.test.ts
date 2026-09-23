@@ -98,7 +98,7 @@ describe("Japanese FAQ translations", () => {
       "freelance-act-applies",
       "freelance-payment-sixty-days",
     ]);
-    expect(japaneseFaqTranslations.slice(-11).map(({ contentId }) => contentId)).toEqual([
+    expect(japaneseFaqTranslations.slice(92, 103).map(({ contentId }) => contentId)).toEqual([
       "bicycle-on-sidewalk-in-japan",
       "cooling-off-every-contract",
       "long-stay-sightseeing-work-or-children",

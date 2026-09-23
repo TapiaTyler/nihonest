@@ -9,8 +9,8 @@ vi.mock("server-only", () => ({}));
 
 describe("Japanese residence-status translations", () => {
   it("keeps the representative status batch current and machine translated", () => {
-    expect(japaneseResidenceStatusTranslations).toHaveLength(12);
-    expect(new Set(japaneseResidenceStatusTranslations.map(({ contentId }) => contentId)).size).toBe(12);
+    expect(japaneseResidenceStatusTranslations).toHaveLength(30);
+    expect(new Set(japaneseResidenceStatusTranslations.map(({ contentId }) => contentId)).size).toBe(30);
     expect(japaneseResidenceStatusTranslations.every(({ availability, reviewState }) => availability === "active" && reviewState === "machine-translated")).toBe(true);
   });
 

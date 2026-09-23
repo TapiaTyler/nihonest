@@ -18,7 +18,7 @@ export const taxesGlossaryEntries = [
   }),
   japaneseTermSchema.parse({
     id: "jumin-zei", slug: "jumin-zei", japanese: "住民税", kana: "じゅうみんぜい", romaji: "jūminzei", englishName: "Individual Resident Tax",
-    shortDefinition: "A local tax generally administered by prefectures and municipalities using prior-year income and residence information.",
+    shortDefinition: "A local tax generally administered by prefectures and municipalities based on the prior year's income and residence information as of January 1.",
     detailedExplanation: "Billing and collection can lag behind the year in which income was earned. The responsible municipality, January 1 circumstances, and collection method affect practical handling.",
     commonContext: "Appears in municipal notices and may be deducted from salary or paid through separate bills.",
     topicIds: ["taxes", "municipal-procedures"], journeyStageIds: ["living-in-japan"], relatedArticleIds: ["income-and-resident-tax-after-moving-to-japan", "leaving-japan-and-closing-out-procedures"], relatedTermIds: ["shotoku-zei", "tokubetsu-choshu", "futsu-choshu", "jumin-toroku"], sourceIds: ["tokyo-resident-tax-special-collection", "isa-daily-life-guidebook"], searchTerms: ["residence tax", "inhabitant tax", "local tax", "juminzei"], status: "needs-review",

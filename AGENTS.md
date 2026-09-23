@@ -8,4 +8,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-For Japanese glossary translation work, follow `content/translations/GLOSSARY-TRANSLATION-WORKFLOW.md`. Have an Explorer subagent identify untranslated records before a Claude call, then use a separate Reviewer subagent for the translated legal, administrative, or other high-stakes definitions and a Tester for focused validation. Use an Implementer only for a clearly bounded integration that benefits from delegation; the primary agent owns batch scope, editorial decisions, and final handoff. Preserve existing translation artifacts and do not regenerate unchanged terms. Report which agents and Claude model actually ran; never imply delegation occurred when it did not.
+Japanese translation work is delegated to Claude, which drafts, reviews, and integrates it without a Codex review step. Follow `content/translations/CLAUDE-TRANSLATION-REPORT.md`. Preserve existing translation artifacts, do not regenerate unchanged terms, and keep artifacts `machine-translated` until a qualified human reviews them.
