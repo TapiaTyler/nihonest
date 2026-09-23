@@ -61,7 +61,7 @@ Do not revert these user decisions:
 
 ## Residence statuses
 
-All 30 status record fields are translated. The last 18 were drafted by `npm run status:draft` for $0.40 and reviewed by Claude; they use the shared structured-content prompt, so the catalog's prompt-revision test is unchanged. The command drafts every untranslated status, five per parallel call, and passes each status's Japanese glossary definition so the two stay consistent. **Next, Phase B:** the structured guidance section has no Japanese yet; see `docs/LOCALIZATION-ROLLOUT-PLAN.md`.
+All 30 status record fields are translated. The last 18 were drafted by `npm run status:draft` for $0.40 and reviewed by Claude; they use the shared structured-content prompt, so the catalog's prompt-revision test is unchanged. The command drafts every untranslated status, five per parallel call, and passes each status's Japanese glossary definition so the two stay consistent. **Structured guidance (Phase B, done):** `npm run status:guidance:draft` extracts each status's reader-facing guidance snippets by path (`src/domain/residence-status/guidance-text.ts`), translates them in one isolated call per status, and checks key parity. `-- --integrate <draft dir>` regenerates `residence-status-guidance-translations.ts`; its test fails when any English snippet changes, and rerunning the draft command redrafts only stale statuses. The first run cost $2.91 for all 30. Claude checked key parity, numbers, and status names on all 30 and read Permanent Resident and Dependent in full. In Dependent guidance, "sponsor" means 扶養者.
 
 ## How the pipeline was developed (background)
 

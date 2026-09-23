@@ -3,6 +3,7 @@ import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article
 import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
 import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
 import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
+import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
 import type { JourneyTranslation } from "@/domain/localization/journey-presentation";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
@@ -106,6 +107,11 @@ export function getResidenceStatusTranslations(): readonly ResidenceStatusTransl
     examples: parseStringArray(artifact.fields.examples),
     considerations: parseStringArray(artifact.fields.considerations),
   })).filter(({ summary, purpose }) => Boolean(summary && purpose));
+}
+
+/** Path-keyed Japanese overlay for one status's structured guidance, or undefined when none is active. */
+export function getResidenceStatusGuidanceTranslation(contentId: string): Readonly<Record<string, string>> | undefined {
+  return getActiveTranslations(japaneseResidenceStatusGuidanceTranslations).find((artifact) => artifact.contentId === contentId)?.fields;
 }
 
 export function getJourneyTranslations(): readonly JourneyTranslation[] {

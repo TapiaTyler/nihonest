@@ -13,7 +13,7 @@ import { SaveContentButton } from "@/components/saved-content/save-content-butto
 import { JapaneseReading } from "@/components/localization/japanese-reading";
 import { StructuredStatusGuidance } from "@/components/residence-status/structured-status-guidance";
 import { LocalizedResidenceStatusActivities, LocalizedResidenceStatusPurpose, LocalizedResidenceStatusSummary } from "@/components/localization/localized-residence-status-fields";
-import { getResidenceStatusTranslations } from "@/lib/content/translations";
+import { getResidenceStatusGuidanceTranslation, getResidenceStatusTranslations } from "@/lib/content/translations";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   dateStyle: "long",
@@ -111,7 +111,7 @@ export default async function ResidenceStatusPage({
         <LocalizedResidenceStatusPurpose status={residenceStatus} translation={translation} />
 
         {residenceStatus.structuredGuidance && (
-          <StructuredStatusGuidance guidance={residenceStatus.structuredGuidance} />
+          <StructuredStatusGuidance guidance={residenceStatus.structuredGuidance} translation={getResidenceStatusGuidanceTranslation(residenceStatus.id)} />
         )}
 
         <LocalizedResidenceStatusActivities status={residenceStatus} translation={translation} />

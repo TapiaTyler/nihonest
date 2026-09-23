@@ -3,7 +3,7 @@
  * one-shot Claude call, parsing of its JSON output, and mechanical checks. The pipeline exists so that a
  * coordinating agent runs one command instead of reading and pasting translation context itself.
  */
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { mkdtemp } from "node:fs/promises";
@@ -227,7 +227,8 @@ export function parseDraftText(text: string): DraftEntry[] {
  */
 export async function runClaude(userPrompt: string, options: Readonly<{ model: string; effort: string; budgetUsd: number; systemPromptPath?: string; rawOnly?: boolean }>): Promise<ClaudeRun> {
   const workdir = await mkdtemp(join(tmpdir(), "nihonest-glossary-"));
-  const result = spawnSync(resolveClaudeBinary(), [
+  // Asynchronous so callers can run several isolated calls in parallel.
+  const child = spawn(resolveClaudeBinary(), [
     "-p",
     "--model", options.model,
     "--effort", options.effort,
@@ -237,8 +238,16 @@ export async function runClaude(userPrompt: string, options: Readonly<{ model: s
     "--max-budget-usd", String(options.budgetUsd),
     "--output-format", "json",
     "--system-prompt-file", options.systemPromptPath ?? glossaryPromptPath,
-  ], { cwd: workdir, input: userPrompt, encoding: "utf8", maxBuffer: 20 * 1024 * 1024 });
-  if (result.error) throw result.error;
+  ], { cwd: workdir });
+  const result = await new Promise<{ status: number | null; stdout: string; stderr: string }>((resolvePromise, reject) => {
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8").on("data", (chunk: string) => { stdout += chunk; });
+    child.stderr.setEncoding("utf8").on("data", (chunk: string) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (status) => resolvePromise({ status, stdout, stderr }));
+    child.stdin.end(userPrompt);
+  });
   if (result.status !== 0) throw new Error(`Claude exited with ${result.status}: ${result.stderr || result.stdout}`);
   const envelope = JSON.parse(result.stdout) as { is_error?: boolean; result?: string; total_cost_usd?: number; modelUsage?: Record<string, unknown> };
   if (envelope.is_error) throw new Error(`Claude reported an error: ${envelope.result}`);

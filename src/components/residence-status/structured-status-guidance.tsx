@@ -1,40 +1,44 @@
+"use client";
+
 import Link from "next/link";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { applyGuidanceText } from "@/domain/residence-status/guidance-text";
 import type { StructuredResidenceStatusGuidance } from "@/domain/residence-status/residence-status";
 
-const conditionLabels: Record<StructuredResidenceStatusGuidance["qualificationPathways"][number]["allOf"][number]["type"], string> = {
-  activity: "Activity",
-  education: "Education",
-  experience: "Experience",
-  examination: "Examination",
-  license: "Professional qualification",
-  language: "Language",
-  remuneration: "Remuneration",
-  organization: "Organization",
-  relationship: "Relationship",
-  program: "Program",
-};
+type ConditionType = StructuredResidenceStatusGuidance["qualificationPathways"][number]["allOf"][number]["type"];
 
-export function StructuredStatusGuidance({ guidance }: Readonly<{ guidance: StructuredResidenceStatusGuidance }>) {
+/**
+ * Structured guidance for one residence status. When Japanese is selected and a current overlay exists,
+ * translated snippets replace their English originals one by one; untranslated snippets stay English.
+ */
+export function StructuredStatusGuidance({ guidance: canonicalGuidance, translation }: Readonly<{
+  guidance: StructuredResidenceStatusGuidance;
+  translation?: Readonly<Record<string, string>>;
+}>) {
+  const { locale, message } = useInterfaceMessages();
+  const active = locale === "ja" && translation ? translation : undefined;
+  const guidance = active ? applyGuidanceText(canonicalGuidance, active) : canonicalGuidance;
+  const conditionLabel = (type: ConditionType) => message(`guidance.condition.${type}`);
   return (
-    <section className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="structured-guidance-heading">
+    <section lang={active ? "ja" : "en"} className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="structured-guidance-heading">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Structured research pilot</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("guidance.pilot")}</p>
         <h2 id="structured-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-          How this route is assessed
+          {message("guidance.heading")}
         </h2>
         <p className="mt-3 leading-7 text-slate-600">
-          This draft organizes official rules for comparison. It cannot determine an individual&apos;s eligibility or replace the current official checklist.
+          {message("guidance.intro")}
         </p>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <OverviewCard label="Route shape" value={guidance.routeKindLabel} />
-        <OverviewCard label="Work authorization" value={guidance.workAuthorization.summary} />
-        <OverviewCard label="Renewal" value={guidance.renewal.summary} />
+        <OverviewCard label={message("guidance.routeShape")} value={guidance.routeKindLabel} />
+        <OverviewCard label={message("guidance.workAuthorization")} value={guidance.workAuthorization.summary} />
+        <OverviewCard label={message("guidance.renewal")} value={guidance.renewal.summary} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
-        <h3 className="font-semibold text-slate-950">Available periods of stay</h3>
+        <h3 className="font-semibold text-slate-950">{message("guidance.periods")}</h3>
         <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-700">
           {guidance.periodsOfStay.map((period) => (
             <li key={`${period.label}-${period.duration}`}>
@@ -44,28 +48,28 @@ export function StructuredStatusGuidance({ guidance }: Readonly<{ guidance: Stru
           ))}
         </ul>
         <p className="mt-4 text-sm leading-6 text-slate-500">
-          These are available categories, not a promised grant. The period requested and the period actually granted may differ.
+          {message("guidance.periodsNote")}
         </p>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <GuidanceList title="Activities this route can cover" items={guidance.activityScope.included} />
-        <GuidanceList title="Important boundaries" items={guidance.activityScope.boundaries} tone="caution" />
+        <GuidanceList title={message("guidance.included")} items={guidance.activityScope.included} />
+        <GuidanceList title={message("guidance.boundaries")} items={guidance.activityScope.boundaries} tone="caution" />
       </div>
 
       {guidance.qualificationPathways.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-xl font-semibold tracking-tight text-slate-950">Qualification pathways to examine</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Each card is a separate possible route through the criteria; the cards are not cumulative.</p>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950">{message("guidance.pathways")}</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{message("guidance.pathwaysNote")}</p>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {guidance.qualificationPathways.map((pathway) => (
               <article key={pathway.id} className="rounded-2xl border border-slate-200 bg-white p-5">
                 <h4 className="font-semibold text-slate-950">{pathway.label}</h4>
-                {pathway.allOf.length > 0 && <ConditionList label="All of these" conditions={pathway.allOf} />}
-                {pathway.anyOf.length > 0 && <ConditionList label="At least one of these" conditions={pathway.anyOf} />}
+                {pathway.allOf.length > 0 && <ConditionList label={message("guidance.allOf")} conditions={pathway.allOf} conditionLabel={conditionLabel} />}
+                {pathway.anyOf.length > 0 && <ConditionList label={message("guidance.anyOf")} conditions={pathway.anyOf} conditionLabel={conditionLabel} />}
                 {pathway.exceptions.length > 0 && (
                   <div className="mt-4 border-t border-slate-100 pt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">Exceptions and cautions</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">{message("guidance.exceptions")}</p>
                     <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-600">
                       {pathway.exceptions.map((exception) => <li key={exception}>{exception}</li>)}
                     </ul>
@@ -78,11 +82,11 @@ export function StructuredStatusGuidance({ guidance }: Readonly<{ guidance: Stru
       )}
 
       {guidance.organizationConditions.length > 0 && (
-        <div className="mt-6"><GuidanceList title="Organization or host conditions" items={guidance.organizationConditions} /></div>
+        <div className="mt-6"><GuidanceList title={message("guidance.organization")} items={guidance.organizationConditions} /></div>
       )}
 
       <div className="mt-6 rounded-2xl border border-teal-200 bg-teal-50 p-5">
-        <h3 className="font-semibold text-teal-950">Work outside this route</h3>
+        <h3 className="font-semibold text-teal-950">{message("guidance.outsideWork")}</h3>
         <p className="mt-2 text-sm leading-6 text-teal-950">{guidance.workAuthorization.outsideActivityNote}</p>
       </div>
 
@@ -90,14 +94,14 @@ export function StructuredStatusGuidance({ guidance }: Readonly<{ guidance: Stru
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           {guidance.transitions.length > 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 className="font-semibold text-slate-950">Transitions to examine</h3>
+              <h3 className="font-semibold text-slate-950">{message("guidance.transitions")}</h3>
               <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-700">
                 {guidance.transitions.map((transition) => (
                   <li key={`${transition.label}-${transition.summary}`}>
                     <strong>{transition.label}:</strong> {transition.summary}{" "}
                     {transition.targetStatusId && (
                       <Link className="font-semibold text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-600" href={`/residence-statuses/${transition.targetStatusId}`}>
-                        View status
+                        {message("guidance.viewStatus")}
                       </Link>
                     )}
                   </li>
@@ -105,13 +109,13 @@ export function StructuredStatusGuidance({ guidance }: Readonly<{ guidance: Stru
               </ul>
             </div>
           )}
-          <GuidanceList title="Evidence categories to plan for" items={guidance.evidenceCategories} />
+          <GuidanceList title={message("guidance.evidence")} items={guidance.evidenceCategories} />
         </div>
       )}
 
       {guidance.sourceAssertions.some(({ effectiveFrom }) => effectiveFrom) && (
         <p className="mt-6 rounded-xl bg-amber-100 px-4 py-3 text-sm leading-6 text-amber-950">
-          This route contains time-sensitive rules. Effective dates are attached to the affected source assertions so later reforms can be reviewed without silently preserving an outdated requirement.
+          {message("guidance.timeSensitive")}
         </p>
       )}
     </section>
@@ -138,9 +142,10 @@ function GuidanceList({ title, items, tone = "default" }: Readonly<{ title: stri
   );
 }
 
-function ConditionList({ label, conditions }: Readonly<{
+function ConditionList({ label, conditions, conditionLabel }: Readonly<{
   label: string;
   conditions: StructuredResidenceStatusGuidance["qualificationPathways"][number]["allOf"];
+  conditionLabel: (type: ConditionType) => string;
 }>) {
   return (
     <div className="mt-4">
@@ -148,7 +153,7 @@ function ConditionList({ label, conditions }: Readonly<{
       <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
         {conditions.map((condition) => (
           <li key={`${condition.type}-${condition.summary}`}>
-            <span className="font-semibold text-slate-900">{conditionLabels[condition.type]}:</span> {condition.summary}
+            <span className="font-semibold text-slate-900">{conditionLabel(condition.type)}:</span> {condition.summary}
           </li>
         ))}
       </ul>
