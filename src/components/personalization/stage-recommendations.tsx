@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArticleCard } from "@/components/content/article-card";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { GuidedJourney } from "@/domain/discovery/discovery";
+import type { JourneyTitleTranslation } from "@/domain/localization/journey-presentation";
+import type { ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
+import { LocalizedArticleCard } from "@/components/localization/localized-article-card";
 import { recommendationsForStage } from "@/domain/personalization/preferences";
 import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
@@ -15,13 +17,17 @@ export function StageRecommendations({
   articles,
   journeys,
   location,
+  articleTranslations = [],
+  journeyTitles = [],
 }: Readonly<{
   articles: readonly ArticleMetadata[];
   journeys: readonly GuidedJourney[];
   location: "home" | "explore";
+  articleTranslations?: readonly ArticleSearchTranslation[];
+  journeyTitles?: readonly JourneyTitleTranslation[];
 }>) {
   const { preferences, isReady } = usePersonalization();
-  const { locale, message } = useInterfaceMessages();
+  const { locale, message, format } = useInterfaceMessages();
   const stage = preferences.journeyStage;
   if (!isReady || !stage) return null;
 
@@ -31,6 +37,11 @@ export function StageRecommendations({
   const journey = journeys.find(({ id }) => id === preferences.journeyId);
   const route = journey?.routes.find(({ id }) => id === preferences.routeId);
   const focusedArticle = articles.find(({ id }) => id === preferences.focusedArticleId);
+  const japaneseJourney = locale === "ja" ? journeyTitles.find(({ contentId }) => contentId === journey?.id) : undefined;
+  const journeyTitle = japaneseJourney?.title ?? journey?.title ?? "";
+  const focusedArticleTitle = (locale === "ja"
+    ? articleTranslations.find(({ contentId }) => contentId === focusedArticle?.id)?.title
+    : undefined) ?? focusedArticle?.title ?? "";
   const recommendations = recommendationsForStage(
     stage,
     articles,
@@ -52,10 +63,10 @@ export function StageRecommendations({
             <p className="eyebrow">{message("home.recommendationsEyebrow")}</p>
             <h2 id={`${location}-recommendations-heading`} className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
               {journey
-                ? message("home.recommendationsForJourney").replace("{title}", journey.title)
+                ? format("home.recommendationsForJourney", { title: journeyTitle })
                 : focusedArticle
-                  ? message("home.recommendationsForGuide").replace("{title}", focusedArticle.title)
-                  : message("home.recommendationsForStage").replace("{stage}", stageLabel.toLowerCase())}
+                  ? format("home.recommendationsForGuide", { title: focusedArticleTitle })
+                  : format("home.recommendationsForStage", { stage: stageLabel.toLowerCase() })}
             </h2>
           </div>
           <Link href="/onboarding" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
@@ -64,7 +75,7 @@ export function StageRecommendations({
         </div>
         <p className="mt-4 max-w-3xl leading-7 text-slate-600">
           {journey
-            ? message("home.recommendationsJourneyNote").replace("{stage}", stageLabel)
+            ? format("home.recommendationsJourneyNote", { stage: stageLabel })
             : message("home.recommendationsGeneralNote")}
         </p>
         {(journey || focusedArticle) && (
@@ -76,17 +87,18 @@ export function StageRecommendations({
             )}
             {focusedArticle && (
               <Link href={journey ? articleJourneyHref(focusedArticle.slug, journey.id, route?.id) : `/articles/${focusedArticle.slug}`} className="inline-flex min-h-11 items-center rounded-full px-4 font-semibold text-teal-800 hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                {message("home.focusedRouteLink").replace("{title}", focusedArticle.title)}
+                {format("home.focusedRouteLink", { title: focusedArticleTitle })}
               </Link>
             )}
           </div>
         )}
         <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {recommendations.map((article) => (
-            <ArticleCard
+            <LocalizedArticleCard
               key={article.id}
               article={article}
               returnTo={location === "explore" ? "/explore" : undefined}
+              translations={articleTranslations}
             />
           ))}
         </div>

@@ -6,7 +6,7 @@ import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-tr
 import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
 import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
-import type { JourneyTranslation } from "@/domain/localization/journey-presentation";
+import type { JourneyTitleTranslation, JourneyTranslation } from "@/domain/localization/journey-presentation";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import type { ArticleGroupSearchTranslation, ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
@@ -131,4 +131,13 @@ export function getJourneyTranslations(): readonly JourneyTranslation[] {
     phases: parseStructuredArray<JourneyPhaseTranslation>(artifact.fields.phases, "Journey phases"),
     conditions: parseStructuredArray<JourneyConditionTranslation>(artifact.fields.conditions, "Journey conditions"),
   })).filter(({ title, description, introduction }) => Boolean(title && description && introduction));
+}
+
+/** Journey and route titles only; far smaller than the full journey translations when a page just names a journey. */
+export function getJourneyTitleTranslations(): readonly JourneyTitleTranslation[] {
+  return getJourneyTranslations().map(({ contentId, title, routes }) => ({
+    contentId,
+    title,
+    routes: routes.map(({ id, title: routeTitle }) => ({ id, title: routeTitle })),
+  }));
 }

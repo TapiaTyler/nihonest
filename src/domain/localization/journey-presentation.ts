@@ -15,6 +15,13 @@ export type JourneyTranslation = Readonly<{
   conditions: readonly JourneyConditionTranslation[];
 }>;
 
+/** Only the journey and route titles, for surfaces that name a journey without rendering it. */
+export type JourneyTitleTranslation = Readonly<{
+  contentId: string;
+  title: string;
+  routes: readonly Readonly<{ id: string; title: string }>[];
+}>;
+
 /** Applies translated presentation fields while retaining canonical IDs and relationships. */
 export function localizeJourney(journey: GuidedJourney, translation?: JourneyTranslation): GuidedJourney {
   if (!translation || translation.contentId !== journey.id) return journey;

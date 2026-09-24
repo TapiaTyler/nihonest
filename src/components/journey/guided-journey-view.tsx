@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArticleCard } from "@/components/content/article-card";
 import { JourneyRouteLink } from "@/components/personalization/journey-route-link";
 import { ReminderLink } from "@/components/notifications/reminder-link";
 import { JourneyChecklistControl } from "@/components/roadmap/journey-checklist-control";
 import { JourneyProgressSummary } from "@/components/roadmap/journey-progress-summary";
 import { useOptionalContentLocale } from "@/components/localization/content-locale-provider";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { LocalizedArticleCard } from "@/components/localization/localized-article-card";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { ArticleGroup, GuidedJourney, JourneyRoute, ResolvedJourneyStep } from "@/domain/discovery/discovery";
 import { articleJourneyHref, journeyHref } from "@/lib/navigation/journey-context";
 import { localizeJourney, type JourneyTranslation } from "@/domain/localization/journey-presentation";
-import type { ArticleGroupSearchTranslation } from "@/lib/search/knowledgebase-search";
+import type { ArticleGroupSearchTranslation, ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 export type JourneyViewStep = Readonly<{ step: ResolvedJourneyStep; article: ArticleMetadata }>;
 
@@ -24,6 +24,7 @@ export function GuidedJourneyView({
   steps,
   translation,
   groupTranslation,
+  articleTranslations = [],
   mode = "catalog",
 }: Readonly<{
   journey: GuidedJourney;
@@ -33,11 +34,17 @@ export function GuidedJourneyView({
   steps: readonly JourneyViewStep[];
   translation?: JourneyTranslation;
   groupTranslation?: ArticleGroupSearchTranslation;
+  /** Japanese titles and descriptions for the step cards; a step without one keeps its English card. */
+  articleTranslations?: readonly ArticleSearchTranslation[];
   mode?: "catalog" | "personal";
 }>) {
   const locale = useOptionalContentLocale()?.locale ?? "en";
   const { message } = useInterfaceMessages();
   const presentedJourney = locale === "ja" ? localizeJourney(journey, translation) : journey;
+  // Reminders keep the title shown on the card, so one created in Japanese is named in Japanese.
+  const stepTitle = (article: ArticleMetadata) => (locale === "ja"
+    ? articleTranslations.find(({ contentId }) => contentId === article.id)?.title
+    : undefined) ?? article.title;
   const presentedRoute = selectedRoute
     ? presentedJourney.routes.find(({ id }) => id === selectedRoute.id) ?? selectedRoute
     : undefined;
@@ -123,11 +130,12 @@ export function GuidedJourneyView({
                   {phaseSteps.map(({ article, step }) => (
                     <div id={`journey-step-${article.id}`} key={article.id} className={`relative h-full scroll-mt-24 ${step.requiredness === "required" ? "pt-5" : ""}`}>
                       {step.requiredness === "required" && <div className="pointer-events-none absolute left-5 top-0 z-10"><span className="rounded-full bg-teal-800 px-3 py-1 text-xs font-semibold text-white">{locale === "ja" ? "ステップ" : "Step"} {requiredStepNumbers.get(article.id)}</span></div>}
-                      <ArticleCard
+                      <LocalizedArticleCard
                         article={article}
+                        translations={articleTranslations}
                         href={articleJourneyHref(article.slug, journey.id, selectedRoute?.id, mode === "personal" ? "/my-journey" : undefined)}
                         notice={step.requiredness === "conditional" ? `${locale === "ja" ? "該当する場合" : "May apply"}: ${presentedConditionLabels.get(step.articleId) ?? step.conditionLabel}` : undefined}
-                        headerAction={<div className="flex flex-wrap justify-end gap-2"><JourneyChecklistControl checklistId={article.id} /><ReminderLink targetId={article.id} title={article.title} returnTo={`${mode === "personal" ? "/my-journey" : journeyHref(journey.id, selectedRoute?.id)}#journey-step-${article.id}`} /></div>}
+                        headerAction={<div className="flex flex-wrap justify-end gap-2"><JourneyChecklistControl checklistId={article.id} /><ReminderLink targetId={article.id} title={stepTitle(article)} returnTo={`${mode === "personal" ? "/my-journey" : journeyHref(journey.id, selectedRoute?.id)}#journey-step-${article.id}`} /></div>}
                       />
                     </div>
                   ))}

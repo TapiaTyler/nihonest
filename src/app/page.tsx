@@ -4,6 +4,7 @@ import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/articles";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { getInterfaceMessage } from "@/domain/localization/interface-messages";
+import { getArticleSearchTranslations, getJourneyTitleTranslations } from "@/lib/content/translations";
 
 const principles = [
   {
@@ -26,12 +27,14 @@ const principles = [
 export default function Home() {
   const articles = getAllArticles().map(({ metadata }) => metadata);
   const journeys = getAllGuidedJourneys();
+  const articleTranslations = getArticleSearchTranslations();
+  const journeyTitles = getJourneyTitleTranslations();
 
   return (
     <>
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.home")} />
-      <HomeHero journeys={journeys} articles={articles} />
-      <StageRecommendations articles={articles} journeys={journeys} location="home" />
+      <HomeHero journeys={journeys} articles={articles} articleTranslations={articleTranslations} journeyTitles={journeyTitles} />
+      <StageRecommendations articles={articles} journeys={journeys} location="home" articleTranslations={articleTranslations} journeyTitles={journeyTitles} />
 
       <section className="border-y border-slate-200 bg-white" aria-labelledby="what-to-expect">
         <div className="page-shell py-16 sm:py-20">

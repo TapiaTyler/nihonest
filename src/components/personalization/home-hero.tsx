@@ -3,18 +3,22 @@
 import Link from "next/link";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { GuidedJourney } from "@/domain/discovery/discovery";
+import type { JourneyTitleTranslation } from "@/domain/localization/journey-presentation";
+import type { ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { usePersonalization } from "./personalization-provider";
 import { journeyHref } from "@/lib/navigation/journey-context";
 
-export function HomeHero({ journeys, articles }: Readonly<{
+export function HomeHero({ journeys, articles, articleTranslations = [], journeyTitles = [] }: Readonly<{
   journeys: readonly GuidedJourney[];
   articles: readonly ArticleMetadata[];
+  articleTranslations?: readonly ArticleSearchTranslation[];
+  journeyTitles?: readonly JourneyTitleTranslation[];
 }>) {
   const { preferences, isReady } = usePersonalization();
-  const { locale, message } = useInterfaceMessages();
+  const { locale, message, format } = useInterfaceMessages();
   const stage = preferences.journeyStage;
   const stageLabel = stage
     ? locale === "ja"
@@ -24,6 +28,12 @@ export function HomeHero({ journeys, articles }: Readonly<{
   const journey = journeys.find(({ id }) => id === preferences.journeyId);
   const route = journey?.routes.find(({ id }) => id === preferences.routeId);
   const focusedArticle = articles.find(({ id }) => id === preferences.focusedArticleId);
+  const japaneseJourney = locale === "ja" ? journeyTitles.find(({ contentId }) => contentId === journey?.id) : undefined;
+  const journeyTitle = japaneseJourney?.title ?? journey?.title;
+  const routeTitle = japaneseJourney?.routes.find(({ id }) => id === route?.id)?.title ?? route?.title ?? "";
+  const focusedArticleTitle = (locale === "ja"
+    ? articleTranslations.find(({ contentId }) => contentId === focusedArticle?.id)?.title
+    : undefined) ?? focusedArticle?.title ?? "";
 
   return (
     <section className="page-shell grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-32">
@@ -69,17 +79,18 @@ export function HomeHero({ journeys, articles }: Readonly<{
           {stageLabel ? message("home.yourStartingPoint") : message("home.builtPublicFirst")}
         </p>
         <h2 id="foundation-status" className="mt-4 text-2xl font-semibold tracking-tight text-white">
-          {journey?.title ?? stageLabel ?? message("home.personalizationOptional")}
+          {journeyTitle ?? stageLabel ?? message("home.personalizationOptional")}
         </h2>
         <p className="mt-4 leading-7 text-teal-100/80">
           {stageLabel
-            ? message("home.stageSavedSummary")
-                .replace("{stage}", stageLabel)
-                .replace("{focus}", route
-                  ? message("home.route").replace("{title}", route.title)
+            ? format("home.stageSavedSummary", {
+                stage: stageLabel,
+                focus: route
+                  ? format("home.route", { title: routeTitle })
                   : focusedArticle
-                    ? message("home.focusedRoute").replace("{title}", focusedArticle.title)
-                    : "")
+                    ? format("home.focusedRoute", { title: focusedArticleTitle })
+                    : "",
+              })
             : message("home.publicSummary")}
         </p>
       </aside>

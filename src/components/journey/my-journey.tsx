@@ -42,7 +42,7 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
     });
     return (
       <div className="page-shell py-12 sm:py-20">
-        <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} steps={steps} translation={translations.find(({ contentId }) => contentId === journey.id)} groupTranslation={groupTranslations.find(({ contentId }) => contentId === group.id)} mode="personal" />
+        <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} steps={steps} translation={translations.find(({ contentId }) => contentId === journey.id)} groupTranslation={groupTranslations.find(({ contentId }) => contentId === group.id)} articleTranslations={articleTranslations} mode="personal" />
       </div>
     );
   }

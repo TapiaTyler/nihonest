@@ -7,7 +7,7 @@ import { residenceStatuses } from "@/data/residence-statuses";
 import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { getAllFaqEntries } from "@/lib/content/faqs";
-import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getFaqSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
+import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getFaqSearchTranslations, getGlossarySearchTranslations, getJourneyTitleTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 
@@ -41,7 +41,7 @@ export default function ExplorePage() {
         </div>
         <Link href="/can-i-do-this" className="mt-4 inline-flex min-h-11 shrink-0 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:mt-0"><InterfaceText id="explore.activityLink" /></Link>
       </aside>
-      <StageRecommendations articles={articles} journeys={getAllGuidedJourneys()} location="explore" />
+      <StageRecommendations articles={articles} journeys={getAllGuidedJourneys()} location="explore" articleTranslations={getArticleSearchTranslations()} journeyTitles={getJourneyTitleTranslations()} />
       <ExploreDiscovery
         groups={getAllArticleGroups()}
         articles={articles}

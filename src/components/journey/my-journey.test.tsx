@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import { ChecklistProgressProvider } from "@/components/roadmap/checklist-progress-provider";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { articleGroupSchema, guidedJourneySchema } from "@/domain/discovery/discovery";
@@ -46,5 +48,23 @@ describe("MyJourney", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Professional worker journey" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Understand your work status" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Progress for this journey step" })).toBeInTheDocument();
+  });
+  afterEach(() => window.localStorage.removeItem(contentLocaleStorageKey));
+
+  it("shows Japanese step cards when Japanese is selected and a translation exists", () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    const articleTranslations = [{ contentId: article.id, targetLocale: "ja", title: "就労資格を理解する", description: "仕事に関する在留の枠組みを確認します。" }];
+    render(
+      <ContentLocaleProvider>
+        <ChecklistProgressProvider><MyJourney journeys={[journey]} groups={[group]} articles={[article]} articleTranslations={articleTranslations} /></ChecklistProgressProvider>
+      </ContentLocaleProvider>,
+    );
+
+    expect(screen.getByRole("link", { name: "就労資格を理解する" })).toHaveAttribute("href", expect.stringContaining("/articles/understand-work-status"));
+    expect(screen.getByText("仕事に関する在留の枠組みを確認します。")).toBeInTheDocument();
+    expect(screen.queryByText("Understand your work status")).not.toBeInTheDocument();
+    const reminderHref = document.querySelector("#journey-step-understand-work-status a[href^='/reminders']")!.getAttribute("href")!;
+    const reminder = new URL(reminderHref, "https://example.test");
+    expect(reminder.searchParams.get("title")).toBe("就労資格を理解する");
   });
 });

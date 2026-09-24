@@ -4,7 +4,7 @@ import { GuidedJourneyView } from "@/components/journey/guided-journey-view";
 import { guidedJourneys } from "@/data/discovery";
 import { getJourneyRouteById } from "@/domain/discovery/discovery";
 import { getArticleGroupById, getGuidedJourneyById, getJourneySteps } from "@/lib/content/articles";
-import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
+import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
@@ -33,11 +33,12 @@ export default async function GuidedJourneyPage({ params, searchParams }: PagePr
   const translation = getJourneyTranslations().find(({ contentId }) => contentId === journey.id);
   const groupTranslation = getArticleGroupSearchTranslations().find(({ contentId }) => contentId === group.id);
   const steps = getJourneySteps(journey.id, selectedRoute?.id).map(({ step, article }) => ({ step, article: article.metadata }));
+  const articleTranslations = getArticleSearchTranslations().filter(({ contentId }) => steps.some(({ article }) => article.id === contentId));
 
   return (
     <div className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={translation ? formatInterfaceMessage("ja", "pageTitle.withSite", { title: translation.title }) : undefined} />
-      <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} requestedRouteId={requestedRouteId} steps={steps} translation={translation} groupTranslation={groupTranslation} />
+      <GuidedJourneyView journey={journey} group={group} selectedRoute={selectedRoute} requestedRouteId={requestedRouteId} steps={steps} translation={translation} groupTranslation={groupTranslation} articleTranslations={articleTranslations} />
     </div>
   );
 }
