@@ -57,6 +57,8 @@ export function LocalGuidancePanel({
   const municipalityOptions = sortedLocations.filter(({ geography, prefectureId }) => (
     prefectureId === selectedPrefectureId && geography.id !== selectedPrefectureId
   ));
+  // Most prefectures outside Tokyo have no mapped municipalities yet; say so instead of offering an empty list.
+  const prefectureWideOnly = Boolean(selectedPrefectureId) && municipalityOptions.length === 0;
 
   return (
     <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="local-guidance-heading">
@@ -83,25 +85,33 @@ export function LocalGuidancePanel({
               {prefectureOptions.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>)}
             </select>
           </label>
-          <label className="text-sm font-semibold text-slate-800" htmlFor="local-guidance-location">
-            Municipality
-            <select
-              id="local-guidance-location"
-              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-              value={selectedLocation?.prefectureId === selectedPrefectureId && selectedId !== selectedPrefectureId ? selectedId : ""}
-              disabled={!selectedPrefectureId}
-              onChange={(event) => {
-                setLinkedSelectionId("");
-                writeLocalGuidanceLocation(event.target.value);
-              }}
-            >
-              <option value="">Select municipality</option>
-              {groupMunicipalityOptions(municipalityOptions, ({ geography }) => geography.code).map(({ label, options }) => {
-                const items = options.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>);
-                return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
-              })}
-            </select>
-          </label>
+          <div>
+            <label className="text-sm font-semibold text-slate-800" htmlFor="local-guidance-location">
+              Municipality
+              <select
+                id="local-guidance-location"
+                className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
+                value={selectedLocation?.prefectureId === selectedPrefectureId && selectedId !== selectedPrefectureId ? selectedId : ""}
+                disabled={!selectedPrefectureId || prefectureWideOnly}
+                aria-describedby={prefectureWideOnly ? "local-guidance-prefecture-wide" : undefined}
+                onChange={(event) => {
+                  setLinkedSelectionId("");
+                  writeLocalGuidanceLocation(event.target.value);
+                }}
+              >
+                <option value="">{prefectureWideOnly ? "Prefecture-wide only" : "Select municipality"}</option>
+                {groupMunicipalityOptions(municipalityOptions, ({ geography }) => geography.code).map(({ label, options }) => {
+                  const items = options.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>);
+                  return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
+                })}
+              </select>
+            </label>
+            {prefectureWideOnly && (
+              <p id="local-guidance-prefecture-wide" className="mt-2 text-xs leading-5 text-slate-600">
+                Municipalities in this prefecture have not been mapped yet, so the guidance below applies prefecture-wide.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

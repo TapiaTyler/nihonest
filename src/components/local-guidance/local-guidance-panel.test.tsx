@@ -78,4 +78,19 @@ describe("LocalGuidancePanel", () => {
     const groups = [...screen.getByLabelText("Municipality").querySelectorAll("optgroup")];
     expect(groups.map((group) => [group.label, group.querySelectorAll("option").length])).toEqual([["Special wards", 23], ["Tama area", 30], ["Island area", 9]]);
   });
+  it("disables the municipality selector with a prefecture-wide note when no municipalities are mapped", () => {
+    render(<LocalGuidancePanel articleId="registering-your-address-after-arrival" options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />);
+    const municipality = screen.getByLabelText("Municipality");
+    expect(municipality).toBeDisabled();
+    expect(screen.queryByText(/have not been mapped yet/)).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-10000" } });
+    expect(municipality).toBeDisabled();
+    expect(municipality).toHaveAccessibleDescription(/Municipalities in this prefecture have not been mapped yet/);
+    expect(municipality.querySelector("option")).toHaveTextContent("Prefecture-wide only");
+
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
+    expect(municipality).toBeEnabled();
+    expect(screen.queryByText(/have not been mapped yet/)).not.toBeInTheDocument();
+  });
 });
