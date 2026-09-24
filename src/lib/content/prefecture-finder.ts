@@ -1,6 +1,7 @@
 import { administrativeGeographies, getAdministrativeGeography } from "@/data/geography";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { sortAdministrativeGeographies } from "@/domain/geography/administrative-geography";
+import { englishGeographyName } from "@/domain/geography/english-name";
 import type { FinderPrefecture } from "@/domain/geography/prefecture";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
 
@@ -21,6 +22,7 @@ export type FinderCoverage = Readonly<{
 
 export type FinderMunicipality = Readonly<{
   id: string;
+  code: string;
   name: string;
   prefectureId: string;
 }>;
@@ -52,7 +54,8 @@ export function getPrefectureFinderData(): { prefectures: FinderPrefecture[]; mu
     .filter((record) => record.type !== "prefecture" && record.type !== "metropolis")
     .map((record) => ({
       id: record.id,
-      name: record.names.en ?? record.names.ja,
+      code: record.code,
+      name: englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),
       prefectureId: `jp-${record.prefectureCode}000`,
     }));
 

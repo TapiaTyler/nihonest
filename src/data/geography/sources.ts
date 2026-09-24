@@ -5,7 +5,7 @@ export const administrativeGeographySources = [
   {"id":"j-lis-04","url":"https://www.j-lis.go.jp/spd/code-address/touhoku/cms_12514180.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2021-12-28","recordCount":6},
   {"id":"j-lis-11","url":"https://www.j-lis.go.jp/spd/code-address/kantou/cms_13214181.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2024-01-24","recordCount":11},
   {"id":"j-lis-12","url":"https://www.j-lis.go.jp/spd/code-address/kantou/cms_13314181.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2022-02-21","recordCount":7},
-  {"id":"j-lis-13","url":"https://www.j-lis.go.jp/spd/code-address/kantou/cms_13414181.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2025-12-26","recordCount":23},
+  {"id":"j-lis-13","url":"https://www.j-lis.go.jp/spd/code-address/kantou/cms_13414181.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2025-12-26","recordCount":62},
   {"id":"j-lis-14","url":"https://www.j-lis.go.jp/spd/code-address/kantou/cms_13514181.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2023-09-07","recordCount":31},
   {"id":"j-lis-15","url":"https://www.j-lis.go.jp/spd/code-address/tyuubu/cms_13614182.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2021-04-01","recordCount":9},
   {"id":"j-lis-22","url":"https://www.j-lis.go.jp/spd/code-address/tyuubu/cms_14314182.html","retrievedAt":"2026-09-23","sourceUpdatedAt":"2024-01-04","recordCount":8},

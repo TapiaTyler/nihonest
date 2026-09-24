@@ -16,10 +16,16 @@ describe("PrefectureFinder", () => {
     fireEvent.change(search, { target: { value: "東京都" } });
     expect(screen.getByRole("status")).toHaveTextContent("1 prefecture found");
     fireEvent.change(select, { target: { value: "jp-13000" } });
-    expect(screen.getByRole("heading", { name: "Shinjuku City" })).toBeInTheDocument();
-    expect(screen.queryByText("Nagoya City")).not.toBeInTheDocument();
-    expect(screen.getByText(/not the entire prefecture/)).toBeInTheDocument();
+    // Researched guidance appears only after a municipality or ward is chosen, and only for that area.
+    expect(screen.queryByRole("heading", { name: "Researched local guidance" })).not.toBeInTheDocument();
+    const municipalitySelect = screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" });
+    expect(within(municipalitySelect).getByRole("option", { name: "Chiyoda City" })).toHaveValue("jp-13101");
+    fireEvent.change(municipalitySelect, { target: { value: "jp-13104" } });
+    expect(screen.getByRole("heading", { name: "Researched local guidance" })).toBeInTheDocument();
+    expect(screen.getByText(/cover only Shinjuku City, not the entire prefecture/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Registering an address in Shinjuku" })).toHaveAttribute("href", "/articles/registering-your-address-after-arrival?local=jp-13104#local-guidance-heading");
+    expect(screen.queryByRole("link", { name: "Registering an address in Chiyoda" })).not.toBeInTheDocument();
+    fireEvent.change(municipalitySelect, { target: { value: "" } });
     fireEvent.change(search, { target: { value: "no-such-prefecture" } });
     expect(screen.getByRole("status")).toHaveTextContent("0 prefectures found");
     expect(screen.getByText(/outside the current search results/)).toBeInTheDocument();
@@ -35,12 +41,13 @@ describe("PrefectureFinder", () => {
     render(<PrefectureFinder locale="ja" {...data} />);
     expect(screen.getByText(/currently in English/)).toBeInTheDocument();
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-01000" } });
-    expect(screen.getByText(/does not yet have researched local supplements/)).toBeInTheDocument();
+    expect(screen.queryByText(/does not yet have researched local supplements/)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Hokkaido/ })).toHaveTextContent("北海道");
     expect(screen.getByText(/Prefecture-wide procedures for these articles have not been researched/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01000#local-guidance-heading");
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" }), { target: { value: "jp-01101" } });
-    expect(screen.getByText(/Research for 札幌市中央区 on the guides below/)).toBeInTheDocument();
+    expect(screen.getByText(/Research for Chuo Ward, Sapporo on the guides below/)).toBeInTheDocument();
+    expect(screen.getByText(/does not yet have researched local supplements for Chuo Ward, Sapporo/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01101#local-guidance-heading");
   });
 });

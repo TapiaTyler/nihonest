@@ -4,8 +4,8 @@ import { getAdministrativeGeography, legacyGeographyIds } from "@/data/geography
 // Coverage is deliberately narrower than the national identity registry. Preserve
 // legacy public/storage IDs while using canonical IDs for newly researched wards.
 const supportedLocations = [
-  { id: "tokyo", name: "Tokyo Metropolis", aliases: ["Tokyo"], selectable: false },
-  { id: "aichi", name: "Aichi Prefecture", aliases: ["Aichi"], selectable: false },
+  { id: "tokyo", name: "Tokyo", aliases: ["Tokyo Metropolis", "Tokyo-to"], selectable: false },
+  { id: "aichi", name: "Aichi", aliases: ["Aichi Prefecture", "Aichi-ken"], selectable: false },
   { id: "jp-13101", name: "Chiyoda City", aliases: ["Chiyoda", "Chiyoda Ward", "Chiyoda-ku"], selectable: true },
   { id: "jp-13102", name: "Chuo City", aliases: ["Chuo", "Chuo Ward", "Chuo-ku"], selectable: true },
   { id: "jp-13103", name: "Minato City", aliases: ["Minato", "Minato Ward", "Minato-ku"], selectable: true },

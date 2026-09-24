@@ -7,19 +7,20 @@ data, not newly generated translation artifacts.
 
 ## Scope and hierarchy
 
-The snapshot contains 261 records:
+The snapshot contains 300 records:
 
 - 47 prefectural-level records (46 `prefecture`, Tokyo as `metropolis`);
-- Tokyo's 23 `special-ward` municipalities, directly under Tokyo;
+- Tokyo's 23 `special-ward` municipalities and its 26 `city`, 5 `town`, and 8 `village`
+  municipalities (the Tama area and the islands), all directly under Tokyo;
 - 20 `designated-city` municipalities under their prefectures;
 - 171 `administrative-ward` records under those designated cities.
 
 `prefecture` is an umbrella type covering Hokkaido, Kyoto, Osaka, and the other
 prefectures. Regions such as Kanto and Kansai are not government parents.
-The schema also accepts `city`, `town`, and `village` for later source-backed
-additions; this snapshot does not contain the rest of Japan's municipalities.
-In particular, Tokyo's child list currently covers its special wards only,
-not its cities, towns, or villages. Do not describe that list as all of Tokyo.
+The schema accepts `city`, `town`, and `village` for source-backed additions.
+Tokyo's child list is complete (all 62 municipalities, added 2026-09-23 from the
+same J-LIS table); outside Tokyo this snapshot does not yet contain ordinary
+cities, towns, or villages, only designated cities and their wards.
 
 ```text
 jp-13000  Tokyo (metropolis)
@@ -104,8 +105,8 @@ The prefecture source table has no reading column, so this is not a claim of
 complete kana-based prefecture ordering. Add verified readings if that is needed.
 For complete existing English prefecture-name sorting, all 47 labels are present.
 
-All 261 records have source Japanese names; all 214 city/ward records have
-source readings. English labels currently cover the 47 prefectures and the two
+All 300 records have source Japanese names; all 253 municipality and ward
+records have source readings. English labels currently cover the 47 prefectures and the two
 existing pilot municipalities. Other English names remain absent rather than
 invented. A future UI must identify fallback appropriately; the registry alone
 does not establish complete bilingual interface coverage.
@@ -113,6 +114,14 @@ does not establish complete bilingual interface coverage.
 Existing municipal controls retain their English alphabetical behavior. The
 new code-order helpers are available for the future finder; this change does
 not silently reorder today's selectors.
+
+## English display labels
+
+`englishGeographyName` (`src/domain/geography/english-name.ts`) gives every record an English label for
+selectors: a record's own `names.en` when present, otherwise the official kana romanized in modified Hepburn
+without macrons (n becomes m before b, m, and p, as in "Tempaku"), with the unit's suffix: "Chiyoda City",
+"Hachioji City", "Okutama Town", "Ogasawara Village", and "Chuo Ward, Sapporo" for a designated-city ward. These
+are display labels only; they are not stored in the registry and never identify a record.
 
 ## Existing content and saved-location compatibility
 

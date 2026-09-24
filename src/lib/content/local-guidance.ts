@@ -1,6 +1,7 @@
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { administrativeGeographies, getAdministrativeGeography, getAdministrativeGeographyAncestors } from "@/data/geography";
 import { sources } from "@/data/sources";
+import { englishGeographyName } from "@/domain/geography/english-name";
 
 export type ArticleLocalGuidance = ReturnType<typeof getLocalGuidanceForArticle>[number];
 export type SelectableLocalGuidanceLocation = ReturnType<typeof getSelectableLocalGuidanceLocations>[number];
@@ -14,7 +15,9 @@ export function getSelectableLocalGuidanceLocations() {
     return {
       geography: {
         id: supported?.id ?? record.id,
-        name: supported?.name ?? record.names.en ?? record.names.ja,
+        /** Official code: ordering by it keeps each designated city next to its wards. */
+        code: record.code,
+        name: supported?.name ?? englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),
         type: record.type,
         parentId: record.parentId,
       },

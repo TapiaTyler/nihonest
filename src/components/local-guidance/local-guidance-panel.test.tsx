@@ -14,8 +14,8 @@ describe("LocalGuidancePanel", () => {
     const prefecture = screen.getByLabelText("Prefecture");
     const prefectureOptions = [...prefecture.querySelectorAll("option")].map(({ textContent }) => textContent);
     expect(prefectureOptions).toHaveLength(48);
-    expect(prefectureOptions).toContain("Aichi Prefecture");
-    expect(prefectureOptions).toContain("Tokyo Metropolis");
+    expect(prefectureOptions).toContain("Aichi");
+    expect(prefectureOptions).toContain("Tokyo");
     expect(prefectureOptions).toContain("Hokkaido");
 
     fireEvent.change(prefecture, { target: { value: "aichi" } });
@@ -23,7 +23,7 @@ describe("LocalGuidancePanel", () => {
 
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
     expect(screen.getByRole("heading", { name: "Registering an address in Nagoya" })).toBeInTheDocument();
-    expect(screen.getByText(/designated city · Aichi Prefecture/i)).toBeInTheDocument();
+    expect(screen.getByText(/designated city · Aichi/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Nagoya City: Moving procedures/i })).toHaveAttribute("lang", "ja");
   });
 
@@ -44,7 +44,7 @@ describe("LocalGuidancePanel", () => {
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "aichi" } });
     expect(screen.getByLabelText("Municipality")).toHaveValue("");
     expect(screen.queryByText(/saved local guidance location has not changed/)).not.toBeInTheDocument();
-    expect(screen.getByText(/Research for Aichi Prefecture on this article has not been done yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Research for Aichi on this article has not been done yet/)).toBeInTheDocument();
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("aichi");
     fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "nagoya" } });
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
@@ -56,7 +56,26 @@ describe("LocalGuidancePanel", () => {
     expect(screen.getByText(/Research for Hokkaido on this article has not been done yet/)).toBeInTheDocument();
     expect(screen.getByText(/municipality's official site, look up enrollment/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "jp-01101" } });
-    expect(screen.getByText(/Research for 札幌市中央区 on this article has not been done yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Research for Chuo Ward, Sapporo on this article has not been done yet/)).toBeInTheDocument();
     expect(screen.getByText(/ward of a designated city/)).toBeInTheDocument();
+  });
+  it("lists municipalities in English, each designated city followed by its wards, and all of Tokyo", () => {
+    render(<LocalGuidancePanel options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />);
+    const municipalityNames = () => [...screen.getByLabelText("Municipality").querySelectorAll("option")].slice(1).map(({ textContent }) => textContent);
+
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
+    const osaka = municipalityNames();
+    expect(osaka[0]).toBe("Osaka City");
+    expect(osaka.indexOf("Sakai City")).toBe(osaka.findIndex((name) => name?.endsWith(", Sakai")) - 1);
+    expect(osaka.slice(1, osaka.indexOf("Sakai City")).every((name) => name?.endsWith("Ward, Osaka"))).toBe(true);
+
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
+    const tokyo = municipalityNames();
+    expect(tokyo).toHaveLength(62);
+    expect(tokyo[0]).toBe("Chiyoda City");
+    expect(tokyo.indexOf("Hachioji City")).toBe(23);
+    expect(tokyo.at(-1)).toBe("Ogasawara Village");
+    const groups = [...screen.getByLabelText("Municipality").querySelectorAll("optgroup")];
+    expect(groups.map((group) => [group.label, group.querySelectorAll("option").length])).toEqual([["Special wards", 23], ["Tama area", 30], ["Island area", 9]]);
   });
 });

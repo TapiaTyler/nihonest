@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import type { ArticleLocalGuidance, SelectableLocalGuidanceLocation } from "@/lib/content/local-guidance";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
+import { groupMunicipalityOptions } from "@/domain/geography/tokyo-areas";
 import {
   getLocalGuidanceLocationSnapshot,
   subscribeToLocalGuidanceLocation,
@@ -41,9 +42,11 @@ export function LocalGuidancePanel({
   );
   useEffect(() => subscribeToLocalGuidanceLocation(() => setLinkedSelectionId("")), []);
   const selectedId = linkedSelectionId || savedId;
+  // Prefectures are listed by English name; municipalities by official code, which keeps each designated city
+  // directly before its wards and Tokyo's special wards before its cities, towns, and villages.
   const sortedLocations = [...locations].sort((left, right) => (
     left.parentName.localeCompare(right.parentName, "en")
-    || left.geography.name.localeCompare(right.geography.name, "en")
+    || left.geography.code.localeCompare(right.geography.code, "en")
   ));
   const selectedLocation = sortedLocations.find(({ geography }) => geography.id === selectedId);
   const selected = options.find(({ geography }) => geography.id === selectedId);
@@ -93,7 +96,10 @@ export function LocalGuidancePanel({
               }}
             >
               <option value="">Select municipality</option>
-              {municipalityOptions.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>)}
+              {groupMunicipalityOptions(municipalityOptions, ({ geography }) => geography.code).map(({ label, options }) => {
+                const items = options.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>);
+                return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
+              })}
             </select>
           </label>
         </div>

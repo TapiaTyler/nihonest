@@ -3,12 +3,17 @@ import { administrativeGeographies, administrativeGeographySources, getAdministr
 import { supportedGeographies } from "@/data/local-guidance/geographies";
 
 describe("national geography snapshot", () => {
-  it("covers 47 prefectures, 23 special wards, and all 171 wards of 20 designated cities", () => {
-    expect(administrativeGeographies).toHaveLength(261);
+  it("covers 47 prefectures, all 62 Tokyo municipalities, and all 171 wards of 20 designated cities", () => {
+    expect(administrativeGeographies).toHaveLength(300);
     expect(administrativeGeographies.filter(({ type }) => type === "prefecture" || type === "metropolis").map(({ prefectureCode }) => prefectureCode))
       .toEqual(Array.from({ length: 47 }, (_, index) => String(index + 1).padStart(2, "0")));
     expect(administrativeGeographies.filter(({ type }) => type === "special-ward")).toHaveLength(23);
     expect(administrativeGeographies.filter(({ type }) => type === "administrative-ward")).toHaveLength(171);
+    // Tokyo: 23 special wards plus the Tama area and islands (26 cities, 5 towns, 8 villages).
+    const tokyoTypes = getAdministrativeGeographyChildren("jp-13000").map(({ type }) => type);
+    expect(tokyoTypes.filter((type) => type === "city")).toHaveLength(26);
+    expect(tokyoTypes.filter((type) => type === "town")).toHaveLength(5);
+    expect(tokyoTypes.filter((type) => type === "village")).toHaveLength(8);
     const expectedWardCounts = {
       "01100": 10, "04100": 5, "11100": 10, "12100": 6, "14100": 18,
       "14130": 7, "14150": 3, "15100": 8, "22100": 3, "22130": 3,
@@ -51,18 +56,18 @@ describe("national geography snapshot", () => {
     expect(getAdministrativeGeography("shinjuku")).toBe(getAdministrativeGeography("jp-13104"));
     expect(getAdministrativeGeographyByCode("131041")).toBe(getAdministrativeGeography("shinjuku"));
     expect(getAdministrativeGeographyByCode("131042")).toBeUndefined();
-    expect(getAdministrativeGeographyChildren("tokyo")).toHaveLength(23);
+    expect(getAdministrativeGeographyChildren("tokyo")).toHaveLength(62);
   });
 
   it("has a dated source for every record and only source-backed readings", () => {
     const uniqueCodes = new Set(administrativeGeographies.map(({ localGovernmentCode }) => localGovernmentCode));
-    expect(uniqueCodes.size).toBe(261);
+    expect(uniqueCodes.size).toBe(300);
     for (const source of administrativeGeographySources) {
       expect(new URL(source.url).hostname).toBe("www.j-lis.go.jp");
       expect(source.retrievedAt).toBe("2026-09-23");
       expect(administrativeGeographies.filter(({ sourceId }) => sourceId === source.id)).toHaveLength(source.recordCount);
     }
-    expect(administrativeGeographies.filter(({ type }) => type.endsWith("ward")).every(({ names }) => Boolean(names.kana))).toBe(true);
+    expect(administrativeGeographies.filter(({ type }) => type !== "prefecture" && type !== "metropolis").every(({ names }) => Boolean(names.kana))).toBe(true);
     expect(administrativeGeographies.filter(({ type }) => type === "prefecture" || type === "metropolis").every(({ names }) => Boolean(names.en))).toBe(true);
   });
 });

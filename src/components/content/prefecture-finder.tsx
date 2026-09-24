@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { searchPrefectures, type FinderPrefecture } from "@/domain/geography/prefecture";
+import { groupMunicipalityOptions } from "@/domain/geography/tokyo-areas";
 import type { FinderCoverage, FinderMunicipality } from "@/lib/content/prefecture-finder";
 import { prefectureGeneralGuides, prefectureNationalGuides } from "@/lib/content/prefecture-finder";
 import { prefectureFinderMessages as message } from "./prefecture-finder-messages";
@@ -34,6 +35,8 @@ export function PrefectureFinder({
   const municipalityOptions = municipalities.filter(({ prefectureId }) => prefectureId === selectedId);
   const selectedMunicipality = municipalityOptions.find(({ id }) => id === selectedMunicipalityId);
   const guidanceLocationId = selectedMunicipality?.id ?? selectedId;
+  // Researched supplements are shown only for the selected municipality or ward, never prefecture-wide.
+  const municipalityCoverage = localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.id);
 
   return (
     <section className="not-prose rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby={`${searchId}-heading`} lang="en">
@@ -69,7 +72,10 @@ export function PrefectureFinder({
             <label className="mt-4 block text-sm font-semibold text-slate-900" htmlFor={municipalityId}>{message.municipalityLabel}</label>
             <select id={municipalityId} className={controlClass} value={selectedMunicipalityId} onChange={(event) => setSelectedMunicipalityId(event.target.value)}>
               <option value="">{message.municipalityPlaceholder}</option>
-              {municipalityOptions.map((municipality) => <option key={municipality.id} value={municipality.id}>{municipality.name}</option>)}
+              {groupMunicipalityOptions(municipalityOptions, ({ code }) => code).map(({ label, options }) => {
+                const items = options.map((municipality) => <option key={municipality.id} value={municipality.id}>{municipality.name}</option>);
+                return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
+              })}
             </select>
             <p className="mt-2 text-xs leading-5 text-slate-600">{message.municipalityScope}</p>
           </>}
@@ -80,25 +86,24 @@ export function PrefectureFinder({
               <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}?local=${guidanceLocationId}#local-guidance-heading`}>{title}</Link></li>
             ))}
           </ul>
-          <h5 className="mt-4 font-semibold text-slate-900">{message.localHeading}</h5>
-          {localCoverage ? (
+          {selectedMunicipality && (
             <>
-              <p className="mt-1 text-sm leading-6 text-slate-700">{message.localPilot}</p>
-              {localCoverage.municipalities.map((municipality) => (
-                <div key={municipality.id} className="mt-3">
-                  <h6 className="font-semibold text-slate-900">{municipality.name}</h6>
-                  <ul className="mt-1 list-inside list-disc space-y-1 text-sm leading-6">
-                    {municipality.supplements.map((supplement) => (
+              <h5 className="mt-4 font-semibold text-slate-900">{message.localHeading}</h5>
+              {municipalityCoverage ? (
+                <>
+                  <p className="mt-1 text-sm leading-6 text-slate-700">{message.localPilot(selectedMunicipality.name)}</p>
+                  <ul className="mt-2 list-inside list-disc space-y-1 text-sm leading-6">
+                    {municipalityCoverage.supplements.map((supplement) => (
                       <li key={supplement.id}>
-                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${municipality.id}#local-guidance-heading`}>{supplement.title}</Link>
+                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${municipalityCoverage.id}#local-guidance-heading`}>{supplement.title}</Link>
                         <span className="text-slate-600"> · {message.reviewStatus} · {message.checked}: {supplement.lastCheckedAt}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
-              ))}
+                </>
+              ) : <p className="mt-1 text-sm leading-6 text-slate-700">{message.localUnavailable(selectedMunicipality.name)}</p>}
             </>
-          ) : <p className="mt-1 text-sm leading-6 text-slate-700">{message.localUnavailable}</p>}
+          )}
         </div>
       )}
 
