@@ -71,4 +71,34 @@ describe("AccountContentSyncProvider", () => {
     await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), emptyAccountContentState));
     expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([accountRecord]);
   });
+  it("discards a response for the previous account and synchronizes the account signed in during the request", async () => {
+    const firstUser = "30000000-0000-4000-8000-000000000003";
+    const secondUser = "50000000-0000-4000-8000-000000000005";
+    let changeAccount: (userId: string) => void = () => undefined;
+    const client = {
+      auth: {
+        getUser: vi.fn().mockResolvedValue({ data: { user: { id: firstUser } } }),
+        onAuthStateChange: vi.fn((callback: (event: string, session: { user: { id: string } } | null) => void) => {
+          changeAccount = (userId) => callback("SIGNED_IN", { user: { id: userId } });
+          return { data: { subscription: { unsubscribe: vi.fn() } } };
+        }),
+      },
+    } as unknown as SupabaseClient<Database>;
+    mocks.getClient.mockReturnValue(client);
+    const firstAccountRecord = { kind: "article", contentId: "first-account-only", state: "saved", updatedAt: "2026-09-08T12:00:00.000Z" } as const;
+    let finishFirstRequest: (value: unknown) => void = () => undefined;
+    mocks.synchronize
+      .mockImplementationOnce(() => new Promise((resolve) => { finishFirstRequest = resolve; }))
+      .mockResolvedValueOnce({ ok: true, state: emptyAccountContentState });
+
+    render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(1));
+    changeAccount(secondUser);
+    finishFirstRequest({ ok: true, state: { ...emptyAccountContentState, savedContent: [firstAccountRecord] } });
+
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(2));
+    await screen.findByText("synchronized");
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe(secondUser);
+    expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "[]")).toEqual([]);
+  });
 });

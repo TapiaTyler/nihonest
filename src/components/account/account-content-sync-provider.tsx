@@ -71,55 +71,55 @@ export function AccountContentSyncProvider({ children }: Readonly<{ children: Re
 
   const runSynchronization = useCallback(async () => {
     const client = clientRef.current;
-    const userId = userIdRef.current;
-    if (!client || !userId) return;
+    if (!client || !userIdRef.current) return;
     if (inFlightRef.current) {
       queuedRef.current = true;
       return;
     }
 
     inFlightRef.current = true;
-    let synchronizationFailed = false;
-    do {
-      queuedRef.current = false;
-      if (mountedRef.current) {
-        setStatus("synchronizing");
-        setErrorMessage(undefined);
-      }
-
-      const requestSnapshot = getDeviceSnapshot();
-      // A cache belonging to another account must never be imported into the current account.
-      const contentOwner = readAccountContentOwner();
-      const deviceState = contentOwner && contentOwner !== userId
-        ? emptyAccountContentState
-        : readDeviceState();
-      const result = await synchronizeAccountContent(client, deviceState);
-
-      if (!result.ok) {
-        synchronizationFailed = true;
+    // One pass per account. If a different account signs in during a pass, its response is discarded and the
+    // next pass synchronizes the new account, all within this single in-flight run.
+    let userId: string | undefined = userIdRef.current;
+    while (userId) {
+      let synchronizationFailed = false;
+      do {
+        queuedRef.current = false;
         if (mountedRef.current) {
-          setStatus("error");
-          setErrorMessage(result.message);
+          setStatus("synchronizing");
+          setErrorMessage(undefined);
         }
-        break;
-      }
-      // An account change during the request invalidates its response for this browser cache.
-      if (userIdRef.current !== userId) {
-        queuedRef.current = Boolean(userIdRef.current);
-        break;
-      }
 
-      applyingAccountStateRef.current = true;
-      queuedRef.current = applyCanonicalState(result.state, requestSnapshot) || queuedRef.current;
-      writeAccountContentOwner(userId);
-      applyingAccountStateRef.current = false;
-    } while (queuedRef.current && userIdRef.current === userId);
+        const requestSnapshot = getDeviceSnapshot();
+        // A cache belonging to another account must never be imported into the current account.
+        const contentOwner = readAccountContentOwner();
+        const deviceState = contentOwner && contentOwner !== userId
+          ? emptyAccountContentState
+          : readDeviceState();
+        const result = await synchronizeAccountContent(client, deviceState);
 
-    inFlightRef.current = false;
-    if (mountedRef.current && userIdRef.current === userId && !synchronizationFailed) setStatus("synchronized");
-    if (mountedRef.current && userIdRef.current && userIdRef.current !== userId) {
-      queueMicrotask(() => { if (mountedRef.current) void runSynchronization(); });
+        if (!result.ok) {
+          synchronizationFailed = true;
+          if (mountedRef.current) {
+            setStatus("error");
+            setErrorMessage(result.message);
+          }
+          break;
+        }
+        // An account change during the request invalidates its response for this browser cache.
+        if (userIdRef.current !== userId) break;
+
+        applyingAccountStateRef.current = true;
+        queuedRef.current = applyCanonicalState(result.state, requestSnapshot) || queuedRef.current;
+        writeAccountContentOwner(userId);
+        applyingAccountStateRef.current = false;
+      } while (queuedRef.current && userIdRef.current === userId);
+
+      if (mountedRef.current && userIdRef.current === userId && !synchronizationFailed) setStatus("synchronized");
+      const nextUserId: string | undefined = userIdRef.current;
+      userId = mountedRef.current && nextUserId && nextUserId !== userId ? nextUserId : undefined;
     }
+    inFlightRef.current = false;
   }, []);
 
   useEffect(() => {

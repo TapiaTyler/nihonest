@@ -7,7 +7,6 @@ import {
   LocalizedArticleBody,
   LocalizedArticleHeading,
   TranslatedArticleBody,
-  parseTranslatedArticleMarkdown,
 } from "./localized-article";
 
 const translation = {
@@ -89,15 +88,6 @@ describe("localized article presentation", () => {
     event.preventDefault();
     window.dispatchEvent(event);
     expect(screen.getByRole("radio", { name: "日本語（試験版）" })).toHaveAttribute("aria-checked", "true");
-  });
-
-  it("parses the supported translation Markdown structures", () => {
-    expect(parseTranslatedArticleMarkdown(translation.fields.body).map(({ kind }) => kind)).toEqual([
-      "heading",
-      "paragraph",
-      "unordered-list",
-      "blockquote",
-    ]);
   });
 
   it("renders glossary links inside bold text and escaped link syntax", () => {

@@ -6,6 +6,7 @@ import { ResidenceApplicationFeeSection } from "@/components/content/residence-a
 import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
 import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
 import { JapanPrefectureRegionGrid, JapanPracticalBasics } from "@/components/content/japan-geography-reference";
+import { parseArticleMarkdown, type ArticleComponentBlockKind } from "@/domain/article/article-blocks";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
 import { useInterfaceMessages } from "./interface-text";
@@ -39,124 +40,17 @@ function InlineMarkdown({ children }: Readonly<{ children: string }>) {
   });
 }
 
-type MarkdownBlock =
-  | Readonly<{ kind: "heading"; level: 2 | 3; text: string }>
-  | Readonly<{ kind: "paragraph"; text: string }>
-  | Readonly<{ kind: "blockquote"; text: string }>
-  | Readonly<{ kind: "unordered-list"; items: readonly string[] }>
-  | Readonly<{ kind: "ordered-list"; items: readonly string[] }>
-  | Readonly<{ kind: "residence-application-fees" }>
-  | Readonly<{ kind: "tax-residence-scope" }>
-  | Readonly<{ kind: "training-route-comparison" }>
-  | Readonly<{ kind: "japan-prefecture-regions" }>
-  | Readonly<{ kind: "japan-practical-basics" }>;
-
-/** Parses the deliberately small Markdown subset accepted by repository translation artifacts. */
-export function parseTranslatedArticleMarkdown(markdown: string): readonly MarkdownBlock[] {
-  const blocks: MarkdownBlock[] = [];
-  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
-  let paragraph: string[] = [];
-
-  function flushParagraph() {
-    if (paragraph.length > 0) blocks.push({ kind: "paragraph", text: paragraph.join(" ") });
-    paragraph = [];
-  }
-
-  for (let index = 0; index < lines.length;) {
-    const line = lines[index].trim();
-    if (!line) {
-      flushParagraph();
-      index += 1;
-      continue;
-    }
-    if (line === ":::residence-application-fees") {
-      flushParagraph();
-      blocks.push({ kind: "residence-application-fees" });
-      index += 1;
-      continue;
-    }
-    if (line === ":::tax-residence-scope") {
-      flushParagraph();
-      blocks.push({ kind: "tax-residence-scope" });
-      index += 1;
-      continue;
-    }
-    if (line === ":::training-route-comparison") {
-      flushParagraph();
-      blocks.push({ kind: "training-route-comparison" });
-      index += 1;
-      continue;
-    }
-    if (line === ":::japan-prefecture-regions") {
-      flushParagraph();
-      blocks.push({ kind: "japan-prefecture-regions" });
-      index += 1;
-      continue;
-    }
-    if (line === ":::japan-practical-basics") {
-      flushParagraph();
-      blocks.push({ kind: "japan-practical-basics" });
-      index += 1;
-      continue;
-    }
-    const heading = line.match(/^(#{2,3})\s+(.+)$/);
-    if (heading) {
-      flushParagraph();
-      blocks.push({ kind: "heading", level: heading[1].length as 2 | 3, text: heading[2] });
-      index += 1;
-      continue;
-    }
-    if (line.startsWith("> ")) {
-      flushParagraph();
-      const quoteLines: string[] = [];
-      while (index < lines.length && lines[index].trim().startsWith("> ")) {
-        quoteLines.push(lines[index].trim().slice(2));
-        index += 1;
-      }
-      blocks.push({ kind: "blockquote", text: quoteLines.join(" ") });
-      continue;
-    }
-    const unordered = line.match(/^[-*]\s+(.+)$/);
-    const ordered = line.match(/^\d+[.)]\s+(.+)$/);
-    if (unordered || ordered) {
-      flushParagraph();
-      const kind = unordered ? "unordered-list" : "ordered-list";
-      const items: string[] = [];
-      const pattern = unordered ? /^[-*]\s+(.+)$/ : /^\d+[.)]\s+(.+)$/;
-      while (index < lines.length) {
-        const item = lines[index].trim().match(pattern);
-        if (!item) break;
-        items.push(item[1]);
-        index += 1;
-      }
-      blocks.push({ kind, items });
-      continue;
-    }
-    paragraph.push(line);
-    index += 1;
-  }
-
-  flushParagraph();
-  return blocks;
-}
+const componentBlocks: Record<ArticleComponentBlockKind, () => ReactNode> = {
+  "residence-application-fees": () => <ResidenceApplicationFeeSection locale="ja" />,
+  "tax-residence-scope": () => <TaxResidenceScopeTable locale="ja" />,
+  "training-route-comparison": () => <TrainingRouteComparisonTable locale="ja" />,
+  "japan-prefecture-regions": () => <JapanPrefectureRegionGrid locale="ja" />,
+  "japan-practical-basics": () => <JapanPracticalBasics locale="ja" />,
+};
 
 export function TranslatedArticleBody({ markdown }: Readonly<{ markdown: string }>) {
-  return parseTranslatedArticleMarkdown(markdown).map((block, index) => {
-    if (block.kind === "residence-application-fees") {
-      return <ResidenceApplicationFeeSection key={index} locale="ja" />;
-    }
-    if (block.kind === "tax-residence-scope") {
-      return <TaxResidenceScopeTable key={index} locale="ja" />;
-    }
-    if (block.kind === "training-route-comparison") {
-      return <TrainingRouteComparisonTable key={index} locale="ja" />;
-    }
-    if (block.kind === "japan-prefecture-regions") {
-      return <JapanPrefectureRegionGrid key={index} locale="ja" />;
-    }
-    if (block.kind === "japan-practical-basics") {
-      return <JapanPracticalBasics key={index} locale="ja" />;
-    }
+  return parseArticleMarkdown(markdown).map((block, index) => {
+    if (block.kind === "component") return <Fragment key={index}>{componentBlocks[block.component]()}</Fragment>;
     if (block.kind === "heading") {
       return block.level === 2
         ? <h2 key={index} className="mt-10 text-2xl font-semibold tracking-tight text-slate-950"><InlineMarkdown>{block.text}</InlineMarkdown></h2>

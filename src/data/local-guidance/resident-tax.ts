@@ -13,6 +13,6 @@ export const residentTaxSupplements = defineLocalGuidanceSupplements([
     title: "Resident tax in Nagoya", summary: "Nagoya's foreign-resident tax guide covers personal resident tax, payment, certificates, and departure-related questions.",
     applicability: "Use Nagoya's route when Nagoya is the municipality responsible for the relevant resident-tax year.", responsibleBody: "Nagoya City", receivingOffice: "The responsible municipal tax office identified by Nagoya City",
     actions: [{ title: "Use the current tax guide for the relevant year", description: "Confirm the applicable tax year, January 1 address, collection method, outstanding notices, and any steps required before leaving Japan." }],
-    sourceIds: ["nagoya-personal-tax-guide"], sourceFormatNote: "The city landing page is in Japanese and links a dated foreign-resident guide. This summary is not an official translation.",
+    sourceIds: ["nagoya-personal-tax-guide", "nagoya-resident-tax-2026"], sourceFormatNote: "The city landing page is in Japanese and links a guide describing the tax system as of October 2025; check the current assessment-year page for later changes. This summary is not an official translation.",
   },
 ]);

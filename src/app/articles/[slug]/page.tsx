@@ -25,6 +25,7 @@ import { getArticleGroupSearchTranslations, getJapaneseArticleTranslation, getJo
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
 import { InterfaceFormat, InterfaceText, LocalizedText } from "@/components/localization/interface-text";
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
+import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
 import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
@@ -75,10 +76,10 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   const japaneseTranslation = getJapaneseArticleTranslation(metadata.id);
   const localGuidance = getLocalGuidanceForArticle(metadata.id);
   const requestedLocalId = typeof query.local === "string" ? query.local : undefined;
-  const linkedLocalGuidanceId = localGuidance.find(({ geography }) => (
-    getAdministrativeGeography(geography.id)?.id === requestedLocalId
-  ))?.geography.id;
   const localGuidanceLocations = getSelectableLocalGuidanceLocations();
+  const linkedLocalGuidanceId = localGuidanceLocations.find(({ geography }) => (
+    getAdministrativeGeography(geography.id)?.id === getAdministrativeGeography(requestedLocalId ?? "")?.id
+  ))?.geography.id;
   const annotatedDocuments = getAnnotatedDocumentsForArticle(metadata.id);
   const articleSources = metadata.sourceIds.flatMap((sourceId) => {
     const source = getSourceById(sourceId);
@@ -153,7 +154,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
 
         <AnnotatedDocumentViewer key={linkedLocalGuidanceId ?? "saved"} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
 
-        {localGuidance.length > 0 && <LocalGuidancePanel key={linkedLocalGuidanceId ?? "saved"} options={localGuidance} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
+        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={linkedLocalGuidanceId ?? "saved"} articleId={metadata.id} options={localGuidance} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
 
         <div className="mt-12">
           <ArticleTerminology terms={glossaryTerms} />

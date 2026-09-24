@@ -45,6 +45,24 @@ function displayPath(path: string): string {
   return relative(projectRoot, path).split(sep).join("/");
 }
 
+/**
+ * Code shared with a future native client must not depend on the web platform. `src/domain` is portable, and so
+ * are these `src/lib` subtrees. `src/lib/notifications` is not listed: it mixes server email delivery with the
+ * browser client service, and its shared rules already live in `src/domain/notifications`.
+ */
+const portableLibraryRoots = ["src/lib/search/", "src/lib/sync/", "src/lib/translation/"];
+/** Files inside portable subtrees that run only on the server or at build time, with the reason. */
+const serverOnlyFiles = new Map([
+  ["src/lib/translation/source-revision.ts", "hashes canonical sources for revision checks during builds and audits"],
+]);
+const webPlatformImport = /^(?:next(?:\/|$)|react(?:\/|$)|react-dom(?:\/|$)|@supabase\/ssr$|server-only$)|^@\/(?:app|components)\/|^@\/lib\/(?:supabase|storage|accounts)\//;
+const browserGlobal = /\b(?:window|document|localStorage|sessionStorage|navigator)\s*[.[]|\btypeof\s+(?:window|document|navigator)\b/;
+
+/** Removes comments so documentation that mentions `window` or `document` is not flagged. */
+function withoutComments(source: string): string {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\s)\/\/.*$/gm, "$1");
+}
+
 const files = await sourceFiles(sourceRoot);
 const graph = new Map<string, string[]>();
 const violations: string[] = [];
@@ -62,6 +80,22 @@ for (const file of files) {
       if (/^@\/(?:app|components|data|lib)\//.test(specifier) || /^(?:next(?:\/|$)|react(?:\/|$)|@supabase\/)/.test(specifier)) {
         violations.push(`${normalizedFile} imports prohibited dependency ${specifier}`);
       }
+    }
+  }
+  const portableLibrary = portableLibraryRoots.some((root) => normalizedFile.startsWith(root)) && !serverOnlyFiles.has(normalizedFile);
+  if (normalizedFile.startsWith("src/domain/") || portableLibrary) {
+    const line = withoutComments(source).split("\n").findIndex((text) => browserGlobal.test(text));
+    if (line >= 0) violations.push(`${normalizedFile}:${line + 1} uses a browser global in portable code`);
+  }
+  if (portableLibrary) {
+    for (const specifier of imports) {
+      if (webPlatformImport.test(specifier)) violations.push(`${normalizedFile} imports web-platform dependency ${specifier} in portable code`);
+      if (specifier.startsWith("node:")) violations.push(`${normalizedFile} imports Node built-in ${specifier} in portable code`);
+    }
+  }
+  if (normalizedFile.startsWith("src/domain/")) {
+    for (const specifier of imports) {
+      if (specifier.startsWith("node:")) violations.push(`${normalizedFile} imports Node built-in ${specifier}`);
     }
   }
   if (normalizedFile.startsWith("src/data/")) {

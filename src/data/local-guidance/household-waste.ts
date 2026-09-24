@@ -6,7 +6,7 @@ export const householdWasteSupplements = defineLocalGuidanceSupplements([
     title: "Sorting and disposing of waste in Shinjuku", summary: "Shinjuku defines local separation, collection, and oversized-waste routes.",
     applicability: "Rules and collection points apply to addresses in Shinjuku; an exact collection day can vary by area.", responsibleBody: "Shinjuku City",
     actions: [{ title: "Identify the item before choosing a collection route", description: "Use Shinjuku's multilingual material for ordinary resources and garbage. Follow its separate current procedure for oversized items, regulated appliances, batteries, or business waste." }],
-    sourceIds: ["shinjuku-waste-disposal"],
+    sourceIds: ["shinjuku-waste-disposal", "shinjuku-household-waste-current"],
   },
   {
     id: "nagoya-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", geographyId: "nagoya",

@@ -1,6 +1,6 @@
 /**
  * Tier-1 mechanical check of Japanese article translations against their canonical English MDX (no model
- * calls): heading and list-item parity, identical link targets, numbers present, leftover English prose, and
+ * calls): block-structure parity using the shared portable parser, heading and list-item counts, identical link targets, numbers present, leftover English prose, and
  * heading lines the Japanese renderer would show as literal text (it renders only "## " and "### ").
  * Findings are signals for review, not proof of error. The full report goes to .glossary-drafts/article-check.json.
  *
@@ -9,6 +9,8 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { currentJapaneseArticleTranslations } from "@/data/translations/ja/article-translations";
+import { parseArticleMarkdown, type ArticleBlock } from "@/domain/article/article-blocks";
+import { toPortableArticleMarkdown } from "@/domain/article/article-source";
 import { draftRoot, stripMetadata } from "./glossary-translation/glossary-draft";
 
 type Finding = Readonly<{ check: string; detail: string }>;
@@ -32,6 +34,14 @@ const numbers = (body: string) => {
     .replace(/(\d+(?:\.\d+)?)(億|万)/g, (_, value: string, unit: string) => String(Math.round(Number(value) * (unit === "億" ? 1e8 : 1e4))));
   return [...new Set([...text.matchAll(/\d+(?:\.\d+)?/g)].map(([value]) => value))];
 };
+/** Block structure without paragraphs: heading levels, list kinds with item counts, callouts, and components, in order. */
+const structure = (blocks: readonly ArticleBlock[]) => blocks.flatMap((block) => {
+  if (block.kind === "paragraph") return [];
+  if (block.kind === "heading") return [`h${block.level}`];
+  if (block.kind === "component") return [`:::${block.component}`];
+  if (block.kind === "blockquote") return ["quote"];
+  return [`${block.kind}(${block.items.length})`];
+});
 /** Runs of six or more English words outside links and code, which suggest untranslated prose. */
 const englishRuns = (body: string) => [...body.replace(/\]\([^)]*\)|`[^`]*`|https?:\/\/\S+/g, "").matchAll(/(?:\b[A-Za-z][A-Za-z'’-]*\b[\s,]+){5,}\b[A-Za-z][A-Za-z'’-]*\b/g)].map(([run]) => run.trim());
 
@@ -51,6 +61,13 @@ async function main(): Promise<void> {
     const findings: Finding[] = [];
     if (!en) findings.push({ check: "missing-english", detail: "No canonical MDX for this translation." });
     else {
+      const enStructure = structure(parseArticleMarkdown(toPortableArticleMarkdown(en)));
+      const jaStructure = structure(parseArticleMarkdown(ja));
+      const firstDifference = enStructure.findIndex((part, index) => part !== jaStructure[index]);
+      if (enStructure.length !== jaStructure.length || firstDifference >= 0) {
+        const at = firstDifference >= 0 ? firstDifference : Math.min(enStructure.length, jaStructure.length);
+        findings.push({ check: "structure", detail: `block ${at + 1}: EN ${enStructure[at] ?? "(end)"} vs JA ${jaStructure[at] ?? "(end)"}` });
+      }
       if (headings(en) !== headings(ja)) findings.push({ check: "headings", detail: `EN ${headings(en)} vs JA ${headings(ja)}` });
       if (listItems(en) !== listItems(ja)) findings.push({ check: "list-items", detail: `EN ${listItems(en)} vs JA ${listItems(ja)}` });
       const enLinks = links(en);

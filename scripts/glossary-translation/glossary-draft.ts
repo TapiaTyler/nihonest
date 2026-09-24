@@ -14,6 +14,7 @@ import { glossaryTerms } from "@/data/glossary";
 import { currentJapaneseArticleTranslations } from "@/data/translations/ja/article-translations";
 import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
 import { japaneseProtectedTerminology } from "@/data/translations/ja/protected-terminology";
+import { splitArticleSource } from "@/domain/article/article-source";
 
 export const glossaryPromptPath = resolve(process.cwd(), "content/translations/JAPANESE-GLOSSARY-PROMPT.md");
 export const draftRoot = resolve(process.cwd(), ".glossary-drafts");
@@ -52,26 +53,10 @@ function selectExamples(batch: readonly GlossaryTerm[], limit = 6) {
     .slice(0, limit);
 }
 
-/**
- * Removes the `export const metadata = {...}` object, which is written either on one line or across many.
- * Braces are balanced outside string literals so the prose that follows is kept intact.
- */
+/** Removes the `export const metadata = {...}` object; sources without one are returned unchanged. */
 export function stripMetadata(source: string): string {
-  const start = source.indexOf("export const metadata");
-  const open = source.indexOf("{", start);
-  if (start < 0 || open < 0) return source;
-  let depth = 0;
-  let quote: string | undefined;
-  for (let index = open; index < source.length; index += 1) {
-    const character = source[index]!;
-    if (quote) {
-      if (character === "\\") index += 1;
-      else if (character === quote) quote = undefined;
-    } else if (character === "\"" || character === "'" || character === "`") quote = character;
-    else if (character === "{") depth += 1;
-    else if (character === "}" && --depth === 0) return source.slice(index + 1).replace(/^;?[ \t]*\n/, "");
-  }
-  return source;
+  if (!source.includes("export const metadata")) return source;
+  return splitArticleSource(source).body;
 }
 
 /** Canonical English article bodies keyed by article ID, loaded once. */

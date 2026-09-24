@@ -1,19 +1,28 @@
 "use client";
 
-import { getInterfaceMessage, localizeServiceMessage, type InterfaceMessageId } from "@/domain/localization/interface-messages";
+import { englishInterfaceMessages, type InterfaceMessageId } from "@/domain/localization/interface-message-catalogs/english";
+import { fillInterfaceMessage, interfaceMessageText, serviceMessageId } from "@/domain/localization/interface-message-lookup";
 import { defaultContentLocale } from "@/domain/localization/content-locale";
 import { useOptionalContentLocale } from "./content-locale-provider";
+import { useJapaneseInterfaceMessages } from "./japanese-interface-messages";
 
 export function useInterfaceMessages() {
   const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
+  // English is bundled; Japanese arrives as a separate chunk, with English shown until it loads.
+  const japanese = useJapaneseInterfaceMessages(locale === "ja");
+  const catalog = locale === "ja" ? japanese : englishInterfaceMessages;
+  const message = (id: InterfaceMessageId) => interfaceMessageText(catalog, id);
   return {
     locale,
-    message: (id: InterfaceMessageId) => getInterfaceMessage(locale, id),
+    message,
     /** Fills `{name}` placeholders so word order can differ between languages. */
-    format: (id: InterfaceMessageId, values: Readonly<Record<string, string | number>>) =>
-      getInterfaceMessage(locale, id).replace(/\{(\w+)\}/g, (placeholder, name: string) => String(values[name] ?? placeholder)),
+    format: (id: InterfaceMessageId, values: Readonly<Record<string, string | number>>) => fillInterfaceMessage(message(id), values),
     /** Localizes a known English service or API message; unknown text is shown unchanged. */
-    serviceMessage: (text: string | undefined) => (text === undefined ? undefined : localizeServiceMessage(locale, text)),
+    serviceMessage: (text: string | undefined) => {
+      if (text === undefined) return undefined;
+      const id = serviceMessageId(text);
+      return id ? message(id) : text;
+    },
   };
 }
 

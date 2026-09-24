@@ -1,294 +1,110 @@
-You do not need a permanently “finished” web application before starting the native app. You do, however, want the content model, shared domain logic, synchronization contracts, and backend API to be stable first. The current roadmap order—finish canonical content and localization, complete hosted integration, then begin native development—is sensible.
+# Structural refactor and native-app readiness
 
-## Native application timing
+Status as of 2026-09-23. This tracks what must be true before Phase 15 (native application foundation) in
+`docs/ROADMAP.md` begins, what is already done, and what remains.
 
-The ideal native starting point is when these foundations are stable:
+## Principles (unchanged)
 
-- Article, glossary, FAQ, journey, and roadmap schemas
-- Stable content IDs and relationships
-- Authentication and account synchronization contracts
-- Saved-content and progress merge behavior
-- Notification/reminder contracts
-- Localization artifact format
-- A portable content format suitable for offline storage
-- A reachable hosted backend for real cross-device testing
+- The native app needs stable contracts, not a finished website. Content schemas, stable IDs, account
+  synchronization, notification contracts, the localization artifact format, a portable offline content format,
+  and a reachable hosted backend must be stable first.
+- Native UI is built separately: navigation, screens, form controls, accessibility, notifications, offline
+  downloads, secure credential storage, and app lifecycle. Next.js pages, DOM components, CSS, and MDX rendering
+  are not shared.
+- Shared code: Zod schemas, domain types, search normalization and ranking, journey resolution, roadmap
+  recommendations, saved-content and progress contracts, merge logic, API contracts, content metadata, taxonomy,
+  and validation.
+- Articles stay repository-controlled (Git) until a CMS is justified. Accounts, preferences, saved items,
+  progress, and reminders live in Supabase. Media and downloadable bundles belong in object storage. The native
+  app caches a versioned content bundle in SQLite and keeps unsynchronized changes in a local outbox.
 
-The website does not need every future feature or every municipality completed. It needs a stable vertical foundation that the native client can consume without repeatedly redesigning its data model.
+## Completed
 
-### Would work be duplicated?
+- **File organization (`b00d344`).** The large registries and components named in the original plan were split
+  along domain boundaries: glossary, sources, discovery, annotated documents, and structured residence-status
+  guidance each have per-domain modules behind an `index.ts` that validates the combined catalog. The article
+  registry is split into categorized registration modules, and the site header, onboarding form, Explore
+  discovery, and annotated-document viewer are split by behavior. The largest of those files is now 159 lines.
+- **Domain boundary.** `src/domain` imports nothing from Next.js, React, Supabase, `@/lib`, `@/data`, or
+  `@/components`, and `npm run architecture:check` enforces this (343 production modules, no cycles).
+  `src/data` may not import `@/app` or `@/components`.
+- **Synchronization is client-agnostic.** `src/lib/sync/account-content-sync.ts` takes a `SupabaseClient`
+  parameter and validates state with `src/domain/sync`, so a native client can reuse it unchanged.
+- **Localization artifact format.** Translations are revision-addressed artifacts
+  (`src/domain/translation`), rendered with English fallback. Server pages pass artifacts to client components as
+  props; full translation catalogs are not imported by client components.
+- **Portable article format and content bundle.** English bodies used the same Markdown subset as the
+  Japanese translations, so one block model now serves both.
+  - `src/domain/article/article-blocks.ts` defines the block schema (paragraph, H2/H3 heading, blockquote,
+    ordered and unordered list, and a `component` block for the five shared components) and the parser. Inline
+    text stays Markdown: `**bold**`, `*italic*`, and `[label](/path)` links.
+  - `src/domain/article/article-source.ts` splits the MDX metadata literal from the body and converts the
+    shared-component tags to `:::directive` lines without editing the English sources. Any other JSX, import,
+    export, or expression is rejected. The Vitest MDX plugin and the translation scripts use the same splitter.
+  - `npm run content:bundle` writes `build/content-bundle/` (gitignored): a manifest (format version, catalog
+    version derived from SHA-256 file checksums, generation time) and JSON files for English articles, current
+    Japanese article translations (stale ones are excluded so clients fall back to English), glossary, FAQs,
+    sources, residence statuses, article groups, and journeys. About 2 MB before compression.
+  - All 95 English articles convert, and English and Japanese block structure matches in all 95. The tier-1
+    article check now reports structure differences.
+  - Not yet bundled: Japanese overlays for glossary, FAQs, statuses, and journeys, local guidance, and annotated
+    documents. Add them when the native catalog needs them.
+- **One storage interface.** `src/lib/storage/key-value-store.ts` defines a synchronous `KeyValueStore`, a
+  `StorageEnvironment` (which stores exist, plus change subscription and notification), and `storedValue(key,
+  area)`, which handles fallbacks, removal, and change notification for one key. The browser environment binds
+  persistent state to localStorage (with cross-tab `storage` events) and session state to sessionStorage.
+  `setStorageEnvironment` swaps the binding; a native client can use Expo SQLite's synchronous key-value store
+  without changing callers. The ten storage modules keep their exported functions and storage keys, so saved
+  data is unaffected; each is now a few lines over `storedValue`. A test runs the saved-content module on a
+  non-browser environment.
+- **Stricter architecture gate.** `npm run architecture:check` also rejects browser globals (`window`,
+  `document`, `localStorage`, `sessionStorage`, `navigator`, outside comments) and Node built-ins in
+  `src/domain`. The portable `src/lib` subtrees (`search`, `sync`, `translation`) additionally may not import
+  Next.js, React, `server-only`, `@supabase/ssr`, `@/app`, `@/components`, or the browser-bound `@/lib/supabase`,
+  `@/lib/storage`, and `@/lib/accounts`. Server-only files inside those subtrees are listed with a reason
+  (currently `translation/source-revision.ts`). `src/lib/notifications` is not portable: it mixes server email
+  delivery with the browser client, and its shared rules live in `src/domain/notifications`.
+- **Interface-message catalogs split by locale.** English and Japanese live in
+  `src/domain/localization/interface-message-catalogs/english.ts` and `japanese.ts` (the Japanese file must
+  supply every English key, checked by the type system and a test). `interface-message-lookup.ts` holds the shared
+  lookup, placeholder filling, and service-message mapping. Server code keeps using `interface-messages.ts`, which
+  loads both. In the browser, `useInterfaceMessages()` bundles only English and loads Japanese as a separate
+  chunk when it is selected, starting during hydration for returning Japanese readers and showing English until
+  it arrives. English pages no longer download the Japanese catalog (about 50 KB of source).
+- **Lint clean.** The account-sync provider restarted itself through a self-referencing callback to handle an
+  account switch mid-request, which the React Compiler's `react-hooks/immutability` rule rejects. It now runs one
+  pass per account in a single loop under the same in-flight guard. A new test covers a switch during a request:
+  the previous account's response is discarded and the new account synchronizes.
+- **Baseline (2026-09-23).** Type checking, lint, and all 370 tests pass.
 
-Some work must be implemented separately because native UI is genuinely different:
+## Remaining before Phase 15
 
-- Navigation
-- Screens and layouts
-- Form controls
-- Accessibility implementation
-- Native notifications
-- Offline downloads
-- Secure authentication storage
-- App lifecycle and network-state handling
+1. **Check `Intl` under Hermes.** Japanese collation (`Intl.Collator("ja")` in geography sorting and search)
+   and time-zone formatting in `src/domain/notifications` should be verified in the first Phase 15 spike.
 
-Next.js pages, DOM components, CSS, and MDX rendering cannot simply be dropped into React Native. Trying to maximize UI sharing usually produces an inferior native application.
+Account and sign-in (`src/lib/accounts/client-account-service.ts`) are tied to the browser Supabase client and
+OAuth redirects by design; the native app implements its own sign-in with secure session storage while sharing the
+account and sync contracts.
 
-A substantial amount should remain reusable:
+## Monorepo sequence (when Phase 15 starts)
 
-- Zod schemas
-- Domain types
-- Search normalization and ranking
-- Journey resolution
-- Roadmap recommendations
-- Saved-content and progress contracts
-- Merge logic
-- API request/response contracts
-- Content metadata
-- Stable IDs and taxonomy
-- Validation and integrity checks
-
-That separation is already explicitly anticipated in [ARCHITECTURE.md](C:/Users/T3/Documents/Websites/nihonest/docs/ARCHITECTURE.md:861) and [DECISIONS.md](C:/Users/T3/Documents/Websites/nihonest/docs/DECISIONS.md:415).
-
-### Same repository or separate project?
-
-I recommend one repository with workspaces once native development actually begins:
-
-```text
-apps/
-  web/
-  mobile/
-packages/
-  domain/
-  content-contracts/
-  search/
-  synchronization/
-  api-contracts/
-content/
-```
-
-Expo officially supports workspace-based monorepos and describes them as useful when multiple applications share code. It also acknowledges their additional tooling complexity, which supports the existing decision not to introduce one before the second application exists. [Expo monorepo guidance](https://docs.expo.dev/guides/monorepos/).
-
-A completely separate repository would require coordinating schema releases, content artifacts, tests, and compatibility across repositories. That is feasible, but unnecessarily cumbersome for one developer and one closely related product family.
-
-The likely sequence should be:
-
-1. Refactor reusable web logic into cleaner platform-independent modules.
-2. Finish localization and canonical content stabilization.
-3. Complete hosted integration.
-4. Convert the repository into workspaces.
-5. Move the existing web application into `apps/web`.
-6. Create the Expo application under `apps/mobile`.
-7. Move only genuinely shared code into `packages/*`.
-
-That avoids copying the current repository and avoids creating packages speculatively.
-
-## Current project organization
-
-The overall architecture is sound. The meaningful boundaries are already present:
-
-- `src/app` — Next.js routing
-- `src/components` — presentation and interaction
-- `src/domain` — schemas and rules
-- `src/lib` — orchestration and adapters
-- `src/data` — canonical registries
-- `content` — editorial bodies and review artifacts
-- `supabase` — database migrations and policies
-
-The main scalability concern is centralized file size and ownership, not a fundamentally incorrect structure.
-
-The files most likely to benefit from splitting include:
-
-- `src/data/glossary-additions.ts`
-- `src/data/structured-residence-status-guidance.ts`
-- `src/data/annotated-documents.ts`
-- `src/data/discovery.ts`
-- `src/data/sources.ts`
-- `src/lib/content/articles.ts`
-- `src/components/site-header.tsx`
-- `src/components/personalization/onboarding-form.tsx`
-- `src/components/discovery/explore-discovery.tsx`
-- `src/components/documents/annotated-document-viewer.tsx`
-
-### Recommended data organization
-
-Large registries should be divided by a stable domain boundary rather than an arbitrary line limit:
+One repository with workspaces, introduced only when the second app exists (Expo supports workspace monorepos):
 
 ```text
-src/data/
-  glossary/
-    immigration.ts
-    employment.ts
-    education.ts
-    taxes.ts
-    municipal.ts
-    index.ts
-
-  sources/
-    immigration.ts
-    employment.ts
-    education.ts
-    taxes.ts
-    municipal.ts
-    index.ts
-
-  discovery/
-    groups.ts
-    shared-steps.ts
-    journeys/
-      study.ts
-      professional-work.ts
-      family.ts
-      business.ts
-    index.ts
-
-  annotated-documents/
-    identity.ts
-    municipal.ts
-    tax.ts
-    index.ts
+apps/web        the current Next.js application
+apps/mobile     the Expo application
+packages/*      only genuinely shared code: domain, content contracts, search, synchronization, API contracts
+content/        canonical articles and review artifacts
 ```
 
-Each `index.ts` would combine and validate its modules. This preserves a single public catalog while reducing merge conflicts and making ownership clear.
+1. Finish the remaining item above (the Hermes check happens in the first Phase 15 spike).
+2. Finish canonical content, localization, and hosted integration.
+3. Convert the repository to workspaces and move the web app into `apps/web`.
+4. Create `apps/mobile`.
+5. Move shared code into `packages/*` as the native app needs it, not speculatively.
 
-The article registry should eventually be generated or split into categorized registration modules. Any change there must respect Next.js MDX compilation behavior, so it should not be replaced with unrestricted runtime file discovery without verifying Next.js bundling requirements.
+## Native offline content
 
-### Recommended component splitting
-
-Large interactive components should be divided by behavior:
-
-```text
-components/navigation/
-  site-header.tsx
-  desktop-navigation.tsx
-  mobile-navigation-drawer.tsx
-  account-navigation-menu.tsx
-
-components/discovery/
-  explore-discovery.tsx
-  explore-filter-panel.tsx
-  explore-results.tsx
-  grouped-results.tsx
-  use-explore-state.ts
-
-components/documents/
-  annotated-document-viewer.tsx
-  document-location-selector.tsx
-  document-version-selector.tsx
-  document-field-list.tsx
-```
-
-The parent component should retain orchestration while smaller components handle a coherent interaction or presentation responsibility.
-
-### Comments and developer orientation
-
-Adding comments everywhere is not ideal. The existing documentation standard is correct: comments should explain invariants, ownership, synchronization, or surprising behavior—not restate JSX or variable names.
-
-The most useful combination would be:
-
-- Module-level comments describing responsibility and prohibited dependencies
-- JSDoc on exported contracts and complex functions
-- Comments beside non-obvious merge, routing, applicability, and fallback logic
-- Small `README.md` files inside complex domains such as synchronization, localization, notifications, and annotated documents
-- A dependency map explaining flows such as:
-
-```text
-data → schema validation → content adapter → page/component
-local state → account service → synchronization contract → Supabase
-source record → monitoring → editorial review → article dependency
-```
-
-Cross-file comments should refer to stable concepts or exported symbols instead of brittle line numbers or file paths.
-
-I would schedule a dedicated structural-refactoring checkpoint before full Phase 14 localization. Localization will greatly increase catalog volume, so splitting the registries before multiplying language artifacts would reduce future work.
-
-## Database and content storage
-
-The ideal architecture is hybrid rather than “put everything in a database.”
-
-| Information | Recommended home |
-|---|---|
-| Canonical article text and editorial history | Repository/Git |
-| Taxonomy, sources, relationships, and content metadata | Repository now; relational database only if a CMS is later justified |
-| Accounts, preferences, saved items, progress, reminders | PostgreSQL/Supabase |
-| Images, PDFs, downloadable bundles, audio | Object storage |
-| Native offline catalog | Versioned bundle cached in SQLite |
-| Authentication credentials | Platform-secure credential storage |
-| Native unsynchronized mutations | Local SQLite/outbox plus cloud reconciliation |
-
-### Articles should remain repository-controlled for now
-
-Moving the current articles into object storage would add more overhead than value:
-
-- No meaningful query capability inside MDX files
-- Additional network dependency
-- Cache invalidation and version coordination
-- More complicated previews and editorial approval
-- Separate backup and migration concerns
-- Harder Git diffs and human review
-- Runtime failure modes for otherwise public static content
-
-Object storage is designed primarily for files and media. Supabase itself recommends storing media files outside the database because of their size. [Supabase Storage guidance](https://supabase.com/docs/guides/storage/quickstart).
-
-For Nihonest, object storage would be appropriate for:
-
-- Officially reusable document images
-- Annotated image derivatives
-- PDFs
-- Future audio files
-- Versioned downloadable native content bundles
-- Possibly prebuilt localization bundles
-
-It is not presently the ideal canonical home for article bodies.
-
-### If a CMS is eventually introduced
-
-A future content database should combine relational fields with limited JSONB rather than storing each article as one opaque object:
-
-```text
-content_items
-content_revisions
-localized_revisions
-content_sources
-content_relationships
-content_taxonomy
-publication_events
-media_assets
-editorial_approvals
-```
-
-Fields such as stable ID, slug, status, locale, revision, publication state, and dates should be ordinary relational columns. Flexible article blocks or document annotations could use carefully validated `jsonb`. PostgreSQL supports indexing and querying JSONB, but that does not mean every related entity should be collapsed into one document. [PostgreSQL JSONB documentation](https://www.postgresql.org/docs/17/datatype-json.html).
-
-### Native offline storage
-
-When native development begins, a versioned catalog bundle backed by SQLite is likely the best fit:
-
-```text
-manifest
-  catalogVersion
-  generatedAt
-  locale
-  checksum
-
-articles
-glossary
-faqs
-groups
-journeys
-sources
-```
-
-The native application could ship with a baseline database or content bundle, download newer immutable versions, verify the checksum, and atomically switch versions. Expo’s current SQLite library provides persistent databases across application restarts and supports full-text-search extensions, making it a plausible choice for offline catalog search. [Expo SQLite documentation](https://docs.expo.dev/versions/latest/sdk/sqlite/).
-
-Private user state would continue synchronizing through Supabase, while public content could be downloaded anonymously.
-
-## Overall recommendation
-
-I would not move articles into a database now, and I would not begin full native development yet.
-
-The best next architectural sequence is:
-
-1. Complete the remaining Phase 13 discovery and audit.
-2. Run a behavior-preserving file-organization refactor.
-3. Complete Phase 14 canonical localization artifacts.
-4. Perform hosted integration and validate the shared backend.
-5. Introduce the monorepo and Expo native application.
-6. Add versioned offline content bundles and SQLite during the native phases.
-
-This keeps the current low-cost repository-first model, reduces future duplication, and gives the native app stable contracts without waiting for Nihonest to be “finished forever.”
+The native app ships with a baseline bundle, downloads newer immutable versions anonymously, verifies checksums,
+and switches versions atomically. Expo SQLite persists across restarts and supports full-text search. Private
+state continues to synchronize through Supabase. The content bundle (`npm run content:bundle`) is the input to that database.

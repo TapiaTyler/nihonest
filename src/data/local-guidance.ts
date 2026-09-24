@@ -6,7 +6,7 @@ import { residentTaxSupplements } from "@/data/local-guidance/resident-tax";
 import { disasterPreparationSupplements } from "@/data/local-guidance/disaster-preparation";
 import { languageAndConsultationSupplements } from "@/data/local-guidance/language-and-consultation";
 
-// Subject order remains stable; each subject keeps Shinjuku before Nagoya.
+// Subject order remains stable; new Tokyo wards use administrative code order.
 export const localGuidanceSupplements = [
   ...addressRegistrationSupplements,
   ...nationalHealthInsuranceSupplements,

@@ -1,17 +1,27 @@
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { administrativeGeographies, getAdministrativeGeography, getAdministrativeGeographyAncestors } from "@/data/geography";
 import { sources } from "@/data/sources";
 
 export type ArticleLocalGuidance = ReturnType<typeof getLocalGuidanceForArticle>[number];
 export type SelectableLocalGuidanceLocation = ReturnType<typeof getSelectableLocalGuidanceLocations>[number];
 
 export function getSelectableLocalGuidanceLocations() {
-  return supportedGeographies
-    .filter(({ selectable }) => selectable)
-    .map((geography) => {
-      const parent = supportedGeographies.find(({ id }) => id === geography.parentId);
-      if (!parent) throw new Error(`Missing parent geography for "${geography.id}".`);
-      return { geography, parentName: parent.name };
-    });
+  return administrativeGeographies.map((record) => {
+    const supported = supportedGeographies.find(({ id }) => getAdministrativeGeography(id)?.id === record.id);
+    const prefecture = getAdministrativeGeographyAncestors(record.id)[0] ?? record;
+    const supportedPrefecture = supportedGeographies.find(({ id }) => getAdministrativeGeography(id)?.id === prefecture.id);
+    const prefectureId = supportedPrefecture?.id ?? prefecture.id;
+    return {
+      geography: {
+        id: supported?.id ?? record.id,
+        name: supported?.name ?? record.names.en ?? record.names.ja,
+        type: record.type,
+        parentId: record.parentId,
+      },
+      parentName: supportedPrefecture?.name ?? prefecture.names.en ?? prefecture.names.ja,
+      prefectureId,
+    };
+  });
 }
 
 export function getLocalGuidanceForArticle(articleId: string) {

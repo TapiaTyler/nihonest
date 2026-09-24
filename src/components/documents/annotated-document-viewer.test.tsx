@@ -84,4 +84,24 @@ describe("AnnotatedDocumentViewer", () => {
     expect(document.getElementById("resident-tax-notice-prefecture")).toHaveValue("aichi");
     expect(document.getElementById("resident-tax-notice-jurisdiction")).toHaveValue("nagoya");
   });
+
+  it("uses a linked municipality for both the tax document and local guidance without saving it", () => {
+    const articleId = "income-and-resident-tax-after-moving-to-japan";
+    window.localStorage.setItem(localGuidanceLocationStorageKey, "nagoya");
+    render(<>
+      <AnnotatedDocumentViewer families={getAnnotatedDocumentsForArticle(articleId)} linkedLocationId="shinjuku" />
+      <LocalGuidancePanel options={getLocalGuidanceForArticle(articleId)} locations={getSelectableLocalGuidanceLocations()} linkedLocationId="shinjuku" />
+    </>);
+
+    expect(document.getElementById("resident-tax-notice-prefecture")).toHaveValue("tokyo");
+    expect(document.getElementById("resident-tax-notice-jurisdiction")).toHaveValue("shinjuku");
+    expect(document.getElementById("local-guidance-prefecture")).toHaveValue("tokyo");
+    expect(document.getElementById("local-guidance-location")).toHaveValue("shinjuku");
+    expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
+
+    fireEvent.change(document.getElementById("resident-tax-notice-prefecture") as HTMLSelectElement, { target: { value: "aichi" } });
+    expect(document.getElementById("local-guidance-prefecture")).toHaveValue("aichi");
+    expect(document.getElementById("local-guidance-location")).toHaveValue("nagoya");
+    expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
+  });
 });

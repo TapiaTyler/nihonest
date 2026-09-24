@@ -10,9 +10,9 @@ export const nationalHealthInsuranceSupplements = defineLocalGuidanceSupplements
   },
   {
     id: "nagoya-national-health-insurance", articleId: "joining-national-health-insurance", geographyId: "nagoya",
-    title: "National Health Insurance in Nagoya", summary: "Nagoya publishes current eligibility, exception, ward-office, and electronic routes.",
-    applicability: "The local filing route applies only after national and employment-based coverage rules place you in municipal National Health Insurance.", responsibleBody: "Nagoya City", receivingOffice: "Insurance counter at the ward office for your address, or an eligible electronic route",
-    actions: [{ title: "Match the event to Nagoya's procedure", description: "Check whether you are enrolling, withdrawing, or reporting another change, then use the city's current route and document instructions." }],
-    sourceIds: ["nagoya-national-health-insurance"], sourceFormatNote: "The controlling city page is in Japanese. This English summary is not an official translation.",
+    title: "National Health Insurance in Nagoya", summary: "Nagoya publishes eligibility and ward-office routes, with electronic notifications for specified events.",
+    applicability: "The local filing route applies only after national and employment-based coverage rules place you in municipal National Health Insurance.", responsibleBody: "Nagoya City", receivingOffice: "Ward insurance and pension section or branch resident welfare section, or an eligible electronic route",
+    actions: [{ title: "Match the event to Nagoya's procedure", description: "Check whether you are enrolling, withdrawing, or reporting another change. Electronic notification is available only for the events listed by the city; otherwise follow the current ward-office route and document instructions." }],
+    sourceIds: ["nagoya-national-health-insurance", "nagoya-nhi-electronic"], sourceFormatNote: "The controlling city pages are in Japanese. This English summary is not an official translation.",
   },
 ]);

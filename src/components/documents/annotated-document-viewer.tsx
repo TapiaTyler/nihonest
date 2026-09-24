@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { documentLifecycleLabels } from "@/components/documents/annotated-document-labels";
 import { AnnotatedDocumentQuickNavigation } from "@/components/documents/annotated-document-quick-navigation";
 import { AnnotatedDocumentSelectors } from "@/components/documents/annotated-document-selectors";
@@ -13,8 +13,8 @@ import {
 } from "@/lib/storage/local-guidance-location";
 
 /** Owns jurisdiction, version, callout, announcement, and cross-panel location state for one family. */
-function DocumentFamilyViewer({ family }: Readonly<{ family: ArticleAnnotatedDocument }>) {
-  const selectedLocationId = useSyncExternalStore(
+function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: ArticleAnnotatedDocument; linkedLocationId?: string }>) {
+  const savedLocationId = useSyncExternalStore(
     subscribeToLocalGuidanceLocation,
     getLocalGuidanceLocationSnapshot,
     () => "",
@@ -23,6 +23,11 @@ function DocumentFamilyViewer({ family }: Readonly<{ family: ArticleAnnotatedDoc
     left.parentGeography.name.localeCompare(right.parentGeography.name, "en")
     || left.geography.name.localeCompare(right.geography.name, "en")
   ));
+  const [linkedSelectionId, setLinkedSelectionId] = useState(
+    linkedLocationId && sortedVariants.some(({ geographyId }) => geographyId === linkedLocationId) ? linkedLocationId : "",
+  );
+  useEffect(() => subscribeToLocalGuidanceLocation(() => setLinkedSelectionId("")), []);
+  const selectedLocationId = linkedSelectionId || savedLocationId;
   const defaultVariant = sortedVariants[0];
   const jurisdictionVariant = sortedVariants.find(({ geographyId }) => geographyId === selectedLocationId) ?? defaultVariant;
   const availableVersions = jurisdictionVariant?.versions ?? family.versions;
@@ -39,6 +44,7 @@ function DocumentFamilyViewer({ family }: Readonly<{ family: ArticleAnnotatedDoc
   function selectJurisdiction(nextVariant: (typeof sortedVariants)[number] | undefined) {
     if (!nextVariant) return;
     const nextVersion = nextVariant.versions.find(({ lifecycle }) => lifecycle === "current") ?? nextVariant.versions[0];
+    setLinkedSelectionId("");
     writeLocalGuidanceLocation(nextVariant.geographyId);
     setVersionId(nextVersion.id);
     setActiveFieldId(undefined);
@@ -102,14 +108,14 @@ function DocumentFamilyViewer({ family }: Readonly<{ family: ArticleAnnotatedDoc
   );
 }
 
-export function AnnotatedDocumentViewer({ families }: Readonly<{ families: readonly ArticleAnnotatedDocument[] }>) {
+export function AnnotatedDocumentViewer({ families, linkedLocationId }: Readonly<{ families: readonly ArticleAnnotatedDocument[]; linkedLocationId?: string }>) {
   if (families.length === 0) return null;
   return (
     <section className="mt-12" aria-labelledby="document-examples-heading">
       <h2 id="document-examples-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Understand the documents</h2>
       <p className="mt-3 leading-7 text-slate-600">These accessible concept maps explain important fields without reproducing a usable identity or immigration document.</p>
       <AnnotatedDocumentQuickNavigation families={families} />
-      <div className="mt-6 space-y-8">{families.map((family) => <DocumentFamilyViewer key={family.id} family={family} />)}</div>
+      <div className="mt-6 space-y-8">{families.map((family) => <DocumentFamilyViewer key={family.id} family={family} linkedLocationId={linkedLocationId} />)}</div>
     </section>
   );
 }
