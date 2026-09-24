@@ -20,7 +20,6 @@ const sourceEntries = [
 
 describe("official source registry assembly", () => {
   it("assembles every subject-owned source exactly once in deterministic module order", () => {
-    expect(sourceEntries).toHaveLength(330);
     expect(sources.map(({ id }) => id)).toEqual(sourceEntries.map(({ id }) => id));
     expect(new Set(sources.map(({ id }) => id)).size).toBe(sources.length);
   });

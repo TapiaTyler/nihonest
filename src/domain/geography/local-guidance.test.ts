@@ -1,83 +1,45 @@
 import { describe, expect, it } from "vitest";
+import { getAdministrativeGeography } from "@/data/geography";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { sources } from "@/data/sources";
 import { validateLocalGuidanceCollection } from "./local-guidance";
 
+/**
+ * Rules rather than inventories: adding a researched batch must not require editing this file. Coverage itself is
+ * reported by `npm run local-guidance -- coverage`.
+ */
+const codeOf = (id: string) => getAdministrativeGeography(id)!.code;
+
 describe("local guidance model", () => {
-  it("assembles researched municipalities and subject pairs in code and subject order", () => {
-    expect(supportedGeographies.map(({ id }) => id)).toEqual([
-      "tokyo",
-      "aichi",
-      "jp-13101",
-      "jp-13102",
-      "jp-13103",
-      "shinjuku",
-      "jp-13105",
-      "jp-13106",
-      "jp-13107",
-      "jp-13108",
-      "jp-13109",
-      "jp-13110",
-      "jp-13111",
-      "jp-13112",
-      "jp-13113",
-      "jp-13114",
-      "jp-13115",
-      "jp-13116",
-      "jp-13117",
-      "jp-13118",
-      "jp-13119",
-      "jp-13120",
-      "jp-13121",
-      "jp-13122",
-      "jp-13123",
-      "nagoya",
-    ]);
-    expect(localGuidanceSupplements.map(({ id }) => id)).toEqual([
-      "chiyoda-address-registration",
-      "chuo-address-registration",
-      "minato-address-registration",
-      "shinjuku-address-registration",
-      "bunkyo-address-registration",
-      "taito-address-registration",
-      "sumida-address-registration",
-      "koto-address-registration",
-      "shinagawa-address-registration",
-      "meguro-address-registration",
-      "ota-address-registration",
-      "setagaya-address-registration",
-      "shibuya-address-registration",
-      "nakano-address-registration",
-      "suginami-address-registration",
-      "toshima-address-registration",
-      "kita-address-registration",
-      "arakawa-address-registration",
-      "itabashi-address-registration",
-      "nerima-address-registration",
-      "adachi-address-registration",
-      "katsushika-address-registration",
-      "edogawa-address-registration",
-      "nagoya-address-registration",
-      "shinjuku-national-health-insurance",
-      "nagoya-national-health-insurance",
-      "shinjuku-household-waste",
-      "nagoya-household-waste",
-      "shinjuku-resident-tax",
-      "nagoya-resident-tax",
-      "shinjuku-disaster-preparation",
-      "nagoya-disaster-preparation",
-      "shinjuku-language-and-consultation",
-      "nagoya-language-and-consultation",
-    ]);
+  it("lists prefecture parents first, then selectable locations in administrative code order", () => {
+    const parents = supportedGeographies.filter(({ selectable }) => !selectable);
+    const selectable = supportedGeographies.filter(({ selectable }) => selectable);
+    expect(supportedGeographies.slice(0, parents.length)).toEqual(parents);
+    for (const { id } of parents) expect(["prefecture", "metropolis"]).toContain(getAdministrativeGeography(id)?.type);
+    const codes = selectable.map(({ id }) => codeOf(id));
+    expect(codes).toEqual([...codes].sort());
+    expect(new Set(codes).size).toBe(codes.length);
   });
 
-  it("links every pilot supplement to known geography, article, and source records", () => {
+  it("keeps each guide's supplements together, in code order, one per location", () => {
+    const articleOrder = [...new Set(localGuidanceSupplements.map(({ articleId }) => articleId))];
+    // Each guide's records form one contiguous run, so subject order stays stable as batches are added.
+    expect(localGuidanceSupplements.map(({ articleId }) => articleId))
+      .toEqual(articleOrder.flatMap((articleId) => localGuidanceSupplements.filter((supplement) => supplement.articleId === articleId).map(() => articleId)));
+    for (const articleId of articleOrder) {
+      const codes = localGuidanceSupplements.filter((supplement) => supplement.articleId === articleId).map(({ geographyId }) => codeOf(geographyId));
+      expect(codes, articleId).toEqual([...codes].sort());
+      expect(new Set(codes).size, articleId).toBe(codes.length);
+    }
+    expect(new Set(localGuidanceSupplements.map(({ id }) => id)).size).toBe(localGuidanceSupplements.length);
+  });
+
+  it("links every supplement to known geography, article, and source records", () => {
     expect(() => validateLocalGuidanceCollection(
       supportedGeographies,
       localGuidanceSupplements,
       [...new Set(localGuidanceSupplements.map(({ articleId }) => articleId))],
       sources.map(({ id }) => id),
     )).not.toThrow();
-    expect(localGuidanceSupplements).toHaveLength(34);
   });
 });

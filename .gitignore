@@ -19,6 +19,7 @@
 /supabase/.temp/
 /.source-monitoring/
 /.glossary-drafts/
+/.local-guidance/
 
 # logs and system files
 npm-debug.log*

@@ -24,6 +24,7 @@
     "localization:glossary:check": "tsx scripts/check-glossary-consistency.ts",
     "localization:articles:review": "tsx scripts/review-article-translations.ts",
     "content:bundle": "tsx scripts/build-content-bundle.ts",
+    "local-guidance": "tsx scripts/local-guidance.ts",
     "glossary:draft": "tsx scripts/draft-glossary-translations.ts",
     "glossary:check": "tsx scripts/check-glossary-draft.ts",
     "status:draft": "tsx scripts/draft-status-translations.ts",

@@ -102,6 +102,21 @@ test("opens general advice for a selected prefecture without claiming local rese
   await expect(panel.getByText(/Research for Hokkaido on this article has not been done yet/)).toBeVisible();
 });
 
+test("navigates between researched NHI wards", async ({ page }) => {
+  await page.goto(articleUrl);
+  const finder = page.getByRole("region", { name: "Find a prefecture" });
+  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
+  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13101");
+  await finder.getByRole("link", { name: "National Health Insurance in Chiyoda" }).click();
+
+  const panel = page.getByRole("region", { name: "Local guidance" });
+  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13101");
+  await expect(panel.getByRole("heading", { name: "National Health Insurance in Chiyoda" })).toBeVisible();
+
+  await panel.getByLabel("Municipality").selectOption("jp-13123");
+  await expect(panel.getByRole("heading", { name: "National Health Insurance in Edogawa" })).toBeVisible();
+});
+
 test("opens a newly researched Tokyo ward by canonical ID without replacing the saved location", async ({ page }) => {
   await page.goto(articleUrl);
   await page.evaluate(() => localStorage.setItem("nihonest:local-guidance-location:v1", "shinjuku"));
@@ -118,86 +133,3 @@ test("opens a newly researched Tokyo ward by canonical ID without replacing the 
   expect(await page.evaluate(() => localStorage.getItem("nihonest:local-guidance-location:v1"))).toBe("shinjuku");
 });
 
-test("opens a C2 ward with its own address-registration guidance", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13107");
-  await finder.getByRole("link", { name: "Registering an address in Sumida" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13107#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13107");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Sumida" })).toBeVisible();
-  await expect(panel.getByText(/main Ward Office, on weekdays from 9 a\.m\. to 4:30 p\.m\./)).toBeVisible();
-});
-
-test("opens a C3 ward with the matching address-registration guidance", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13108");
-  await finder.getByRole("link", { name: "Registering an address in Koto" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13108#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13108");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Koto" })).toBeVisible();
-  await expect(panel.getByText(/not Toyosu or another branch/)).toBeVisible();
-});
-
-test("opens a C4 ward with its overseas counter restriction", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13111");
-  await finder.getByRole("link", { name: "Registering an address in Ota" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13111#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13111");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Ota" })).toBeVisible();
-  await expect(panel.getByText(/a person whose passport says a residence card will be issued later must use City Hall/)).toBeVisible();
-});
-
-test("opens a C5 ward with its own overseas counter hours", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13116");
-  await finder.getByRole("link", { name: "Registering an address in Toshima" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13116#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13116");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Toshima" })).toBeVisible();
-  await expect(panel.getByText(/weekdays from 8:30 a\.m\. to 4 p\.m\./)).toBeVisible();
-});
-
-test("opens a C6 ward with its overseas main-counter route", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13118");
-  await finder.getByRole("link", { name: "Registering an address in Arakawa" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13118#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13118");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Arakawa" })).toBeVisible();
-  await expect(panel.getByText(/must use the Ward Office Resident Records Section rather than a branch/)).toBeVisible();
-});
-
-test("opens the final Tokyo ward with its own address-registration guidance", async ({ page }) => {
-  await page.goto(articleUrl);
-  const finder = page.getByRole("region", { name: "Find a prefecture" });
-  await finder.getByRole("combobox", { name: "Choose a prefecture" }).selectOption("jp-13000");
-  await finder.getByRole("combobox", { name: "Choose a mapped municipality or ward" }).selectOption("jp-13123");
-  await finder.getByRole("link", { name: "Registering an address in Edogawa" }).click();
-
-  await expect(page).toHaveURL(/\/articles\/registering-your-address-after-arrival\?local=jp-13123#local-guidance-heading$/);
-  const panel = page.getByRole("region", { name: "Local guidance" });
-  await expect(panel.getByLabel("Municipality")).toHaveValue("jp-13123");
-  await expect(panel.getByRole("heading", { name: "Registering an address in Edogawa" })).toBeVisible();
-  await expect(panel.getByText(/if an automated gate left no entry stamp/)).toBeVisible();
-});

@@ -9,3 +9,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- END:nextjs-agent-rules -->
 
 Japanese translation work is delegated to Claude, which drafts, reviews, and integrates it without a Codex review step. Follow `content/translations/CLAUDE-TRANSLATION-REPORT.md`. Preserve existing translation artifacts, do not regenerate unchanged terms, and keep artifacts `machine-translated` until a qualified human reviews them.
+
+For municipality-specific local guidance (supplements in `src/data/local-guidance/`), follow `docs/LOCAL-GUIDANCE-WORKFLOW.md` and use `npm run local-guidance` for worksheets, page fetching, and checks.
