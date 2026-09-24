@@ -56,7 +56,7 @@ function selectExamples(batch: readonly GlossaryTerm[], limit = 6) {
  * Removes the `export const metadata = {...}` object, which is written either on one line or across many.
  * Braces are balanced outside string literals so the prose that follows is kept intact.
  */
-function stripMetadata(source: string): string {
+export function stripMetadata(source: string): string {
   const start = source.indexOf("export const metadata");
   const open = source.indexOf("{", start);
   if (start < 0 || open < 0) return source;

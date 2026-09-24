@@ -227,6 +227,38 @@ Each pass should provide direct manual-review links and run only focused validat
 - Do not remove the pilot label or describe Japanese as complete until the defined interface and content coverage threshold is satisfied.
 - Record which high-risk artifacts still require qualified human review.
 
+## Remaining Japanese localization work (as of 2026-09-23)
+
+Content catalogs (articles, FAQs, glossary, residence statuses and their structured guidance, journeys, and "Can I do this?" activities), page chrome on every route, and browser-tab titles are localized. The following work remains before the Japanese pilot label can be removed.
+
+### Deferred until the geography work lands
+
+- **Annotated documents:** about 10 interface strings in `src/components/documents/annotated-document-version-content.tsx` (for example "Field explanations", "Official visual reference", "Verify the current official document", "Archived version:"), plus document field explanations. Some documents depend on location-specific information, so localize them after the geography work.
+- **Local-guidance panels and the prefecture finder:** translate their interface and the Shinjuku/Nagoya supplement prose as revision-addressed artifacts with English fallback (see Geography A–C in `docs/ROADMAP.md`).
+
+### Article translation verification
+
+All 95 article translations are machine translated and predate several terminology decisions. Verify them in tiers, cheapest first:
+
+1. **Mechanical script (no model calls):** for each article, check heading, list, and callout parity with the English; identical link targets (including glossary links); every number, date, amount, and period present in the Japanese; protected terms and official status names in 「」; and no leftover English sentences. `npm run localization:audit` already checks revision currency. **Built:** `npm run localization:articles:check` (`scripts/check-article-translations.ts`) runs this tier and writes `.glossary-drafts/article-check.json`. First run (2026-09-23): 21 of 95 articles had findings. After review, the check compares amounts by value (万/億/million), which removed the amount false positives. Seven missing links were restored, two with sentences the translation had omitted: the medical-stay Temporary Visitor limitation and the Designated Activities language-guide sentence. The English pension article now uses the official age range ("aged 20 or older but under 60", matching 「20歳以上60歳未満」), with its source revision updated. The Engineer/Specialist links in the artist-status and journalist-status translations are kept by decision and allowlisted in the check. Headings: every H2/H3 matches the English and renders. Two Japanese bodies (consumer contracts, neighborhood living) had a leading 「# タイトル」 line that the Japanese renderer showed as literal text; it was removed, and the check now flags such unrenderable heading lines. Six English MDX bodies also began with `# Title`, so the English page showed the title twice; those H1s were removed and the six Japanese source revisions updated. The check keeps `english-body-title` as a guard against new ones. **Next: tier 2.**
+2. **Glossary consistency (script):** every glossary-linked term uses the glossary's Japanese headword, and the recorded decisions in `content/translations/CLAUDE-TRANSLATION-REPORT.md` hold (for example 退職 vs 出国, 技能等の移転, "sponsor" as 扶養者 or 受入れ機関, 日本に戻る期限). **Built:** `npm run localization:glossary:check` (`scripts/check-glossary-consistency.ts`) writes `.glossary-drafts/glossary-consistency.json`. First run (2026-09-23): 22 findings. Fixed: two article glossary links that showed COE and ビザ instead of the headword, one 帰国期限 in the re-entry article, and the Medical Stay guarantor (身元保証人 → the official 身元保証機関) in the article and the 医療滞在 glossary entry. The remaining 身元保証人 uses name real guarantors and are recorded as reviewed in the script. The Designated Activities guidance "Host, sponsor, employer…" keeps 「受入れ機関、身元保証人、雇用主…」: "sponsor" there means a guarantor with moral responsibility (user decision). All tier-2 findings are resolved.
+3. **Model review (only where tiers 1–2 do not settle it):** one isolated Claude call per article section, with the English and Japanese sections, relevant glossary entries, and the decision list, returning findings only (quote, problem, fix, severity). Start with immigration, tax, and legal articles; Claude reviews each finding before applying it and asks the user about real ambiguities. **Built:** `npm run localization:articles:review` (`scripts/review-article-translations.ts`, prompt `content/translations/ARTICLE-REVIEW-PROMPT.md` plus the report's decisions). It makes one isolated call per article, pairing sections by H2 heading, and writes findings to `.glossary-drafts/article-review-<timestamp>/`. Run on all 95 articles (2026-09-23): $4.06 in total, with 162 findings (26 errors, 136 warnings). Claude checked each finding against the English and applied about 155, several with its own wording. The errors included omitted sentences, reversed conditions (the working-holiday age exception), a job-leaving 出国, 技能移転, and dropped actors. The main warning patterns were weakened or strengthened hedges, 帰国 or 完全帰国 used for returning to Japan or leaving it permanently, family "sponsor" wording, and missing (COE) or (JLPT) abbreviations. Seven findings were rejected with a reason: "admission" is school admission; 非課税枠 renders "exemption"; 受取り matches paying the Permanent Residence fee at pickup; 在留期間 is what cannot be extended; the My Number copy rule is a real prohibition; 保育士 is kept; 市区町村 is kept. Tier-2 rules now also catch 技能移転 and 完全帰国.
+4. Browser spot-check of fixed articles in Japanese.
+
+### Smaller gaps
+
+- The account dashboard shows the raw saved-journey ID instead of the journey's title.
+- Emails sent by the sign-in provider are English.
+- Unknown provider or service errors fall back to English; known ones are mapped by `localizeServiceMessage`.
+- The 12 older Codex-drafted residence-status records have not had the Claude review the other 18 received.
+- Search engines and link previews see English titles; tab titles are localized on the client only. Fixing this needs locale-specific routes.
+
+### Closure (section 7)
+
+- Final pass across mobile layout, keyboard and screen-reader flows, `lang` boundaries, fallback notices, and cross-page links in Japanese.
+- Qualified human review of high-risk immigration, tax, legal, and healthcare translations; every artifact is still `machine-translated`.
+- Remove the Japanese pilot label only after the steps above.
+
 ## Explicitly deferred
 
 - Runtime translation APIs or credentials
