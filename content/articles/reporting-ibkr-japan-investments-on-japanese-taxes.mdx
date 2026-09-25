@@ -1,0 +1,43 @@
+export const metadata = {
+  id: "reporting-ibkr-japan-investments-on-japanese-taxes",
+  title: "Reporting IBKR Japan stock trades on Japanese taxes",
+  description: "Organize Japanese tax questions for foreign-stock sales, currency, dividends, and foreign tax when trading through an IBSJ taxable account.",
+  slug: "reporting-ibkr-japan-investments-on-japanese-taxes",
+  journeyStageIds: ["living-in-japan"], topicIds: ["taxes"], audienceIds: ["employee", "student", "freelancer", "business-owner"], geographicScopes: ["national"], importance: "important", contentType: "guide",
+  sourceIds: ["nta-tax-residency-2010", "nta-overseas-stock-gains-1937", "nta-listed-stock-gains-1463", "nta-stock-acquisition-cost-1466", "nta-foreign-currency-stock-sale", "nta-foreign-currency-transactions", "nta-dividend-income-1330", "nta-foreign-tax-credit", "nta-final-tax-return"],
+  termIds: ["kyojusha", "hi-eijusha", "hikyojusha", "gaikoku-zeigaku-kojo", "kakutei-shinkoku", "zei-rishi"],
+  searchTerms: ["IBKR Japan tax", "IBSJ tax return", "foreign stocks Japan tax", "US stock gains Japanese tax", "IBKR FIFO Japan average cost", "USD yen stock tax Japan", "foreign dividends Japan tax", "Interactive Brokers ippan account"],
+  residenceStatusIds: [],
+  relationships: [{ type: "prerequisite", articleId: "tax-residence-and-taxable-income-in-japan" }, { type: "related", articleId: "using-ibkr-japan-to-trade-us-stocks" }, { type: "next-step", articleId: "filing-a-japanese-income-tax-return" }, { type: "related", articleId: "foreign-income-tax-treaties-and-foreign-tax-credits" }],
+  status: "needs-review", createdAt: "2026-09-24", updatedAt: "2026-09-24",
+}
+
+> **Separate tax review required:** This guide organizes the questions and source records for a Japan tax resident using an ordinary IBSJ taxable account to buy and sell foreign listed shares. It does not supply a return-ready calculation. A qualified Japanese tax reviewer should check the cost-basis, currency, dividend, and foreign-tax-credit sections before anyone relies on an example or files from it. Margin, short sales, derivatives, stock lending, NISA, and another country's tax return need separate analysis.
+
+## Start with tax residence and the account type
+
+Japanese tax scope depends on whether you are a resident, non-permanent resident for **tax** purposes, or non-resident. The tax category “non-permanent resident” is not the same as holding or lacking an immigration Permanent Resident status. A non-permanent resident can face different rules for foreign-source income and remittances; the place where a brokerage account is held does not settle the classification by itself. [NTA: who is liable for income tax](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2010.htm) · [Tax-residence guide](/articles/tax-residence-and-taxable-income-in-japan)
+
+IBSJ says it currently does not offer a *tokutei* account and that customers must address their own tax filing. Do not assume an IBSJ Activity Statement is the same as a Japanese *tokutei* annual transaction report. Confirm whether your account is an ordinary taxable account or NISA before applying this guide. [IBSJ individual accounts](https://www.interactivebrokers.co.jp/en/accounts/individual.php)
+
+## Reconstruct each stock sale in yen
+
+For a Japan tax resident, gains from selling foreign shares can be taxable in Japan. Start with each acquisition and disposal date, quantity, proceeds, acquisition cost, and directly relevant costs. A USD-denominated gain shown by a broker is not the final Japanese-yen gain: yen values at the relevant transactions matter. The NTA explains both [overseas stock-sale treatment](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1937.htm) and [listed-share gain calculation](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1463.htm). Its [foreign-currency transaction guidance](https://www.nta.go.jp/english/taxes/individual/12017.htm) describes the ordinary transaction-date exchange-rate approach and exceptions.
+
+The exchange-rate movement while the foreign share is held is generally part of the yen-denominated share-sale result in the [NTA's foreign-currency share-sale example](https://www.nta.go.jp/law/shitsugi/shotoku/02/02.htm). It is not a reason to calculate the share gain only in dollars. A later transaction involving USD cash after the sale can raise a **separate** foreign-currency question; keep those dates and conversions distinct. Do not infer that an unrealized change in a USD cash balance is itself a filed gain.
+
+### Check repeated purchases against the broker statement
+
+If you bought the same share in several lots, the acquisition cost of a partial sale needs particular care. The [NTA's repeated-purchase guidance](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1466.htm) describes an average-cost-like method. [IBSJ says](https://www.interactivebrokers.co.jp/en/support/faqs.php) that its Activity Statements calculate trading gains and losses using FIFO, even though its trading tools show an average position price. The two outputs can differ. Preserve all purchase and sale records and have a Japanese tax professional review the correct method and any reconciliation; **do not copy the statement's realized P/L into a Japanese return without checking it**.
+
+## Treat dividends and foreign tax separately
+
+Record each dividend's gross amount, payment date, foreign tax withheld, Japanese tax withheld, and the amount actually credited. Net cash received alone can hide two layers of withholding. The NTA's [dividend guidance](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1330.htm) explains the income calculation; the available Japanese reporting choices depend on the security and the taxpayer's facts.
+
+A foreign tax credit is not an automatic refund of every dollar withheld overseas. Eligibility, treaty limits, Japanese credit limits, and supporting documents matter. Reconcile the foreign tax shown in IBSJ records with any treaty treatment, then use the [NTA foreign-tax-credit rules](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1240.htm) and [cross-border tax guide](/articles/foreign-income-tax-treaties-and-foreign-tax-credits). Have a reviewer check the result especially if you are a non-permanent resident or have tax obligations in another country.
+
+## Build a reviewable record before filing
+
+Keep the IBSJ annual and activity statements, trade confirmations, cost-basis history (including transfers from another broker), currency-conversion entries, dividend and withholding records, deposit and withdrawal records, exchange rates used for yen calculations, and prior-year positions. A transfer of shares into IBSJ does not erase their original acquisition history. Reconcile totals to the relevant NTA share-sale calculation and final-return forms for the **tax year being filed**. [NTA final-return guidance](https://www.nta.go.jp/english/taxes/individual/12011.htm) · [Filing a Japanese income-tax return](/articles/filing-a-japanese-income-tax-return)
+
+Before filing, ask a licensed tax accountant ([税理士](/glossary/zei-rishi), **zeirishi**) to review uncertain residency or remittance treatment, repeated-purchase basis, foreign-currency cash transactions, foreign withholding and credits, and any interaction with another country's return. The account and tax rules can change, so use current IBSJ notices and NTA instructions for the year concerned.

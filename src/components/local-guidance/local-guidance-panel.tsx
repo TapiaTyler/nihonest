@@ -49,7 +49,14 @@ export function LocalGuidancePanel({
     || left.geography.code.localeCompare(right.geography.code, "en")
   ));
   const selectedLocation = sortedLocations.find(({ geography }) => geography.id === selectedId);
-  const selected = options.find(({ geography }) => geography.id === selectedId);
+  // A designated-city ward without its own supplement uses the city's: the city runs these procedures and ward
+  // offices are its counters (as in Nagoya), so the city-wide guidance is the right answer for the ward.
+  const ownSupplement = options.find(({ geography }) => geography.id === selectedId);
+  const parentCity = selectedLocation?.geography.type === "administrative-ward"
+    ? locations.find(({ geography }) => geography.canonicalId === selectedLocation.geography.parentId)
+    : undefined;
+  const citySupplement = ownSupplement ? undefined : options.find(({ geography }) => geography.id === parentCity?.geography.id);
+  const selected = ownSupplement ?? citySupplement;
   const generalAdvice = getGeneralLocalAdvice(articleId ?? options[0]?.supplement.articleId ?? "");
   const [pendingPrefectureId, setPendingPrefectureId] = useState("");
   const prefectureOptions = sortedLocations.filter(({ geography }) => geography.type === "prefecture" || geography.type === "metropolis");
@@ -143,6 +150,7 @@ export function LocalGuidancePanel({
                 {geographyTypeLabels[selected.geography.type]}{selected.parentName ? ` · ${selected.parentName}` : ""}
               </p>
               <h3 className="mt-2 text-xl font-semibold text-slate-950">{selected.supplement.title}</h3>
+              {citySupplement && selectedLocation && <p className="mt-1 text-sm text-slate-600">Applies city-wide, including {selectedLocation.geography.name}.</p>}
             </div>
             <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">Editorial review</span>
           </div>

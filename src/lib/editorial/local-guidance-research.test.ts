@@ -51,4 +51,16 @@ describe("local guidance research helpers", () => {
       { claim: "¥300", found: true },
     ]);
   });
+
+  it("reads hours written with readings, in kana, or as 4pm", () => {
+    const english = "Open from 10 a.m. to 5 p.m.; consultation from 1 to 4 p.m.";
+    expect(checkConcreteClaims(english, "午前(ごぜん)10時(じ)から午後(ごご)5時(じ)まで。1pm to 4pm")).toEqual([
+      { claim: "10 a.m.", found: true },
+      { claim: "5 p.m.", found: true },
+      { claim: "4 p.m.", found: true },
+    ]);
+    expect(checkConcreteClaims("until 4 p.m.", "午後4じまで")).toEqual([{ claim: "4 p.m.", found: true }]);
+    expect(checkConcreteClaims("1 to 5 p.m.", "午後1時～5時")).toEqual([{ claim: "5 p.m.", found: true }]);
+    expect(checkConcreteClaims("by 8 a.m.", "Put it out by 8 a.m. on collection days.")).toEqual([{ claim: "8 a.m.", found: true }]);
+  });
 });

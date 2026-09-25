@@ -9,8 +9,9 @@ vi.mock("server-only", () => ({}));
 
 describe("Japanese FAQ translations", () => {
   it("publishes one current machine-translated artifact for the bounded FAQ batch", () => {
-    expect(japaneseFaqTranslations).toHaveLength(104);
-    expect(new Set(japaneseFaqTranslations.map(({ contentId }) => contentId)).size).toBe(104);
+    // Batches are appended by `npm run faq:draft -- --integrate`; the lists below pin the original catalog order.
+    expect(japaneseFaqTranslations.length).toBeGreaterThanOrEqual(104);
+    expect(new Set(japaneseFaqTranslations.map(({ contentId }) => contentId)).size).toBe(japaneseFaqTranslations.length);
     expect(japaneseFaqTranslations.every(({ availability, reviewState }) => (
       availability === "active" && reviewState === "machine-translated"
     ))).toBe(true);
@@ -111,7 +112,7 @@ describe("Japanese FAQ translations", () => {
       "foreign-lawyer-or-accountant-in-japan",
       "legal-or-accounting-office-support-work",
     ]);
-    expect(japaneseFaqTranslations.slice(-1).map(({ contentId }) => contentId)).toEqual([
+    expect(japaneseFaqTranslations.slice(103, 104).map(({ contentId }) => contentId)).toEqual([
       "permanent-residence-maximum-period-2027",
     ]);
   });

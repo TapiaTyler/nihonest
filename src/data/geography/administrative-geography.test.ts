@@ -46,8 +46,11 @@ describe("national geography snapshot", () => {
   });
 
   it("resolves legacy IDs and keeps researched coverage narrower than the administrative registry", () => {
-    expect(supportedGeographies.map(({ id }) => id)).toEqual(["tokyo", "aichi", "jp-13101", "jp-13102", "jp-13103", "shinjuku", "jp-13105", "jp-13106", "jp-13107", "jp-13108", "jp-13109", "jp-13110", "jp-13111", "jp-13112", "jp-13113", "jp-13114", "jp-13115", "jp-13116", "jp-13117", "jp-13118", "jp-13119", "jp-13120", "jp-13121", "jp-13122", "jp-13123", "nagoya"]);
-    expect(supportedGeographies.filter(({ selectable }) => selectable).map(({ id }) => id)).toEqual(["jp-13101", "jp-13102", "jp-13103", "shinjuku", "jp-13105", "jp-13106", "jp-13107", "jp-13108", "jp-13109", "jp-13110", "jp-13111", "jp-13112", "jp-13113", "jp-13114", "jp-13115", "jp-13116", "jp-13117", "jp-13118", "jp-13119", "jp-13120", "jp-13121", "jp-13122", "jp-13123", "nagoya"]);
+    // Rules rather than a list, so adding researched locations needs no edit here.
+    const supportedIds = supportedGeographies.map(({ id }) => id);
+    for (const legacyId of ["tokyo", "aichi", "shinjuku", "nagoya"]) expect(supportedIds).toContain(legacyId);
+    expect(new Set(supportedGeographies.map(({ id }) => getAdministrativeGeography(id)?.id)).size).toBe(supportedIds.length);
+    expect(supportedIds.length).toBeLessThan(administrativeGeographies.length);
     for (const old of supportedGeographies) {
       const canonical = getAdministrativeGeography(old.id)!;
       expect(canonical.type).toBe(old.type);

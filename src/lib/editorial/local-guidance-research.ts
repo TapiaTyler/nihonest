@@ -118,7 +118,10 @@ function to24Hour(hour: number, meridiem: string): number {
  * another source, a different page, or a misreading.
  */
 export function checkConcreteClaims(english: string, sourceText: string): ClaimCheck[] {
-  const source = normalizeWidth(sourceText).replace(/,/g, "");
+  const source = normalizeWidth(sourceText).replace(/,/g, "")
+    // Pages for foreign residents add readings (午後(ごご)5時(じ)) and write hours in kana (午後4じ).
+    .replace(/[(（][\u3040-\u309f]+[)）]/g, "")
+    .replace(/(\d)じ/g, "$1時");
   const results: ClaimCheck[] = [];
   const add = (claim: string, candidates: readonly string[]) => {
     if (!results.some((result) => result.claim === claim)) results.push({ claim, found: candidates.some((candidate) => source.includes(candidate)) });
@@ -135,6 +138,10 @@ export function checkConcreteClaims(english: string, sourceText: string): ClaimC
     add(claim.trim(), [
       `${h24}:${mm}`, `${h24}時${japaneseMinutes}`, `${h12}:${mm}`,
       `${/p/i.test(meridiem!) ? "午後" : "午前"}${h12}時${japaneseMinutes}`,
+      `${hour}${minute ? `:${minute}` : ""}${meridiem!.toLowerCase()}m`,
+      `${hour}${minute ? `:${minute}` : ""} ${meridiem!.toLowerCase()}.m.`,
+      // The end of an afternoon range often drops 午後 (午後1時～5時).
+      ...(/p/i.test(meridiem!) ? ["～", "〜", "~"].map((dash) => `${dash}${h12}時${japaneseMinutes}`) : []),
       // Half past is often written 半 (8時半).
       ...(mm === "30" ? [`${h24}時半`, `${h12}時半`] : []),
     ]);

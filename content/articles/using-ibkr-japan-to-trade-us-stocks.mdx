@@ -1,0 +1,36 @@
+export const metadata = {
+  id: "using-ibkr-japan-to-trade-us-stocks",
+  title: "Using IBKR Japan to trade US stocks with yen",
+  description: "Follow yen funding, currency conversion, US-stock purchases, sale proceeds, and withdrawals in an Interactive Brokers Japan account.",
+  slug: "using-ibkr-japan-to-trade-us-stocks",
+  journeyStageIds: ["living-in-japan"], topicIds: ["banking", "taxes"], audienceIds: ["employee", "student", "freelancer", "business-owner"], geographicScopes: ["national"], importance: "important", contentType: "guide",
+  sourceIds: ["nta-overseas-stock-gains-1937", "nta-final-tax-return"], termIds: [],
+  searchTerms: ["IBKR Japan", "Interactive Brokers Japan", "IBSJ", "buy US stocks with yen", "convert yen to dollars IBKR", "IBKR auto conversion", "withdraw dollars IBKR Japan", "foreign resident stock trading Japan"],
+  residenceStatusIds: [],
+  relationships: [{ type: "related", articleId: "opening-a-bank-account-after-moving-to-japan" }, { type: "next-step", articleId: "reporting-ibkr-japan-investments-on-japanese-taxes" }],
+  status: "needs-review", createdAt: "2026-09-24", updatedAt: "2026-09-24",
+}
+
+> **Editorial review needed:** This is a practical map of a Japan-based IBSJ account, not a recommendation to buy a particular security. Account permissions, conversion behavior, commissions, bank charges, and available products can change. Confirm the current terms and the order preview in your own account before trading.
+
+## First identify the account you actually hold
+
+Interactive Brokers Securities Japan (IBSJ) is the group's Japanese brokerage. Its rules are not interchangeable with those of an Interactive Brokers LLC account overseas. Eligibility depends on residence and the account application, not simply nationality. A foreign national living in Japan should use [IBSJ's current individual-account information](https://www.interactivebrokers.co.jp/en/accounts/individual.php) and confirm the account type, trading permissions, and currency features in Client Portal. The discussion below concerns an ordinary **cash account** buying US-listed shares, not margin borrowing, short selling, options, or NISA.
+
+## Trace the money from yen to a US stock
+
+1. **Fund the account.** In Client Portal, create a deposit notification and use the resulting instructions to send yen from a Japanese bank account in your own name. The notification does not itself transfer money. IBSJ describes yen transfers from Japanese banks as domestic remittances and does not accept third-party deposits. Check the account-specific instructions before sending money. [IBSJ funding instructions](https://www.interactivebrokers.co.jp/en/support/fund-my-account.php) · [IBSJ FAQ](https://www.interactivebrokers.co.jp/en/support/faqs.php)
+2. **Check the product currency and order preview.** A US stock is traded in its product currency, normally USD. IBSJ says its account base currency is JPY and that it can automatically convert funds when the account lacks enough of a product's currency for a trade. This means buying a stock with yen funding does **not necessarily require a separate manual USD purchase first**. Check the available cash, estimated conversion, stock commission, and total cost before submitting the order. [IBSJ FAQ: currency conversions and foreign-stock trades](https://www.interactivebrokers.co.jp/en/support/faqs.php)
+3. **Keep the conversion record.** An automatic conversion has an exchange-rate cost even if no separate conversion commission appears. IBSJ publishes its [current currency-conversion pricing](https://www.interactivebrokers.co.jp/jp/pricing/commissions-spot-currencies.php?re=apac). The applicable rate and charges can differ from what a bank quotes for an international transfer, so compare the *total* result rather than a headline FX rate.
+
+IBSJ says customer-initiated conversions are generally limited to conversion **into JPY**, while automatic conversion can support a trade in another product currency. Do not assume a manual JPY-to-USD currency order is available just because another Interactive Brokers entity offers one. If the order preview or cash balance behaves differently from this outline, stop and check your account's permissions and the [current IBSJ FAQ](https://www.interactivebrokers.co.jp/en/support/faqs.php).
+
+## What happens after a sale
+
+Selling a US stock produces proceeds in the product currency. IBSJ says that, after accepting the applicable multi-currency disclosure, foreign-security sale proceeds can be held in that currency. Confirm how this applies to your account before planning to reuse USD proceeds for another purchase. Holding USD, converting it into JPY, and withdrawing it to a bank are three separate choices. [IBSJ FAQ: multi-currency proceeds](https://www.interactivebrokers.co.jp/en/support/faqs.php)
+
+IBSJ lists JPY, USD, EUR, and GBP as supported deposit and withdrawal currencies. A USD withdrawal is an international wire, so the receiving or intermediary bank can impose charges even if IBSJ's own withdrawal charge is zero for that request. A JPY withdrawal follows the domestic-remittance route. Check the current [withdrawal rules and fees](https://www.interactivebrokers.co.jp/en/support/faqs.php) and your receiving bank before choosing a currency. Also allow for settlement and withdrawal availability; an executed sale is not the same as immediately withdrawable cash.
+
+## Keep a transaction trail from day one
+
+Save deposit confirmations, trade confirmations, activity statements, dividend and withholding entries, currency-conversion entries, and withdrawal records. IBSJ says conversions appear on activity statements. A stock's USD profit, the amount of yen you eventually withdraw, and the amount that may be reportable for Japanese tax are **not automatically the same figure**. Read [the separate Japanese-tax guide](/articles/reporting-ibkr-japan-investments-on-japanese-taxes) before treating a broker profit column as a return-ready number. IBSJ says it does not offer a *tokutei* (broker-prepared tax-reporting) account, so account holders need to address their own filing obligations. [IBSJ FAQ](https://www.interactivebrokers.co.jp/en/support/faqs.php)

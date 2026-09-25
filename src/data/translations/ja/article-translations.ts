@@ -10,6 +10,7 @@ import { japaneseEmploymentTransitionArticleTranslations } from "./article-trans
 import { japaneseFreelanceArticleTranslations } from "./article-translations-freelance";
 import { japaneseTaxArticleTranslations } from "./article-translations-tax";
 import { japaneseTaxLifecycleArticleTranslations } from "./article-translations-tax-lifecycle";
+import { japaneseInvestingArticleTranslations } from "./article-translations-investing";
 import { japaneseResidentProtectionArticleTranslations } from "./article-translations-resident-protections";
 import { japaneseSettlingInArticleTranslations } from "./article-translations-settling-in";
 import { japaneseMobilityDailyLifeArticleTranslations } from "./article-translations-mobility-daily-life";
@@ -253,6 +254,7 @@ COEの発行後に、雇用主、学校、活動、関係、入国予定時期�
   ...japaneseLegalAccountingArticleTranslations,
   ...japaneseTrainingRouteArticleTranslations,
   ...japaneseJapanBasicsArticleTranslations,
+  ...japaneseInvestingArticleTranslations,
 ] as const;
 
 /** Includes stale pilot history for audit while consumers select active artifacts only. */

@@ -15,6 +15,8 @@ export function getSelectableLocalGuidanceLocations() {
     return {
       geography: {
         id: supported?.id ?? record.id,
+        /** The registry ID, which parentId refers to; `id` keeps legacy saved-location values such as "nagoya". */
+        canonicalId: record.id,
         /** Official code: ordering by it keeps each designated city next to its wards. */
         code: record.code,
         name: supported?.name ?? englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),

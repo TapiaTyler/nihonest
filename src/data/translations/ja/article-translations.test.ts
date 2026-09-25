@@ -105,6 +105,8 @@ const sourcePaths: Readonly<Record<string, string>> = {
   "legal-accounting-services-status": "content/articles/legal-accounting-services-status.mdx",
   "choosing-a-training-or-workforce-development-route-in-japan": "content/articles/choosing-a-training-or-workforce-development-route-in-japan.mdx",
   "understanding-japan-geography-government-and-language": "content/articles/understanding-japan-geography-government-and-language.mdx",
+  "using-ibkr-japan-to-trade-us-stocks": "content/articles/using-ibkr-japan-to-trade-us-stocks.mdx",
+  "reporting-ibkr-japan-investments-on-japanese-taxes": "content/articles/reporting-ibkr-japan-investments-on-japanese-taxes.mdx",
 };
 
 function markdownStructure(source: string) {

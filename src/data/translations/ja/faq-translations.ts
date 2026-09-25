@@ -1,8 +1,10 @@
-import { translationArtifactSchema } from "@/domain/translation/translation";
+import { translationArtifactSchema, type TranslationArtifact } from "@/domain/translation/translation";
 
 const terminologyRevision = "74c46a91ccec5c9de19e65a60b89acd0bde3f837a042c3fe08a6ce6f1899f5cf";
 const promptRevision = "4c275d0982deb5cef4ad5c05b49c900bd2f71e8065991ff32aec2ba5739c1486";
 const generator = { id: "codex-assisted", model: "gpt-5" } as const;
+/** FAQs drafted with `npm run faq:draft` and reviewed by Claude. */
+const claudeGenerator = { id: "claude-code-claude-reviewed", model: "claude-opus-5-5" } as const;
 
 function defineFaqTranslation(
   contentId: string,
@@ -10,6 +12,7 @@ function defineFaqTranslation(
   question: string,
   summary: string,
   generatedAt = "2026-09-19T00:00:00.000Z",
+  artifactGenerator: TranslationArtifact["generator"] = generator,
 ) {
   return translationArtifactSchema.parse({
     schemaVersion: 1,
@@ -20,7 +23,7 @@ function defineFaqTranslation(
     sourceRevision,
     terminologyRevision,
     promptRevision,
-    generator,
+    generator: artifactGenerator,
     fields: { question, summary },
     availability: "active",
     reviewState: "machine-translated",
@@ -134,4 +137,16 @@ export const japaneseFaqTranslations = [
   defineFaqTranslation("foreign-lawyer-or-accountant-in-japan", "7751151620ecbbf62e1b7d83996c29ac6fd46e408da83dec0681c7f8b8e7b32f", "海外の弁護士資格や会計資格を使って、日本で働けますか？", "海外の資格だけでは、「法律・会計業務」の在留資格の要件を満たしません。この在留資格には、日本法上認められる11種類の資格または登録のいずれかが必要です。これには、特定の外国法事務弁護士と外国公認会計士の区分が含まれます。", "2026-09-23T06:55:07.000Z"),
   defineFaqTranslation("legal-or-accounting-office-support-work", "10437b18b384020dbd0bfcd74be5f967ef875ad1503f816ed8e5e295e8b9faae", "法律事務所や会計事務所で働く場合、「法律・会計業務」の在留資格が該当しますか？", "必ずしもそうではありません。この在留資格は、日本法上の11種類の資格のいずれかに基づいて行う、資格者に限られた業務を対象とします。パラリーガル、コンプライアンス、簿記、財務、翻訳、事務の仕事は、実際の職務と資格に基づいて別途検討する必要があります。", "2026-09-23T06:55:07.000Z"),
   defineFaqTranslation("permanent-residence-maximum-period-2027", "13f2e5723bceee1030fdfd675e2b7f1a6594a4b6daa59e7afa0fb93cd1a488d9", "日本の永住許可を申請するには、最長の在留期間が必要ですか？", "2026年2月24日付のガイドラインでは、2027年3月31日までは在留期間「3年」が「最長の在留期間」として扱われます。2027年4月1日以降は、原則として現在の在留資格で定められた実際の最長の在留期間をもって在留している必要があります。2027年3月31日時点で在留期間「3年」を有する人は、その在留期間内に永住許可申請について処分を受ける場合、初回に限り「最長の在留期間」をもって在留しているものとして扱われます。この取扱いによって永住許可が保証されるものではありません。", "2026-09-23T06:59:54.000Z"),
+  defineFaqTranslation("cultural-activities-paid-work", "172764d674f415afcc235b2ecda74f943f33d4b2e26784a53d9c658aec359a1d", "「文化活動」の在留資格で日本に滞在している間、収入を得ることはできますか？", "「文化活動」の在留資格で行う主たる活動は、収入を伴わないものでなければなりません。リモートワークやフリーランスの仕事を含め、報酬を得る仕事については、始める前に別途の確認と、必要となる資格外活動許可の取得が必要です。許可は裁量により判断されます。「文化活動」のガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("highly-skilled-points-enough", "2cf14310c8ae4cba8ad0e99b3ed19c11b9678895eaf96d0db4540313007d7692", "ポイントが高ければ、それだけで「高度専門職」の在留資格の対象になりますか？", "いいえ。まず、実際の職務内容と所属機関が、該当する高度専門職の活動に当てはまる必要があります。そのうえで、現行のポイント制または特別高度人材制度（J-Skip）の基準、報酬、立証資料が重要になります。J-Skipは別の在留資格ではなく、要件を満たすための別の方法です。詳しくはガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("ibkr-japan-buy-usd-first", "717e46e3c3892c5a0b0c6b351ad90774d1a68b5a2d12a2519eb829b8bf7ad02f", "IBKR Japanで円を使って米国株を買う場合、先に米ドルを買う必要がありますか？", "必ずしも必要ではありません。IBSJの現金口座に関するガイドによると、株式の商品の通貨が口座に足りない場合でも、自動換算によって注文できることがあります。一方、顧客が自分で行う換算は、一般に円への換算に限られます。取引の前に、口座の取引権限、注文のプレビュー、現在の料金を確認してください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("ibkr-statement-japan-tax-return", "4787cf1b55fa19bb63bbd239546eff3486c9585034d0a474379261e65908f42f", "IBKR Japanの利益の数値を、そのまま日本の確定申告書に転記できますか？", "そのまま使えるとは考えないでください。日本円での金額が重要です。IBSJはアクティビティ・ステートメントでは先入先出法（FIFO）が使われるとしていますが、国税庁は繰り返し購入した場合について別の方法を説明しています。取引、為替、配当、源泉徴収の記録を保管し、照合内容を確認してもらってください。詳しくは別の税金ガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("internal-transfer-without-degree", "a4163b793d4f3f5f8d462219fa98a0c0485e72c528c35c2b2c64195987fc1c6d", "学位がなくても、勤務先の会社から日本へ転勤できますか？", "可能な場合があります。「企業内転勤」は、単に学位の有無で判断するものではなく、要件を満たす転勤前の社内での勤務歴と、実態があり内容の明確な転勤に基づきます。事業所、転勤前の職務、日本での配属、専門的な活動、報酬のすべてについて証明が必要です。「企業内転勤」のガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("long-term-entry-preflight", "12de3383f329b766123d27b61615a378e1825afdda883fc61dead9c4c3f332cb", "長期滞在のために日本へ出発する前に、何を確認すればよいですか？", "旅券（パスポート）、査証（ビザ）、在留資格認定証明書（COE）、入国日、認められた活動が、今も予定と一致しているか確認してください。移動中は、ご自身の在留資格や手続きに関係する記録をすぐに確認できるようにしておき、資金、連絡手段、宿泊先、最初の1週間の手続きについても計画を立ててください。長期滞在の入国チェックリストでは、入国から到着後の手続きへのつながりを説明しています。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("permanent-residence-application-current-status", "074e0aaf891c4f8a837541901a48b05ed3346a87461b96b73a0504a548cd574d", "永住許可を申請すると、現在の在留資格の期間は延長されますか？", "いいえ。永住許可の申請によって、現在の在留期間が延長されることはありません。申請中に在留期間が満了する可能性がある場合は、満了前に別途在留期間の更新を申請し、現在の義務を引き続き果たしてください。詳しくは永住許可のガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("permanent-resident-child-born-abroad", "b68581e4b155f9595ad068de0b0f4116b9ab70dc5912cc46ec6d5c4c6f9d1242", "日本国外で生まれた私の子どもは、「永住者の配偶者等」の在留資格を利用できますか？", "ガイドで説明している、この在留資格の子に関する経路には該当しません。この経路は、日本で生まれ、その後も引き続き日本に住んでいる実子を対象としています。国外で生まれた子どもには、「家族滞在」、「定住者」、またはその他の経路が必要となる場合があります。子どもの国籍と正確な事情を確認してください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("research-job-residence-status", "b5bdc1c5de47c4e2a8bd18dd76c9558bee8c2afa716048240bce3a0327c888cb", "日本での研究職は、すべて「研究」の在留資格で働くのですか？", "いいえ。「研究」は、「教授」の区分に当たらない、契約に基づく研究活動のうち要件を満たすものが対象です。大学での研究は「教授」に該当する場合があり、主に技術開発や臨床業務を行う場合は、別の在留資格が必要になることがあります。「研究」のガイドで、受入れ機関と主な職務を照らし合わせて確認してください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("school-check-in-after-arrival", "8096c0b524f766782b0fab2b9adad7baf1fafdddf91b29835efd7257634a0f16", "日本に到着した後、学校で何をする必要がありますか？", "学校の到着手続きとオリエンテーションの案内に従ってください。在籍状況、学費、学生証、授業、出席、期限、相談窓口を確認してください。「留学」の在留資格を持つ人と短期間滞在する学生では、出入国在留管理と市区町村での手続きが異なります。詳しくは学校到着後の手続きのガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("student-entry-documents-in-hand-luggage", "3ed22b86351ea792dd3387065c73a5e5b230ed72013b63655c6e8c56bee838d4", "「留学」の査証や学校の書類は、預け入れ荷物に入れたほうがよいですか？", "いいえ。パスポート、査証、在留資格認定証明書（COE）の情報、学校の入学許可と連絡先、滞在先の住所、求められている書類は、機内持ち込みの手荷物に入れてください。申請内容が今も予定と一致しているか確認してください。「留学」の入国ガイドでは、最初の1週間についても説明しています。", "2026-09-25T10:47:34.000Z", claudeGenerator),
+  defineFaqTranslation("student-transfer-school-notification", "f9f12dce3593b2a5990d767fbd2ba9029b3a03f7c34857cb611457a9a3f1e894", "日本で転校した場合、新しい学校が「留学」の在留資格の手続きを代わりに行ってくれますか？", "そうだと考えないでください。担当する学校の窓口に速やかに伝え、学生本人と学校がそれぞれ別に行う手続きのうち、どれが該当するかを学校と出入国在留管理庁（ISA）の両方に確認してください。学校が届出をしても、在留資格が自動的に変更または延長されるわけではありません。詳しくは学校到着後の手続きのガイドをご覧ください。", "2026-09-25T10:47:34.000Z", claudeGenerator),
 ] as const;

@@ -50,4 +50,13 @@ describe("PrefectureFinder", () => {
     expect(screen.getByText(/does not yet have researched local supplements for Chuo Ward, Sapporo/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01101#local-guidance-heading");
   });
+
+  it("shows a designated city's researched guides for its wards", () => {
+    render(<PrefectureFinder locale="en" {...data} />);
+    fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-23000" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" }), { target: { value: "jp-23101" } });
+
+    expect(screen.getByText(/Nagoya City runs these procedures for all its wards, so its supplements apply to Chikusa Ward, Nagoya/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "National Health Insurance in Nagoya" })).toHaveAttribute("href", "/articles/joining-national-health-insurance?local=jp-23101#local-guidance-heading");
+  });
 });

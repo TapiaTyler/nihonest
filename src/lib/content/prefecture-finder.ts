@@ -25,6 +25,7 @@ export type FinderMunicipality = Readonly<{
   code: string;
   name: string;
   prefectureId: string;
+  parentId?: string;
 }>;
 
 export const prefectureNationalGuides = [
@@ -55,6 +56,7 @@ export function getPrefectureFinderData(): { prefectures: FinderPrefecture[]; mu
     .map((record) => ({
       id: record.id,
       code: record.code,
+      parentId: record.parentId,
       name: englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),
       prefectureId: `jp-${record.prefectureCode}000`,
     }));

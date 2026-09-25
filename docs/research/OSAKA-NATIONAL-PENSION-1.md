@@ -1,0 +1,14 @@
+# Osaka: National Pension for Osaka City and Sakai
+
+Official source inspection: September 24, 2026. This batch adds `national-pension-after-moving-to-japan` supplements
+for Osaka City (`jp-27100`) and Sakai (`jp-27140`), completing all seven local guides for both cities. Both remain
+`needs-review`; no Japanese translation artifacts were created or changed. Their wards show the city supplements.
+Researched by Claude with `npm run local-guidance` (fetch and `check --links --evidence`).
+
+The records sit after the Tokyo and Nagoya records in `src/data/local-guidance/national-pension.ts`. Later Tokyo pension
+batches must be inserted above Nagoya's record to keep administrative code order (the local-guidance order test enforces this).
+
+| City | Official evidence | Claim boundary |
+|---|---|---|
+| Osaka City | The [joining page](https://www.city.osaka.lg.jp/fukushi/page/0000369591.html) (April 1, 2026): Category I after leaving employee pension coverage before 60 or ceasing to be a dependent spouse; no filing needed at 20. The [employment page](https://www.city.osaka.lg.jp/fukushi/page/0000369548.html): file within 14 days of leaving a job at the ward insurance and pension section with My Number or Basic Pension Number evidence, identity documents, and proof of the loss or leaving date; starting a job goes through the employer. The [Mynaportal page](https://www.city.osaka.lg.jp/fukushi/page/0000567760.html): online Category I enrollment, exemption, postponement, student, and other procedures with a My Number Card and its password. The [moving page](https://www.city.osaka.lg.jp/fukushi/page/0000369545.html): generally no notice, with listed exceptions. | Osaka City's pages do not describe enrollment after arriving from abroad, so the supplement makes no claim about it. Contribution relief criteria are left to Japan Pension Service. |
+| Sakai | The [notifications table](https://www.city.sakai.lg.jp/kurashi/honen/nenkin/kokunen_gaiyou/todokede.html) (March 26, 2026): Category I enrollment at the ward office for ages 20 to under 60 after leaving a job, ceasing to be a dependent spouse, or returning from abroad; pension handbook, Basic Pension Number notice, or My Number card, identity documents, and a separation notice when leaving a job; no notice for a move when My Number and the Basic Pension Number are linked; benefits handled with the Sakai-Higashi Pension Office. The [relief page](https://www.city.sakai.lg.jp/kurashi/honen/nenkin/hokenryou/menjo.html) (August 21, 2026): statutory and income-based exemptions, postponement under 50, the student system (students cannot use income-based exemptions), childbirth exemption, Mynaportal applications, July-to-June periods, and applications reaching back two years and one month. | Income thresholds and exemption fractions are not reproduced. |

@@ -1,0 +1,18 @@
+# Tokyo National Pension batch 8
+
+Official source inspection: September 25, 2026. This batch adds local
+supplements to `national-pension-after-moving-to-japan` for Katsushika
+(`jp-13122`), Edogawa (`jp-13123`), and Hachioji (`jp-13201`). They remain
+`needs-review`. No Japanese translation artifacts were created or changed.
+
+| Location | Official evidence | Claim boundary |
+|---|---|---|
+| Katsushika | The [notification page](https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1001772.html), updated March 19, 2026, lists overseas move-in, retirement, and dependent-status loss with their counter and document routes. The [relief page](https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1001775.html), updated the same day, describes exemption and student applications and supporting documents. The [electronic list](https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1028649/index.html) has no displayed date and includes Category I acquisition/change and relief applications. | The notification page does not specify what a first-time arrival lacking a pension-number record should bring. The electronic list does not identify an overseas-arrival form; the cited pages establish no postal route or local arrival deadline. |
+| Edogawa | The [notification guide](https://www.city.edogawa.tokyo.jp/e053/kurashi/nenkin/kanyutodokede/todokede.html), updated April 8, 2025, includes overseas first enrollment and workplace/dependent coverage changes, with separate document examples and ward or district-office counters. The [exemption](https://www.city.edogawa.tokyo.jp/e053/kurashi/nenkin/hokenryo/menjo.html) and [student](https://www.city.edogawa.tokyo.jp/e053/kurashi/nenkin/menjyo/gakusei.html) pages, both updated March 31, 2026, detail relief documents and counters. The [forms page](https://www.city.edogawa.tokyo.jp/e053/kurashi/nenkin/kankeitodokesyo.html), updated April 8, 2025, covers postal forms. | The arrival row asks for a pension-number record without explaining a first-time enrollee who has none. Confirm that case and the form/attachments for remote arrival filing with the ward. Do not apply workplace-loss evidence to an overseas arrival. |
+| Hachioji | The [foreign-resident page](https://www.city.hachioji.tokyo.jp/kurashi/nenkin/003/007/p003580.html), updated November 21, 2024, directs Category I applicants to the main pension desk or eligible citizen offices with residence card and passport. The [coverage-change page](https://www.city.hachioji.tokyo.jp/tantoumadoguchi/013/003/p003593.html), updated the same day, lists identity, pension-number and event evidence and permits mail or linked My Number Portal filing. The [exemption](https://www.city.hachioji.tokyo.jp/kurashi/nenkin/003/003/001/p003566.html) and [student](https://www.city.hachioji.tokyo.jp/kurashi/nenkin/003/003/001/p003557.html) pages, both updated December 4, 2024, distinguish postal destinations and also link My Number Portal. | The foreign-resident page gives no arrival deadline or first-enrollment pension-number rule. The remote coverage-change routes are not established for an overseas arrival. The city does not itself accept internet submissions; the linked electronic route is My Number Portal. Student postal applications go to the pension office, while exemption/postponement can also be mailed to the city. |
+
+The cited municipal pages are in Japanese. These English supplements summarize
+local routes and boundaries, not official translations. The next National
+Pension batch in code order is Tachikawa (`jp-13202`), Fuchu (`jp-13206`),
+and Machida (`jp-13209`). These Tokyo records belong before Nagoya in
+`national-pension.ts` to preserve administrative code order.

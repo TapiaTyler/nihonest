@@ -93,4 +93,14 @@ describe("LocalGuidancePanel", () => {
     expect(municipality).toBeEnabled();
     expect(screen.queryByText(/have not been mapped yet/)).not.toBeInTheDocument();
   });
+
+  it("shows a designated city's supplement for its wards, labeled as city-wide", () => {
+    render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "aichi" } });
+    fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "jp-23101" } });
+
+    expect(screen.getByRole("heading", { name: "National Health Insurance in Nagoya" })).toBeInTheDocument();
+    expect(screen.getByText("Applies city-wide, including Chikusa Ward, Nagoya.")).toBeInTheDocument();
+    expect(screen.queryByText(/has not been done yet/)).not.toBeInTheDocument();
+  });
 });

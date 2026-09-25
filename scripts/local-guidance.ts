@@ -387,9 +387,12 @@ async function checkCommand(argv: readonly string[]): Promise<void> {
 
 /** The data tests a local-guidance batch can affect. Everything else is unaffected by supplement and source data. */
 const dataTests = [
+  "src/data/geography/administrative-geography.test.ts",
   "src/domain/geography/local-guidance.test.ts",
   "src/lib/content/prefecture-finder.test.ts",
   "src/data/sources.test.ts",
+  // Catches a source that no supplement or article cites any more, e.g. after replacing a supplement's sources.
+  "src/lib/source-monitoring/article-source-metadata.test.ts",
 ];
 
 /** Supplement IDs whose records changed against HEAD, found by mapping diff hunks onto each record's lines. */

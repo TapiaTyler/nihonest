@@ -23,11 +23,14 @@ export const addressRegistrationSupplements = defineLocalGuidanceSupplements([
     sourceIds: ["minato-moving-in-current", "minato-moving-english"], sourceFormatNote: "The current detailed procedure is in Japanese; the ward's English living guide is an older overview. Check the current page for documents and counter hours.",
   },
   {
-    id: "shinjuku-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "shinjuku",
-    title: "Registering an address in Shinjuku", summary: "Shinjuku City handles moving notifications for residents of the special ward.",
-    applicability: "Use this route only when your actual registered home is in Shinjuku City.", responsibleBody: "Shinjuku City", receivingOffice: "Shinjuku City Office or an eligible special branch office",
-    actions: [{ title: "Confirm the correct notification, counter, and documents", description: "Choose the moving-in, moving-out, or within-city route on Shinjuku's current page. Some arrivals from overseas, interpreted visits, and group notifications are directed to the main office rather than a special branch. Family relationship records in another language may require a Japanese translation identifying the translator." }],
-    sourceIds: ["shinjuku-address-changes"],
+    id: "shinjuku-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "shinjuku", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Shinjuku", summary: "Shinjuku accepts the moving-in notification within 14 days at the ward office or a special branch office; foreign residents arriving from abroad must file at the ward office's main counter during regular weekday hours.",
+    applicability: "Use this route only when your actual home is in Shinjuku City. Hotels, weekly apartments, private lodging, and company offices generally cannot be registered.", responsibleBody: "Shinjuku City", receivingOffice: "Resident Records Section (window 7), first floor of the ward office main building, or a special branch office",
+    actions: [
+      { title: "File within 14 days at the right counter", description: "File within 14 days after you move in; the ward does not accept the notification before you start living there. Counters are open on weekdays from 8:30 a.m. to 5 p.m.; the main building also takes filings until 7 p.m. on Tuesdays and from 9 a.m. to 5 p.m. on the fourth Sunday of the month. Arrivals from abroad, people who have just become mid- to long-term residents, anyone needing an interpreter, and groups must use window 7 in the main building, and an arrival from abroad cannot be filed on Tuesday evenings or the fourth Sunday. In March, April, July, September, and October the counters can be too crowded to finish a filing." },
+      { title: "Bring your residence card and relationship documents", description: "After arriving from abroad, bring your residence card, or your passport stamped to show that the card will be issued later. From another municipality, bring the moving-out certificate, identity documents, your residence card, and the My Number Cards of everyone in the household. A foreign resident joining a household may need the original document proving the relationship to the household head, with a Japanese translation that names the translator. You, a household member, or a representative with a letter of authorization can file." },
+    ],
+    sourceIds: ["shinjuku-moving-in-from-abroad","shinjuku-moving-in","shinjuku-address-changes"], sourceFormatNote: "Shinjuku's current procedure pages are in Japanese; its English page lists the routes. This English summary is Nihonest guidance, not an official translation.",
   },
   {
     id: "bunkyo-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-13105",
@@ -163,10 +166,73 @@ export const addressRegistrationSupplements = defineLocalGuidanceSupplements([
     sourceIds: ["edogawa-moving-in", "edogawa-foreign-registration"], sourceFormatNote: "The detailed current moving-in page is in Japanese; the ward also provides an Easy Japanese foreign-resident overview. This summary is Nihonest guidance, not an official translation.",
   },
   {
-    id: "nagoya-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "nagoya",
-    title: "Registering an address in Nagoya", summary: "Nagoya routes resident moving procedures through the ward office for the new address.",
-    applicability: "Use this route for an address within Nagoya City; the service ward is part of Nagoya, not a separate municipality.", responsibleBody: "Nagoya City", receivingOffice: "Resident registration counter at the relevant ward office or branch",
-    actions: [{ title: "Use the route for your kind of move", description: "Nagoya distinguishes arrival from outside the city from a move within Nagoya. Confirm the office for your new address and the current document list before visiting." }],
-    sourceIds: ["nagoya-resident-registration", "nagoya-moving-procedures"], sourceFormatNote: "The detailed city procedure is in Japanese; the checklist is in Easy Japanese. This summary is Nihonest guidance, not an official translation.",
+    id: "hachioji-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-13201", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Hachioji", summary: "Hachioji accepts the moving-in notification within 14 days after you start living in the city, at City Hall or a Citizens Department office, and not in advance.",
+    applicability: "Use this route for an address in Hachioji City. Counters and hours differ between a move from another municipality and a move from abroad.", responsibleBody: "Hachioji City", receivingOffice: "Citizens Division (window 7) on the first floor of City Hall, or a Citizens Department office",
+    actions: [
+      { title: "File within 14 days, at a counter open for your case", description: "File within 14 days after you start living in Hachioji; the city does not accept the notification in advance. You, a member of your household, or a representative with a letter of authorization can file. City Hall takes both kinds of moves on weekdays from 8:30 a.m. to 5 p.m. For a move from another municipality, the Hachioji Station South Exit office is also open until 7 p.m. on weekdays and from 10 a.m. to 5 p.m. on Sundays; a move from abroad can be filed only on weekdays. People with a disability certificate should file at City Hall." },
+      { title: "Bring your residence card and the documents for your case", description: "Foreign residents bring the residence cards or Special Permanent Resident Certificates of everyone moving (after arriving from abroad, a passport stating that the card will be issued later also works), identity documents, and any My Number Cards held. From another municipality, bring the moving-out certificate. A foreign resident joining a household whose head is a foreign resident needs an official document proving the relationship, with a translation that names the translator if it is in another language; contact the city beforehand." },
+    ],
+    sourceIds: ["hachioji-moving-in","hachioji-moving-in-from-abroad"], sourceFormatNote: "Hachioji's current moving-in procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "tachikawa-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-13202", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Tachikawa", summary: "Tachikawa accepts the moving-in notification within 14 days after you start living in the city, at City Hall or the Window Service Center; notifications involving foreign nationals are handled only during regular hours.",
+    applicability: "Use this route for an address in Tachikawa City, whether you move from another municipality or from abroad.", responsibleBody: "Tachikawa City", receivingOffice: "Family Register and Resident Division on the first floor of City Hall, or the Window Service Center",
+    actions: [
+      { title: "File within 14 days, during regular hours", description: "File within 14 days after you start living at the new address; the city does not accept the notification in advance. City Hall is open on weekdays from 8:30 a.m. to 5 p.m. The Window Service Center stays open until 8 p.m. on weekdays and opens on weekends, but after 5 p.m. and on weekends it only takes notifications for later processing and cannot handle any notification involving a foreign national. The counter hours change from November 11, 2026, so check the city's notice." },
+      { title: "Bring the documents for your case", description: "From abroad, bring the passports of everyone registering, including the page with the entry stamp, and residence cards. From another municipality, bring the moving-out certificate, unless you filed the moving-out notice through Mynaportal. Also bring identity documents and any My Number Cards or notification cards. The person moving, a household member, or a relative can file; anyone else needs a letter of authorization." },
+    ],
+    sourceIds: ["tachikawa-moving-in"], sourceFormatNote: "Tachikawa's current moving-in procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "fuchu-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-13206", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Fuchu", summary: "Fuchu accepts the moving-in notification within 14 days after you start living at the new address; foreign residents must file at the General Service Division in City Hall.",
+    applicability: "Use this route for an address in Fuchu City. Foreign residents cannot use the Shiraitodai or Saifu branch counters.", responsibleBody: "Fuchu City", receivingOffice: "General Service Division on the first floor of City Hall",
+    actions: [
+      { title: "File within 14 days at City Hall", description: "File within 14 days after you start living at the new address; notifications for a future date are not accepted, and online filing is not available. Foreign residents must file at the General Service Division on the first floor of City Hall, not at the Shiraitodai or Saifu branch counters. A move from abroad cannot be filed at the Saturday counter, only on weekdays. You, someone in your new household, or a representative with a letter of authorization can file." },
+      { title: "Bring your residence card and the documents for your case", description: "Bring identity documents and your residence card or Special Permanent Resident Certificate, and a document proving your relationship to the household head if you are not the head and the relationship cannot otherwise be confirmed. From another municipality, bring the moving-out certificate and any My Number Card. From abroad, bring the passport used to enter Japan; if you used an automated gate and have no entry stamp, ask airport staff for one, or bring a boarding-pass stub showing the date." },
+    ],
+    sourceIds: ["fuchu-moving-in"], sourceFormatNote: "Fuchu's current moving-in procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "machida-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-13209", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Machida", summary: "Machida accepts the moving-in notification within 14 days at the Citizens Division or any of six citizen centers, on weekdays and the second and fourth Sundays, and visits can be booked online.",
+    applicability: "Use this route for an address in Machida City, whether you move from another municipality or from abroad.", responsibleBody: "Machida City", receivingOffice: "Citizens Division on the first floor of City Hall, or a citizen center (Tadao, Tsurukawa, Minami, Naruse Ekimae, Sakai, or Oyama)",
+    actions: [
+      { title: "File within 14 days, with every document", description: "File within 14 days after you start living in Machida, at the Citizens Division or a citizen center, on weekdays or the second and fourth Sundays from 8:30 a.m. to 5 p.m. You can book a counter time online. The person moving or the household head can file; a representative needs a letter of authorization written entirely by hand by the person moving. If a required document is missing, the notification cannot be accepted that day." },
+      { title: "Bring passports showing your entry date", description: "From abroad, bring the passports of everyone moving in, showing the date of entry, and residence cards or Special Permanent Resident Certificates. If you pass through an automated gate, ask for an entry stamp; otherwise bring something showing the date, such as a boarding pass. After a move from abroad on a Sunday, certificates are issued from the next day. From another municipality, bring the moving-out certificate, identity documents, the My Number Cards of everyone moving (with their passwords), and residence cards." },
+    ],
+    sourceIds: ["machida-moving-in-from-abroad","machida-moving-in"], sourceFormatNote: "Machida's current moving-in procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "nagoya-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "nagoya", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Nagoya", summary: "Nagoya accepts the moving-in notification within 14 days at the Citizens Section of the ward office, or the branch office, for your new address.",
+    applicability: "Use this route for an address within Nagoya City; the ward is part of Nagoya, not a separate municipality.", responsibleBody: "Nagoya City", receivingOffice: "Citizens Section of the ward office for your new address, or the Residents' Life Section of its branch office",
+    actions: [
+      { title: "File within 14 days at your new ward", description: "File within 14 days of the move, at the ward office (or its branch office, in wards that have one) for your new address; forms are at the counter, and a seal may be needed. Arriving close to closing time can mean coming back another day for certificates. Moving within Nagoya from one ward to another needs no moving-out notice, only the moving-in notification at the new ward." },
+      { title: "Bring passports, residence cards, and relationship documents", description: "From abroad, bring the passports of everyone moving in, plus something showing the entry date, such as a boarding-pass stub, if the passport does not show it, and residence cards or Special Permanent Resident Certificates. From another municipality, bring the moving-out certificate, the My Number Cards of everyone moving (with their PINs), identity documents, and residence cards. If the new household head is a foreign resident, bring the original document proving the relationship, with a translation naming the translator. A representative needs a letter of authorization." },
+    ],
+    sourceIds: ["nagoya-resident-registration","nagoya-moving-procedures"], sourceFormatNote: "Nagoya's current procedure is in Japanese; its checklist is in Easy Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "osaka-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-27100", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Osaka", summary: "Osaka City accepts the moving-in notification at the ward office for your new address within 14 days after the move, not before it and not by post.",
+    applicability: "Use this route only for an address within Osaka City; the ward office is part of the city, not a separate municipality.", responsibleBody: "Osaka City", receivingOffice: "Resident services section of the ward office for your new address, or a ward branch office",
+    actions: [
+      { title: "File within 14 days at your ward office", description: "File the moving-in notification within 14 days after you move. Osaka City does not accept it before the move or by post, and its service counters outside ward offices cannot handle it. Bring the moving-out certificate from your previous municipality (not needed for a move within Osaka City or after filing the moving-out notice through Mynaportal), identity documents, and the My Number Cards of everyone moving. Foreign residents bring a residence card or Special Permanent Resident Certificate; presenting it also completes the immigration address notification. A representative needs a letter of authorization, even a relative in a different household." },
+      { title: "Bring the extra documents for an arrival from abroad", description: "For a move from abroad, bring the passport of the person arriving; if it has no entry stamp, bring something showing the entry date, such as the boarding-pass stub. A foreign resident who is not the household head, joining a household whose foreign head is a relative, needs a document proving the relationship; a document in another language needs a translation that names the translator." },
+    ],
+    sourceIds: ["osaka-moving-in"], sourceFormatNote: "Osaka City's current moving-in procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+  },
+  {
+    id: "sakai-address-registration", articleId: "registering-your-address-after-arrival", geographyId: "jp-27140", lastCheckedAt: "2026-09-24",
+    title: "Registering an address in Sakai", summary: "Sakai accepts the moving-in notification at the Citizens Section of the ward office for your new address within 14 days, and not by post.",
+    applicability: "Use this route only for an address within Sakai City; the ward office is part of the city, not a separate municipality.", responsibleBody: "Sakai City", receivingOffice: "Citizens Section of the ward office for your new address",
+    actions: [
+      { title: "File within 14 days at your ward office", description: "The person moving or the household head files the moving-in notification within 14 days after moving, at the Citizens Section of the ward office for the new address; it cannot be filed by post. From another municipality, bring the moving-out certificate (or your My Number Card after a special moving-out notice) and identity documents. A representative from outside the household needs a letter of authorization, and if the household head is a foreign resident, bring an official document proving the relationship." },
+      { title: "Bring passports for an arrival from abroad", description: "For a move from abroad, bring the passport of everyone moving, whatever their nationality, with the entry stamp; if you used an automated gate and the passport shows no entry date, also bring a boarding-pass stub or printed e-ticket showing the date. A temporary return by someone not planning to live in Japan for a year or more does not use this procedure." },
+    ],
+    sourceIds: ["sakai-moving-procedures"], sourceFormatNote: "Sakai's current moving procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
   },
 ]);

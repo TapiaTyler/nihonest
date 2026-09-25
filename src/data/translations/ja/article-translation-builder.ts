@@ -12,6 +12,7 @@ export function defineJapaneseArticleTranslation(
   description: string,
   body: string,
   generator: TranslationArtifact["generator"] = japaneseArticleGenerator,
+  generatedAt = "2026-09-20T00:00:00.000Z",
 ) {
   return translationArtifactSchema.parse({
     schemaVersion: 1,
@@ -26,6 +27,6 @@ export function defineJapaneseArticleTranslation(
     fields: { title, description, body },
     availability: "active",
     reviewState: "machine-translated",
-    generatedAt: "2026-09-20T00:00:00.000Z",
+    generatedAt,
   });
 }

@@ -36,7 +36,10 @@ export function PrefectureFinder({
   const selectedMunicipality = municipalityOptions.find(({ id }) => id === selectedMunicipalityId);
   const guidanceLocationId = selectedMunicipality?.id ?? selectedId;
   // Researched supplements are shown only for the selected municipality or ward, never prefecture-wide.
-  const municipalityCoverage = localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.id);
+  // A designated-city ward without its own supplements shows the city's, which apply to all of its wards.
+  const ownCoverage = localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.id);
+  const cityCoverage = ownCoverage ? undefined : localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.parentId);
+  const municipalityCoverage = ownCoverage ?? cityCoverage;
 
   return (
     <section className="not-prose rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby={`${searchId}-heading`} lang="en">
@@ -91,11 +94,11 @@ export function PrefectureFinder({
               <h5 className="mt-4 font-semibold text-slate-900">{message.localHeading}</h5>
               {municipalityCoverage ? (
                 <>
-                  <p className="mt-1 text-sm leading-6 text-slate-700">{message.localPilot(selectedMunicipality.name)}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-700">{cityCoverage ? message.cityWide(cityCoverage.name, selectedMunicipality.name) : message.localPilot(selectedMunicipality.name)}</p>
                   <ul className="mt-2 list-inside list-disc space-y-1 text-sm leading-6">
                     {municipalityCoverage.supplements.map((supplement) => (
                       <li key={supplement.id}>
-                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${municipalityCoverage.id}#local-guidance-heading`}>{supplement.title}</Link>
+                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${selectedMunicipality.id}#local-guidance-heading`}>{supplement.title}</Link>
                         <span className="text-slate-600"> · {message.reviewStatus} · {message.checked}: {supplement.lastCheckedAt}</span>
                       </li>
                     ))}

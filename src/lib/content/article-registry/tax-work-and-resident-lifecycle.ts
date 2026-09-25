@@ -3,6 +3,8 @@ import FilingAJapaneseIncomeTaxReturn, { metadata as filingAJapaneseIncomeTaxRet
 import TaxResidenceAndTaxableIncomeInJapan, { metadata as taxResidenceAndTaxableIncomeInJapanMetadata } from "../../../../content/articles/tax-residence-and-taxable-income-in-japan.mdx";
 import PayrollWithholdingAndYearEndAdjustment, { metadata as payrollWithholdingAndYearEndAdjustmentMetadata } from "../../../../content/articles/payroll-withholding-and-year-end-adjustment.mdx";
 import ForeignIncomeTaxTreatiesAndForeignTaxCredits, { metadata as foreignIncomeTaxTreatiesAndForeignTaxCreditsMetadata } from "../../../../content/articles/foreign-income-tax-treaties-and-foreign-tax-credits.mdx";
+import UsingIbkrJapanToTradeUsStocks, { metadata as usingIbkrJapanToTradeUsStocksMetadata } from "../../../../content/articles/using-ibkr-japan-to-trade-us-stocks.mdx";
+import ReportingIbkrJapanInvestmentsOnJapaneseTaxes, { metadata as reportingIbkrJapanInvestmentsOnJapaneseTaxesMetadata } from "../../../../content/articles/reporting-ibkr-japan-investments-on-japanese-taxes.mdx";
 import TaxForSideWorkAndSoleProprietors, { metadata as taxForSideWorkAndSoleProprietorsMetadata } from "../../../../content/articles/tax-for-side-work-and-sole-proprietors.mdx";
 import ConsumptionTaxAndTheInvoiceSystem, { metadata as consumptionTaxAndTheInvoiceSystemMetadata } from "../../../../content/articles/consumption-tax-and-the-invoice-system.mdx";
 import TaxProceduresBeforeLeavingJapan, { metadata as taxProceduresBeforeLeavingJapanMetadata } from "../../../../content/articles/tax-procedures-before-leaving-japan.mdx";
@@ -25,6 +27,8 @@ export const taxWorkAndResidentLifecycleArticleRegistrations = [
   [taxResidenceAndTaxableIncomeInJapanMetadata, TaxResidenceAndTaxableIncomeInJapan],
   [payrollWithholdingAndYearEndAdjustmentMetadata, PayrollWithholdingAndYearEndAdjustment],
   [foreignIncomeTaxTreatiesAndForeignTaxCreditsMetadata, ForeignIncomeTaxTreatiesAndForeignTaxCredits],
+  [usingIbkrJapanToTradeUsStocksMetadata, UsingIbkrJapanToTradeUsStocks],
+  [reportingIbkrJapanInvestmentsOnJapaneseTaxesMetadata, ReportingIbkrJapanInvestmentsOnJapaneseTaxes],
   [taxForSideWorkAndSoleProprietorsMetadata, TaxForSideWorkAndSoleProprietors],
   [consumptionTaxAndTheInvoiceSystemMetadata, ConsumptionTaxAndTheInvoiceSystem],
   [taxProceduresBeforeLeavingJapanMetadata, TaxProceduresBeforeLeavingJapan],

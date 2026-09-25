@@ -21,6 +21,7 @@ export const prefectureFinderMessages = {
   municipalityScope: "This list contains the municipalities and wards currently mapped by ID. Other municipalities have not been added to the location selector yet.",
   municipalityNotice: (name: string) => `Research for ${name} on the guides below has not necessarily been done. Each article will show a researched supplement when one exists, or clearly labeled general advice otherwise.`,
   localPilot: (name: string) => `These supplements cover only ${name}, not the entire prefecture. Open a guide to see ${name} selected on that page; your saved local guidance location will not change.`,
+  cityWide: (city: string, ward: string) => `${city} runs these procedures for all its wards, so its supplements apply to ${ward}. Open a guide to see ${ward} selected on that page; your saved local guidance location will not change.`,
   localUnavailable: (name: string) => `Nihonest does not yet have researched local supplements for ${name}. Use the general starting points above, and check the responsible office for your address.`,
   reviewStatus: "Editorial review pending",
   checked: "Sources last checked",

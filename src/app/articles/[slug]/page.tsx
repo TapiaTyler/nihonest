@@ -152,9 +152,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
           </LocalizedArticleBody>
         </div>
 
-        <AnnotatedDocumentViewer key={linkedLocalGuidanceId ?? "saved"} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
+        <AnnotatedDocumentViewer key={`documents-${linkedLocalGuidanceId ?? "saved"}`} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
 
-        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={linkedLocalGuidanceId ?? "saved"} articleId={metadata.id} options={localGuidance} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
+        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
 
         <div className="mt-12">
           <ArticleTerminology terms={glossaryTerms} />

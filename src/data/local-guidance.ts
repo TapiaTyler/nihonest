@@ -5,6 +5,7 @@ import { householdWasteSupplements } from "@/data/local-guidance/household-waste
 import { residentTaxSupplements } from "@/data/local-guidance/resident-tax";
 import { disasterPreparationSupplements } from "@/data/local-guidance/disaster-preparation";
 import { languageAndConsultationSupplements } from "@/data/local-guidance/language-and-consultation";
+import { nationalPensionSupplements } from "@/data/local-guidance/national-pension";
 
 // Subject order remains stable; new Tokyo wards use administrative code order.
 export const localGuidanceSupplements = [
@@ -14,4 +15,5 @@ export const localGuidanceSupplements = [
   ...residentTaxSupplements,
   ...disasterPreparationSupplements,
   ...languageAndConsultationSupplements,
+  ...nationalPensionSupplements,
 ] as const;

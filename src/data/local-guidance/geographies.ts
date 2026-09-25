@@ -1,11 +1,12 @@
 import { supportedGeographySchema } from "@/domain/geography/local-guidance";
-import { getAdministrativeGeography, legacyGeographyIds } from "@/data/geography";
+import { getAdministrativeGeography } from "@/data/geography";
 
 // Coverage is deliberately narrower than the national identity registry. Preserve
 // legacy public/storage IDs while using canonical IDs for newly researched wards.
 const supportedLocations = [
   { id: "tokyo", name: "Tokyo", aliases: ["Tokyo Metropolis", "Tokyo-to"], selectable: false },
   { id: "aichi", name: "Aichi", aliases: ["Aichi Prefecture", "Aichi-ken"], selectable: false },
+  { id: "jp-27000", name: "Osaka", aliases: ["Osaka Prefecture", "Osaka-fu"], selectable: false },
   { id: "jp-13101", name: "Chiyoda City", aliases: ["Chiyoda", "Chiyoda Ward", "Chiyoda-ku"], selectable: true },
   { id: "jp-13102", name: "Chuo City", aliases: ["Chuo", "Chuo Ward", "Chuo-ku"], selectable: true },
   { id: "jp-13103", name: "Minato City", aliases: ["Minato", "Minato Ward", "Minato-ku"], selectable: true },
@@ -29,14 +30,21 @@ const supportedLocations = [
   { id: "jp-13121", name: "Adachi City", aliases: ["Adachi", "Adachi Ward", "Adachi-ku"], selectable: true },
   { id: "jp-13122", name: "Katsushika City", aliases: ["Katsushika", "Katsushika Ward", "Katsushika-ku"], selectable: true },
   { id: "jp-13123", name: "Edogawa City", aliases: ["Edogawa", "Edogawa Ward", "Edogawa-ku"], selectable: true },
+  { id: "jp-13201", name: "Hachioji City", aliases: ["Hachioji", "Hachiōji", "Hachioji-shi"], selectable: true },
+  { id: "jp-13202", name: "Tachikawa City", aliases: ["Tachikawa", "Tachikawa-shi"], selectable: true },
+  { id: "jp-13206", name: "Fuchu City", aliases: ["Fuchu", "Fuchū", "Fuchu-shi"], selectable: true },
+  { id: "jp-13209", name: "Machida City", aliases: ["Machida", "Machida-shi"], selectable: true },
   { id: "nagoya", name: "Nagoya City", aliases: ["Nagoya", "Nagoya-shi"], selectable: true },
+  { id: "jp-27100", name: "Osaka City", aliases: ["Osaka", "Osaka-shi"], selectable: true },
+  { id: "jp-27140", name: "Sakai City", aliases: ["Sakai", "Sakai-shi"], selectable: true },
 ] as const;
 
 export const supportedGeographies = supportedLocations.map((location) => {
   const geography = getAdministrativeGeography(location.id);
   if (!geography) throw new Error(`Missing canonical geography for ${location.id}.`);
+  // The parent's supported ID: a legacy ID ("tokyo") where one exists, otherwise the canonical ID ("jp-27000").
   const parentId = geography.parentId
-    ? Object.entries(legacyGeographyIds).find(([, id]) => id === geography.parentId)?.[0]
+    ? supportedLocations.find((candidate) => getAdministrativeGeography(candidate.id)?.id === geography.parentId)?.id
     : undefined;
   if (geography.parentId && !parentId) throw new Error(`Missing supported parent for ${location.id}.`);
   return supportedGeographySchema.parse({ ...location, type: geography.type, parentId });

@@ -1,0 +1,151 @@
+# Local guidance coverage plan: major areas
+
+Planned 2026-09-24. This sets which locations receive researched local guidance before full deployment (web and
+native app), in what order, and how progress is tracked. Research method and verification are in
+[LOCAL-GUIDANCE-WORKFLOW.md](LOCAL-GUIDANCE-WORKFLOW.md); live counts come from `npm run local-guidance -- coverage`.
+
+## Scope decision
+
+Each prefecture gets local guidance for its **major areas**:
+
+- **Tokyo:** the 23 special wards, plus **Hachioji**, **Tachikawa**, **Fuchu**, and **Machida**.
+- **Osaka:** Osaka City and Sakai (complete). Osaka's other large cities wait for the broader coverage below.
+- **Everywhere else:**
+  - the prefectural capital;
+  - every designated city (20 nationally);
+  - every other city with **300,000 or more residents**;
+  - the prefecture's **largest city**, when that is not the capital, even below 300,000.
+
+  A prefecture may therefore have one major area or several.
+
+A location is complete when it has a supplement for all **seven guides**: address registration, National Health
+Insurance, National Pension, household waste, disaster preparation, language and local support, and income and
+resident tax. Designated cities are researched at city level; their administrative wards show the city's supplements.
+
+**Population rule in practice:** the additional cities below are a preliminary list from general knowledge, not
+research. Confirm each against the latest official resident population (the Ministry of Internal Affairs and
+Communications' resident-register figures) when the city's record is imported, and add or drop cities near the
+300,000 line accordingly. Record the figure and its date in the batch's research note.
+
+**Deferred until after full deployment, including the native app:** broader coverage, meaning all other cities, towns,
+and villages, including the rest of the Tama area and Osaka's other large cities. Until then, unlisted locations keep
+the general advice and the prefecture-wide note.
+
+## Status (2026-09-24, updated after Adachi, Katsushika, and Edogawa; G1 complete)
+
+| Group | Locations | Complete (all 7) | Notes |
+|---|---:|---:|---|
+| Tokyo special wards | 23 | 23 | All 23 wards complete for all seven guides. |
+| Tokyo cities | 4 | 4 | Hachioji, Tachikawa, Fuchu, and Machida complete. |
+| Designated cities | 20 | 3 | Nagoya, Osaka City, and Sakai complete. |
+| Prefectural capitals (not designated cities) | 31 | 0 | Not yet in the registry. |
+| Additional major cities (preliminary) | 28 | 0 | Not yet in the registry; confirm populations at import. |
+| **Total** | **106** | **30** | About 545 new supplements remain; all pilot records have been rewritten. |
+
+"Pilot depth" means a one-action record from the original Shinjuku/Nagoya pilot. It is upgraded to the current
+standard (specific counters, deadlines, documents, and routes, checked with `--evidence`) in the same batch as the
+location's missing guides. All pilot records (Shinjuku and Nagoya) were rewritten on September 24, 2026.
+
+## Locations by prefecture
+
+Registry IDs are given where the location is already in `src/data/geography/`. "Import" means the city record must be
+added from the J-LIS table for that prefecture (code, check digit, name, and reading) before research. Additional
+cities marked † are close to 300,000 or qualify only as the largest city; confirm them first.
+
+| # | Prefecture | Capital and designated cities | Additional major cities (preliminary) | Registry |
+|---:|---|---|---|---|
+| 1 | Hokkaido | Sapporo | Asahikawa | `jp-01100`; import |
+| 2 | Aomori | Aomori | — | import |
+| 3 | Iwate | Morioka | — | import |
+| 4 | Miyagi | Sendai | — | `jp-04100` |
+| 5 | Akita | Akita | — | import |
+| 6 | Yamagata | Yamagata | — | import |
+| 7 | Fukushima | Fukushima | Koriyama, Iwaki† | import |
+| 8 | Ibaraki | Mito | — | import |
+| 9 | Tochigi | Utsunomiya | — | import |
+| 10 | Gunma | Maebashi | Takasaki | import |
+| 11 | Saitama | Saitama | Kawaguchi, Kawagoe, Tokorozawa, Koshigaya | `jp-11100`; import |
+| 12 | Chiba | Chiba | Funabashi, Matsudo, Ichikawa, Kashiwa | `jp-12100`; import |
+| 13 | Tokyo | 23 special wards, Hachioji, Tachikawa, Fuchu, Machida | — | `jp-13101`–`jp-13123`, `jp-13201`, `jp-13202`, `jp-13206`, `jp-13209` |
+| 14 | Kanagawa | Yokohama, Kawasaki, Sagamihara | Fujisawa, Yokosuka | `jp-14100`, `jp-14130`, `jp-14150`; import |
+| 15 | Niigata | Niigata | — | `jp-15100` |
+| 16 | Toyama | Toyama | — | import |
+| 17 | Ishikawa | Kanazawa | — | import |
+| 18 | Fukui | Fukui | — | import |
+| 19 | Yamanashi | Kofu | — | import |
+| 20 | Nagano | Nagano | — | import |
+| 21 | Gifu | Gifu | — | import |
+| 22 | Shizuoka | Shizuoka, Hamamatsu | — | `jp-22100`, `jp-22130` |
+| 23 | Aichi | Nagoya | Toyota, Okazaki, Ichinomiya, Toyohashi, Kasugai† | `jp-23100`; import |
+| 24 | Mie | Tsu | Yokkaichi | import |
+| 25 | Shiga | Otsu | — | import |
+| 26 | Kyoto | Kyoto | — | `jp-26100` |
+| 27 | Osaka | Osaka City, Sakai (complete) | deferred | `jp-27100`, `jp-27140` |
+| 28 | Hyogo | Kobe | Himeji, Nishinomiya, Amagasaki, Akashi† | `jp-28100`; import |
+| 29 | Nara | Nara | — | import |
+| 30 | Wakayama | Wakayama | — | import |
+| 31 | Tottori | Tottori | — | import |
+| 32 | Shimane | Matsue | — | import |
+| 33 | Okayama | Okayama | Kurashiki | `jp-33100`; import |
+| 34 | Hiroshima | Hiroshima | Fukuyama | `jp-34100`; import |
+| 35 | Yamaguchi | Yamaguchi | Shimonoseki† (largest city) | import |
+| 36 | Tokushima | Tokushima | — | import |
+| 37 | Kagawa | Takamatsu | — | import |
+| 38 | Ehime | Matsuyama | — | import |
+| 39 | Kochi | Kochi | — | import |
+| 40 | Fukuoka | Fukuoka, Kitakyushu | Kurume† | `jp-40130`, `jp-40100`; import |
+| 41 | Saga | Saga | — | import |
+| 42 | Nagasaki | Nagasaki | — | import |
+| 43 | Kumamoto | Kumamoto | — | `jp-43100` |
+| 44 | Oita | Oita | — | import |
+| 45 | Miyazaki | Miyazaki | — | import |
+| 46 | Kagoshima | Kagoshima | — | import |
+| 47 | Okinawa | Naha | — | import |
+
+## Phases
+
+**G1: Tokyo complete (27 locations) — done.** Add Hachioji, Tachikawa, Fuchu, and Machida as selectable locations; they fall under the Tama
+area group. Finish National Pension for the remaining wards. Research waste, disaster, language, and tax for all 23
+wards, upgrading Shinjuku's pilot records. Research Hachioji, Tachikawa, Fuchu, and Machida for all seven guides.
+
+**G2: Designated cities (17 remaining).** Add each city and its prefecture as selectable
+locations; their records are already in the registry. Suggested order, largest metropolitan areas first:
+1. Nagoya (complete)
+2. Kanagawa (Yokohama, Kawasaki, Sagamihara)
+3. Saitama
+4. Chiba
+5. Kyoto
+6. Kobe
+7. Fukuoka and Kitakyushu
+8. Sapporo
+9. Sendai
+10. Hiroshima
+11. Shizuoka and Hamamatsu
+12. Niigata
+13. Okayama
+14. Kumamoto
+
+**G3: Capitals and additional major cities (59, preliminary).** Import each city's record from J-LIS, confirming its
+population, then add it and its prefecture as selectable and research all seven guides. Work prefecture by prefecture,
+region by region, so that neighboring batches share source patterns and each prefecture is finished at once.
+
+## Batch method
+
+- **One location per batch, all of its missing guides.** A single official site serves every guide, so fetching and
+  context carry over; Osaka City and Sakai were each one batch of six guides. For the Tokyo wards in G1, each batch is
+  one ward's missing guides.
+- Before a location's first batch, add it (and its prefecture, if new) to `src/data/local-guidance/geographies.ts`.
+  In G3, import the registry record first. The tests are rule-based, so no test edits are needed.
+- Record each batch in `docs/research/` and verify with `npm run local-guidance -- verify`. Data-only batches need
+  nothing else; see the verification budget in the workflow.
+- Estimated size: about 104 location batches (27 in G1, 18 in G2, 59 in G3).
+
+## Translation
+
+Japanese for local guidance is translated in large batches once a phase's English is stable, not batch by batch.
+The recommended points are after G1, after G2, and after G3, each covering that phase's supplements. The finder and
+panel interface is translated in the first of these batches.
+
+## Open decisions
+
+- **Translation points:** confirm translating after each phase (recommended) or once after G3.

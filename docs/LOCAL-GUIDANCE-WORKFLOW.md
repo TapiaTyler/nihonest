@@ -3,6 +3,7 @@
 How to add municipality-specific supplements to a national guide (for example Bunkyo's National Health Insurance
 procedure on `joining-national-health-insurance`). The workflow is the same for any agent or person, and the
 `local-guidance` script does the mechanical parts so research time goes to reading official pages and writing.
+Which locations to cover, and in what order, is set in [LOCAL-GUIDANCE-COVERAGE-PLAN.md](LOCAL-GUIDANCE-COVERAGE-PLAN.md).
 
 ## Commands
 
@@ -29,7 +30,7 @@ npm run local-guidance -- verify
   time, and yen amount stated in the English appears on a cited page. Errors fail the command; warnings are for a
   researcher to judge.
 - **verify** is the whole verification for a research batch: it finds the supplements changed since the last
-  commit, runs `check --links --evidence` on only those, runs the three data tests, and prints a few lines.
+  commit, runs `check --links --evidence` on only those, runs the data tests (including the unused-source check), and prints a few lines.
   Network errors are retried once.
 
 Output lives in `.local-guidance/` (gitignored).
@@ -70,5 +71,10 @@ components, or schemas. The browser tests cover the finder and panel behavior on
   the page it comes from or remove it.
 - New supplements stay `needs-review`. Do not create or change Japanese translation artifacts; Japanese for local
   guidance is translated in one batch after the English is stable.
+- Research a designated city (Nagoya, Osaka, Yokohama, …) at city level: the city runs these procedures and its
+  administrative wards are counters. A ward without its own supplement shows the city's, labeled city-wide. Add a
+  ward-level supplement only when the city's pages give that ward a genuinely different rule.
+- When a supplement states something tied to a date (an opening, a rule change, a tax-year deadline) or cites an old
+  or undated page, add a row to [LOCAL-GUIDANCE-RECHECK.md](LOCAL-GUIDANCE-RECHECK.md) in the same batch.
 - Only selectable locations can take supplements. A location outside `src/data/local-guidance/geographies.ts` must
   be added there first (the worksheet says so).
