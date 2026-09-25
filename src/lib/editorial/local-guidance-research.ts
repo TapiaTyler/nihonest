@@ -138,10 +138,12 @@ export function checkConcreteClaims(english: string, sourceText: string): ClaimC
     add(claim.trim(), [
       `${h24}:${mm}`, `${h24}時${japaneseMinutes}`, `${h12}:${mm}`,
       `${/p/i.test(meridiem!) ? "午後" : "午前"}${h12}時${japaneseMinutes}`,
+      // Noon hours are often written as 午後0時 (午後0時30分 for 12:30 p.m.).
+      ...(/p/i.test(meridiem!) && h12 === 12 ? [`午後0時${japaneseMinutes}`] : []),
       `${hour}${minute ? `:${minute}` : ""}${meridiem!.toLowerCase()}m`,
       `${hour}${minute ? `:${minute}` : ""} ${meridiem!.toLowerCase()}.m.`,
-      // The end of an afternoon range often drops 午後 (午後1時～5時).
-      ...(/p/i.test(meridiem!) ? ["～", "〜", "~"].map((dash) => `${dash}${h12}時${japaneseMinutes}`) : []),
+      // The end of an afternoon range often drops 午後 (午後1時～5時, 午後は0時45分から4時00分).
+      ...(/p/i.test(meridiem!) ? ["～", "〜", "~", "から"].map((dash) => `${dash}${h12}時${japaneseMinutes}`) : []),
       // Half past is often written 半 (8時半).
       ...(mm === "30" ? [`${h24}時半`, `${h12}時半`] : []),
     ]);

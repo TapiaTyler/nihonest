@@ -15,15 +15,47 @@ years or without a date, adds a `recheck` item to the location's file in the sam
 
 | Recheck from | Location | Record | What changes | Action |
 |---|---|---|---|---|
+| 2023-03-01 | Kurashiki | `kurashiki-disaster-preparation` | Some integrated GIS hazard layers reflect March 2023 data. | Check the current map layers and portal links for updates. |
+| 2024-03-01 | Okayama | `okayama-household-waste` | The city's current linked household recycling guide is the edition beginning March 2024. | Check the current edition and collection instructions before relying on waste categories or schedules. |
+| 2025-01-25 | Kurashiki | `kurashiki-household-waste` | Area collection calendars are updated separately. | Confirm the current schedule for the address before relying on collection dates. |
+| 2025-06-01 | Iwaki | `iwaki-disaster-preparation` | The city published its 2026-revision disaster map and district map sheets. | Check for revised map sheets, hazard information, and evacuation facilities. |
+| 2025-06-05 | Ichinomiya | `ichinomiya-household-waste` | Waste-app functions and language availability may change. | Confirm the app's current language options, neighborhood calendar, and collection rules. |
+| 2026-03-04 | Asahikawa | `asahikawa-disaster-preparation` | The city published its consolidated hazard map with new river and inland-flood layers. | Check for revised layers and shelter information. |
+| 2026-03-10 | Okazaki | `okazaki-household-waste` | The sorting guide and area collection calendar can be updated independently. | Confirm the currently published guide and calendar for the home address. |
+| 2026-03-19 | Iwaki | `iwaki-household-waste` | The current handbook edition and district collection calendars can be revised; the city has also published a correction notice for the printed handbook. | Check the latest handbook, correction notice, and calendar for the resident's district. |
+| 2026-03-23 | Kasugai | `kasugai-language-and-consultation` | The city published the current Kasugai Fureai Japanese-class listing. | Confirm the next cohort, places, and registration route. |
+| 2026-03-27 | Fukuyama | `fukuyama-household-waste` | The cited sorting guide and collection calendar are for fiscal 2026. | Replace or reconfirm the guide and calendars for the next fiscal year. |
+| 2026-04-01 | Asahikawa | `asahikawa-household-waste` | The cited district calendar covers the 2026 fiscal year. | Check the replacement district calendars for the next fiscal year. |
+| 2026-04-01 | Koriyama | `koriyama-household-waste` | Koriyama publishes fiscal-year area collection calendars and rules that can change by year. | Replace with the next fiscal-year calendars and reconfirm area selection and collection guidance. |
+| 2026-04-01 | Koriyama | `koriyama-disaster-preparation` | The hazard-map directory was updated in 2026. | Check for revised maps and linked location information. |
+| 2026-04-01 | Takasaki | `takasaki-household-waste` | The cited sorting page links to fiscal-year-specific collection calendars. | Replace the calendar reference with the current fiscal-year edition and reconfirm area-specific schedules. |
+| 2026-04-01 | Nishinomiya | `nishinomiya-household-waste` | New waste sorting categories and collection schedules were rolled out in phases, beginning in some areas in January 2026 and citywide in April 2026. | Confirm which handbook and schedule apply to each address after rollout is complete. |
+| 2026-04-01 | Hiroshima | `hiroshima-household-waste` | Hiroshima City changed noncombustible-waste instructions from April 2026 and publishes a new annual guide. | Check the current annual guide and collection rules before relying on sorting instructions. |
+| 2026-04-01 | Shimonoseki | `shimonoseki-household-waste` | The FY2026 collection guide reflects changed collection weekdays and frequency for some recyclables. | Replace with the next fiscal year's guide and verify current district calendars. |
+| 2026-04-14 | Yokkaichi | `yokkaichi-national-health-insurance` | The National Health Insurance procedure page was updated on this date. | Recheck the enrollment document list and the online or postal withdrawal routes. |
+| 2026-05-29 | Hiroshima | `hiroshima-disaster-preparation` | The city's listed designated emergency evacuation locations were last updated May 29, 2026. | Recheck the current maps and which sites are open for the hazard. |
+| 2026-06-22 | Yokkaichi | `yokkaichi-address-registration` | The overseas move-in procedure page was updated on this date. | Recheck its filing counters, hours, and document requirements. |
+| 2026-07-06 | Kyoto | `kyoto-address-registration` | Kyoto's overseas move procedure page was updated on this date. | Recheck the office jurisdiction rules and document list. |
+| 2026-07-14 | Kurume | `kurume-language-and-consultation` | The city updated its Japanese class listing and application page. | Confirm current class recruitment, locations, and application method. |
+| 2026-08-01 | Kobe | `kobe-address-registration` | Kobe's overseas and domestic moving pages were updated in 2026. | Recheck filing hours, counter locations, and document requirements. |
+| 2026-08-20 | Okayama | `okayama-disaster-preparation` | Okayama City updated its web hazard map. | Recheck the map link and current map features after updates. |
+| 2026-10-01 | Tokorozawa | `tokorozawa-address-registration` | Counter reception hours change from October 1, 2026. | Update the weekday and Saturday hours. |
 | 2026-10-01 | Taito | `taito-household-waste` | Electronic payment for online bulky waste applications starts. | Reword from "From October 1, 2026" to present tense. |
 | 2026-10-01 | Suginami | `suginami-disaster-preparation` | The Ogikubo community center returns as a flood shelter after renovation. | Reword to present tense; confirm the shelter list. |
 | 2026-10-01 | Kita | `kita-household-waste` | Electronic payment for online bulky waste applications starts. | Reword to present tense. |
 | 2026-10-01 | Machida | `machida-disaster-preparation` | The revised hazard map is being delivered to every household from June 2026. | Reword once delivery is complete. |
+| 2026-10-01 | Yokosuka | `yokosuka-household-waste` | Bulky waste fees rise from October 1. | Replace the old and new fees with the current fee. |
 | 2026-10-01 | Nagoya | `nagoya-household-waste` | Bulky waste becomes "anything that does not fit in a 45-liter designated bag"; the record gives both the old (until September 2026) and new rule. | Drop the "until September 2026" wording. |
+| 2026-10-01 | Kasugai | `kasugai-household-waste` | The city announces changed bulky-waste acceptance and fee rules for applications from October 2026. | Recheck the accepted-item list and booking instructions once the change takes effect. |
+| 2026-10-01 | Kobe | `kobe-national-pension` | The city describes a new child-rearing premium exemption starting October 2026. | Recheck eligibility and filing details after the program starts. |
+| 2026-10-05 | Sendai | `sendai-address-registration` | The autumn 2026 special counter for foreign residents moving from overseas closes after October 2, 2026. | Remove or update the special counter dates; check whether a spring counter is announced. |
 | 2026-11-11 | Tachikawa | `tachikawa-address-registration` | Counter and phone hours change; the record points to the city's notice instead of giving new hours. | Add the new hours if needed, or confirm the City Hall and Window Service Center hours still hold. |
 | 2026-11-15 | Taito | `taito-language-and-consultation` | The foreign resident consultation desk at the Lifelong Learning Center opens. | Reword to present tense; confirm hours and languages. |
+| 2026-12-01 | Tokorozawa | `tokorozawa-language-and-consultation` | Chinese consultation is suspended for now. | Check whether it has resumed. |
 | 2026-12-01 | Arakawa | `arakawa-disaster-preparation` | A hazard map for flooding from heavy rain is being prepared. | Add it once published. |
 | 2026-12-01 | Arakawa | `arakawa-language-and-consultation` | Living-guide videos are Japanese only; other languages are promised. | Add the languages once published. |
+| 2026-12-01 | Sagamihara | `sagamihara-disaster-preparation` | The city plans to correct the Sagami River house-collapse zone on its flood hazard map after the prefecture's fix. | Remove the correction note once the map is updated. |
+| 2027-01-01 | Sagamihara | `sagamihara-household-waste` | Sagamihara revises its waste handling fees from January 2027; the record does not quote fees. | Confirm the bulky garbage page and booklet reflect the new fees. |
 | 2027-03-01 | Tachikawa | `tachikawa-language-and-consultation` | The Shibasaki Japanese class stops taking new students and moves venue from December 2026 to February 2027. | Remove the temporary wording; confirm the schedule and venues. |
 | 2027-04-01 | Taito | `taito-language-and-consultation` | The ward office's Chinese, English, and Korean consultation ends at the end of March 2027. | Remove the ward-office wording. |
 
@@ -34,10 +66,40 @@ year's filing page, usually in January.
 
 | Location | Record | Statement |
 |---|---|---|
+| Asahikawa | `asahikawa-resident-tax` | Review the assessment-year forms, filing exceptions, and submission routes before applying this guidance to a later tax year. |
+| Koriyama | `koriyama-resident-tax` | Recheck current-year declaration exceptions, payment channels, and the city responsible for the applicable assessment year. |
+| Iwaki | `iwaki-resident-tax` | The FY2026 resident-tax filing year, period, district venues, postal route, and electronic-filing information. |
+| Takasaki | `takasaki-resident-tax` | Confirm current-year declaration requirements, notice dates, payment deadlines and channels, and procedures for a person moving abroad. |
+| Saitama | `saitama-resident-tax` | Filing-season counter dates "from February 16 to March 16" in 2026. |
+| Kawagoe | `kawagoe-resident-tax` | 2026 filing period "from February 12 to March 16". |
+| Chiba | `chiba-resident-tax` | 2026 filing counters "from February 2 to the March 16 deadline". |
+| Ichikawa | `ichikawa-resident-tax` | 2026 filing period "from February 16 to March 16". |
 | Minato | `minato-resident-tax` | "For the 2026 tax year, the filing deadline was March 16, 2026." Replace with the current year's deadline, or reword to a general "by mid-March". |
 | Shinjuku | `shinjuku-resident-tax` | Online filing "from the 2026 tax year"; forms mailed in February. |
 | Bunkyo | `bunkyo-resident-tax` | Online filing "from the 2026 tax year". |
 | Fuchu | `fuchu-resident-tax` | Online filing "from the 2026 tax year"; filing later "may miss the June tax calculation". |
+| Kawasaki | `kawasaki-resident-tax` | Online filing through eLTAX "from the 2026 tax year" return. |
+| Toyohashi | `toyohashi-resident-tax` | The current guide contains year-specific rules and dates; check the next tax-year guide before advising on filing. |
+| Okazaki | `okazaki-resident-tax` | The FY 2026 return guide gives dates and routes for that year; check the next year's notice and filing schedule. |
+| Ichinomiya | `ichinomiya-resident-tax` | Check the current tax-year deadline and tax-representative instructions before advising on a departure. |
+| Kasugai | `kasugai-resident-tax` | The cited form and electronic filing route are for the 2026 assessment year; verify later-year instructions and departure arrangements. |
+| Toyota | `toyota-resident-tax` | Check the resident-tax return deadline, exceptions, and departure procedures against the current tax-year page. |
+| Yokkaichi | `yokkaichi-resident-tax` | Confirm the current tax-year rules, filing route, payment calendar, and options for people moving away. |
+| Kyoto | `kyoto-resident-tax` | Recheck filing forms, deadlines, online routes, and payment guidance for the current tax year. |
+| Kobe | `kobe-resident-tax` | Confirm annual filing criteria, dates, forms, and online services for the current tax year. |
+| Himeji | `himeji-resident-tax` | Recheck annual resident-tax filing duties, forms, submission routes, and dates against Himeji's current tax-year pages. |
+| Amagasaki | `amagasaki-resident-tax` | Recheck the annual resident-tax filing criteria, forms, routes, and deadlines against Amagasaki's current fiscal-year page. |
+| Akashi | `akashi-resident-tax` | Recheck resident-tax filing criteria, deadline, forms, and channels for each tax year. |
+| Nishinomiya | `nishinomiya-resident-tax` | Recheck annual resident-tax filing criteria, documents, forms, electronic route, and dates against the current tax-year instructions. |
+| Okayama | `okayama-resident-tax` | Recheck the city's resident-tax payment and departure guidance for the current tax year. |
+| Kurashiki | `kurashiki-resident-tax` | Recheck the resident-tax filing deadlines and exemptions for the current tax year. |
+| Hiroshima | `hiroshima-resident-tax` | Recheck resident-tax departure and representative procedures for the current tax year and ward. |
+| Fukuyama | `fukuyama-resident-tax` | Recheck the current tax year's payment and departure guidance. |
+| Shimonoseki | `shimonoseki-resident-tax` | Confirm current-year filing exceptions, electronic filing eligibility, assessment notices, and payment routes. |
+| Kitakyushu | `kitakyushu-resident-tax` | Resident-tax thresholds and procedures are year-specific; recheck against the current city page each tax year. |
+| Fukuoka | `fukuoka-resident-tax` | The January 1 residence rule, income guidance, and departure steps should be checked against current tax-year information. |
+| Kurume | `kurume-resident-tax` | Confirm each assessment year's filing exceptions, electronic route, and declaration venues. |
+| Kumamoto | `kumamoto-resident-tax` | Confirm current tax-year electronic filing, declaration instructions, and departure payment procedure. |
 
 ## 3. Old or undated sources (recheck at the next review)
 
@@ -45,6 +107,23 @@ Supplements are accurate to these pages, but the pages are old or undated and ma
 
 | Location | Record | Source | Date |
 |---|---|---|---|
+| Asahikawa | `asahikawa-language-and-consultation` | Asahikawa City foreign consultation and Japanese-study FAQs | 2021-02-01 |
+| Sendai | `sendai-language-and-consultation` | Multicultural Center relocation notice (hours and services) | November 21, 2024 |
+| Koriyama | `koriyama-address-registration` | koriyama-address-registration-overseas | 2021-12-02 |
+| Koriyama | `koriyama-resident-tax` | koriyama-resident-tax | 2021-12-02 |
+| Koriyama | `koriyama-national-pension` | koriyama-national-pension | 2022-04-01 |
+| Iwaki | `iwaki-national-health-insurance` | National Health Insurance procedures | August 1, 2025 |
+| Iwaki | `iwaki-national-pension` | National Pension enrollment page | April 1, 2024 |
+| Takasaki | `takasaki-disaster-preparation` | takasaki-disaster-hazard-maps | 2023-12-18 |
+| Takasaki | `takasaki-language-and-consultation` | takasaki-international-association | 2024-07-18 |
+| Takasaki | `takasaki-national-pension` | takasaki-national-pension | 2023-12-18 |
+| Saitama | `saitama-disaster-preparation` | Disaster prevention guidebook (2020 revision, partly corrected October 2025) | 2020 |
+| Kawaguchi | `kawaguchi-disaster-preparation` | Flood hazard map page (disaster handbook excerpt) | August 16, 2021 |
+| Koshigaya | `koshigaya-address-registration` | Moving in from abroad FAQ | October 21, 2021 |
+| Ichikawa | `ichikawa-language-and-consultation` | Consultation desk for foreign residents page | April 10, 2024 |
+| Funabashi | `funabashi-address-registration` | Moving in from abroad FAQ | November 18, 2023 |
+| Funabashi | `funabashi-language-and-consultation` | Japanese classes page | July 9, 2021 |
+| Kashiwa | `kashiwa-household-waste` | Waste categories (Kashiwa area) page | January 20, 2022 |
 | Chiyoda | `chiyoda-disaster-preparation` | Stay-in-district and shelter pages | November 17, 2023 |
 | Chiyoda | `chiyoda-household-waste` | Wakechiyo app page | June 2, 2023 |
 | Shinjuku | `shinjuku-address-registration` | Moving in from abroad page | September 10, 2021 (contains an outdated pandemic note, not used) |
@@ -64,6 +143,37 @@ Supplements are accurate to these pages, but the pages are old or undated and ma
 | Fuchu | `fuchu-disaster-preparation` | Evacuation areas page | September 5, 2013 |
 | Fuchu | `fuchu-disaster-preparation` | Hazard maps page | June 8, 2021 |
 | Machida | `machida-language-and-consultation` | Consultation page | June 13, 2023 |
+| Yokohama | `yokohama-disaster-preparation` | English page on preparing for disasters | March 1, 2024 |
+| Kawasaki | `kawasaki-disaster-preparation` | Foreign-language disaster maps | Information as of January 1, 2015 |
+| Niigata | `niigata-language-and-consultation` | International Association page | March 28, 2023 |
+| Niigata | `niigata-disaster-preparation` | Comprehensive hazard map | Made in fiscal 2018 |
+| Hamamatsu | `hamamatsu-disaster-preparation` | Earthquake disaster prevention maps page | June 20, 2018 |
+| Hamamatsu | `hamamatsu-language-and-consultation` | Multicultural Center page (Canal Hamamatsu) | January 1, 2024 |
+| Kasugai | `kasugai-household-waste` | Kasugai resource and waste collection calendar page | not stated |
+| Kasugai | `kasugai-disaster-preparation` | Kasugai city map hub | not stated |
+| Yokkaichi | `yokkaichi-resident-tax` | yokkaichi-tax-payment | 2021-04-01 |
+| Yokkaichi | `yokkaichi-resident-tax` | yokkaichi-resident-tax | 2024-08-15 |
+| Yokkaichi | `yokkaichi-disaster-preparation` | yokkaichi-evacuation-status | 2021-02-26 |
+| Kyoto | `kyoto-language-and-consultation` | kyoto-foreign-consultation | 2026-03-09 |
+| Himeji | `himeji-national-pension` | Himeji National Pension enrollment categories page | 2013-05-08 |
+| Amagasaki | `amagasaki-national-health-insurance` | Amagasaki National Health Insurance postal joining page | 2025-01-09 |
+| Akashi | `akashi-national-pension` | Akashi National Pension enrollment page | 2025-04-01 |
+| Nishinomiya | `nishinomiya-national-pension` | Nishinomiya National Pension moving procedure page | 2024-11-01 |
+| Okayama | `okayama-address-registration` | okayama-address-moving-in | 2012-01-26 |
+| Okayama | `okayama-national-health-insurance` | okayama-national-health-insurance | 2018-11-12 |
+| Okayama | `okayama-household-waste` | okayama-waste-app | 2016-08-31 |
+| Okayama | `okayama-language-and-consultation` | okayama-foreign-resident-consultation | 2019-06-03 |
+| Kurashiki | `kurashiki-language-and-consultation` | kurashiki-classes | not stated |
+| Hiroshima | `hiroshima-language-and-consultation` | hiroshima-japanese-classes | 2022-03 |
+| Fukuyama | `fukuyama-resident-tax` | fukuyama-tax | 2023-12-01 |
+| Shimonoseki | `shimonoseki-disaster-preparation` | shimonoseki-disaster-maps | undated |
+| Shimonoseki | `shimonoseki-national-pension` | shimonoseki-national-pension | 2025-04-30 |
+| Fukuoka | `fukuoka-language-and-consultation` | Fukuoka City Consultation Support Center for Foreign Residents | 2022-04-01 |
+| Fukuoka | `fukuoka-disaster-preparation` | Useful links and applications for disaster information | not stated |
+| Kumamoto | `kumamoto-national-health-insurance` | kumamoto-nhi-notices | 2024-12-02 |
+| Kumamoto | `kumamoto-household-waste` | kumamoto-waste-guide | 2018-03-19 |
+| Kumamoto | `kumamoto-household-waste` | kumamoto-bulky-waste | 2023-10-16 |
+| Kumamoto | `kumamoto-household-waste` | kumamoto-waste-calendars | undated |
 
 ## 4. Known gaps to fill later
 
@@ -71,6 +181,38 @@ Not errors, but information the cited pages did not give; worth adding when the 
 
 | Location | Record | Gap |
 |---|---|---|
+| Sapporo | `sapporo-resident-tax` | The filing deadline and the leaving-Japan (tax agent) step. |
+| Sapporo | `sapporo-language-and-consultation` | Japanese classes (the help desk's own site lists them). |
+| Asahikawa | `asahikawa-address-registration` | The moving page mentions passports for arrivals from overseas but does not set out every nationality or family-record case; confirm case-specific documents. |
+| Asahikawa | `asahikawa-national-health-insurance` | The National Health Insurance page does not separately specify documents for enrollment directly from overseas. |
+| Asahikawa | `asahikawa-national-pension` | The city page does not give the full filing route and document list for foreign residents moving directly from overseas. |
+| Sendai | `sendai-address-registration` | Regular ward office counter hours and documents for moving in from abroad. |
+| Sendai | `sendai-resident-tax` | Filing deadline and the leaving-Japan (tax agent) step. |
+| Sendai | `sendai-language-and-consultation` | Consultation languages by day; Japanese classes. |
+| Koriyama | `koriyama-national-health-insurance` | The cited page distinguishes online enrollment after employer coverage ends from counter procedures for moving into Koriyama; confirm any updated online route for address-change enrollment. |
+| Iwaki | `iwaki-language-and-consultation` | The city page links to the International Association but does not itself specify consultation languages, hours, appointment rules, or current Japanese class schedules and fees. |
+| Iwaki | `iwaki-national-pension` | The cited enrollment page does not detail the complete procedure for a new resident arriving from abroad or local exemption filing. |
+| Takasaki | `takasaki-resident-tax` | The cited pages do not explain the procedure for appointing a tax representative before leaving Japan; confirm current requirements with the City Tax Division. |
+| Takasaki | `takasaki-language-and-consultation` | The cited city page does not give a current Japanese-class schedule or enrollment requirements; check availability and details with the provider. |
+| Saitama | `saitama-resident-tax` | Leaving-Japan (tax agent) step. |
+| Saitama | `saitama-language-and-consultation` | Japanese classes. |
+| Kawagoe | `kawagoe-household-waste` | Burnable waste day, time, and bags (in the guide PDF); bulky waste phone hours and fees. |
+| Kawagoe | `kawagoe-resident-tax` | The leaving-Japan (tax agent) step. |
+| Kawaguchi | `kawaguchi-household-waste` | Collection deadline time. |
+| Kawaguchi | `kawaguchi-resident-tax` | Filing deadline and the leaving-Japan (tax agent) step. |
+| Tokorozawa | `tokorozawa-household-waste` | Regular waste rules and deadline; bulky waste phone hours. |
+| Koshigaya | `koshigaya-household-waste` | Collection deadline and bag rules (in the calendar PDF). |
+| Koshigaya | `koshigaya-resident-tax` | Who must file, the deadline, and the leaving-Japan (tax agent) step; the city's filing page was unavailable. |
+| Chiba | `chiba-household-waste` | The regular waste deadline (in the sorting chart PDF). |
+| Chiba | `chiba-national-pension` | Joining when moving in from abroad. |
+| Ichikawa | `ichikawa-household-waste` | Burnable waste day, time, and bags (in the calendar PDF). |
+| Funabashi | `funabashi-resident-tax` | Filing deadline; the page gives FY2025 and FY2026 as the start of online filing. |
+| Funabashi | `funabashi-household-waste` | Burnable waste day, time, and bags; bulky waste fees. |
+| Matsudo | `matsudo-resident-tax` | Filing deadline. |
+| Matsudo | `matsudo-national-pension` | The moving-abroad (leaving or voluntary membership) step. |
+| Matsudo | `matsudo-household-waste` | Burnable waste day, time, and bags (in the guide PDF). |
+| Kashiwa | `kashiwa-resident-tax` | Filing deadline and who must file an inhabitant tax return. |
+| Kashiwa | `kashiwa-household-waste` | Current bulky waste fee (the city revised waste fees) and the Shonan area rules. |
 | Chuo | `chuo-household-waste` | Burnable waste deadline. |
 | Minato | `minato-resident-tax` | Leaving-Japan (tax agent) step. |
 | Taito | `taito-resident-tax` | Leaving-Japan (tax agent) step. |
@@ -95,3 +237,47 @@ Not errors, but information the cited pages did not give; worth adding when the 
 | Edogawa | `edogawa-household-waste` | Bulky waste ticket prices (drop-off fees change from October 1, 2026). |
 | Machida | `machida-resident-tax` | Leaving-Japan (tax agent) step. |
 | Machida | `machida-language-and-consultation` | Japanese classes. |
+| Yokohama | `yokohama-language-and-consultation` | The Information Center's address and each lounge's Japanese class schedule. |
+| Kawasaki | `kawasaki-household-waste` | Bulky garbage phone hours and fees. |
+| Kawasaki | `kawasaki-language-and-consultation` | Consultation days; Japanese classes. |
+| Sagamihara | `sagamihara-household-waste` | The general garbage deadline and bags (in the booklet PDF, not on the web pages). |
+| Sagamihara | `sagamihara-resident-tax` | The filing deadline (on the filing-period page). |
+| Sagamihara | `sagamihara-language-and-consultation` | Japanese classes. |
+| Yokosuka | `yokosuka-resident-tax` | Filing deadline and the leaving-Japan (tax agent) step. |
+| Yokosuka | `yokosuka-national-pension` | The moving-abroad step. |
+| Fujisawa | `fujisawa-household-waste` | Burnable waste day, time, and bags; foreign-language collection calendars. |
+| Fujisawa | `fujisawa-disaster-preparation` | Flood and landslide hazard map and evacuation shelters. |
+| Niigata | `niigata-resident-tax` | Who must file, the filing period, and counters. |
+| Niigata | `niigata-national-pension` | The counter for joining and the documents. |
+| Niigata | `niigata-language-and-consultation` | Consultation hours and languages (on the association's site). |
+| Shizuoka | `shizuoka-household-waste` | Burnable waste day, time, and bags (in the area guidebook PDF); bulky waste phone hours. |
+| Shizuoka | `shizuoka-address-registration` | Counter hours. |
+| Hamamatsu | `hamamatsu-household-waste` | Collection times and bags. |
+| Hamamatsu | `hamamatsu-resident-tax` | Filing period and the leaving-Japan (tax agent) step for inhabitant tax. |
+| Hamamatsu | `hamamatsu-national-pension` | Joining National Pension (counter and documents). |
+| Hamamatsu | `hamamatsu-language-and-consultation` | Consultation languages and hours. |
+| Toyohashi | `toyohashi-disaster-preparation` | The fetched disaster page is a category index; it links to but does not show the address-specific hazard map itself. |
+| Toyohashi | `toyohashi-national-pension` | The accessible pension landing page lists procedure links but does not expose event-specific document requirements in its fetched text. |
+| Okazaki | `okazaki-national-pension` | The accessible pension page is an index; it does not itself enumerate current documents or all service counters. |
+| Ichinomiya | `ichinomiya-disaster-preparation` | The fetched disaster section is an index linking to maps and event-specific guidance rather than the address-specific map itself. |
+| Kasugai | `kasugai-national-health-insurance` | The joining page does not separately describe direct overseas move-in documents; confirm current foreign-resident eligibility with the division. |
+| Kasugai | `kasugai-national-pension` | The cited pension FAQ concerns retirement, not direct arrivals from overseas or exemption applications. |
+| Toyota | `toyota-household-waste` | The accessible city waste portal page links to several procedure pages but does not show the current address-specific calendar in its fetched text. |
+| Toyota | `toyota-language-and-consultation` | The cited city consultation hub does not state Japanese-class availability or current appointment arrangements. |
+| Yokkaichi | `yokkaichi-household-waste` | Check current neighborhood collection dates and address-specific disposal details using the city calendar or Sanaru service. |
+| Yokkaichi | `yokkaichi-language-and-consultation` | Confirm which languages and interpretation options are currently available and verify class schedules and participation conditions with providers. |
+| Yokkaichi | `yokkaichi-national-pension` | Verify the current filing route and required documents for exemptions, student postponement, and other individual pension events. |
+| Kyoto | `kyoto-national-health-insurance`, `kyoto-national-pension` | Verify current online or postal options and detailed document checklists for each specific insurance or pension event. |
+| Kobe | `kobe-household-waste` | Collection windows and calendars are address-specific; the fetched search page does not expose the full selected-address calendar in static text. |
+| Himeji | `himeji-disaster-preparation` | The fetched wide-area map page lists hazard-map blocks but does not describe live evacuation channels or current shelter-opening information. |
+| Amagasaki | `amagasaki-household-waste` | The fetched pages link to the city handbook, calendar, and internet bulky-waste application, but the actual district collection schedule and item-specific bulky-waste fees were not captured in the static text. |
+| Akashi | `akashi-address-registration`, `akashi-language-and-consultation` | Replace general address-registration and multilingual-support referrals with current dedicated official city procedure and service pages when located. |
+| Kurashiki | `kurashiki-national-pension` | The city pension procedure page is an overview and does not fully enumerate current municipal documents and branch counters. |
+| Hiroshima | `hiroshima-address-registration` | The cited moving-in pages cover moves from another municipality; confirm the applicable counter and documents for a move from overseas. |
+| Fukuyama | `fukuyama-address-registration` | The moving-in source addresses moves from another municipality; overseas arrivals should confirm their specific documents directly with the resident-registration office. |
+| Shimonoseki | `shimonoseki-resident-tax` | The cited pages do not explain appointing a tax representative for a resident leaving Japan; confirm current departure procedures with the Resident Tax Division. |
+| Kitakyushu | `kitakyushu-language-and-consultation` | The fetched Japanese-class directory page did not expose its current class listings; confirm live directory details before adding schedules or fees. |
+| Kurume | `kurume-address-registration` | The city move-notice page lists domestic moves but does not separately give overseas-arrival documents; confirm them at the Citizens Division. |
+| Kurume | `kurume-national-health-insurance` | The current page gives remote routes for leaving National Health Insurance, but not whether joining can be done remotely. |
+| Kurume | `kurume-resident-tax` | The cited city page does not explain payment arrangements or a tax representative for residents leaving Japan. |
+| Kumamoto | `kumamoto-language-and-consultation` | Confirm current Japanese conversation dates and registration; the city links to an outside operator without a schedule. |

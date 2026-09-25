@@ -50,19 +50,19 @@ describe("LocalGuidancePanel", () => {
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
   });
 
-  it("offers general article advice for an unresearched prefecture and an unlisted designated city", () => {
+  it("offers general article advice for an unresearched prefecture and an unlisted city", () => {
     const { unmount } = render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-01000" } });
     expect(screen.getByText(/Research for Hokkaido on this article has not been done yet/)).toBeInTheDocument();
     expect(screen.getByText(/municipality's official site, look up enrollment/)).toBeInTheDocument();
     unmount();
 
-    // A saved municipality that is not listed still gets general guidance, with the ward note for a designated city.
-    window.localStorage.setItem(localGuidanceLocationStorageKey, "jp-01100");
+    // A saved municipality that is not listed still gets general guidance; only designated cities get the ward note.
+    window.localStorage.setItem(localGuidanceLocationStorageKey, "jp-13208");
     render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
-    expect(screen.getByLabelText("Prefecture")).toHaveValue("jp-01000");
-    expect(screen.getByText(/Research for Sapporo City on this article has not been done yet/)).toBeInTheDocument();
-    expect(screen.getByText(/Sapporo City is divided into wards. Each ward office may have its own procedures/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Prefecture")).toHaveValue("tokyo");
+    expect(screen.getByText(/Research for Chofu City on this article has not been done yet/)).toBeInTheDocument();
+    expect(screen.queryByText(/is divided into wards/)).not.toBeInTheDocument();
   });
 
   it("lists only researched municipalities and offers Other for the rest of the prefecture", () => {

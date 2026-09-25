@@ -1,0 +1,116 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Kurume City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-40203", name: "Kurume City", aliases: ["Kurume","Kurume-shi"], planGroup: "major-city" },
+  sources: [
+    { id: "kurume-moving", title: "Resident move notifications", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2010kosekishoumei/3010juuminidou/idoutodokede.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-nhi", title: "National Health Insurance joining and leaving notices", url: "https://www.city.kurume.fukuoka.jp/1070kenkou/2020kokuhonenkin/3020kokuhokanyuu/tax_insuranse_join.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-waste-regions", title: "Household waste regions and sorting", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2030kankyougomi/3010dashikata/", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-bulky-waste", title: "Bulky waste and special collection applications", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2030kankyougomi/3010dashikata/2019-0924-1123-200.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-resident-tax", title: "Current resident-tax declaration instructions", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2020zeikin/3020shimin/2024-1118-1610-260.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-hazard-map", title: "Web hazard map", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2040bousaianzen/3003shiru/2023-0908-1436-87.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-shelters", title: "City shelters and opening information", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2040bousaianzen/3005sonaeru/2023-0616-1047-86.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-foreign-consultation", title: "Foreign resident consultation desk", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2140soudan/3050lifetalk/gaikokujin-soudan-madoguti.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-japanese-classes", title: "Japanese classes for foreign residents", url: "https://www.city.kurume.fukuoka.jp/1050kurashi/2140soudan/3050lifetalk/2021-0518-1505-244.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-pension-enrollment", title: "National Pension Category I enrollment after leaving work", url: "https://www.city.kurume.fukuoka.jp/1070kenkou/2020kokuhonenkin/3070nenkinkanyuu/2021-0721-1451-30.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kurume-pension-exemption", title: "National Pension contribution exemption applications", url: "https://www.city.kurume.fukuoka.jp/1070kenkou/2020kokuhonenkin/3080nenkinhokenryou/tax_pension_exemption.html", language: "ja", lastCheckedAt: "2026-09-25" },
+  ],
+  supplements: [
+    {
+      id: "kurume-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-25",
+      title: "Registering an address in Kurume",
+      summary: "Kurume accepts moving-in notices at City Hall, citizen centers, and general branch offices after you move in.",
+      applicability: "For a home address in Kurume City; ask the Citizens Division about documents for a move directly from overseas.",
+      responsibleBody: "Kurume City", receivingOffice: "City Hall Citizens Division, citizen centers, or general branch offices' Citizen Welfare Sections",
+      actions: [
+        { title: "File after moving in", description: "The person moving or the household head files within 14 days after arriving from another Japanese municipality. Bring the former municipality's moving-out certificate, or the relevant My Number Card if you used card-based moving, plus identification. Foreign residents bring the residence card or special permanent resident certificate for everyone moving. A representative needs the city's authorization form." },
+      ],
+      sourceIds: ["kurume-moving"],
+      sourceFormatNote: "Kurume's moving page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-25",
+      title: "National Health Insurance in Kurume",
+      summary: "Kurume lists reason-specific joining documents and takes notices at its Health Insurance Division, general branches, and citizen centers.",
+      applicability: "For residents whose insurance route is Kurume's municipal National Health Insurance; ask the city about your household's eligibility and contributions.",
+      responsibleBody: "Kurume City", receivingOffice: "Health Insurance Division at City Hall, Citizen Welfare Section of a general branch, or a citizen center",
+      actions: [
+        { title: "Match documents to your event", description: "The insured person or household head generally files within 14 days. For a move from another municipality, bring the moving-out certificate. After leaving workplace health insurance, bring proof of the coverage-loss date. Foreign nationals bring a residence card or equivalent. The city also asks for the filer's identification and, if available, My Number documents for the household head and joining members and bank details for premium transfer." },
+        { title: "Use the correct route when leaving", description: "If you join workplace coverage or become its dependent and cannot visit, Kurume allows the loss notice by post or electronic application. The cited page describes these remote routes for leaving Kurume National Health Insurance; confirm joining options with the city before assuming the same routes apply." },
+      ],
+      sourceIds: ["kurume-nhi"],
+      sourceFormatNote: "Kurume's National Health Insurance page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-25",
+      title: "Household waste in Kurume",
+      summary: "Kurume uses different waste guidance for the main Kurume area, Tanushimaru, and Kitano; bulky items need advance booking.",
+      applicability: "Choose the city's guidance and collection calendar for your district or school area; collection rules can also depend on the registered collection point.",
+      responsibleBody: "Kurume City",
+      actions: [
+        { title: "Select your area's sorting and calendar", description: "The city separates its household-waste guidance into the Kurume area excluding Tanushimaru and Kitano, Tanushimaru, and Kitano. Use the matching area page and district calendar rather than another part of the city's schedule. The waste page also points to collection-point registration and the sorting app." },
+        { title: "Book bulky waste", description: "Items that do not fit in a city-designated household bag generally use bulky-waste collection. Apply before the collection day by phone, web, or LINE; the city gives the collection place and payment route. If the item is not in the online list or the place is unclear, use the phone route. Check the city page for excluded appliances and other items." },
+      ],
+      sourceIds: ["kurume-waste-regions", "kurume-bulky-waste"],
+      sourceFormatNote: "Kurume's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "Resident tax in Kurume",
+      summary: "Kurume's City Tax Division publishes the current resident-tax declaration instructions, venue list, and electronic filing route.",
+      applicability: "Use Kurume's instructions if Kurume was your municipality of residence on January 1 of the relevant tax year; check your own filing obligation with the division.",
+      responsibleBody: "Kurume City", receivingOffice: "City Tax Division of Kurume City Hall or a listed declaration venue for the current tax year",
+      actions: [
+        { title: "Check whether Kurume needs your declaration", description: "The city says a person with a Kurume address on January 1 generally reports prior-year income and deductions, but lists exceptions, including an income-tax return or a salary payment report filed by an employer with Kurume. Its current instructions list the documents to bring and the available declaration venues. They also link to electronic filing for the current assessment year; check the current-year page before using a venue or channel." },
+      ],
+      sourceIds: ["kurume-resident-tax"],
+      sourceFormatNote: "Kurume's tax instructions are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-25",
+      title: "Disaster planning in Kurume",
+      summary: "Kurume's web map shows multiple water and landslide hazards, while a separate city page lists shelters and where to check openings.",
+      applicability: "Inspect your exact address and a usable shelter for each relevant hazard; during an event, follow live opening and evacuation information.",
+      responsibleBody: "Kurume City",
+      actions: [
+        { title: "Use the web map and current shelter status", description: "Kurume's web map includes flood, storm surge, inland flooding, landslide, and agricultural reservoir layers, with a mobile-oriented view. The city's shelter list has locations and accessibility information; it directs residents to current opening and crowding information separately. Its route-search function may not reflect flooded roads, so do not treat a suggested route as a live safety check." },
+      ],
+      sourceIds: ["kurume-hazard-map", "kurume-shelters"],
+      sourceFormatNote: "Kurume's disaster pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-25",
+      title: "Language and consultation support in Kurume",
+      summary: "Kurume runs a foreign-resident consultation desk at City Hall and publishes Japanese class applications for foreign residents.",
+      applicability: "For foreign residents in Kurume; check current class availability and language support with the city before visiting.",
+      responsibleBody: "Kurume City", receivingOffice: "Foreign Resident Consultation Desk, Public Relations and Consultation Division, City Hall",
+      actions: [
+        { title: "Use the consultation desk", description: "The desk on City Hall's sixth floor takes questions about residence status, health insurance, pensions, taxes, work, and daily life in person, by phone, email, or fax. The city says no appointment is needed and lists an English-speaking counselor; ask how other languages are supported for your case." },
+        { title: "Apply for a Japanese class", description: "Kurume lists beginner and elementary Japanese classes for foreign residents, with sessions at several locations. The city page gives an application link and also accepts applications through the consultation desk by email, fax, or phone. Check the current class page for schedule, places, and any fee before applying." },
+      ],
+      sourceIds: ["kurume-foreign-consultation", "kurume-japanese-classes"],
+      sourceFormatNote: "Kurume's support pages are in Japanese and easy Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kurume-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Kurume",
+      summary: "Kurume accepts Category I enrollment after leaving work and contribution-exemption applications at its Medical and Pension Division, branches, citizen centers, or the pension office.",
+      applicability: "For Kurume residents whose pension category calls for these filings; ask the city or pension office which procedure applies to your move or coverage change.",
+      responsibleBody: "Kurume City", receivingOffice: "Medical and Pension Division at City Hall, general branch Citizen Welfare Sections, citizen centers, or the pension office",
+      actions: [
+        { title: "File after losing employer coverage", description: "Kurume's retirement procedure asks for your Basic Pension Number or My Number information, identity document, and evidence of the retirement or coverage-loss date. A representative needs an authorization form. The city also describes a smartphone application through Mynaportal using a My Number Card." },
+        { title: "Ask about a contribution exemption", description: "The same city counters and pension office accept exemption applications. Kurume lists number and identity documents, plus job-loss evidence when that is the reason for a special review. Its page also describes a Mynaportal route with a smartphone and My Number Card." },
+      ],
+      sourceIds: ["kurume-pension-enrollment", "kurume-pension-exemption"],
+      sourceFormatNote: "Kurume's pension pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "gap", records: ["kurume-address-registration"], gap: "The city move-notice page lists domestic moves but does not separately give overseas-arrival documents; confirm them at the Citizens Division." },
+    { kind: "gap", records: ["kurume-national-health-insurance"], gap: "The current page gives remote routes for leaving National Health Insurance, but not whether joining can be done remotely." },
+    { kind: "tax-year", records: ["kurume-resident-tax"], statement: "Confirm each assessment year's filing exceptions, electronic route, and declaration venues." },
+    { kind: "gap", records: ["kurume-resident-tax"], gap: "The cited city page does not explain payment arrangements or a tax representative for residents leaving Japan." },
+    { kind: "dated", records: ["kurume-language-and-consultation"], from: "2026-07-14", change: "The city updated its Japanese class listing and application page.", action: "Confirm current class recruitment, locations, and application method." },
+  ],
+});

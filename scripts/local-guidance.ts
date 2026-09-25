@@ -22,9 +22,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import tls from "node:tls";
 import { getAdministrativeGeography } from "@/data/geography";
-import { localGuidanceArticleOrder, localGuidanceLocations, localGuidanceRecheckItems, localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
-import { sources } from "@/data/sources";
 import { englishGeographyName } from "@/domain/geography/english-name";
 import type { LocalGuidanceSupplement } from "@/domain/geography/local-guidance";
 import { checkConcreteClaims, decodeHtml, htmlToText, matchingLinks, type PageText } from "@/lib/editorial/local-guidance-research";
@@ -247,7 +245,24 @@ async function locationWorksheetCommand(id: string): Promise<void> {
   await writeFile(worksheetPath, worksheet);
   console.log(`Worksheet for ${ward.nameEn} → ${shown(worksheetPath)}`);
 }
-const sourceById = new Map(sources.map((source) => [source.id, source]));
+type LocalGuidanceData = typeof import("@/data/local-guidance");
+/*
+ * Location data loads only for commands that use it (not fetch), so page fetching keeps working while another agent's
+ * location file is half-written in the same checkout.
+ */
+let localGuidanceArticleOrder: LocalGuidanceData["localGuidanceArticleOrder"];
+let localGuidanceLocations: LocalGuidanceData["localGuidanceLocations"];
+let localGuidanceRecheckItems: LocalGuidanceData["localGuidanceRecheckItems"];
+let localGuidanceSupplements: LocalGuidanceData["localGuidanceSupplements"];
+let supportedGeographies: LocalGuidanceData["supportedGeographies"];
+let sourceById: Map<string, (typeof import("@/data/sources"))["sources"][number]>;
+
+async function loadData(): Promise<void> {
+  const data = await import("@/data/local-guidance");
+  ({ localGuidanceArticleOrder, localGuidanceLocations, localGuidanceRecheckItems, localGuidanceSupplements, supportedGeographies } = data);
+  const { sources } = await import("@/data/sources");
+  sourceById = new Map(sources.map((source) => [source.id, source]));
+}
 
 /** The official host a ward's existing sources use most, as the starting point for finding new pages. */
 function officialHost(ward: Ward): string | undefined {
@@ -544,9 +559,11 @@ async function checkCommand(argv: readonly string[]): Promise<void> {
   if (hasFlag(argv, "links") || hasFlag(argv, "evidence")) {
     const urls = [...new Set(citedIds.map((id) => sourceById.get(id)!.url))];
     console.log(`Fetching ${urls.length} source page(s)…`);
-    for (const fetched of await inBatches(urls, 4, fetchPage)) pageCache.set(fetched.url, fetched);
+    // Key by the requested URL: pages that redirect report their final URL.
+    const fetchedPages = await inBatches(urls, 4, fetchPage);
+    urls.forEach((url, index) => pageCache.set(url, fetchedPages[index]!));
     for (const url of urls) {
-      const fetched = pageCache.get(url) ?? [...pageCache.values()].find((page) => page.url === url);
+      const fetched = pageCache.get(url);
       if (!fetched || fetched.error || fetched.status >= 400) errors.push(`${url}: ${fetched?.error ?? `HTTP ${fetched?.status}`}`);
     }
   }
@@ -782,11 +799,12 @@ async function verifyCommand(): Promise<void> {
 async function main(): Promise<void> {
   const [command, ...argv] = process.argv.slice(2);
   trustSystemCertificates();
+  if (command === "fetch") return fetchCommand(argv);
+  await loadData();
   if (command === "coverage") return coverageCommand();
   if (command === "add-location") return addLocationCommand(argv);
   if (command === "generate") return generateCommand();
   if (command === "worksheet") return worksheetCommand(argv);
-  if (command === "fetch") return fetchCommand(argv);
   if (command === "check") return checkCommand(argv);
   if (command === "verify") return verifyCommand();
   console.log(await readFile(resolve(process.cwd(), "scripts/local-guidance.ts"), "utf8").then((source) => source.match(/\/\*\*([\s\S]*?)\*\//)?.[1]?.replace(/^ \* ?/gm, "") ?? ""));

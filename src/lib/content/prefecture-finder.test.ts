@@ -16,7 +16,6 @@ describe("prefecture finder data", () => {
     expect(new Set(municipalities.map(({ id }) => id))).toEqual(researched);
     expect(municipalities.find(({ id }) => id === "jp-13104")?.prefectureId).toBe("jp-13000");
     expect(municipalities.find(({ id }) => id === "jp-23100")).toMatchObject({ prefectureId: "jp-23000", isDesignatedCity: true });
-    expect(municipalities.some(({ id }) => id === "jp-01100")).toBe(false);
     expect(municipalities.some(({ id }) => id === "jp-13208")).toBe(false);
   });
 

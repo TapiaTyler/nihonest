@@ -62,5 +62,7 @@ describe("local guidance research helpers", () => {
     expect(checkConcreteClaims("until 4 p.m.", "午後4じまで")).toEqual([{ claim: "4 p.m.", found: true }]);
     expect(checkConcreteClaims("1 to 5 p.m.", "午後1時～5時")).toEqual([{ claim: "5 p.m.", found: true }]);
     expect(checkConcreteClaims("by 8 a.m.", "Put it out by 8 a.m. on collection days.")).toEqual([{ claim: "8 a.m.", found: true }]);
+    expect(checkConcreteClaims("until 12:30 p.m.", "午前8時30分から午後0時30分まで")).toEqual([{ claim: "12:30 p.m.", found: true }]);
+    expect(checkConcreteClaims("12:45 to 4 p.m.", "午後は0時45分から4時00分まで")).toEqual([{ claim: "4 p.m.", found: true }]);
   });
 });

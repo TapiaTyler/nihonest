@@ -38,14 +38,16 @@ describe("PrefectureFinder", () => {
   });
 
   it("shows an explicit local coverage gap and Japanese interface fallback", () => {
+    // Any prefecture with no researched municipality, so growing coverage never breaks this test.
+    const unresearched = data.prefectures.find(({ id }) => !data.municipalities.some(({ prefectureId }) => prefectureId === id))!;
     render(<PrefectureFinder locale="ja" {...data} />);
     expect(screen.getByText(/currently in English/)).toBeInTheDocument();
-    fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-01000" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: unresearched.id } });
     expect(screen.queryByText(/does not yet have researched local supplements/)).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Hokkaido/ })).toHaveTextContent("北海道");
+    expect(screen.getByRole("heading", { name: new RegExp(unresearched.names.en) })).toHaveTextContent(unresearched.names.ja);
     expect(screen.getByText(/Prefecture-wide procedures for these articles have not been researched/)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01000#local-guidance-heading");
-    // No municipality in Hokkaido has researched guidance, so no municipality selector is offered.
+    expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain(`/articles/joining-national-health-insurance?local=${unresearched.id}#local-guidance-heading`);
+    // No municipality there has researched guidance, so no municipality selector is offered.
     expect(screen.queryByRole("combobox", { name: "Choose a municipality or ward" })).not.toBeInTheDocument();
   });
 

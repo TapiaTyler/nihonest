@@ -1,0 +1,116 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Iwaki City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-07204", name: "Iwaki City", aliases: ["Iwaki","Iwaki-shi"], planGroup: "major-city" },
+  sources: [
+    { id: "iwaki-moving", title: "Address changes and moving notifications", url: "https://www.city.iwaki.lg.jp/www/contents/1001000003066/index.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-nhi", title: "National Health Insurance enrollment and withdrawal procedures", url: "https://www.city.iwaki.lg.jp/www/contents/1452663797980/index.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-waste", title: "Household waste sorting handbook", url: "https://www.city.iwaki.lg.jp/www/contents/1001000001842/", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-resident-tax", title: "FY2026 resident tax declaration instructions", url: "https://www.city.iwaki.lg.jp/www/contents/1633932822988/", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-disaster", title: "Iwaki disaster map (2026 revision)", url: "https://www.city.iwaki.lg.jp/www/contents/1001000003880/", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-multicultural", title: "Multicultural coexistence services", url: "https://www.city.iwaki.lg.jp/www/contents/1001000003148/index.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "iwaki-pension", title: "National Pension enrollment", url: "https://www.city.iwaki.lg.jp/www/contents/1001000003008/index.html", language: "ja", lastCheckedAt: "2026-09-25" },
+  ],
+  supplements: [
+    {
+      id: "iwaki-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-25",
+      title: "Registering an address in Iwaki",
+      summary: "Iwaki accepts moving-in notifications at City Hall, branch offices, and citizen service centers, with a separate document list for overseas arrivals.",
+      applicability: "For a home address in Iwaki City. Ask the Citizens Division or the branch serving your address about individual cases and current counter arrangements.",
+      responsibleBody: "Iwaki City", receivingOffice: "City Hall Citizens Division, a branch office, or a citizen service center",
+      actions: [
+        { title: "Prepare the documents for your move", description: "After moving in from overseas, bring the original passports for everyone registering, proof of the entry date if the passport does not show it, and a family register and its address history (koseki and koseki no fuhyo) unless the registered domicile is Iwaki. Bring residence cards or special permanent resident certificates where held, and other applicable household cards or certificates. A person outside the moving household needs a letter of authorization. The city provides moving checklists in several languages." },
+        { title: "Use a counter serving your address", description: "The city lists the Citizens Division, branch offices, and citizen service centers for notifications. Its station service center has a different schedule and a narrower window for My Number Card moving-in notifications; check the city page before visiting. Use the service center or branch list to identify a suitable counter for your neighborhood." },
+      ],
+      sourceIds: ["iwaki-moving"],
+      sourceFormatNote: "Iwaki's moving page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-25",
+      title: "National Health Insurance in Iwaki",
+      summary: "Iwaki lists event-specific documents and accepts National Health Insurance notices at the Citizens Division, Insurance and Pension Division, branches, and citizen service centers.",
+      applicability: "For residents whose coverage route is Iwaki's municipal National Health Insurance; ask the city about eligibility and household contributions.",
+      responsibleBody: "Iwaki City", receivingOffice: "City Hall Citizens Division when filing with a resident move, otherwise the Insurance and Pension Division, a branch office, or a citizen service center",
+      actions: [
+        { title: "Match documents to the event", description: "Bring My Number confirmation and identity documents, plus the event-specific record: a moving-out certificate for a move into Iwaki, proof of loss of workplace coverage when leaving an employer plan, or the public assistance decision when assistance ends. A person outside the household needs authorization. The city says the member or household must file rather than relying on an employer to do it." },
+        { title: "Use the right route when leaving coverage", description: "Iwaki accepts some withdrawal and certificate reissue applications through its LoGo online form. Its page lists which proof is required, including workplace coverage records when joining another plan. Confirm the specific online form and mailing arrangements on the city page; the cited remote options do not establish online enrollment for every joining event." },
+      ],
+      sourceIds: ["iwaki-nhi"],
+      sourceFormatNote: "Iwaki's National Health Insurance page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-25",
+      title: "Household waste in Iwaki",
+      summary: "Iwaki publishes a current sorting handbook and collection calendars by district; collection rules depend on the local collection area.",
+      applicability: "Choose the collection calendar and collection point for your address; ask the property manager or local city counter where to put waste.",
+      responsibleBody: "Iwaki City",
+      actions: [
+        { title: "Check the calendar and sorting handbook for your area", description: "Iwaki directs residents to sort waste using its current household handbook and district collection calendar. The city also offers a sorting app that can show collection types and dates after you set your area. Use the city's current page because the handbook is revised and the city has published corrections to its latest printed edition." },
+        { title: "Follow the designated collection point", description: "The handbook says to use city-standard bags and place sorted waste at the collection site. Collection days and site arrangements vary by district, so confirm them with your building manager or the city contact for the address. Check the handbook for items the city does not collect and separate disposal routes." },
+      ],
+      sourceIds: ["iwaki-waste"],
+      sourceFormatNote: "Iwaki's waste handbook page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "Resident tax in Iwaki",
+      summary: "Iwaki publishes annual resident-tax declaration instructions with district venues, mail submission, and electronic filing information.",
+      applicability: "Check Iwaki's current instructions if Iwaki was your municipality of residence on January 1 of the relevant year; confirm your personal filing obligation with the city.",
+      responsibleBody: "Iwaki City", receivingOffice: "The current-year venue for your district or the City Tax Division by post as instructed",
+      actions: [
+        { title: "Check the current-year declaration route", description: "Iwaki's FY2026 instructions cover income earned in 2025 and identify who may need a city and prefectural tax return, including some people with no taxable income. The city lists district-specific venues and says the ordinary tax counters do not accept returns during the filing period. Its instructions also describe postal and electronic submission routes. Check the current year's page for the exact period, venue, and required records before filing." },
+      ],
+      sourceIds: ["iwaki-resident-tax"],
+      sourceFormatNote: "Iwaki's tax instructions are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-25",
+      title: "Disaster planning in Iwaki",
+      summary: "Iwaki's 2026 disaster map covers flooding, tsunami, and landslide risks and distinguishes shelters from temporary evacuation places.",
+      applicability: "Check the map area for your home, work, and school and confirm a suitable destination for each hazard; follow live alerts during an event.",
+      responsibleBody: "Iwaki City",
+      actions: [
+        { title: "Check the district map for your address", description: "The city map combines river flooding, tsunami inundation, landslide risk, and evacuation facilities, with map sheets organized by district. The city also publishes a multilingual version in English, easy Japanese, and Vietnamese. Consult the detailed hazard maps for more specific inundation information and identify the nearest appropriate shelter or evacuation place for each relevant hazard." },
+        { title: "Confirm current conditions during an emergency", description: "Iwaki's map is for advance planning. During an event, check current city instructions and alerts; mapped facilities and routes do not by themselves show whether a site is open or a route is safe." },
+      ],
+      sourceIds: ["iwaki-disaster"],
+      sourceFormatNote: "Iwaki's disaster map page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-25",
+      title: "Language and consultation support in Iwaki",
+      summary: "Iwaki supports multicultural consultation, daily-life information, Japanese classes, and disaster-preparedness activities through the city and Iwaki International Association.",
+      applicability: "For residents seeking language or daily-life support in Iwaki; confirm current languages, availability, and the responsible provider before relying on a service.",
+      responsibleBody: "Iwaki City", receivingOffice: "Gender Equality and Multicultural Center; the city links to Iwaki International Association for service details",
+      actions: [
+        { title: "Ask about multicultural consultation", description: "The city describes multicultural consultation staff who provide communication support, daily-life consultation, and information about city services. The city page links to Iwaki International Association for service details. Confirm current languages, hours, appointment arrangements, and whether your question should go to the city or association." },
+        { title: "Find Japanese classes and practical support", description: "Iwaki says Japanese classes for foreign residents and volunteer training are provided through its multicultural program, with further details through Iwaki International Association. The city and association also run disaster-preparedness and easy-Japanese activities. Check current class dates, locations, eligibility, and any fee with the provider." },
+      ],
+      sourceIds: ["iwaki-multicultural"],
+      sourceFormatNote: "Iwaki's multicultural services page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "iwaki-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension procedures in Iwaki",
+      summary: "Iwaki directs Category I enrollment after leaving employee pension coverage to the city Insurance and Pension Division, nearby branches or service centers, or the Hirano Pension Office, and also links to online filing.",
+      applicability: "For people whose National Pension category requires a municipal procedure; check the national guide and confirm your category with the pension office.",
+      responsibleBody: "Iwaki City", receivingOffice: "City Hall Insurance and Pension Division, a nearby branch office or citizen service center, or the Hirano Pension Office",
+      actions: [
+        { title: "Prepare records for a Category I change", description: "When leaving employee pension coverage before age 60, Iwaki asks for evidence of the date that coverage ended, a document showing the basic pension number, and the applicant's identification. The city says a dependent spouse under 60 may also need to change categories. Its page links to the Japan Pension Service's online application procedure." },
+        { title: "Use the correct office for a dependent spouse", description: "A person becoming a Category III dependent applies through the employed spouse's workplace, according to Iwaki. Ask the workplace or Hirano Pension Office about overseas arrival, exemption, or other circumstances not covered by the cited city enrollment instructions." },
+      ],
+      sourceIds: ["iwaki-pension"],
+      sourceFormatNote: "Iwaki's National Pension page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "old-source", records: ["iwaki-national-health-insurance"], source: "National Health Insurance procedures", date: "August 1, 2025" },
+    { kind: "old-source", records: ["iwaki-national-pension"], source: "National Pension enrollment page", date: "April 1, 2024" },
+    { kind: "dated", records: ["iwaki-household-waste"], from: "2026-03-19", change: "The current handbook edition and district collection calendars can be revised; the city has also published a correction notice for the printed handbook.", action: "Check the latest handbook, correction notice, and calendar for the resident's district." },
+    { kind: "tax-year", records: ["iwaki-resident-tax"], statement: "The FY2026 resident-tax filing year, period, district venues, postal route, and electronic-filing information." },
+    { kind: "dated", records: ["iwaki-disaster-preparation"], from: "2025-06-01", change: "The city published its 2026-revision disaster map and district map sheets.", action: "Check for revised map sheets, hazard information, and evacuation facilities." },
+    { kind: "gap", records: ["iwaki-language-and-consultation"], gap: "The city page links to the International Association but does not itself specify consultation languages, hours, appointment rules, or current Japanese class schedules and fees." },
+    { kind: "gap", records: ["iwaki-national-pension"], gap: "The cited enrollment page does not detail the complete procedure for a new resident arriving from abroad or local exemption filing." },
+  ],
+});

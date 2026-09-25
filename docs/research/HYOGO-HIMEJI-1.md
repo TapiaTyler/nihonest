@@ -1,0 +1,15 @@
+# Himeji City local guidance research
+
+Inspected 2026-09-25. Official Himeji pages were fetched and reviewed from `.local-guidance/location-himeji/` saved Markdown files. Latest MIC resident-register table is the 2026-01-01 table, published 2026-07-29; Himeji's official monthly resident register reports 520,222 total residents (505,179 Japanese + 15,043 foreign residents) on 2026-01-01 ([city population PDF](https://www.city.himeji.lg.jp/shisei/cmsfiles/contents/0000004/4686/080101.pdf)). J-LIS's Hyogo municipality directory (updated October 27, 2025) lists Himeji as 姫路市 / ひめじし, code 282014.
+
+| Guide | Evidence | Claim boundary |
+|---|---|---|
+| Address registration | [Moving into Himeji](https://www.city.himeji.lg.jp/kurashi/0000006731.html) | Filing within 14 days, listed city and local counters, and documents for domestic and overseas moves; case-specific nationality, household, and office details need confirmation. |
+| National Health Insurance | [Joining after workplace coverage ends](https://www.city.himeji.lg.jp/kurashi/0000004340.html), [postal procedure](https://www.city.himeji.lg.jp/kurashi/0000012259.html), [foreign-resident explanation](https://www.city.himeji.lg.jp/kurashi/0000031592.html) | Specific office and online/postal routes, with event-specific documents; eligibility and unlisted filing events are not generalized. |
+| Household waste | [Clean-calendar search](https://www.city.himeji.lg.jp/kurashi/0000033506.html), [household waste guide](https://www.city.himeji.lg.jp/kurashi/category/2-10-3-0-0-0-0-0-0-0.html) | District/address calendars, multilingual links, and building caveats; exact district schedule, placement point, and item treatment need address-specific confirmation. |
+| Resident tax | [Resident-tax filing](https://www.city.himeji.lg.jp/kurashi/0000000608.html), [forms and annual guide](https://www.city.himeji.lg.jp/kurashi/0000000713.html) | City filing criteria, postal option, and current forms; annual dates/forms and each person's filing duty must be checked for the relevant year. |
+| Disaster preparation | [Wide-area hazard maps](https://www.city.himeji.lg.jp/anzen/0000016745.html) | Citywide block maps cover flood, landslide, and storm-surge risks and offer foreign-language editions; exact risk and live evacuation/shelter status require current address map and alerts. |
+| Language and local support | [Foreign Resident Consultation Center](https://www.city.himeji.lg.jp/kurashi/0000006260.html), [Japanese classes](https://www.city.himeji.lg.jp/kurashi/0000006610.html) | Published consultation availability and listed learning options; languages, admission, schedules, and costs vary by provider and can change. |
+| National Pension | [Enrollment categories and municipal counter](https://www.city.himeji.lg.jp/kurashi/0000003852.html), [premium information](https://www.city.himeji.lg.jp/kurashi/0000003922.html) | The cited enrollment page is dated 2013; guidance is limited to the counter and referral to current city/Japan Pension Service instructions, with a recheck recorded. |
+
+No shared sources were added. No warnings were retained by the targeted link/evidence check.

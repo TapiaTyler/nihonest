@@ -42,10 +42,10 @@ Generated from the location files by `npm run local-guidance -- generate` (also 
 |---|---:|---:|---|
 | Tokyo special wards | 23 | 23 | All 23 complete. |
 | Tokyo cities | 4 | 4 | All 4 complete. |
-| Designated cities | 20 | 3 | Complete: Nagoya City, Osaka City, Sakai City. |
+| Designated cities | 20 | 20 | All 20 complete. |
 | Prefectural capitals (not designated cities) | 31 | 0 | None started. |
-| Additional major cities (preliminary) | 28 | 0 | None started. |
-| **Total** | **106** | **30** | About 532 new supplements remain. |
+| Additional major cities (preliminary) | 28 | 28 | All 28 complete. |
+| **Total** | **106** | **75** | About 217 new supplements remain. |
 
 <!-- status:end -->
 

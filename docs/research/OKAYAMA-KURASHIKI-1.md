@@ -1,0 +1,18 @@
+# Kurashiki City local guidance research
+
+- Inspected: 2026-09-25
+- City: Kurashiki City (`jp-33202`), Okayama Prefecture
+- Population check: 471,025 residents on 2026-01-01, from the latest available Ministry of Internal Affairs and Communications resident-register statistics ([e-Stat 2026 survey, released 2026-07-29](https://www.e-stat.go.jp/stat-search/files?layout=dataset&query=%E5%B8%82%E7%94%BA%E6%9D%91%E3%80%80%E4%BA%BA%E5%8F%A3)). This confirms eligibility as an additional major city (300,000+).
+- Official registry: [J-LIS Okayama municipality table](https://www.j-lis.go.jp/spd/code-address/chuugoku/cms_15414184.html) lists code `332020`, name 倉敷市, reading くらしきし. The code's five-digit identity is `33202`; check digit is `0`.
+
+| Guide | Official evidence inspected | Claim boundary |
+|---|---|---|
+| Address registration | [Moving-in notification](https://www.city.kurashiki.okayama.jp/kurashi/koseki/1003029/1003071/1003072.html), [foreign-resident registration](https://www.city.kurashiki.okayama.jp/kurashi/koseki/1003081/1003083.html) | Covers city counters, 14-day filing period, and key move/arrival records. Counter and exact document requirements depend on the case and address. |
+| National Health Insurance | [Enrollment for foreign residents](https://www.city.kurashiki.okayama.jp/kurashi/hoken/1004520/1004521/1010945.html) | Covers city eligibility overview, supporting proof, and named city and branch counters; national eligibility rules remain in the national guide. |
+| Household waste | [Collection days by area](https://www.city.kurashiki.okayama.jp/kurashi/kankyo/1003645/1013690/1003647/1003660.html) | Directs readers to current area calendars and the environmental center or neighborhood association for address-specific collection details. No schedule is reproduced. |
+| Disaster preparation | [Hazard-map overview](https://www.city.kurashiki.okayama.jp/anzen/disaster/1002627/1002683/1011275.html), [evacuation locations](https://www.city.kurashiki.okayama.jp/anzen/disaster/1002627/1002677/1011274.html) | Identifies the city's map resources and need to verify current map layers and open evacuation sites; does not assign a site without an address. |
+| Language and local support | [Foreign-resident consultation](https://www.city.kurashiki.okayama.jp/culture/global/1005407/1011017.html), [Japanese classes](https://www.city.kurashiki.okayama.jp/culture/global/1005171/1005134/1005155/index.html) | Describes the city consultation desk and member-group classes; readers should confirm availability and class details with the provider. |
+| Income and resident tax | [Resident-tax return overview](https://www.city.kurashiki.okayama.jp/kurashi/tax/1001559/1014528/1001560/1001567.html) | Gives the city's general return rule and listed exceptions. Tax liability and filing duties depend on the relevant year and individual income. |
+| National Pension | [Enrollment and withdrawal procedures](https://www.city.kurashiki.okayama.jp/kurashi/hoken/1003115/1015233.html) | Explains municipality-handled filings at a high level. Direct readers to the city or Japan Pension Service for current documents and counters. |
+
+The fetched Markdown pages were read from `.local-guidance/location-kurashiki/` and `.local-guidance/research-g3-west/`. All records remain `needs-review`. The pension overview's counter and document details warrant follow-up; the Japanese-class page does not state a publication date, so both have recheck items. The hazard-map page says some GIS information reflects March 2023, which is also flagged for recheck. No shared sources were added.
