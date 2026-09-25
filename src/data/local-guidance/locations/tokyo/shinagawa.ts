@@ -1,0 +1,113 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Shinagawa City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13109", name: "Shinagawa City", aliases: ["Shinagawa","Shinagawa Ward","Shinagawa-ku"] },
+  sources: [
+    { id: "shinagawa-moving-in-domestic", title: "Moving into Shinagawa from another municipality", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-zyuumin_inkan/procedure-zyuumin_inkan-zyuumin/procedure-zyuumin_inkan-zyuumin-todoke/tennyu20241020.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "shinagawa-moving-in-overseas", title: "Moving into Shinagawa from abroad", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-zyuumin_inkan/procedure-zyuumin_inkan-zyuumin/procedure-zyuumin_inkan-zyuumin-todoke/20241025kokugaitennyu.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "shinagawa-national-health-insurance-procedures", title: "National Health Insurance joining notifications", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-kenkouhoken/procedure-kenkouhoken-todokede/hpg000001509.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-national-health-insurance-postal", title: "National Health Insurance joining by post", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-kenkouhoken/procedure-kenkouhoken-todokede/20200325095605.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-national-pension-procedures", title: "National Pension joining and contribution-relief procedures", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-nenkin/20191225091839.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "shinagawa-household-waste-burnable", title: "Burnable waste", url: "https://www.city.shinagawa.tokyo.jp/PC/kankyo/kankyo-gomi/gomi-kateigomi/gomi-kateigomi-dashikata/hpg000005604.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-household-waste-bulky", title: "Putting out bulky waste", url: "https://www.city.shinagawa.tokyo.jp/PC/kankyo/kankyo-gomi/gomi-sodai/20240807165625.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-disaster-flood-maps", title: "Flood hazard maps and flood records", url: "https://www.city.shinagawa.tokyo.jp/PC/bosai/bosai2/taihu/hpg000020939.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-disaster-sheltering-at-home", title: "Portable toilets and sheltering at home", url: "https://www.city.shinagawa.tokyo.jp/PC/bosai/bosai2/20240621153952.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-foreign-residents", title: "For foreigners (multilingual information)", url: "https://www.city.shinagawa.tokyo.jp/PC/chiiki/kokusai/tabunka/20200512111849.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-international-friendship-association", title: "Shinagawa International Friendship Association", url: "https://www.city.shinagawa.tokyo.jp/PC/chiiki/kokusai/kokusai/20250328143515.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-resident-tax-filing", title: "Filing a special ward inhabitant tax return", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-zeikin/procedure-zeikin-sinkoku/procedure-zeikin-sinkoku-kuminzei/procedure-zeikin-sinkoku-kuminzei-kozin/hpg000001465.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shinagawa-resident-tax-leaving-japan", title: "Inhabitant tax when leaving Japan", url: "https://www.city.shinagawa.tokyo.jp/PC/procedure/procedure-zeikin/procedure-zeikin-sinkoku/procedure-zeikin-sinkoku-kuminzei/procedure-zeikin-sinkoku-kuminzei-kozin/20190711154408.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "shinagawa-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Shinagawa",
+      summary: "Shinagawa City has separate instructions for moves from another Japanese municipality and arrivals from abroad.",
+      applicability: "Use this route only when your actual home is in Shinagawa City.",
+      responsibleBody: "Shinagawa City", receivingOffice: "Resident Registration Section at the City Office or a counter permitted for your case",
+      actions: [
+        { title: "Use the overseas checklist when entering from abroad", description: "File within 14 days after you begin living at the address. Foreign residents arriving from abroad should bring passports and residence cards or special permanent resident certificates for everyone moving; original family-relationship records and Japanese translations may be needed to record relationships. Shinagawa accepts new-entry and re-entry resident registration for foreign residents on weekdays until 5 p.m., not at Tuesday extended or Sunday counters. Confirm the receiving counter and current documents before visiting." },
+      ],
+      sourceIds: ["shinagawa-moving-in-domestic","shinagawa-moving-in-overseas"],
+      sourceFormatNote: "The current detailed procedures are in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Shinagawa",
+      summary: "Shinagawa accepts joining notices at its insurance desk and listed regional centers, with postal filing for a narrower workplace-coverage-loss case.",
+      applicability: "Use Shinagawa's procedure if Shinagawa is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Shinagawa City", receivingOffice: "National Health Insurance and Medical Pension Section Qualification Desk at the ward office, or one of the regional centers listed on the joining page",
+      actions: [
+        { title: "Match your joining event to Shinagawa's table", description: "Shinagawa asks for a joining notice within 14 days and My Number information for the household head and everyone joining. Its table distinguishes a move from another municipality, loss of workplace or dependent coverage, birth, and the end of public assistance. A person joining after workplace coverage ends needs proof of the end date. Foreign residents should ask the ward about residence-status and stay-period requirements; a Designated Activities resident needs the designation document." },
+        { title: "Use post only for the stated workplace-coverage case", description: "Shinagawa's postal joining route is for someone who lost workplace health insurance and can provide a qualification-loss or retirement certificate. Send the ward's movement notice and a copy of that proof to the Qualification Desk. Only the household head, the person joining, or a member of the same registered household may file by post; the page does not offer postal joining for a move-in." },
+      ],
+      sourceIds: ["shinagawa-national-health-insurance-procedures","shinagawa-national-health-insurance-postal"],
+      sourceFormatNote: "Shinagawa's current joining and postal procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Shinagawa",
+      summary: "Shinagawa collects burnable waste from each household in see-through bags by 8 a.m. (7:30 a.m. in early-collection areas), and collects bulky waste of about 30 cm or more by paid application.",
+      applicability: "Collection days differ by area. New residents should contact the Shinagawa cleaning office.",
+      responsibleBody: "Shinagawa City",
+      actions: [
+        { title: "Put burnable waste out by 8 a.m. in a see-through bag", description: "Shinagawa collects burnable waste from each household: at the designated place on the grounds for apartments, or at your entrance or gate for houses. Put it out by 8 a.m. on collection day (7:30 a.m. in early-collection areas) in a see-through bag, even if you also use a lidded container, and no more than four 45-liter bags at a time. Clean plastics go out as recyclables. New residents should contact the Shinagawa cleaning office." },
+        { title: "Book bulky waste early", description: "Items of about 30 cm or more on a side are bulky waste. Apply to the Shinagawa bulky waste reception center online at any time or by phone from Monday to Saturday, including holidays, 8 a.m. to 7 p.m., leaving plenty of time. If you pay electronically online, you do not need tickets; write the reception number, collection date, item, and amount on paper and tape it to each item." },
+      ],
+      sourceIds: ["shinagawa-household-waste-burnable","shinagawa-household-waste-bulky"],
+      sourceFormatNote: "Shinagawa's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Shinagawa",
+      summary: "Shinagawa charges special ward inhabitant tax at your January 1 address; if you leave Japan with tax still to pay, you pay in full, set up account transfer, or name a tax agent.",
+      applicability: "Use Shinagawa's route when you lived in Shinagawa City on January 1 of the tax year.",
+      responsibleBody: "Shinagawa City", receivingOffice: "Taxation Section, Tax Division, Shinagawa City Office",
+      actions: [
+        { title: "File if your income was not reported", description: "If you lived in Shinagawa on January 1 and had income the previous year, file with the ward unless you file an income-tax return. This includes employees whose employer did not send a salary report to the ward and people claiming deductions such as medical expenses. File before the tax notice is delivered, or the return may not be reflected in the tax." },
+        { title: "Settle the tax before leaving Japan", description: "If you leave Japan and still owe tax, pay it in full, set up account transfer, or name a tax agent (nozei kanrinin) who pays for you. If you leave between January and June, the notice for the previous year's income arrives in early June, so name a tax agent before you leave. If you leave a job and salary deduction stops, you pay the rest yourself. Leaving without filing a moving-out notice means you are still treated as living in the ward." },
+      ],
+      sourceIds: ["shinagawa-resident-tax-filing","shinagawa-resident-tax-leaving-japan"],
+      sourceFormatNote: "Shinagawa's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Shinagawa",
+      summary: "Shinagawa recommends sheltering at home after a disaster if your home is not at risk of collapse or spreading fire, and its disaster map includes flood hazard maps for heavy rain and the Tama River.",
+      applicability: "Check your flood risk and shelters on the Shinagawa disaster map ahead of time; during heavy rain or typhoons, watch for evacuation information from the ward.",
+      responsibleBody: "Shinagawa City",
+      actions: [
+        { title: "Prepare to shelter at home", description: "Shinagawa recommends staying at home after a large disaster if you are not worried about collapse or spreading fire. Prepare water, food, and toilets: when water is cut, toilets cannot be used normally. The ward's leaflet on sheltering at home and disaster toilets is available in English, Chinese, and Korean." },
+        { title: "Check the flood hazard maps", description: "The Shinagawa disaster map includes a flood hazard map showing expected flooding from heavy rain, both river overflow and drainage overflow, with maximum depth and shelters, and a Tama River flood map. Low-lying land along rivers can flood deeply, but so can low ground away from rivers. For heavy rain and typhoons, the ward may issue evacuation information." },
+      ],
+      sourceIds: ["shinagawa-disaster-sheltering-at-home","shinagawa-disaster-flood-maps"],
+      sourceFormatNote: "Shinagawa's disaster pages are in Japanese, with some leaflets in English, Chinese, and Korean. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and local support in Shinagawa",
+      summary: "Shinagawa shares information for foreigners in several languages and its website can be machine-translated into 131 languages; the Shinagawa International Friendship Association runs Japanese classes.",
+      applicability: "For foreign residents of Shinagawa. Shinagawa's pages checked in this batch do not describe a ward-run multilingual consultation desk.",
+      responsibleBody: "Shinagawa City",
+      actions: [
+        { title: "Use the multilingual information", description: "Shinagawa's page for foreigners, in Japanese, Easy Japanese, and English, links to information in foreign languages, and the ward website can be viewed in 131 languages through automatic translation." },
+        { title: "Join a Japanese class", description: "The Shinagawa International Friendship Association runs Japanese classes for foreign residents of the ward; see its website for details." },
+      ],
+      sourceIds: ["shinagawa-foreign-residents","shinagawa-international-friendship-association"],
+      sourceFormatNote: "Shinagawa's pages are in Japanese, with Easy Japanese and English on the page for foreigners. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shinagawa-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Shinagawa",
+      summary: "Shinagawa directs foreign residents' National Pension enrollment to its ward pension section, while specified regional centers take several Category I changes.",
+      applicability: "Use Shinagawa's procedure if Shinagawa is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Shinagawa City", receivingOffice: "National Pension Section at Shinagawa City Office; the listed regional centers take eligible Category I changes but not contribution-relief applications",
+      actions: [
+        { title: "Match the enrollment event to its documents", description: "Shinagawa says foreign residents who need National Pension enrollment should use the ward's National Pension Section. Its procedure table lists a Basic Pension Number record and passport for a person returning from abroad, but does not give a separate first-time arrival document list; ask the section what applies to your case. After leaving employee pension coverage, bring a pension-number record and proof of the retirement or coverage-loss date. After leaving spousal dependent coverage, bring proof that the dependent status ended. The main section or one of the named regional centers accepts those listed changes; bring identity evidence, and check authorization rules if a representative files." },
+        { title: "Keep contribution relief at the main section", description: "For contribution exemption, payment postponement, or Student Special Payment, Shinagawa directs applicants to the ward's National Pension Section rather than a regional center. The table lists pension-number evidence and a student ID for the student application, with additional separation records possible in some cases. The ward links to My Number Portal electronic applications for the listed notifications; check the current Japan Pension Service form for your particular event before using it." },
+      ],
+      sourceIds: ["shinagawa-national-pension-procedures"],
+      sourceFormatNote: "Shinagawa's current National Pension procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+});

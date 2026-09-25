@@ -3,45 +3,23 @@ import { administrativeGeographies, administrativeGeographySources, getAdministr
 import { supportedGeographies } from "@/data/local-guidance/geographies";
 
 describe("national geography snapshot", () => {
-  it("covers 47 prefectures, all 62 Tokyo municipalities, and all 171 wards of 20 designated cities", () => {
-    expect(administrativeGeographies).toHaveLength(300);
+  it("covers 47 prefectures, all 62 Tokyo municipalities, and 20 designated cities without their wards", () => {
+    expect(administrativeGeographies).toHaveLength(129);
     expect(administrativeGeographies.filter(({ type }) => type === "prefecture" || type === "metropolis").map(({ prefectureCode }) => prefectureCode))
       .toEqual(Array.from({ length: 47 }, (_, index) => String(index + 1).padStart(2, "0")));
     expect(administrativeGeographies.filter(({ type }) => type === "special-ward")).toHaveLength(23);
-    expect(administrativeGeographies.filter(({ type }) => type === "administrative-ward")).toHaveLength(171);
+    // Designated cities run local procedures for all their wards, so ward records are not kept.
+    expect(administrativeGeographies.filter(({ type }) => type === "administrative-ward")).toHaveLength(0);
     // Tokyo: 23 special wards plus the Tama area and islands (26 cities, 5 towns, 8 villages).
     const tokyoTypes = getAdministrativeGeographyChildren("jp-13000").map(({ type }) => type);
     expect(tokyoTypes.filter((type) => type === "city")).toHaveLength(26);
     expect(tokyoTypes.filter((type) => type === "town")).toHaveLength(5);
     expect(tokyoTypes.filter((type) => type === "village")).toHaveLength(8);
-    const expectedWardCounts = {
-      "01100": 10, "04100": 5, "11100": 10, "12100": 6, "14100": 18,
-      "14130": 7, "14150": 3, "15100": 8, "22100": 3, "22130": 3,
-      "23100": 16, "26100": 11, "27100": 24, "27140": 7, "28100": 9,
-      "33100": 4, "34100": 8, "40100": 7, "40130": 7, "43100": 5,
-    };
-    expect(administrativeGeographies.filter(({ type }) => type === "designated-city")).toHaveLength(20);
-    for (const [code, count] of Object.entries(expectedWardCounts)) {
-      const children = getAdministrativeGeographyChildren(`jp-${code}`);
-      expect(children).toHaveLength(count);
-      expect(children.every(({ type }) => type === "administrative-ward")).toBe(true);
-    }
-  });
-
-  it("keeps same-named wards distinct by code and parent", () => {
-    const tokyoChuo = getAdministrativeGeographyByCode("13102")!;
-    const sapporoChuo = getAdministrativeGeographyByCode("01101")!;
-    expect(tokyoChuo.type).toBe("special-ward");
-    expect(sapporoChuo.type).toBe("administrative-ward");
-    expect(tokyoChuo.parentId).toBe("jp-13000");
-    expect(sapporoChuo.parentId).toBe("jp-01100");
-    expect(getAdministrativeGeographyAncestors(sapporoChuo.id).map(({ id }) => id)).toEqual(["jp-01000", "jp-01100"]);
-  });
-
-  it("uses Hamamatsu's current three wards and excludes retired codes, including former Tenryu", () => {
-    expect(getAdministrativeGeographyChildren("jp-22130").map(({ code }) => code)).toEqual(["22138", "22139", "22140"]);
-    for (const code of ["22131", "22132", "22133", "22134", "22135", "22136", "22137"]) {
-      expect(getAdministrativeGeographyByCode(code)).toBeUndefined();
+    const designatedCities = administrativeGeographies.filter(({ type }) => type === "designated-city");
+    expect(designatedCities).toHaveLength(20);
+    for (const city of designatedCities) {
+      expect(getAdministrativeGeographyChildren(city.id)).toHaveLength(0);
+      expect(getAdministrativeGeographyAncestors(city.id).map(({ id }) => id)).toEqual([`jp-${city.prefectureCode}000`]);
     }
   });
 
@@ -64,7 +42,7 @@ describe("national geography snapshot", () => {
 
   it("has a dated source for every record and only source-backed readings", () => {
     const uniqueCodes = new Set(administrativeGeographies.map(({ localGovernmentCode }) => localGovernmentCode));
-    expect(uniqueCodes.size).toBe(300);
+    expect(uniqueCodes.size).toBe(129);
     for (const source of administrativeGeographySources) {
       expect(new URL(source.url).hostname).toBe("www.j-lis.go.jp");
       expect(source.retrievedAt).toBe("2026-09-23");

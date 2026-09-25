@@ -1,0 +1,113 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Sakai City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-27140", name: "Sakai City", aliases: ["Sakai","Sakai-shi"] },
+  sources: [
+    { id: "sakai-moving-procedures", title: "Moving-in, moving-out, and moving notifications", url: "https://www.city.sakai.lg.jp/kurashi/todokede/tenkyo/tennyushutsushosai.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-national-health-insurance-notifications", title: "National Health Insurance notifications within 14 days", url: "https://www.city.sakai.lg.jp/kurashi/honen/kokuho/kokumin_kenkouhoken/14niti.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-national-health-insurance-remote-joining", title: "National Health Insurance joining by post or electronic application", url: "https://www.city.sakai.lg.jp/kurashi/honen/kokuho/kokumin_kenkouhoken/enroll.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-household-waste-rules", title: "How to put out household waste", url: "https://www.city.sakai.lg.jp/kurashi/gomi/gomi_recy/bunbetsu/shigen/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-household-waste-bulky", title: "Bulky waste and small non-combustible items by application", url: "https://www.city.sakai.lg.jp/kurashi/gomi/gomi_recy/bunbetsu/shigen/sodaigomi/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-disaster-shelters", title: "Designated shelters by ward", url: "https://www.city.sakai.lg.jp/kurashi/bosai/shiru/hinanbasyo/hinan/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-disaster-handbook-foreign-residents", title: "Disaster preparedness handbook for foreign residents", url: "https://www.city.sakai.lg.jp/shisei/kokusai/kyosei/hasshin_teikyou/bousai-handbooku.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-foreign-resident-consultation", title: "Living consultation for foreign residents", url: "https://www.city.sakai.lg.jp/shisei/kokusai/kyosei/seikatsu/seikatsu_sodan.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-japanese-classes", title: "Japanese classes and learning materials", url: "https://www.city.sakai.lg.jp/shisei/kokusai/kyosei/seikatsu/nihongo/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-tax-facts", title: "Sakai City Tax Facts", url: "https://www.city.sakai.lg.jp/foreign-language/english/visitors/living/dailylife/tax.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-national-pension-notifications", title: "National Pension notifications for members and recipients", url: "https://www.city.sakai.lg.jp/kurashi/honen/nenkin/kokunen_gaiyou/todokede.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sakai-national-pension-relief", title: "National Pension contribution exemptions and postponement", url: "https://www.city.sakai.lg.jp/kurashi/honen/nenkin/hokenryou/menjo.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "sakai-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-24",
+      title: "Registering an address in Sakai",
+      summary: "Sakai accepts the moving-in notification at the Citizens Section of the ward office for your new address within 14 days, and not by post.",
+      applicability: "Use this route only for an address within Sakai City; the ward office is part of the city, not a separate municipality.",
+      responsibleBody: "Sakai City", receivingOffice: "Citizens Section of the ward office for your new address",
+      actions: [
+        { title: "File within 14 days at your ward office", description: "The person moving or the household head files the moving-in notification within 14 days after moving, at the Citizens Section of the ward office for the new address; it cannot be filed by post. From another municipality, bring the moving-out certificate (or your My Number Card after a special moving-out notice) and identity documents. A representative from outside the household needs a letter of authorization, and if the household head is a foreign resident, bring an official document proving the relationship." },
+        { title: "Bring passports for an arrival from abroad", description: "For a move from abroad, bring the passport of everyone moving, whatever their nationality, with the entry stamp; if you used an automated gate and the passport shows no entry date, also bring a boarding-pass stub or printed e-ticket showing the date. A temporary return by someone not planning to live in Japan for a year or more does not use this procedure." },
+      ],
+      sourceIds: ["sakai-moving-procedures"],
+      sourceFormatNote: "Sakai's current moving procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sakai-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Sakai",
+      summary: "Sakai's ward offices handle National Health Insurance; the household head files within 14 days, and joining after leaving workplace coverage or moving in from another municipality's insurance can also be done by post or online.",
+      applicability: "Use Sakai's procedure if you live in Sakai City and municipal National Health Insurance is the right coverage route for you. The same procedure applies in all 7 wards.",
+      responsibleBody: "Sakai City", receivingOffice: "Insurance and Pension Section of the ward office for your address",
+      actions: [
+        { title: "File within 14 days, and know what a late filing costs", description: "The household head files within 14 days at the ward office's Insurance and Pension Section, with identity documents and a seal; someone from outside the household needs a letter of authorization. When moving in while insured by another municipality's National Health Insurance, bring a cash card and the bank seal to set up premium transfer. When leaving workplace coverage, bring a certificate of the health-insurance loss date. If you file late, premiums still run from the month you became eligible, and medical costs in the gap are fully self-paid unless there was an emergency or other unavoidable reason." },
+        { title: "Use post or the electronic system for eligible cases", description: "Joining by post or through the city's electronic application system is open to people leaving workplace coverage (including voluntary continuation and dependents), people moving in from another municipality's National Health Insurance, and people whose public assistance has ended. The household head files, not before the event. The electronic route needs an electronic signature, such as with a My Number Card, and the coverage-loss certificate must show the health-insurance loss date, not the employment-insurance loss or retirement date. Coverage documents take two to three weeks to arrive by these routes." },
+      ],
+      sourceIds: ["sakai-national-health-insurance-notifications","sakai-national-health-insurance-remote-joining"],
+      sourceFormatNote: "Sakai's current procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sakai-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Sakai",
+      summary: "Sakai collects household waste in clear or white translucent bags on fixed schedules by category, and residents moving into a detached house must apply for collection first.",
+      applicability: "Use the city's sorting app or calendar for your exact address; collection days differ by area.",
+      responsibleBody: "Sakai City",
+      actions: [
+        { title: "Apply if you live in a house, then sort and bag correctly", description: "If you move into a detached house, apply for waste collection before putting any out. Use clear or white translucent bags of 45 liters or less (shop bags are fine), tied closed; unbagged waste and cardboard boxes are not collected. Daily-life waste is collected twice a week, plastic containers and packaging once a week, and cans and bottles for food and drink and PET bottles twice a month. The city's sorting app shows each item's category and your area's collection calendar." },
+        { title: "Apply for bulky waste and small non-combustibles", description: "Durable items longer than about 30 centimeters are bulky waste (with a fee); non-combustible items 30 centimeters or smaller are collected free. Both need an application, which can be made online at any time with cashless payment available, or by phone for items that need discussion. Televisions, air conditioners, and other specified appliances are not collected by the city." },
+      ],
+      sourceIds: ["sakai-household-waste-rules","sakai-household-waste-bulky"],
+      sourceFormatNote: "Sakai's current waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sakai-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Sakai",
+      summary: "Sakai's English tax guide explains that municipal and prefectural inhabitant tax is paid where you were registered on January 1, based on the previous year's income, including when you leave Japan.",
+      applicability: "Use Sakai's route when your address was registered in Sakai City on January 1 of the tax year.",
+      responsibleBody: "Sakai City", receivingOffice: "Your ward office",
+      actions: [
+        { title: "Declare income unless your employer reports it", description: "Municipal and prefectural inhabitant tax is paid together, to the municipality where your address was registered on January 1, and is calculated on the previous year's income. Declare your income and deductible expenses by March 15 at the ward office's declaration venue, unless your employer submits a salary payment report for you." },
+        { title: "Settle the tax before leaving Japan", description: "If you lived in Sakai on January 1, you must still pay that year's tax when you leave Japan: pay the full amount before leaving, or appoint a tax agent to pay for you and notify your ward office, and consult the ward office if you cannot appoint one. Taxes can be paid at banks and post offices, convenience stores, by payment apps, by account transfer, or online." },
+      ],
+      sourceIds: ["sakai-tax-facts"],
+      sourceFormatNote: "Sakai publishes this guide in English. The ward office handles individual cases.",
+    },
+    {
+      id: "sakai-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Sakai",
+      summary: "Sakai designates shelters for each type of disaster, listed by ward, and publishes a disaster handbook for foreign residents.",
+      applicability: "Check the shelters near your exact address for both earthquakes and storms or floods; during an event, follow live instructions from the city.",
+      responsibleBody: "Sakai City",
+      actions: [
+        { title: "Find your ward's shelters for each kind of disaster", description: "Sakai designates shelters separately for earthquakes and for storm and flood damage, and lists them for each of its seven wards. Check the nearest shelter for each kind of disaster before you need it." },
+        { title: "Read the handbook for foreign residents", description: "The city's disaster handbook for foreign residents explains everyday preparation and what to do when a disaster happens. The city's International Division and the Multicultural Exchange Plaza (POME Sakai) are listed as contacts." },
+      ],
+      sourceIds: ["sakai-disaster-shelters","sakai-disaster-handbook-foreign-residents"],
+      sourceFormatNote: "Sakai's shelter and handbook pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sakai-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Sakai",
+      summary: "Sakai's Multicultural Exchange Plaza offers free living consultation for foreign residents in up to 11 languages, and the city runs Japanese classes for beginners.",
+      applicability: "For foreign residents who live, work, or study in Sakai. Consultation gives information and advice and may refer you to another office.",
+      responsibleBody: "Sakai City", receivingOffice: "Multicultural Exchange Plaza Sakai (POME Sakai)",
+      actions: [
+        { title: "Use the living consultation desk", description: "Counselors at the Multicultural Exchange Plaza give living and administrative information, in person in 11 languages using translation devices, or by phone in 8 languages through three-way calls. Both run on weekdays from 10 a.m. to noon and 1 p.m. to 4 p.m., except holidays and the New Year period. The Osaka Foundation of International Exchange also offers consultation in more languages." },
+        { title: "Join a Japanese class", description: "Sakai runs Japanese classes for foreign residents, including classes for complete beginners, and publishes free beginner materials. Check the city's page for the current classes." },
+      ],
+      sourceIds: ["sakai-foreign-resident-consultation","sakai-japanese-classes"],
+      sourceFormatNote: "Sakai's consultation and class pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sakai-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "National Pension in Sakai",
+      summary: "Sakai's ward offices take Category I pension filings, including enrollment after returning from abroad, and contribution relief can also be applied for online.",
+      applicability: "Use Sakai's procedure if you live in Sakai City and your coverage category calls for a National Pension filing. The same procedure applies in all 7 wards.",
+      responsibleBody: "Sakai City", receivingOffice: "Insurance and Pension Section of the ward office for your address; Sakai-Higashi Pension Office for pension benefits",
+      actions: [
+        { title: "Match your event to Sakai's table", description: "People aged 20 to under 60 who leave a job, stop being a dependent spouse, or move to Sakai after living abroad and fall under Category I join National Pension at the ward office. Bring your pension handbook, Basic Pension Number notice, or My Number card, identity documents, and, when leaving a job, a document such as a separation notice. A move from another municipality needs no notice if your My Number is linked to your Basic Pension Number. Starting a job or becoming a dependent spouse is handled through the employer." },
+        { title: "Apply for contribution relief if paying is hard", description: "Sakai explains statutory exemptions, income-based full or partial exemptions, postponement for people under 50, the Student Special Payment System, and the exemption around childbirth. Students use the Student Special Payment System rather than the income-based exemptions. Exemption, postponement, student, and childbirth applications can also be made through Mynaportal. Exemption and postponement periods run from July to the following June, and an application can cover up to two years and one month before the application date." },
+      ],
+      sourceIds: ["sakai-national-pension-notifications","sakai-national-pension-relief"],
+      sourceFormatNote: "Sakai's current pension pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+});

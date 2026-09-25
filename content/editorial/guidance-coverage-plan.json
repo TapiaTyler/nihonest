@@ -284,5 +284,9 @@
       "plannedArticleIds": [],
       "summary": "Audit natural Japanese terminology, ordinary-language and occupation search terms, FAQs, groups, journeys, residence-status comparisons, and the educational activity cross-reference after canonical research stabilizes."
     }
+  ],
+  "excludedArticles": [
+    { "id": "using-ibkr-japan-to-trade-us-stocks", "reason": "Specially requested one-off guide to a single broker's accounts; not part of the research-batch rotation." },
+    { "id": "reporting-ibkr-japan-investments-on-japanese-taxes", "reason": "Specially requested one-off guide to a single broker's accounts; not part of the research-batch rotation." }
   ]
 }

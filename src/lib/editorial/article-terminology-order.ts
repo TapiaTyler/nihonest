@@ -7,7 +7,8 @@ function uniqueInOrder(ids: readonly string[]) {
 /** Reads the explicit terminology list from an article's exported MDX metadata. */
 export function getDeclaredArticleTermIds(source: string): readonly string[] {
   const metadataMatch = source.match(/termIds\s*:\s*\[([^\]]*)\]/);
-  if (!metadataMatch?.[1]) throw new Error("Article metadata must declare termIds.");
+  // An empty list (`termIds: []`) is a valid declaration; only a missing one is an error.
+  if (metadataMatch?.[1] === undefined) throw new Error("Article metadata must declare termIds.");
 
   const ids = [...metadataMatch[1].matchAll(/"([a-z0-9-]+)"/g)]
     .map((match) => match[1])

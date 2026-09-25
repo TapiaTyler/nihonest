@@ -7,6 +7,7 @@ import { immigrationServicesSourceEntries } from "@/data/sources/immigration-ser
 import { municipalIdentitySourceEntries } from "@/data/sources/municipal-identity";
 import { taxBusinessConsumerSourceEntries } from "@/data/sources/tax-business-consumer";
 import { sources } from "@/data/sources";
+import { localGuidanceSourceEntries } from "@/data/local-guidance";
 
 const sourceEntries = [
   ...immigrationServicesSourceEntries,
@@ -16,6 +17,7 @@ const sourceEntries = [
   ...educationLanguageSourceEntries,
   ...municipalIdentitySourceEntries,
   ...dailyLifeSafetySourceEntries,
+  ...localGuidanceSourceEntries,
 ];
 
 describe("official source registry assembly", () => {

@@ -4,6 +4,7 @@ import { sortAdministrativeGeographies } from "@/domain/geography/administrative
 import { englishGeographyName } from "@/domain/geography/english-name";
 import type { FinderPrefecture } from "@/domain/geography/prefecture";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
+import { getResearchedMunicipalityIds } from "./local-guidance";
 
 export type FinderCoverage = Readonly<{
   prefectureId: string;
@@ -26,6 +27,8 @@ export type FinderMunicipality = Readonly<{
   name: string;
   prefectureId: string;
   parentId?: string;
+  /** Designated cities run procedures city-wide through ward offices whose details can differ. */
+  isDesignatedCity: boolean;
 }>;
 
 export const prefectureNationalGuides = [
@@ -51,14 +54,17 @@ export function getPrefectureFinderData(): { prefectures: FinderPrefecture[]; mu
     "en",
   ).map((record) => ({ id: record.id, code: record.code, names: { en: record.names.en!, ja: record.names.ja } }));
 
+  // Only municipalities with researched guidance are offered; "Other" in the finder covers the rest of the prefecture.
+  const researched = getResearchedMunicipalityIds();
   const municipalities = administrativeGeographies
-    .filter((record) => record.type !== "prefecture" && record.type !== "metropolis")
+    .filter((record) => record.type !== "prefecture" && record.type !== "metropolis" && researched.has(record.id))
     .map((record) => ({
       id: record.id,
       code: record.code,
       parentId: record.parentId,
       name: englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),
       prefectureId: `jp-${record.prefectureCode}000`,
+      isDesignatedCity: record.type === "designated-city",
     }));
 
   const coverage = supportedGeographies.flatMap((geography) => {

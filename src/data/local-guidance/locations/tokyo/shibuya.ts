@@ -1,0 +1,116 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Shibuya City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13113", name: "Shibuya City", aliases: ["Shibuya","Shibuya Ward","Shibuya-ku"] },
+  sources: [
+    { id: "shibuya-moving-in-domestic", title: "Moving in from another municipality for foreign residents", url: "https://www.city.shibuya.tokyo.jp/kurashi/gaikokujin/jumin/f_t_tennyu.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "shibuya-moving-in-overseas", title: "Moving in from abroad for foreign residents", url: "https://www.city.shibuya.tokyo.jp/kurashi/gaikokujin/jumin/f_t_tennyu_kaigai.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "shibuya-national-health-insurance-procedures", title: "National Health Insurance notifications by event", url: "https://www.city.shibuya.tokyo.jp/kurashi/kokuho/kokuho/kokuho_tetsuzuki_todokede.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-national-health-insurance-remote", title: "National Health Insurance postal and online joining procedures", url: "https://www.city.shibuya.tokyo.jp/kurashi/kokuho/kokuho/yusotetsuduki.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-national-pension-procedures", title: "National Pension event, document, and counter table", url: "https://www.city.shibuya.tokyo.jp/kurashi/nenkin/shikaku-menjo/nenkin_tetsuzuki_todokede.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "shibuya-national-pension-relief", title: "National Pension contribution relief", url: "https://www.city.shibuya.tokyo.jp/kurashi/nenkin/shikaku-menjo/menjo.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "shibuya-household-waste-english", title: "Garbage and recycling (Living in Shibuya)", url: "https://www.city.shibuya.tokyo.jp/contents/living-in-shibuya/en/daily/garbage.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-household-waste-bulky", title: "Bulky waste", url: "https://www.city.shibuya.tokyo.jp/kurashi/gomi/kateigomi/gomi_sodai.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-disaster-earthquakes-english", title: "Earthquakes (Living in Shibuya)", url: "https://www.city.shibuya.tokyo.jp/contents/living-in-shibuya/en/emergencies/earthquakes.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-disaster-evacuation-places", title: "Gathering places, evacuation places, and stay-in-district areas", url: "https://www.city.shibuya.tokyo.jp/bosai/bosai/hinan/basyo.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-foreign-language-counseling", title: "Foreign language counseling (Living in Shibuya)", url: "https://www.city.shibuya.tokyo.jp/contents/living-in-shibuya/en/foreign-language/foreign-language.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-japanese-classes", title: "Japanese classes", url: "https://www.city.shibuya.tokyo.jp/kurashi/gaikoku-info/gaikoku-info/nihongo_school.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "shibuya-resident-tax-english", title: "Taxes (Living in Shibuya)", url: "https://www.city.shibuya.tokyo.jp/contents/living-in-shibuya/en/resident/taxes.html", language: "en", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "shibuya-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Shibuya",
+      summary: "Shibuya City has separate foreign-resident instructions for moves from another Japanese municipality and arrivals from abroad.",
+      applicability: "Use this route only when your actual home is in Shibuya City.",
+      responsibleBody: "Shibuya City", receivingOffice: "Ward Office 3F, an eligible branch office, or the Ward Residents Service Center during its overseas-arrival hours",
+      actions: [
+        { title: "Follow the overseas counter schedule if arriving from abroad", description: "File within 14 days after moving in. For an overseas arrival, bring passports and residence cards or special permanent resident certificates for everyone moving; household-relationship evidence may also be needed. The Ward Office and branches handle overseas cases on weekdays from 8:30 a.m. to 5 p.m.; the service center handles them on weekdays from 11 a.m. to 5 p.m., not at its later domestic-move hours or on Saturday. The ward directs residents needing foreign-language help to the Ward Office 3F counter." },
+      ],
+      sourceIds: ["shibuya-moving-in-domestic","shibuya-moving-in-overseas"],
+      sourceFormatNote: "The current detailed procedures are in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shibuya-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Shibuya",
+      summary: "Shibuya routes joining notices by event, and reserves postal and online enrollment for loss of workplace coverage.",
+      applicability: "Use Shibuya's procedure if Shibuya is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Shibuya City", receivingOffice: "Residents and Family Registry Section at the ward office, a branch, or a citizen service center for listed domestic moves; National Health Insurance Qualification and Assessment Section at the ward office for foreign-resident procedures",
+      actions: [
+        { title: "Match the event to the ward's counter and evidence", description: "Shibuya asks the household head to file within 14 days. A person moving from another municipality who had municipal insurance there uses the resident-registration route; foreign-resident insurance procedures go through the National Health Insurance Section after any required address registration. Check the table for your event's identity, My Number, coverage-loss, and residence-status documents. A Designated Activities resident needs the passport designation document." },
+        { title: "Check the narrow postal and online joining routes", description: "Shibuya accepts postal and Graffer online joining when workplace health insurance ends, with evidence of the coverage-loss date. Those routes are not listed for joining because of a move or birth. For online filing, the applicant must be the person joining or someone in the same registered household and must supply images of the required documents; a representative from another household needs authorization and cannot use the online route." },
+      ],
+      sourceIds: ["shibuya-national-health-insurance-procedures","shibuya-national-health-insurance-remote"],
+      sourceFormatNote: "Shibuya's current joining and remote-filing procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shibuya-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Shibuya",
+      summary: "Shibuya collects burnable trash twice a week, non-burnable trash once a month, and recyclables once a week, in see-through bags or containers, and collects bulky waste over 30 cm by paid reservation.",
+      applicability: "Collection days differ by area; Shibuya's English living guide explains the categories.",
+      responsibleBody: "Shibuya City",
+      actions: [
+        { title: "Sort by type and use see-through bags", description: "Burnable trash is collected twice a week, non-burnable trash once a month, and recyclables once a week. Put burnable and non-burnable trash in a designated container or a transparent or semitransparent bag. Bundle newspapers, magazines, and cardboard without bags; rinse bottles and cans; remove caps and labels from PET bottles and crush them." },
+        { title: "Reserve bulky waste", description: "Household items with a side over 30 cm are bulky waste (cut anything over 180 cm down). Reserve through the bulky waste reception center online, by LINE, or by phone, and pay by ticket or cashless payment; the item is collected from your residence, or from near the roadside on the first floor of an apartment building. Business waste and air conditioners, TVs, refrigerators, and washing machines are not collected." },
+      ],
+      sourceIds: ["shibuya-household-waste-english","shibuya-household-waste-bulky"],
+      sourceFormatNote: "Shibuya's bulky waste page is in Japanese; its living guide is in English. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shibuya-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Shibuya",
+      summary: "Shibuya's English guide explains that anyone living in Shibuya on January 1 with income the previous year owes resident tax there for the whole year, and that people leaving Japan before early June must name someone to pay it.",
+      applicability: "Use Shibuya's route when you lived in Shibuya City on January 1 of the tax year.",
+      responsibleBody: "Shibuya City", receivingOffice: "Taxation Division, Shibuya City Office",
+      actions: [
+        { title: "File and pay", description: "File a return with the Taxation Division by March 15, unless you filed a final income-tax return or have only salary reported by your employer. Tax notices arrive in early June; individuals pay in four installments, and employees have the tax deducted from salary in 12 installments from June to the following May. Pay at the city office, branch offices, banks, post offices, convenience stores, electronically, or by automatic bank transfer." },
+        { title: "Name someone to pay before leaving Japan", description: "Even if you move during the year, you pay the full year's tax to the municipality where you lived on January 1. If you leave Japan before the tax is finalized in early June, appoint someone to be responsible for paying it." },
+      ],
+      sourceIds: ["shibuya-resident-tax-english"],
+    },
+    {
+      id: "shibuya-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Shibuya",
+      summary: "Shibuya's disaster prevention portal and app work in 121 languages, and the ward lists temporary gathering places, evacuation places, and stay-in-district areas by district.",
+      applicability: "Know your gathering place, evacuation place, and shelter before a disaster; during an event, follow the ward's information.",
+      responsibleBody: "Shibuya City",
+      actions: [
+        { title: "Use the portal and app in your language", description: "The Shibuya City Disaster Prevention Portal Site and Disaster Prevention App are available in 121 languages; the app shows real-time information and works offline for the disaster map. Shibuya also subsidizes furniture-fixing equipment, up to ¥10,000 per household." },
+        { title: "Know your gathering and evacuation places", description: "Temporary gathering places, mainly ward school grounds and parks, are where people gather to assess the situation before moving to an evacuation place; if an evacuation place is close, go there directly. Prepare at least three days of food, ideally a week, and agree meeting places with your family." },
+      ],
+      sourceIds: ["shibuya-disaster-earthquakes-english","shibuya-disaster-evacuation-places"],
+      sourceFormatNote: "Shibuya's earthquake page is in English; its evacuation list is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shibuya-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Shibuya",
+      summary: "Shibuya runs free Japanese classes for foreign residents who live or work in the ward, and its English living guide lists Tokyo and national consultation services in foreign languages.",
+      applicability: "For foreign residents of Shibuya. The consultation services listed are run by Tokyo and national bodies.",
+      responsibleBody: "Shibuya City",
+      actions: [
+        { title: "Join a free Japanese class", description: "Shibuya's Japanese classes for foreign residents of high-school age and older who live or work in the ward are free apart from the textbook: a starter course in person on Tuesday and Thursday mornings or online on Wednesday and Friday evenings, and an elementary course online on Tuesday evenings. Apply in the application period and attend an orientation with a short level check." },
+        { title: "Use Tokyo and national consultation services", description: "Shibuya's English living guide lists the Tokyo Metropolitan Foreign Residents' Advisory Center (English on weekdays, Chinese on Tuesdays and Fridays, Korean on Wednesdays), the Immigration Information Center, and human rights counseling for foreigners." },
+      ],
+      sourceIds: ["shibuya-japanese-classes","shibuya-foreign-language-counseling"],
+      sourceFormatNote: "Shibuya's class page is in Japanese; its counseling guide is in English. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "shibuya-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Shibuya",
+      summary: "Shibuya lists overseas arrival and loss of workplace or dependent coverage as separate Category I events, with different counter and document considerations.",
+      applicability: "Use Shibuya's procedure if Shibuya is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Shibuya City", receivingOffice: "National Pension Section at Shibuya City Office or Shibuya Pension Office; some coverage-change filings can use branch or service centers",
+      actions: [
+        { title: "Choose the joining route for your event", description: "Shibuya lists moving in from overseas, leaving employee pension coverage, and losing a spouse's dependent coverage as reasons to acquire Category I status. Its table allows a My Number Portal application or filing at the ward pension section or Shibuya Pension Office. Branch and service centers generally do not accept filings by foreign nationals. For retirement or dependent-coverage loss, bring identity evidence and a document showing when coverage ended, such as a social-insurance qualification-loss certificate, retirement certificate, or separation notice. The table does not specify an arrival document package; ask the main pension section what to bring for a first enrollment after moving from abroad." },
+        { title: "Apply for the appropriate contribution relief", description: "Shibuya lists contribution exemption or payment postponement and Student Special Payment applications through My Number Portal, at the main ward pension section, or at Shibuya Pension Office. Branch and service centers do not take these relief applications. The table asks for separation evidence for unemployment-based relief and student identification or an enrollment certificate for the student application. It does not establish a postal route for these filings." },
+      ],
+      sourceIds: ["shibuya-national-pension-procedures","shibuya-national-pension-relief"],
+      sourceFormatNote: "Shibuya's procedure and contribution-relief pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "old-source", records: ["shibuya-household-waste","shibuya-disaster-preparation","shibuya-language-and-consultation","shibuya-resident-tax"], source: "English guide, Living in Shibuya", date: "Not dated" },
+    { kind: "gap", records: ["shibuya-disaster-preparation"], gap: "Flood hazard maps." },
+  ],
+});

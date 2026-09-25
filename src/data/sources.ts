@@ -7,6 +7,7 @@ import { taxBusinessConsumerSourceEntries } from "@/data/sources/tax-business-co
 import { educationLanguageSourceEntries } from "@/data/sources/education-language";
 import { municipalIdentitySourceEntries } from "@/data/sources/municipal-identity";
 import { dailyLifeSafetySourceEntries } from "@/data/sources/daily-life-safety";
+import { localGuidanceSourceEntries } from "@/data/local-guidance";
 import sourceMonitoringStateJson from "../../content/source-monitoring/state.json";
 
 // Module and local array order make registry assembly deterministic without global sequence numbers.
@@ -18,6 +19,8 @@ const declaredSources = [
   ...educationLanguageSourceEntries,
   ...municipalIdentitySourceEntries,
   ...dailyLifeSafetySourceEntries,
+  // Sources cited by only one researched location, declared in its file under src/data/local-guidance/locations.
+  ...localGuidanceSourceEntries,
 ];
 
 const sourceMonitoringState = sourceMonitoringStateSchema.parse(sourceMonitoringStateJson);

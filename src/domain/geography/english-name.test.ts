@@ -21,12 +21,14 @@ describe("English geography labels", () => {
   it("labels special wards and designated cities as cities, and administrative wards with their city", () => {
     expect(label("jp-13101")).toBe("Chiyoda City");
     expect(label("jp-01100")).toBe("Sapporo City");
-    expect(label("jp-01101")).toBe("Chuo Ward, Sapporo");
-    expect(label("jp-27109")).toBe("Tennoji Ward, Osaka");
     expect(label("jp-23100")).toBe("Nagoya City");
+    // Ward records are not in the registry, but the schema still accepts them and they are labeled with their city.
+    const sapporo = getAdministrativeGeography("jp-01100")!;
+    const chuoWard = { ...sapporo, id: "jp-01101", code: "01101", localGovernmentCode: "011011", type: "administrative-ward" as const, parentId: sapporo.id, names: { ja: "札幌市中央区", kana: "さっぽろしちゅうおうく" } };
+    expect(englishGeographyName(chuoWard, sapporo)).toBe("Chuo Ward, Sapporo");
   });
 
-  it("gives every mapped municipality and ward an English label", () => {
+  it("gives every mapped municipality an English label", () => {
     for (const record of administrativeGeographies) {
       expect(label(record.id), record.id).toMatch(/^[A-Z][A-Za-z ,]+$/);
     }

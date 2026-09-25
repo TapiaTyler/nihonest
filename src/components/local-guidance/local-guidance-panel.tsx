@@ -21,6 +21,9 @@ const geographyTypeLabels = {
   metropolis: "metropolis",
 } as const;
 
+/** Municipality option for the rest of a prefecture: the prefecture-wide general guidance. */
+const otherOption = "other";
+
 export function LocalGuidancePanel({
   articleId,
   options,
@@ -42,30 +45,36 @@ export function LocalGuidancePanel({
   );
   useEffect(() => subscribeToLocalGuidanceLocation(() => setLinkedSelectionId("")), []);
   const selectedId = linkedSelectionId || savedId;
-  // Prefectures are listed by English name; municipalities by official code, which keeps each designated city
-  // directly before its wards and Tokyo's special wards before its cities, towns, and villages.
+  // Prefectures are listed by English name; municipalities by official code, which keeps Tokyo's special wards
+  // before its cities, towns, and villages.
   const sortedLocations = [...locations].sort((left, right) => (
     left.parentName.localeCompare(right.parentName, "en")
     || left.geography.code.localeCompare(right.geography.code, "en")
   ));
   const selectedLocation = sortedLocations.find(({ geography }) => geography.id === selectedId);
-  // A designated-city ward without its own supplement uses the city's: the city runs these procedures and ward
-  // offices are its counters (as in Nagoya), so the city-wide guidance is the right answer for the ward.
-  const ownSupplement = options.find(({ geography }) => geography.id === selectedId);
-  const parentCity = selectedLocation?.geography.type === "administrative-ward"
-    ? locations.find(({ geography }) => geography.canonicalId === selectedLocation.geography.parentId)
+  const selected = options.find(({ geography }) => geography.id === selectedId);
+  // Designated cities run these procedures city-wide, but each ward office can differ in the details.
+  const wardNote = selectedLocation?.geography.type === "designated-city"
+    ? `${selectedLocation.geography.name} is divided into wards. Each ward office may have its own procedures and local details, such as counters, hours, collection days, and evacuation sites, so check the ward office for your address.`
     : undefined;
-  const citySupplement = ownSupplement ? undefined : options.find(({ geography }) => geography.id === parentCity?.geography.id);
-  const selected = ownSupplement ?? citySupplement;
   const generalAdvice = getGeneralLocalAdvice(articleId ?? options[0]?.supplement.articleId ?? "");
   const [pendingPrefectureId, setPendingPrefectureId] = useState("");
+  // "Other" is stored as the prefecture itself; this remembers that it was chosen, not just the prefecture.
+  const [otherPrefectureId, setOtherPrefectureId] = useState("");
   const prefectureOptions = sortedLocations.filter(({ geography }) => geography.type === "prefecture" || geography.type === "metropolis");
   const selectedPrefectureId = selectedLocation?.prefectureId ?? pendingPrefectureId;
-  const municipalityOptions = sortedLocations.filter(({ geography, prefectureId }) => (
-    prefectureId === selectedPrefectureId && geography.id !== selectedPrefectureId
+  // Only municipalities with researched guidance are listed; "Other" gives the general guidance for the rest.
+  const municipalityOptions = sortedLocations.filter(({ geography, prefectureId, listed }) => (
+    listed && prefectureId === selectedPrefectureId && geography.id !== selectedPrefectureId
   ));
-  // Most prefectures outside Tokyo have no mapped municipalities yet; say so instead of offering an empty list.
+  // Prefectures with no researched municipality get a disabled selector and a note instead of a list of one.
   const prefectureWideOnly = Boolean(selectedPrefectureId) && municipalityOptions.length === 0;
+  const selectedInPrefecture = selectedLocation?.prefectureId === selectedPrefectureId;
+  const municipalityValue = !selectedInPrefecture ? ""
+    : municipalityOptions.some(({ geography }) => geography.id === selectedId) ? selectedId
+      // A saved municipality that is no longer listed keeps its general guidance, shown as "Other".
+      : selectedId !== selectedPrefectureId || otherPrefectureId === selectedPrefectureId ? otherOption
+        : "";
 
   return (
     <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="local-guidance-heading">
@@ -73,7 +82,7 @@ export function LocalGuidancePanel({
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Optional local context</p>
           <h2 id="local-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Local guidance</h2>
-          <p className="mt-2 max-w-xl leading-7 text-slate-600">Choose a prefecture or listed municipality to see researched guidance where available, or general steps for finding the local procedure. The national guidance above remains available for everyone.</p>
+          <p className="mt-2 max-w-xl leading-7 text-slate-600">Choose a prefecture, then a listed municipality or Other, to see researched guidance where available, or general steps for finding the local procedure. The national guidance above remains available for everyone.</p>
         </div>
         <div className="grid gap-4 sm:min-w-96 sm:grid-cols-2">
           <label className="text-sm font-semibold text-slate-800" htmlFor="local-guidance-prefecture">
@@ -84,6 +93,7 @@ export function LocalGuidancePanel({
               value={selectedPrefectureId}
               onChange={(event) => {
                 setPendingPrefectureId(event.target.value);
+                setOtherPrefectureId("");
                 setLinkedSelectionId("");
                 writeLocalGuidanceLocation(event.target.value);
               }}
@@ -98,12 +108,14 @@ export function LocalGuidancePanel({
               <select
                 id="local-guidance-location"
                 className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-                value={selectedLocation?.prefectureId === selectedPrefectureId && selectedId !== selectedPrefectureId ? selectedId : ""}
+                value={prefectureWideOnly ? "" : municipalityValue}
                 disabled={!selectedPrefectureId || prefectureWideOnly}
-                aria-describedby={prefectureWideOnly ? "local-guidance-prefecture-wide" : undefined}
+                aria-describedby={selectedPrefectureId ? "local-guidance-municipality-note" : undefined}
                 onChange={(event) => {
+                  const other = event.target.value === otherOption;
                   setLinkedSelectionId("");
-                  writeLocalGuidanceLocation(event.target.value);
+                  setOtherPrefectureId(other ? selectedPrefectureId : "");
+                  writeLocalGuidanceLocation(other ? selectedPrefectureId : event.target.value);
                 }}
               >
                 <option value="">{prefectureWideOnly ? "Prefecture-wide only" : "Select municipality"}</option>
@@ -111,11 +123,14 @@ export function LocalGuidancePanel({
                   const items = options.map(({ geography }) => <option key={geography.id} value={geography.id}>{geography.name}</option>);
                   return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
                 })}
+                {!prefectureWideOnly && <option value={otherOption}>Other</option>}
               </select>
             </label>
-            {prefectureWideOnly && (
-              <p id="local-guidance-prefecture-wide" className="mt-2 text-xs leading-5 text-slate-600">
-                Municipalities in this prefecture have not been mapped yet, so the guidance below applies prefecture-wide.
+            {selectedPrefectureId && (
+              <p id="local-guidance-municipality-note" className="mt-2 text-xs leading-5 text-slate-600">
+                {prefectureWideOnly
+                  ? "No municipality in this prefecture has researched guidance yet, so the guidance below applies prefecture-wide."
+                  : "Only municipalities with researched guidance are listed. Choose Other for general guidance anywhere else in the prefecture."}
               </p>
             )}
           </div>
@@ -137,7 +152,7 @@ export function LocalGuidancePanel({
           <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">General guidance · local research pending</p>
           <h3 className="mt-2 text-xl font-semibold text-slate-950">{generalAdvice.title}</h3>
           <p className="mt-3 leading-7 text-slate-700">Research for {selectedLocation.geography.name} on this article has not been done yet. The steps below are general advice, not verified instructions for this location.</p>
-          {selectedLocation.geography.type === "administrative-ward" && <p className="mt-2 leading-7 text-slate-700">This is a ward of a designated city. Check the city&apos;s official procedure and which ward office handles your address.</p>}
+          {wardNote && <p className="mt-2 leading-7 text-slate-700">{wardNote}</p>}
           <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-700">{generalAdvice.steps.map((step) => <li key={step}>{step}</li>)}</ul>
         </div>
       ) : !selected ? (
@@ -150,7 +165,7 @@ export function LocalGuidancePanel({
                 {geographyTypeLabels[selected.geography.type]}{selected.parentName ? ` · ${selected.parentName}` : ""}
               </p>
               <h3 className="mt-2 text-xl font-semibold text-slate-950">{selected.supplement.title}</h3>
-              {citySupplement && selectedLocation && <p className="mt-1 text-sm text-slate-600">Applies city-wide, including {selectedLocation.geography.name}.</p>}
+              {wardNote && <p className="mt-1 text-sm leading-6 text-slate-600">{wardNote}</p>}
             </div>
             <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">Editorial review</span>
           </div>

@@ -11,12 +11,13 @@ const articleExists = (id: string) => existsSync(resolve(process.cwd(), `content
 describe("prefecture finder data", () => {
   const { prefectures, municipalities, coverage } = getPrefectureFinderData();
 
-  it("offers every mapped municipality or ward under its canonical prefecture", () => {
-    const mapped = administrativeGeographies.filter(({ type }) => type !== "prefecture" && type !== "metropolis");
-    expect(municipalities).toHaveLength(mapped.length);
-    expect(new Set(municipalities.map(({ id }) => id))).toEqual(new Set(mapped.map(({ id }) => id)));
-    expect(municipalities.find(({ id }) => id === "jp-01101")?.prefectureId).toBe("jp-01000");
+  it("offers only researched municipalities under their canonical prefecture", () => {
+    const researched = new Set(localGuidanceSupplements.map(({ geographyId }) => getAdministrativeGeography(geographyId)!.id));
+    expect(new Set(municipalities.map(({ id }) => id))).toEqual(researched);
     expect(municipalities.find(({ id }) => id === "jp-13104")?.prefectureId).toBe("jp-13000");
+    expect(municipalities.find(({ id }) => id === "jp-23100")).toMatchObject({ prefectureId: "jp-23000", isDesignatedCity: true });
+    expect(municipalities.some(({ id }) => id === "jp-01100")).toBe(false);
+    expect(municipalities.some(({ id }) => id === "jp-13208")).toBe(false);
   });
 
   it("maps all 47 official IDs into exactly one orientation region", () => {

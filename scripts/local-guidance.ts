@@ -1,25 +1,28 @@
 /**
- * Research and validation tooling for municipality-specific local guidance (the supplements in
- * src/data/local-guidance/). Works the same for any agent or person; see docs/LOCAL-GUIDANCE-WORKFLOW.md.
+ * Research and validation tooling for municipality-specific local guidance: one file per researched location in
+ * src/data/local-guidance/locations/<prefecture>/<location>.ts. Works the same for any agent or person; see
+ * docs/LOCAL-GUIDANCE-WORKFLOW.md.
  *
  *   npm run local-guidance -- coverage
- *   npm run local-guidance -- worksheet --article joining-national-health-insurance --next 3
+ *   npm run local-guidance -- add-location jp-14100 [--aliases Yokohama,Yokohama-shi] [--plan-group prefectural-capital|major-city]
+ *   npm run local-guidance -- worksheet --location jp-14100        (all guides for one location)
  *   npm run local-guidance -- worksheet --article joining-national-health-insurance --wards jp-13105,jp-13106
  *   npm run local-guidance -- fetch <url> [<url> ...] [--keywords 国民健康保険,国保] [--follow] [--out <dir>]
- *   npm run local-guidance -- check [--article <id>] [--only <id,id>] [--links] [--evidence]
- *   npm run local-guidance -- verify        (the whole batch verification: changed supplements + data tests)
+ *   npm run local-guidance -- check [--article <id>] [--location <id>] [--only <id,id>] [--links] [--evidence]
+ *   npm run local-guidance -- generate      (rebuilds the recheck schedule and the coverage plan's status table)
+ *   npm run local-guidance -- verify        (the whole batch verification: changed supplements, generated docs, data tests)
  *
  * Output goes to .local-guidance/ (gitignored). Fetched pages are saved as compact Markdown text so a researcher
  * reads a few kilobytes per page instead of the full HTML.
  */
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import tls from "node:tls";
 import { getAdministrativeGeography } from "@/data/geography";
-import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { localGuidanceArticleOrder, localGuidanceLocations, localGuidanceRecheckItems, localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
 import { sources } from "@/data/sources";
 import { englishGeographyName } from "@/domain/geography/english-name";
@@ -61,6 +64,189 @@ const selectableWards = () => supportedGeographies.filter(({ selectable }) => se
   .sort((left, right) => left.code.localeCompare(right.code));
 
 const supplementsFor = (articleId: string) => localGuidanceSupplements.filter((supplement) => supplement.articleId === articleId);
+
+// ---------------------------------------------------------------------------------------------- location files
+
+const locationsRoot = resolve(process.cwd(), "src/data/local-guidance/locations");
+
+function prefectureOf(id: string) {
+  const record = getAdministrativeGeography(id);
+  if (!record) throw new Error(`Unknown geography "${id}".`);
+  const prefecture = getAdministrativeGeography(`jp-${record.prefectureCode}000`)!;
+  return { record, prefecture, folder: prefecture.names.en!.toLowerCase().replace(/[^a-z]/g, "") };
+}
+
+/** A location's file: locations/<prefecture>/<first word of its English name>.ts, e.g. tokyo/chiyoda.ts. */
+function locationFile(id: string) {
+  const { folder } = prefectureOf(id);
+  const file = wardFor(id).nameEn.split(/[ ,]/)[0]!.toLowerCase().replace(/[^a-z]/g, "");
+  return { folder, file, path: join(locationsRoot, folder, `${file}.ts`) };
+}
+
+const positional = (argv: readonly string[]) => argv.find((value, index) => !value.startsWith("--") && !argv[index - 1]?.startsWith("--"));
+
+/**
+ * Creates a location's file and registers it in its prefecture's index.ts, creating the prefecture folder (and its
+ * line in locations/index.ts) the first time. After this, the location's research touches only its own file.
+ */
+async function addLocationCommand(argv: readonly string[]): Promise<void> {
+  const id = positional(argv);
+  if (!id) throw new Error("Pass the location's canonical ID, e.g. add-location jp-14100.");
+  const { record, prefecture, folder } = prefectureOf(id);
+  if (record.type === "prefecture" || record.type === "metropolis") throw new Error("Add a municipality; its prefecture folder is created automatically.");
+  const existing = supportedGeographies.find((geography) => getAdministrativeGeography(geography.id)?.id === record.id);
+  if (existing) throw new Error(`${existing.name} already has a location file (${shown(locationFile(existing.id).path)}).`);
+  const { file, path } = locationFile(record.id);
+  if (existsSync(path)) throw new Error(`${shown(path)} already exists.`);
+
+  const name = englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined);
+  const base = name.replace(/ (City|Town|Village)$/, "");
+  const defaultAliases = record.type === "special-ward" ? [base, `${base} Ward`, `${base}-ku`]
+    : record.type === "town" ? [base, `${base}-machi`]
+      : record.type === "village" ? [base, `${base}-mura`]
+        : [base, `${base}-shi`];
+  const aliases = readOption(argv, "aliases")?.split(",").map((alias) => alias.trim()).filter(Boolean) ?? defaultAliases;
+  const planGroup = readOption(argv, "plan-group");
+  const needsPlanGroup = record.type === "city" && record.prefectureCode !== "13";
+  if (needsPlanGroup && planGroup !== "prefectural-capital" && planGroup !== "major-city") {
+    throw new Error("Cities outside Tokyo need --plan-group prefectural-capital or --plan-group major-city (see docs/LOCAL-GUIDANCE-COVERAGE-PLAN.md).");
+  }
+  const q = (value: unknown) => JSON.stringify(value);
+
+  await mkdir(join(locationsRoot, folder), { recursive: true });
+  await writeFile(path, [
+    'import { defineLocationGuidance } from "@/data/local-guidance/define-location";',
+    "",
+    `/** ${name}: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */`,
+    "export const guidance = defineLocationGuidance({",
+    `  geography: { id: ${q(record.id)}, name: ${q(name)}, aliases: ${q(aliases)}${needsPlanGroup ? `, planGroup: ${q(planGroup)}` : ""} },`,
+    "  sources: [",
+    "  ],",
+    "  supplements: [",
+    "  ],",
+    "});",
+    "",
+  ].join("\n"));
+
+  const prefectureIndex = join(locationsRoot, folder, "index.ts");
+  if (!existsSync(prefectureIndex)) {
+    const prefectureName = prefecture.names.en!;
+    const suffix = { "都": "to", "道": "do", "府": "fu", "県": "ken" }[prefecture.names.ja.slice(-1)] ?? "ken";
+    await writeFile(prefectureIndex, [
+      'import { definePrefectureGuidance } from "@/data/local-guidance/define-location";',
+      `import { guidance as ${file} } from "./${file}";`,
+      "",
+      `/** ${prefectureName}: one import and one list entry per researched location. */`,
+      "export const prefecture = definePrefectureGuidance({",
+      `  geography: { id: ${q(prefecture.id)}, name: ${q(prefectureName)}, aliases: ${q([`${prefectureName} Prefecture`, `${prefectureName}-${suffix}`])} },`,
+      "  locations: [",
+      `    ${file},`,
+      "  ],",
+      "});",
+      "",
+    ].join("\n"));
+    const rootIndex = join(locationsRoot, "index.ts");
+    const lines = (await readFile(rootIndex, "utf8")).replace(/\r\n?/g, "\n").split("\n");
+    const folders = [...new Set([...lines.flatMap((line) => line.match(/^import \{ prefecture as (\w+) \}/)?.[1] ?? []), folder])].sort();
+    await writeFile(rootIndex, [
+      ...folders.map((name) => `import { prefecture as ${name} } from "./${name}";`),
+      "",
+      "/** One line per prefecture folder; each folder's index.ts lists its locations. */",
+      "export const prefectureGuidance = [",
+      ...folders.map((name) => `  ${name},`),
+      "] as const;",
+      "",
+    ].join("\n"));
+  } else {
+    const lines = (await readFile(prefectureIndex, "utf8")).replace(/\r\n?/g, "\n").split("\n");
+    const lastImport = lines.map((line) => line.startsWith("import ")).lastIndexOf(true);
+    lines.splice(lastImport + 1, 0, `import { guidance as ${file} } from "./${file}";`);
+    const listEnd = lines.lastIndexOf("  ],");
+    lines.splice(listEnd, 0, `    ${file},`);
+    await writeFile(prefectureIndex, lines.join("\n"));
+  }
+  console.log(`Created ${shown(path)} for ${name} (${record.id}) and registered it in ${shown(prefectureIndex)}.`);
+  console.log(`Next: npm run local-guidance -- worksheet --location ${record.id}`);
+}
+
+/** A research worksheet covering every guide for one location, so the location's research shares its context. */
+async function locationWorksheetCommand(id: string): Promise<void> {
+  const ward = wardFor(id);
+  if (!ward.supported) throw new Error(`${ward.nameEn} has no location file yet. Run: npm run local-guidance -- add-location ${ward.canonicalId}`);
+  const { path } = locationFile(ward.id);
+  const existing = localGuidanceSupplements.filter(({ geographyId }) => wardFor(geographyId).canonicalId === ward.canonicalId);
+  const host = officialHost(ward);
+  const directory = join(outputRoot, `location-${ward.slug}`);
+  await mkdir(directory, { recursive: true });
+  const keywords = [...new Set(Object.values(topics).flatMap(({ keywords: words }) => words))];
+  const model = localGuidanceLocations.find(({ geography }) => geography.id === "jp-13123") ?? localGuidanceLocations.at(-1);
+  const isDesignatedCity = getAdministrativeGeography(ward.canonicalId)?.type === "designated-city";
+
+  const guideSections = localGuidanceArticleOrder.flatMap((articleId) => {
+    const topic = topics[articleId]!;
+    const current = existing.find((supplement) => supplement.articleId === articleId);
+    const advice = generalLocalAdvice[articleId as keyof typeof generalLocalAdvice];
+    return [
+      `### ${articleId} (\`${ward.slug}-${topic.slug}\`)`,
+      "",
+      current ? `Existing supplement \`${current.id}\` (checked ${current.lastCheckedAt}); rewrite it only if it is below the current standard.` : "No supplement yet.",
+      `Keywords: ${topic.keywords.join(", ")}`,
+      ...(advice ? ["", "Must be more specific than the general advice shown without it:", "", ...advice.steps.map((step) => `- ${step}`)] : []),
+      "",
+    ];
+  });
+
+  const worksheet = [
+    `# Local guidance worksheet: ${ward.nameEn}`,
+    "",
+    `Generated ${today}. Location \`${ward.id}\` (${ward.nameJa}); file \`${shown(path)}\`. Official host: ${host ?? "unknown (find the official site first)"}.`,
+    `Guides already covered: ${existing.length} of ${localGuidanceArticleOrder.length}.`,
+    ...(isDesignatedCity ? ["", `${ward.nameEn} is a designated city: research at city level. The panel already notes that ward offices may differ, so write supplements that hold for every ward and point to the ward office for address-dependent details.`] : []),
+    "",
+    "## 1. Find the official pages",
+    "",
+    "Start from the site root and the page for foreign residents, then fetch the procedure pages you choose. Read the saved `.md` files instead of opening full pages:",
+    "",
+    "```bash",
+    host ? `npm run local-guidance -- fetch https://${host}/ --follow --keywords ${keywords.join(",")} --out ${shown(directory)}` : `# No official host on record yet; find ${ward.nameEn}'s official site, then run fetch with --follow --out ${shown(directory)}`,
+    "```",
+    "",
+    "Prefer current Japanese procedure pages over older English overviews, note each page's date, and use only the location's own official pages (or national government pages) as sources.",
+    "",
+    "## 2. Guides",
+    "",
+    "The national guide (`content/articles/<guide>.mdx`) owns eligibility and general rules. A supplement adds only what is local: the responsible office and counters, filing periods, documents that differ from the national list, online and postal routes, and local exceptions. Do not reproduce premiums, fee tables, or schedules that change; link to them.",
+    "",
+    ...guideSections,
+    "## 3. Conventions",
+    "",
+    `- Everything for ${ward.nameEn} goes in \`${shown(path)}\`: its sources, its supplements (ID \`${ward.slug}-<guide>\`, e.g. \`${ward.slug}-household-waste\`; records omit \`geographyId\`), and its \`recheck\` items. Do not edit other locations' files or the generated docs.`,
+    `- Source IDs \`${ward.slug}-<guide>-<detail>\`, in the file's \`sources\` list with \`language\` and \`lastCheckedAt: "${today}"\` (organization and municipal authority default to the location). A page another location or an article also cites belongs in \`src/data/sources\` instead; reuse existing IDs for the same page.`,
+    "- `responsibleBody` is the English location name. Japanese-language sources need `sourceFormatNote` stating the summary is Nihonest guidance, not an official translation.",
+    "- Every concrete deadline, time, or fee in the English must appear on a cited page (the `--evidence` check verifies this).",
+    "- Add a `recheck` item for anything tied to a date (`dated`), a tax-year statement (`tax-year`), an old or undated cited page (`old-source`), or information the pages did not give (`gap`).",
+    "- Records stay `needs-review`. Do not create or change Japanese translation artifacts.",
+    "",
+    "## 4. Model",
+    "",
+    `A complete location file: \`${model ? shown(locationFile(model.geography.id).path) : "src/data/local-guidance/locations/tokyo/edogawa.ts"}\`.`,
+    "",
+    "## 5. Record and verify",
+    "",
+    `Add \`docs/research/<PREFECTURE>-${ward.slug.toUpperCase()}-<n>.md\`: inspection date and one table row per guide with the official evidence (linked) and the claim boundary. Then:`,
+    "",
+    "```bash",
+    "npm run local-guidance -- verify",
+    "```",
+    "",
+    "That is the whole verification for a data-only batch: the link and evidence check on changed supplements, the regenerated recheck schedule and coverage status, and the data tests. Do not run the full test suite, `tsc`, lint, `architecture:check`, Playwright, or a build unless you changed code.",
+    "",
+  ].join("\n");
+
+  const worksheetPath = join(directory, "WORKSHEET.md");
+  await writeFile(worksheetPath, worksheet);
+  console.log(`Worksheet for ${ward.nameEn} → ${shown(worksheetPath)}`);
+}
 const sourceById = new Map(sources.map((source) => [source.id, source]));
 
 /** The official host a ward's existing sources use most, as the starting point for finding new pages. */
@@ -224,6 +410,8 @@ function supplementSource(supplement: LocalGuidanceSupplement): string {
 }
 
 async function worksheetCommand(argv: readonly string[]): Promise<void> {
+  const location = readOption(argv, "location");
+  if (location) return locationWorksheetCommand(location);
   const topic = requireTopic(readOption(argv, "article"));
   const existing = supplementsFor(topic.articleId);
   const covered = new Set(existing.map(({ geographyId }) => wardFor(geographyId).canonicalId));
@@ -263,7 +451,7 @@ async function worksheetCommand(argv: readonly string[]): Promise<void> {
     "| Location | ID | Japanese | Official host | Sources already used for this location |",
     "|---|---|---|---|---|",
     ...targetRows.map(({ ward, host, reusable }) => `| ${ward.nameEn} | \`${ward.id}\` | ${ward.nameJa} | ${host ?? "unknown"} | ${reusable || "none"} |`),
-    ...targets.filter(({ supported }) => !supported).map((ward) => `\n> **${ward.nameEn} is not a selectable location yet.** Add \`{ id: "${ward.canonicalId}", name: "${ward.nameEn}", aliases: [...], selectable: true }\` to \`src/data/local-guidance/geographies.ts\` in code order before adding supplements.`),
+    ...targets.filter(({ supported }) => !supported).map((ward) => `\n> **${ward.nameEn} has no location file yet.** Run \`npm run local-guidance -- add-location ${ward.canonicalId}\` before adding supplements.`),
     "",
     "## 1. Find the official pages",
     "",
@@ -282,12 +470,12 @@ async function worksheetCommand(argv: readonly string[]): Promise<void> {
     "",
     "## 3. Conventions",
     "",
-    `- Supplement ID \`<location>-${topic.slug}\` (e.g. \`${targets[0]!.slug}-${topic.slug}\`); add records to \`src/data/local-guidance/${topic.slug}.ts\` in administrative code order.`,
-    `- Source IDs \`<location>-${topic.slug}-<detail>\`, added to \`src/data/sources/municipal-identity.ts\` with \`authorityLevel: "municipal-government"\`, the page's \`language\`, and \`lastCheckedAt: "${today}"\`. Reuse an existing source ID when it is the same page.`,
+    `- Supplement ID \`<location>-${topic.slug}\` (e.g. \`${targets[0]!.slug}-${topic.slug}\`), added to the location's file in \`src/data/local-guidance/locations/<prefecture>/\` (records omit \`geographyId\`).`,
+    `- Source IDs \`<location>-${topic.slug}-<detail>\`, in the location file's \`sources\` list with the page's \`language\` and \`lastCheckedAt: "${today}"\`. Reuse an existing source ID when it is the same page.`,
     "- `responsibleBody` is the English location name (e.g. \"Chiyoda City\"). Titles follow the pattern of the model record.",
     "- Japanese-language sources need `sourceFormatNote` stating the summary is Nihonest guidance, not an official translation.",
     "- Every concrete deadline, time, or fee in the English must appear on a cited page (the `--evidence` check verifies this).",
-    "- Records stay `needs-review`; the shared review state in `src/data/local-guidance/shared.ts` sets it. Update its date comment if this batch is checked on a new date.",
+    "- Records stay `needs-review`. Add `recheck` items to the location file for dated statements, tax-year statements, old or undated pages, and gaps.",
     "- Do not create or change Japanese translation artifacts.",
     "",
     "## 4. Model record (existing supplement for this guide)",
@@ -320,9 +508,12 @@ async function worksheetCommand(argv: readonly string[]): Promise<void> {
 
 async function checkCommand(argv: readonly string[]): Promise<void> {
   const articleId = readOption(argv, "article");
+  const location = readOption(argv, "location");
+  const locationId = location ? wardFor(location).canonicalId : undefined;
   const only = readOption(argv, "only")?.split(",").map((id) => id.trim()).filter(Boolean);
   const supplements = (articleId ? supplementsFor(articleId) : [...localGuidanceSupplements])
-    .filter(({ id }) => !only || only.includes(id));
+    .filter(({ id }) => !only || only.includes(id))
+    .filter(({ geographyId }) => !locationId || wardFor(geographyId).canonicalId === locationId);
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -332,7 +523,7 @@ async function checkCommand(argv: readonly string[]): Promise<void> {
     const pair = `${supplement.articleId}:${ward.canonicalId}`;
     if (pairs.has(pair)) errors.push(`${supplement.id}: a second supplement for ${ward.nameEn} on ${supplement.articleId}.`);
     pairs.add(pair);
-    if (!ward.supported) errors.push(`${supplement.id}: ${ward.nameEn} is not a selectable location in geographies.ts.`);
+    if (!ward.supported) errors.push(`${supplement.id}: ${ward.nameEn} has no location file (run add-location).`);
     if (!supplement.responsibleBody.includes(ward.nameEn.replace(/ City$/, ""))) warnings.push(`${supplement.id}: responsibleBody "${supplement.responsibleBody}" differs from "${ward.nameEn}".`);
     const host = officialHost(ward);
     for (const id of supplement.sourceIds) {
@@ -383,21 +574,156 @@ async function checkCommand(argv: readonly string[]): Promise<void> {
   if (errors.length) process.exitCode = 1;
 }
 
+// ---------------------------------------------------------------------------------------------- generated docs
+
+const recheckPath = resolve(process.cwd(), "docs/LOCAL-GUIDANCE-RECHECK.md");
+const coveragePlanPath = resolve(process.cwd(), "docs/LOCAL-GUIDANCE-COVERAGE-PLAN.md");
+const shortName = (name: string) => name.replace(/ City$/, "");
+const records = (ids: readonly string[]) => ids.map((id) => `\`${id}\``).join(", ");
+const cell = (text: string) => text.replace(/\|/g, "\\|");
+
+/** docs/LOCAL-GUIDANCE-RECHECK.md, built from the `recheck` items in every location file. */
+function renderRecheck(): string {
+  const byCode = [...localGuidanceRecheckItems].sort((left, right) => wardFor(left.location.id).code.localeCompare(wardFor(right.location.id).code));
+  const of = <K extends string>(kind: K) => byCode.flatMap(({ location, item }) => item.kind === kind ? [{ location, item: item as Extract<typeof item, { kind: K }> }] : []);
+  const dated = of("dated").sort((left, right) => left.item.from.localeCompare(right.item.from));
+  return [
+    "# Local guidance recheck schedule",
+    "",
+    "<!-- Generated by `npm run local-guidance -- generate` from the `recheck` items in src/data/local-guidance/locations. Do not edit by hand. -->",
+    "",
+    "Local guidance supplements that state something tied to a date, or rest on an old or undated source, and so need",
+    "checking later. Research and verification follow [LOCAL-GUIDANCE-WORKFLOW.md](LOCAL-GUIDANCE-WORKFLOW.md).",
+    "",
+    "**Rechecking a record:** read the cited page again, update the supplement's wording and `lastCheckedAt`, then run",
+    "`npm run local-guidance -- check --only <record-id> --links --evidence`. When an item is resolved, delete it from the",
+    "location file's `recheck` list and run `npm run local-guidance -- generate` (or `verify`).",
+    "**Adding items:** every research batch that writes a date-dependent statement, or cites a source older than about two",
+    "years or without a date, adds a `recheck` item to the location's file in the same change.",
+    "",
+    "## 1. Dated changes (recheck on or after the date)",
+    "",
+    "| Recheck from | Location | Record | What changes | Action |",
+    "|---|---|---|---|---|",
+    ...dated.map(({ location, item }) => `| ${item.from} | ${shortName(location.name)} | ${records(item.records)} | ${cell(item.change)} | ${cell(item.action)} |`),
+    "",
+    "## 2. Tax-year statements (recheck each January)",
+    "",
+    "Resident tax deadlines and filing channels change with each tax year. Check these when the location publishes the next",
+    "year's filing page, usually in January.",
+    "",
+    "| Location | Record | Statement |",
+    "|---|---|---|",
+    ...of("tax-year").map(({ location, item }) => `| ${shortName(location.name)} | ${records(item.records)} | ${cell(item.statement)} |`),
+    "",
+    "## 3. Old or undated sources (recheck at the next review)",
+    "",
+    "Supplements are accurate to these pages, but the pages are old or undated and may have been replaced.",
+    "",
+    "| Location | Record | Source | Date |",
+    "|---|---|---|---|",
+    ...of("old-source").map(({ location, item }) => `| ${shortName(location.name)} | ${records(item.records)} | ${cell(item.source)} | ${cell(item.date)} |`),
+    "",
+    "## 4. Known gaps to fill later",
+    "",
+    "Not errors, but information the cited pages did not give; worth adding when the location publishes it.",
+    "",
+    "| Location | Record | Gap |",
+    "|---|---|---|",
+    ...of("gap").map(({ location, item }) => `| ${shortName(location.name)} | ${records(item.records)} | ${cell(item.gap)} |`),
+    "",
+  ].join("\n");
+}
+
+/**
+ * Coverage-plan groups and their planned location counts (docs/LOCAL-GUIDANCE-COVERAGE-PLAN.md). Tokyo municipalities
+ * and designated cities are grouped by type; other cities by the `planGroup` in their location file.
+ */
+const planGroups = [
+  { label: "Tokyo special wards", planned: 23, match: (type: string, prefectureCode: string) => type === "special-ward" && prefectureCode === "13" },
+  { label: "Tokyo cities", planned: 4, match: (type: string, prefectureCode: string) => type !== "special-ward" && prefectureCode === "13" },
+  { label: "Designated cities", planned: 20, match: (type: string) => type === "designated-city" },
+  { label: "Prefectural capitals (not designated cities)", planned: 31, group: "prefectural-capital" },
+  { label: "Additional major cities (preliminary)", planned: 28, group: "major-city" },
+] as const;
+
+const statusStart = "<!-- status:start (generated by `npm run local-guidance -- generate`; do not edit by hand) -->";
+const statusEnd = "<!-- status:end -->";
+
+function renderStatus(): string {
+  const guideCount = localGuidanceArticleOrder.length;
+  const rows = planGroups.map((group) => {
+    const members = localGuidanceLocations.filter(({ geography }) => {
+      const record = getAdministrativeGeography(geography.id)!;
+      return "group" in group ? geography.planGroup === group.group : group.match(record.type, record.prefectureCode);
+    });
+    const complete = members.filter(({ supplements }) => supplements.length >= guideCount);
+    const partial = members.filter(({ supplements }) => supplements.length < guideCount);
+    const notes = [
+      members.length === 0 ? "None started." : complete.length === group.planned ? `All ${group.planned} complete.` : complete.length ? `Complete: ${complete.map(({ geography }) => geography.name).join(", ")}.` : "",
+      partial.length ? `In progress: ${partial.map(({ geography, supplements }) => `${geography.name} (${supplements.length}/${guideCount})`).join(", ")}.` : "",
+    ].filter(Boolean).join(" ");
+    return { label: group.label, planned: group.planned, complete: complete.length, supplements: members.reduce((sum, { supplements }) => sum + supplements.length, 0), notes };
+  });
+  const planned = rows.reduce((sum, row) => sum + row.planned, 0);
+  const complete = rows.reduce((sum, row) => sum + row.complete, 0);
+  const remaining = planned * guideCount - rows.reduce((sum, row) => sum + row.supplements, 0);
+  return [
+    statusStart,
+    "",
+    "| Group | Locations | Complete (all 7) | Notes |",
+    "|---|---:|---:|---|",
+    ...rows.map((row) => `| ${row.label} | ${row.planned} | ${row.complete} | ${row.notes} |`),
+    `| **Total** | **${planned}** | **${complete}** | About ${remaining} new supplements remain. |`,
+    "",
+    statusEnd,
+  ].join("\n");
+}
+
+/** Rewrites the generated docs; returns the ones that changed. */
+async function generateDocs(): Promise<string[]> {
+  const changed: string[] = [];
+  const write = async (path: string, text: string) => {
+    const current = existsSync(path) ? (await readFile(path, "utf8")).replace(/\r\n?/g, "\n") : "";
+    if (current !== text) {
+      await writeFile(path, text);
+      changed.push(shown(path));
+    }
+  };
+  await write(recheckPath, renderRecheck());
+  const plan = (await readFile(coveragePlanPath, "utf8")).replace(/\r\n?/g, "\n");
+  const start = plan.indexOf(statusStart);
+  const end = plan.indexOf(statusEnd);
+  if (start < 0 || end < 0) throw new Error(`${shown(coveragePlanPath)} is missing its status markers.`);
+  await write(coveragePlanPath, `${plan.slice(0, start)}${renderStatus()}${plan.slice(end + statusEnd.length)}`);
+  return changed;
+}
+
+async function generateCommand(): Promise<void> {
+  const changed = await generateDocs();
+  console.log(changed.length ? `Updated ${changed.join(", ")}.` : "Generated docs are up to date.");
+}
+
 // ---------------------------------------------------------------------------------------------- verify
 
 /** The data tests a local-guidance batch can affect. Everything else is unaffected by supplement and source data. */
 const dataTests = [
   "src/data/geography/administrative-geography.test.ts",
   "src/domain/geography/local-guidance.test.ts",
+  "src/data/local-guidance/locations.test.ts",
   "src/lib/content/prefecture-finder.test.ts",
   "src/data/sources.test.ts",
   // Catches a source that no supplement or article cites any more, e.g. after replacing a supplement's sources.
   "src/lib/source-monitoring/article-source-metadata.test.ts",
 ];
 
-/** Supplement IDs whose records changed against HEAD, found by mapping diff hunks onto each record's lines. */
+/**
+ * Supplement IDs whose records changed against HEAD, found by mapping diff hunks onto each record's lines. Every
+ * record in a new (untracked) location file counts as changed.
+ */
 function changedSupplementIds(): string[] {
-  const diff = execFileSync("git", ["diff", "-U0", "HEAD", "--", "src/data/local-guidance"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  const git = (args: string[]) => execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  const diff = git(["diff", "-U0", "HEAD", "--", "src/data/local-guidance"]);
   const changedLines = new Map<string, number[]>();
   let file = "";
   for (const line of diff.split("\n")) {
@@ -409,6 +735,9 @@ function changedSupplementIds(): string[] {
       const count = hunk[2] === undefined ? 1 : Number(hunk[2]);
       changedLines.set(file, [...(changedLines.get(file) ?? []), ...Array.from({ length: count }, (_, offset) => start + offset)]);
     }
+  }
+  for (const path of git(["ls-files", "--others", "--exclude-standard", "--", "src/data/local-guidance"]).split("\n").filter(Boolean)) {
+    changedLines.set(path, Array.from({ length: readFileSync(resolve(process.cwd(), path), "utf8").split("\n").length }, (_, index) => index + 1));
   }
   const ids = new Set<string>();
   for (const [path, lines] of changedLines) {
@@ -431,9 +760,11 @@ function changedSupplementIds(): string[] {
  * normal type, lint, architecture, and browser checks; data-only batches do not. See LOCAL-GUIDANCE-WORKFLOW.md.
  */
 async function verifyCommand(): Promise<void> {
+  const regenerated = await generateDocs();
+  console.log(regenerated.length ? `Regenerated ${regenerated.join(", ")}.` : "Generated docs are up to date.");
   const changed = changedSupplementIds();
   if (changed.length) {
-    console.log(`Changed supplements: ${changed.join(", ")}`);
+    console.log(`Changed supplements (${changed.length}): ${changed.length > 20 ? `${changed.slice(0, 20).join(", ")}, …` : changed.join(", ")}`);
     await checkCommand(["--only", changed.join(","), "--links", "--evidence"]);
   } else {
     console.log("No supplement records changed since HEAD; skipping the link and evidence check.");
@@ -452,6 +783,8 @@ async function main(): Promise<void> {
   const [command, ...argv] = process.argv.slice(2);
   trustSystemCertificates();
   if (command === "coverage") return coverageCommand();
+  if (command === "add-location") return addLocationCommand(argv);
+  if (command === "generate") return generateCommand();
   if (command === "worksheet") return worksheetCommand(argv);
   if (command === "fetch") return fetchCommand(argv);
   if (command === "check") return checkCommand(argv);

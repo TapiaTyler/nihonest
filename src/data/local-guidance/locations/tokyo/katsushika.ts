@@ -1,0 +1,117 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Katsushika City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13122", name: "Katsushika City", aliases: ["Katsushika","Katsushika Ward","Katsushika-ku"] },
+  sources: [
+    { id: "katsushika-moving-notices", title: "Moving-in and other residence notifications", url: "https://www.city.katsushika.lg.jp/kurashi/1000046/1001401/1001438.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "katsushika-national-health-insurance-procedures", title: "National Health Insurance joining and other notifications", url: "https://www.city.katsushika.lg.jp/kurashi/1000049/1001690/1001699.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-national-health-insurance-eligibility", title: "National Health Insurance eligibility", url: "https://www.city.katsushika.lg.jp/kurashi/1000049/1001690/1001697.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-national-pension-procedures", title: "National Pension notifications by coverage event", url: "https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1001772.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "katsushika-national-pension-relief", title: "National Pension contribution exemption and student postponement", url: "https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1001775.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "katsushika-national-pension-electronic", title: "National Pension My Number Portal procedures", url: "https://www.city.katsushika.lg.jp/kurashi/1000049/1001692/1028649/index.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "katsushika-household-waste-burnable", title: "Putting out burnable waste", url: "https://www.city.katsushika.lg.jp/kurashi/1000048/1001535/1001646.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-household-waste-bulky", title: "Putting out bulky waste", url: "https://www.city.katsushika.lg.jp/kurashi/1000048/1001536/1016343.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-disaster-foreign-residents", title: "Disaster information for foreign residents", url: "https://www.city.katsushika.lg.jp/information/1000087/1022737/1018800.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-disaster-floods", title: "Preparing for floods", url: "https://www.city.katsushika.lg.jp/kurashi/1004028/1000063/1004031/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-foreign-resident-consultation", title: "Daily-life consultation for foreign residents", url: "https://www.city.katsushika.lg.jp/kurashi/1000061/1003798/1003866.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-japanese-classes", title: "Ward Japanese classes (2026)", url: "https://www.city.katsushika.lg.jp/information/1000087/1022737/1028889.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-resident-tax-filing", title: "Filing the 2026 resident tax return", url: "https://www.city.katsushika.lg.jp/kurashi/1000047/1001463/1022540.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "katsushika-resident-tax-agent", title: "Procedures when moving abroad (tax agent)", url: "https://www.city.katsushika.lg.jp/kurashi/1000047/1001463/1040668.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "katsushika-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Katsushika",
+      summary: "Katsushika City accepts moving-in notices at the Ward Office or a nearby residents' office.",
+      applicability: "Use this route only when your actual home is in Katsushika City.",
+      responsibleBody: "Katsushika City", receivingOffice: "Ward Office Resident Registration Section or a residents' office",
+      actions: [
+        { title: "Bring the documents for a domestic or overseas move", description: "File within 14 days after you begin living at the address. For an overseas arrival, foreign residents should bring passports showing the entry date and each mover's residence card or special permanent resident certificate; the ward also accepts the passport route when it is marked that a residence card will be issued later. For a domestic move, bring the prior municipality's moving-out certificate unless the card-transfer exception applies, plus the foreign residents' cards. The ward asks groups of five or more foreign residents filing together to contact it in advance." },
+      ],
+      sourceIds: ["katsushika-moving-notices"],
+      sourceFormatNote: "The current detailed procedure is in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Katsushika",
+      summary: "Katsushika asks households to report joining at its insurance desk or a residents' office; the postal route shown on its procedure page is for withdrawal, not joining.",
+      applicability: "Use Katsushika's procedure if Katsushika is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Katsushika City", receivingOffice: "National Health Insurance and Pension Qualification Desk at Katsushika City Office or a residents' office",
+      actions: [
+        { title: "Report the joining event and bring its evidence", description: "Katsushika asks the household head or a member of the same registered household to notify it within 14 days; someone outside that household needs authorization. For a move into Katsushika, raise insurance during the move-in notification. For workplace or dependent coverage loss, bring evidence of the date coverage ended for everyone joining. The page lists different documents for the end of public assistance and for foreign residents entering the resident register; Designated Activities status also requires the designation document. For a birth, raise insurance during birth registration. Check the ward's eligibility page because resident registration alone does not establish every foreign resident's eligibility." },
+        { title: "Use the correct delivery and filing route", description: "Katsushika generally mails the qualification document to the registered address. If you need it issued at the ward office counter, bring photo identity evidence and check the ward's current conditions. Its procedure page describes postal filing for withdrawal after joining workplace insurance, but does not list postal or online joining; do not use that withdrawal form to enroll." },
+      ],
+      sourceIds: ["katsushika-national-health-insurance-procedures","katsushika-national-health-insurance-eligibility"],
+      sourceFormatNote: "Katsushika's joining and eligibility pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Katsushika",
+      summary: "Katsushika includes rubber and leather goods in burnable waste, and takes bulky waste applications online or by phone every day, including weekends and holidays.",
+      applicability: "Collection days differ by area; check Katsushika's collection calendar for your address.",
+      responsibleBody: "Katsushika City",
+      actions: [
+        { title: "Sort burnable waste", description: "Burnable waste includes kitchen waste (drained), cooking oil (solidified or soaked into cloth), leaves and short pruned branches, clothing, unrecyclable paper, and rubber and leather goods such as shoes, bags, belts, and hoses." },
+        { title: "Book bulky waste", description: "Household items with any side over 30 cm, such as futons, furniture, and bicycles, are bulky waste. Apply to the Katsushika bulky waste reception center online, or by phone every day including weekends and holidays, 8 a.m. to 7 p.m. (except the New Year period); weekends are less busy than Mondays. Buy Katsushika bulky waste tickets for the quoted fee at a convenience store, supermarket, or other seller." },
+      ],
+      sourceIds: ["katsushika-household-waste-burnable","katsushika-household-waste-bulky"],
+      sourceFormatNote: "Katsushika's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Katsushika",
+      summary: "Katsushika asks for resident tax returns by post where possible, including from people with no income who use National Health Insurance or allowances, and requires a tax agent when you move abroad.",
+      applicability: "Use Katsushika's route when you lived in Katsushika City on January 1 of the tax year; moving abroad later that year does not change where you pay.",
+      responsibleBody: "Katsushika City", receivingOffice: "Taxation Section, Tax Division, Katsushika City Office",
+      actions: [
+        { title: "File by post where possible", description: "File if you lived in Katsushika on January 1 and had income the previous year, unless you filed an income-tax return or your salary or pension was reported to the ward. People with no income should file if they need a certificate or are in National Health Insurance, long-term care insurance, or receive child allowances. The ward asks for returns by post, with copies of your My Number and identity documents." },
+        { title: "Name a tax agent before moving abroad", description: "If paying becomes difficult after moving abroad, name a tax agent (nozei kanrinin) to receive notices and pay: an individual with their own livelihood (not necessarily a relative) or a company. Submit the form at window 321 on the 3rd floor or by post, with copies of your and the agent's identity documents, such as a residence card." },
+      ],
+      sourceIds: ["katsushika-resident-tax-filing","katsushika-resident-tax-agent"],
+      sourceFormatNote: "Katsushika's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Katsushika",
+      summary: "Katsushika publishes a disaster map for foreign residents in English and Chinese, a flood hazard map explanation in 108 languages, and the Katsu-Rappa app for disaster radio announcements in four languages.",
+      applicability: "Check your gathering place, evacuation place, and flood risk ahead of time; during an event, follow the ward's disaster radio and evacuation information.",
+      responsibleBody: "Katsushika City",
+      actions: [
+        { title: "Use the maps and app for foreign residents", description: "The Katsushika disaster map for foreign residents shows where to evacuate and get water, in English and Chinese with Japanese. The Katsu-Rappa app shows the ward's disaster radio announcements as text and audio in Japanese, English, Simplified Chinese, and Korean." },
+        { title: "Prepare for floods", description: "Check the flood hazard map (March 2025); its explanation can be read in 108 languages. The ward also publishes a guide to sheltering at home in a flood, how to collect disaster information, and evacuation methods. River cameras and water levels can be checked online." },
+      ],
+      sourceIds: ["katsushika-disaster-foreign-residents","katsushika-disaster-floods"],
+      sourceFormatNote: "Katsushika's disaster pages are in Japanese, some in plain Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Katsushika",
+      summary: "Katsushika's free daily-life consultation for foreign residents runs on Monday afternoons at the ward office in English and Chinese, in person, by phone, or online, and the ward runs Japanese classes for daily life.",
+      applicability: "For foreign residents of Katsushika. Consultation covers registration, health insurance, pension, schools, family matters, and tax.",
+      responsibleBody: "Katsushika City", receivingOffice: "Resident Consultation Room (window 209), 2nd floor of Katsushika City Office",
+      actions: [
+        { title: "Use the Monday consultation", description: "Consultation in English, Chinese, and Japanese is on Mondays from 12:30 to 5 p.m. (last entry 4:30 p.m.) at the ward office, in person, by phone, or online by FaceTime or Google Meet (call to arrange); no reservation is needed and it is free. A Chinese consultation booth at Ekinikowa in Shin-Koiwa opens on the third Wednesday of each month." },
+        { title: "Join the ward's Japanese class", description: "The ward's Japanese classes teach simple Japanese for daily life, not the JLPT, at beginner and elementary levels, with a level check after applying. They are for people aged 15 and over (not junior high school students) who live, work, or study in the ward, or whose children attend school or nursery there." },
+      ],
+      sourceIds: ["katsushika-foreign-resident-consultation","katsushika-japanese-classes"],
+      sourceFormatNote: "Katsushika's pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "katsushika-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Katsushika",
+      summary: "Katsushika gives a ward-counter route for overseas arrivals and distinguishes it from workplace and dependent-coverage changes.",
+      applicability: "Use Katsushika's procedure if Katsushika is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Katsushika City", receivingOffice: "National Pension Section at Katsushika City Office, third floor, or a residents' office for eligible enrollment filings",
+      actions: [
+        { title: "File the notice that matches your coverage change", description: "Katsushika asks a person returning or moving in from overseas who needs Category I coverage to file at its National Pension Section or a residents' office, including when changing from voluntary overseas enrollment. Bring identity and a Basic Pension Number Notice or pension book; ask the ward what a first-time enrollee without a number record should bring. People continuing employee pension coverage, or their dependent spouses, follow the employer route. After retirement or loss of dependent-spouse coverage, the ward asks for identity, pension-number evidence, and proof of the retirement or dependent-status end date. Its pages do not give a separate local arrival deadline." },
+        { title: "Use the listed relief and electronic routes", description: "For contribution exemption, payment postponement, or Student Special Payment, Katsushika directs residents to its National Pension Section and lists My Number Portal applications. A student application needs a student ID or enrollment certificate, identity evidence, and a pension-number record; unemployment-based relief may require a separation or employment-insurance document. The ward's electronic list includes Category I acquisition and category change, but does not identify an overseas-arrival form. The cited pages do not establish a postal route for these cases." },
+      ],
+      sourceIds: ["katsushika-national-pension-procedures","katsushika-national-pension-relief","katsushika-national-pension-electronic"],
+      sourceFormatNote: "Katsushika's current notification, relief, and electronic-procedure pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "old-source", records: ["katsushika-disaster-preparation"], source: "Flood page", date: "Not dated" },
+  ],
+});

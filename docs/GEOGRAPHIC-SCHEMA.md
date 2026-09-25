@@ -7,20 +7,23 @@ data, not newly generated translation artifacts.
 
 ## Scope and hierarchy
 
-The snapshot contains 300 records:
+The snapshot contains 129 records:
 
 - 47 prefectural-level records (46 `prefecture`, Tokyo as `metropolis`);
 - Tokyo's 23 `special-ward` municipalities and its 26 `city`, 5 `town`, and 8 `village`
   municipalities (the Tama area and the islands), all directly under Tokyo;
-- 20 `designated-city` municipalities under their prefectures;
-- 171 `administrative-ward` records under those designated cities.
+- 20 `designated-city` municipalities under their prefectures.
+
+The 171 `administrative-ward` records under designated cities were removed on 2026-09-25: the city runs local
+procedures for all its wards, so Nihonest guidance is city-level. The schema and validation still accept
+`administrative-ward` records if ward-level data (for example, evacuation sites) is needed later.
 
 `prefecture` is an umbrella type covering Hokkaido, Kyoto, Osaka, and the other
 prefectures. Regions such as Kanto and Kansai are not government parents.
 The schema accepts `city`, `town`, and `village` for source-backed additions.
 Tokyo's child list is complete (all 62 municipalities, added 2026-09-23 from the
 same J-LIS table); outside Tokyo this snapshot does not yet contain ordinary
-cities, towns, or villages, only designated cities and their wards.
+cities, towns, or villages, only designated cities.
 
 ```text
 jp-13000  Tokyo (metropolis)
@@ -28,13 +31,13 @@ jp-13000  Tokyo (metropolis)
 
 jp-23000  Aichi (prefecture)
 └── jp-23100  Nagoya (designated-city / municipality)
-    └── jp-23101  Nagoya's Chikusa ward (administrative-ward)
+    └── (administrative wards such as Chikusa, jp-23101, are not in the registry)
 ```
 
 Administrative wards are not interchangeable with Tokyo special wards. Their
 municipal parent stays explicit even when the English word “ward” is shared.
 Same-named wards have different IDs: Tokyo Chuo is `jp-13102`, while Sapporo
-Chuo is `jp-01101`, under Sapporo `jp-01100` and Hokkaido `jp-01000`.
+Chuo would be `jp-01101`, under Sapporo `jp-01100` and Hokkaido `jp-01000`.
 
 ## Record contract
 
@@ -84,8 +87,7 @@ import {
 getAdministrativeGeography("jp-13104"); // Shinjuku
 getAdministrativeGeographyByCode("131041"); // Same record, checksum checked
 getAdministrativeGeographyChildren("jp-13000"); // 23 special wards, code order
-getAdministrativeGeographyChildren("jp-23100"); // 16 Nagoya administrative wards
-getAdministrativeGeographyAncestors("jp-23101"); // Aichi, then Nagoya
+getAdministrativeGeographyAncestors("jp-23100"); // Aichi
 ```
 
 Unknown IDs return `undefined` from lookup and empty lists from traversal;
@@ -105,8 +107,8 @@ The prefecture source table has no reading column, so this is not a claim of
 complete kana-based prefecture ordering. Add verified readings if that is needed.
 For complete existing English prefecture-name sorting, all 47 labels are present.
 
-All 300 records have source Japanese names; all 253 municipality and ward
-records have source readings. English labels currently cover the 47 prefectures and the two
+All 129 records have source Japanese names; all 82 municipality records have
+source readings. English labels currently cover the 47 prefectures and the two
 existing pilot municipalities. Other English names remain absent rather than
 invented. A future UI must identify fallback appropriately; the registry alone
 does not establish complete bilingual interface coverage.

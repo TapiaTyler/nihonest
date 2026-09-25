@@ -1,0 +1,116 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Toshima City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13116", name: "Toshima City", aliases: ["Toshima","Toshima Ward","Toshima-ku"] },
+  sources: [
+    { id: "toshima-moving-in-domestic", title: "Moving into Toshima from another municipality", url: "https://www.city.toshima.lg.jp/096/tetsuzuki/todokede/kiroku/000320.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "toshima-moving-in-overseas", title: "Moving into Toshima from abroad", url: "https://www.city.toshima.lg.jp/096/tetsuzuki/todokede/027375/027295.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "toshima-national-health-insurance-procedures", title: "National Health Insurance joining, withdrawal, and other notifications", url: "https://www.city.toshima.lg.jp/109/tetsuzuki/nenkin/kenkohoken/todokede/004920.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-national-pension-moving", title: "National Pension procedures after domestic and overseas moves", url: "https://www.city.toshima.lg.jp/116/tetsuzuki/nenkin/nenkin/2402090956.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "toshima-national-pension-retirement", title: "National Pension after employee or dependent coverage ends", url: "https://www.city.toshima.lg.jp/116/tetsuzuki/nenkin/nenkin/1603081336.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "toshima-national-pension-relief", title: "National Pension contribution relief and student payment postponement", url: "https://www.city.toshima.lg.jp/116/tetsuzuki/nenkin/nenkin/008389.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "toshima-national-pension-postal", title: "National Pension postal procedures", url: "https://www.city.toshima.lg.jp/116/tetsuzuki/nenkin/nenkin/2003041553.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "toshima-national-pension-electronic", title: "National Pension My Number Portal procedures", url: "https://www.city.toshima.lg.jp/116/tetsuzuki/nenkin/nenkin/2506041543.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "toshima-household-waste-english", title: "How to dispose of garbage and recyclable resources (English)", url: "https://www.city.toshima.lg.jp/info/en/garbage.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-disaster-evacuation-english", title: "Evacuation and emergency shelters (English)", url: "https://www.city.toshima.lg.jp/info/en/evacuation.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-disaster-preparedness-english", title: "Disaster preparedness (English)", url: "https://www.city.toshima.lg.jp/info/en/disaster.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-foreigner-support", title: "Foreigner support (English)", url: "https://www.city.toshima.lg.jp/info/en/support.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-japanese-language-club", title: "Japanese language club (English)", url: "https://www.city.toshima.lg.jp/info/en/j_langclub.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "toshima-resident-tax-english", title: "Taxation (English)", url: "https://www.city.toshima.lg.jp/info/en/taxation.html", language: "en", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "toshima-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Toshima",
+      summary: "Toshima City has different receiving hours for domestic and overseas moving-in notices.",
+      applicability: "Use this route only when your actual home is in Toshima City.",
+      responsibleBody: "Toshima City", receivingOffice: "Ward Hall 3F or an East or West residents' office for overseas arrivals",
+      actions: [
+        { title: "Use the overseas hours if arriving from abroad", description: "File within 14 days after you begin living at the address; Toshima does not accept advance notice. For an overseas arrival, bring passports for everyone moving and residence cards or special permanent resident certificates for foreign residents. If a passport lacks an entry stamp, bring other proof of entry date. A foreign-only household changing recorded relationships may need original relationship documents with translator-identified Japanese translations. Overseas moving-in notices are received at the Ward Hall and East or West residents' offices on weekdays from 8:30 a.m. to 4 p.m.; the longer domestic-move hours and Saturday opening do not apply to this route." },
+      ],
+      sourceIds: ["toshima-moving-in-domestic","toshima-moving-in-overseas"],
+      sourceFormatNote: "The current detailed procedures are in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "toshima-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Toshima",
+      summary: "Toshima accepts joining notices at its National Health Insurance Division or a district resident office, and sets up premium payment by bank-account transfer at the same time.",
+      applicability: "Use Toshima's procedure if Toshima is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Toshima City", receivingOffice: "National Health Insurance Division or a district resident office; leaving workplace coverage can also be filed electronically",
+      actions: [
+        { title: "Match your event to Toshima's table", description: "Toshima asks for notice within 14 days. The division's counter is open weekdays from 8:30 a.m. to 5 p.m. and on the second Saturday from 9 a.m. to 5 p.m. For a foreign resident newly covered by resident registration, the table lists a passport and a residence card or Special Permanent Resident Certificate; a Designated Activities resident also needs the designation document. A representative from outside the household needs a letter of authorization, and a person with unpaid premiums may not be able to file at a district resident office." },
+        { title: "Bring what you need to set up bank-account transfer", description: "Toshima collects premiums by bank-account transfer and asks you to apply for it when you join, so bring a cash card from a participating bank (you will need its PIN) or a passbook and the account's registered seal. Leaving workplace coverage can also be filed electronically, and the joining form can be submitted by post." },
+      ],
+      sourceIds: ["toshima-national-health-insurance-procedures"],
+      sourceFormatNote: "Toshima's current joining procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "toshima-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Toshima",
+      summary: "Toshima collects sorted waste at shared collection sites by 8 a.m. (7:30 a.m. near Ikebukuro Station), in see-through bags with no designated bags, and leaves unsorted waste with a violation sticker.",
+      applicability: "Ask your landlord or real estate agent where your collection site is; collection days differ by area.",
+      responsibleBody: "Toshima City",
+      actions: [
+        { title: "Sort and put waste out by 8 a.m.", description: "Put sorted waste at the designated collection site by 8 a.m. on the collection day (7:30 a.m. in the Ikebukuro Station area); collection continues on rainy days and holidays. Burnable garbage (twice a week) and plastics (once a week) go in transparent or semitransparent bags; there are no designated bags, and black bags and boxes are not allowed. Metal, ceramics, and glass are collected twice a month. Unsorted waste is left with a violation sticker for you to re-sort." },
+        { title: "Treat large items as bulky waste", description: "Furniture, household items, and futons with a side over 30 cm cannot go to the collection site and must be disposed of as bulky waste. For large amounts, such as when moving out, contact the Toshima Waste Collection Office." },
+      ],
+      sourceIds: ["toshima-household-waste-english"],
+    },
+    {
+      id: "toshima-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Toshima",
+      summary: "Toshima's English tax page explains that everyone living in the city on January 1 files a declaration, with or without income, unless covered by a tax return or salary withholding, and that people leaving Japan before paying must pay in full or appoint an agent.",
+      applicability: "Use Toshima's route when you lived in Toshima City on January 1 of the tax year; moving out during the year does not change where you pay.",
+      responsibleBody: "Toshima City", receivingOffice: "City Tax Section, Toshima City Office",
+      actions: [
+        { title: "Declare your income and pay", description: "If you lived in Toshima on January 1, file a declaration of the previous year's income between February 16 and March 15, even with no income, unless you filed an income-tax return or your only income was salary with tax withheld. Payment slips for four installments come by mail; pay at banks, the city office (3rd floor), residents offices, convenience stores, by smartphone payment app, or by account transfer, or have it deducted from salary." },
+        { title: "Pay in full or appoint an agent before leaving Japan", description: "If you leave Japan before your resident tax is due, pay it in full or appoint an agent to pay for you. Toshima's resident tax information for foreign residents is available in Japanese, Chinese, Korean, English, Vietnamese, Burmese, and Nepali." },
+      ],
+      sourceIds: ["toshima-resident-tax-english"],
+    },
+    {
+      id: "toshima-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Toshima",
+      summary: "Toshima treats going to a shelter as a last resort: evacuate only if there is danger, such as spreading fire or collapse, going first to a temporary evacuation area and then, if needed, to a rescue center or evacuation area.",
+      applicability: "Know your temporary evacuation area, rescue center, and evacuation area before a disaster; during an event, follow instructions from the city, police, and fire department.",
+      responsibleBody: "Toshima City",
+      actions: [
+        { title: "Evacuate only when there is danger", description: "Evacuate if a fire cannot be put out and may spread, if the city, police, or fire department orders it, or if your building may collapse. Switch off the breaker, go on foot with essentials, and go to your temporary evacuation area (usually a park), then to the evacuation area your neighborhood is assigned, such as a university campus or cemetery. Rescue centers at elementary and junior high schools shelter people whose homes are unsafe. Part of Ikebukuro is a self-containment area where wide-area evacuation is not needed." },
+        { title: "Prepare supplies for a week", description: "Prepare food, water (about 3 liters per person per day), and supplies for 7 days per person, secure furniture, and agree on meeting places and contact methods with your family. Disaster prevention leaflets are available in English, Chinese, and Korean at the ward's disaster prevention section." },
+      ],
+      sourceIds: ["toshima-disaster-evacuation-english","toshima-disaster-preparedness-english"],
+    },
+    {
+      id: "toshima-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Toshima",
+      summary: "Toshima's City Resident Consultation Counter takes daily-life questions in 22 languages through tablet video interpreting, and volunteer Japanese classes run near Ikebukuro, Otsuka, and Mejiro, mostly free.",
+      applicability: "For foreign residents of Toshima. The counter helps with daily-life problems and may refer you to specialist institutions.",
+      responsibleBody: "Toshima City", receivingOffice: "City Resident Consultation Corner, 4th floor of the main building, Toshima City Office",
+      actions: [
+        { title: "Use the consultation counter", description: "The counter is open on weekdays from 8:30 a.m. to 5 p.m.; consultations are available in 22 languages through tablet video interpreting, with hours varying by language (for example, English, Chinese, and Korean from 8:30 a.m., Vietnamese and Nepali from 9 a.m., and French and Russian from 10 a.m.)." },
+        { title: "Join a volunteer Japanese class", description: "Volunteer Japanese classes run in person in Toshima, several of them free, on Tuesdays and Thursdays near Ikebukuro, Otsuka, and Mejiro. Contact the class organizers directly, not the venues." },
+      ],
+      sourceIds: ["toshima-foreigner-support","toshima-japanese-language-club"],
+    },
+    {
+      id: "toshima-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Toshima",
+      summary: "Toshima directs overseas arrivals to its pension counter and lists separate postal and electronic routes for coverage-loss changes and payment relief.",
+      applicability: "Use Toshima's procedure if Toshima is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Toshima City", receivingOffice: "National Pension Group at Toshima City Office, third floor, counter 10; Ikebukuro Pension Office for eligible relief filings",
+      actions: [
+        { title: "Match an overseas arrival or coverage change to its procedure", description: "After moving in from overseas, a person who needs Category I coverage, including someone who voluntarily joined while abroad, should visit the ward pension counter on a weekday with identity and Basic Pension Number evidence. Ask the counter what to do if this is a first enrollment and no pension-number record exists; the overseas-arrival page gives no filing deadline. A domestic move by someone already in Category I requires no separate pension filing after the address notification. After leaving employee pension coverage or a spouse's dependent coverage, Toshima asks for a filing within 14 days of the coverage-loss date, with identity, pension-number, and coverage-loss evidence." },
+        { title: "Use remote routes for the listed cases", description: "Toshima accepts postal enrollment after leaving employee or dependent coverage and lists My Number Portal acquisition after leaving employee pension coverage. Its postal instructions ask for the notification form and copies of pension-number and coverage-loss evidence. The online list also includes contribution exemption, payment postponement, and Student Special Payment. Relief can be handled at the ward counter or Ikebukuro Pension Office; call the ward before mailing a relief application. For student relief, check the current student-status document requirement. These coverage-loss remote routes are not an established overseas-arrival route." },
+      ],
+      sourceIds: ["toshima-national-pension-moving","toshima-national-pension-retirement","toshima-national-pension-relief","toshima-national-pension-postal","toshima-national-pension-electronic"],
+      sourceFormatNote: "Toshima's moving, coverage-change, and contribution-relief pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "old-source", records: ["toshima-household-waste"], source: "English garbage page", date: "September 17, 2020" },
+    { kind: "old-source", records: ["toshima-disaster-preparation"], source: "English disaster preparedness page", date: "October 28, 2016" },
+    { kind: "gap", records: ["toshima-household-waste"], gap: "Bulky waste booking details." },
+    { kind: "gap", records: ["toshima-disaster-preparation"], gap: "Flood hazard maps." },
+  ],
+});

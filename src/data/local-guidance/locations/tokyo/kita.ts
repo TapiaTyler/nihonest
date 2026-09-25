@@ -1,0 +1,118 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Kita City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13117", name: "Kita City", aliases: ["Kita","Kita Ward","Kita-ku"] },
+  sources: [
+    { id: "kita-address-changes", title: "Moving-in and other address-change notifications", url: "https://www.city.kita.lg.jp/living/registration/1001564/1001568.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "kita-national-health-insurance-procedures", title: "National Health Insurance joining procedure", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001703/1001712/1001713.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-national-health-insurance-remote", title: "National Health Insurance electronic and postal procedures", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001703/1001712/1001721.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-national-pension-procedures", title: "National Pension enrollment and overseas-move procedures", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001688/1001692.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kita-national-pension-postal", title: "National Pension postal procedures", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001688/1001701.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kita-national-pension-exemption", title: "National Pension contribution exemption and postponement", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001688/1001694/1001695.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kita-national-pension-student", title: "National Pension Student Special Payment System", url: "https://www.city.kita.lg.jp/living/insurance-pension/1001688/1001694/1001696.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kita-household-waste-burnable", title: "Burnable waste", url: "https://www.city.kita.lg.jp/living/bins/1002013/1002027/1002028.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-household-waste-bulky", title: "About bulky waste", url: "https://www.city.kita.lg.jp/living/bins/1002013/1002020/1002021.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-disaster-earthquake-evacuation", title: "Evacuation places after a major earthquake", url: "https://www.city.kita.lg.jp/safety/disaster/1018235/1018236/1002575.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-disaster-flood-evacuation", title: "High-ground and flood evacuation places", url: "https://www.city.kita.lg.jp/safety/disaster/1018235/1018236/1002616.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-japanese-classes", title: "Studying Japanese", url: "https://www.city.kita.lg.jp/culture-tourism-sports/exchange/1018313/1010335/1010357.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-foreign-resident-information", title: "Living information sites for foreign residents", url: "https://www.city.kita.lg.jp/culture-tourism-sports/exchange/1018313/1010335/1017619.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-resident-tax-filing", title: "Who needs to file a resident tax return", url: "https://www.city.kita.lg.jp/living/tax/1001899/1001905/1001906.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "kita-resident-tax-agent", title: "Appointing a tax agent or heir", url: "https://www.city.kita.lg.jp/living/tax/1001899/1001905/1001908.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "kita-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Kita",
+      summary: "Kita City receives moving-in notices at its Oji, Akabane, and Takinogawa residents' offices.",
+      applicability: "Use this route only when your actual home is in Kita City.",
+      responsibleBody: "Kita City", receivingOffice: "Oji, Akabane, or Takinogawa residents' office",
+      actions: [
+        { title: "Prepare the documents for your previous address", description: "File within 14 days after moving in. For a move from another Japanese municipality, Kita lists the moving-out certificate or applicable card transfer route, filer identification, and residence cards or special permanent resident certificates for foreign residents. For an overseas arrival, bring passports and each foreign resident's applicable residence card, special permanent resident certificate, temporary refuge permit, or provisional stay permit if issued. The three residents' offices receive moving-in notices on weekdays from 8:30 a.m. to 5 p.m.; check the ward's current page before using any extended or temporary counter." },
+      ],
+      sourceIds: ["kita-address-changes"],
+      sourceFormatNote: "The current detailed procedure is in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Kita",
+      summary: "Kita takes ordinary joining notices at its insurance desk and three citizen offices, but limits birth and advance notices to the main insurance desk.",
+      applicability: "Use Kita's procedure if Kita is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Kita City", receivingOffice: "National Health Insurance Qualification Section at Kita City Office, or the Oji, Akabane, or Takinogawa citizen office for eligible notices",
+      actions: [
+        { title: "Choose the counter for your event", description: "Kita asks for a joining notice within 14 days after the qualifying event. For a move into Kita, raise National Health Insurance during resident registration. For a birth, complete the birth procedure first and then use the National Health Insurance Qualification Section; citizen offices do not take birth joining notices. If a retirement or voluntary-continuation end date is already documented and you need to file before coverage ends, only the main Qualification Section accepts that advance notice." },
+        { title: "Check the evidence and remote-filing limits", description: "Kita lists My Number evidence and different documents for workplace coverage loss, the end of public assistance, and other events. Its electronic route covers leaving workplace, voluntary-continuation, or dependent coverage; postal joining also covers workplace coverage loss and the end of public assistance. Neither remote route accepts joining because of a move or birth. A dependent leaving workplace coverage needs a qualification-loss certificate rather than a retirement or separation document." },
+      ],
+      sourceIds: ["kita-national-health-insurance-procedures","kita-national-health-insurance-remote"],
+      sourceFormatNote: "Kita's current joining and remote-filing procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Kita",
+      summary: "Kita collects burnable waste on two set days a week, including holidays, by 8 a.m., in containers or see-through bags, and collects bulky waste over about 30 cm by application.",
+      applicability: "Collection days differ by area and are shown in Kita's sorting leaflet. In areas with house-by-house collection, including all of Takinogawa, waste goes in front of your home.",
+      responsibleBody: "Kita City",
+      actions: [
+        { title: "Put burnable waste out by 8 a.m.", description: "Burnable waste is collected on two set days a week between Monday and Saturday, including public holidays but not the New Year period. Put it out by 8 a.m. at the collection point (or in front of your home in house-by-house areas; apartments use their designated place), in a container or see-through bag. Waste mixed with recyclables is not collected; five or more 45-liter bags at once is charged, so consult the cleaning office first." },
+        { title: "Book bulky waste", description: "Items with any side over about 30 cm are bulky waste, collected or brought in only by application to the bulky waste reception center: by phone from Monday to Saturday, 8 a.m. to 7 p.m. (except the New Year period), or online at any time. From October 1, 2026, online applications can be paid electronically." },
+      ],
+      sourceIds: ["kita-household-waste-burnable","kita-household-waste-bulky"],
+      sourceFormatNote: "Kita's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Kita",
+      summary: "Kita asks everyone living in the ward on January 1 to file a resident tax return by March 15, even with no income, unless an income-tax return, salary report, or pension withholding covers them; leaving Japan requires a tax agent.",
+      applicability: "Use Kita's route when you lived in Kita City on January 1 of the tax year.",
+      responsibleBody: "Kita City", receivingOffice: "Taxation Division, 2nd floor of Kita City Office Building 1",
+      actions: [
+        { title: "File by March 15, even with no income", description: "File with the municipality where you lived on January 1, by March 15, unless you filed an income-tax return, your employer reports your salary and you have no other income, or you have only public pension with no changes to deductions. People with no income should also file, because without it the ward cannot issue tax certificates and may calculate health insurance and other premiums too high." },
+        { title: "Name a tax agent before leaving Japan", description: "If you move abroad and cannot receive tax notices or pay, name a tax agent (nozei kanrinin); the form is signed by you and the agent and can also be filed online." },
+      ],
+      sourceIds: ["kita-resident-tax-filing","kita-resident-tax-agent"],
+      sourceFormatNote: "Kita's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Kita",
+      summary: "Kita assigns each neighborhood an evacuation place for major earthquake fires, and opens separate high-ground evacuation places when the Arakawa River may flood.",
+      applicability: "Check your neighborhood's earthquake evacuation place and the flood evacuation places before a disaster; they are different. During an event, follow the ward's announcements.",
+      responsibleBody: "Kita City",
+      actions: [
+        { title: "Know your earthquake evacuation place", description: "Evacuation places, designated by Tokyo, are where residents wait until fires after a major earthquake are out; each neighborhood is assigned one, such as Asukayama Park or the Arakawa riverbed. They are also shown on the Kita disaster map." },
+        { title: "Know the flood evacuation places", description: "When a large typhoon threatens the Arakawa River, Kita opens high-ground flood evacuation places, mainly schools on higher ground; other flood evacuation places cover the Shakujii River and landslides. These differ from earthquake shelters. Opening information is posted on the ward website and sent by the Kita disaster weather e-mail." },
+      ],
+      sourceIds: ["kita-disaster-earthquake-evacuation","kita-disaster-flood-evacuation"],
+      sourceFormatNote: "Kita's disaster pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Kita",
+      summary: "Kita lists low-cost Japanese classes in the ward, with maps in Easy Japanese, English, and Chinese, and points foreign residents to Tokyo's multilingual consultation navigation and other support centers.",
+      applicability: "For foreign residents of Kita. The consultation services listed are run by Tokyo and national bodies.",
+      responsibleBody: "Kita City",
+      actions: [
+        { title: "Join a Japanese class", description: "Kita's Japanese classes cost little, typically 100 yen a session or a small monthly fee, and meet on weekdays and weekends at places such as Hokutopia and the Akabane Culture Center; some are for children. Contact each class before going. Maps of the classes are available in Easy Japanese, English, and Chinese." },
+        { title: "Use Tokyo's consultation services", description: "For consultation by phone, Kita points to Tokyo's Multilingual Consultation Navi (TMC Navi), the Foreign Residents Support Center (FRESC), and other services, with leaflets in several languages." },
+      ],
+      sourceIds: ["kita-japanese-classes","kita-foreign-resident-information"],
+      sourceFormatNote: "Kita's pages for foreign residents are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "kita-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Kita",
+      summary: "Kita asks overseas arrivals to complete resident registration before visiting its pension section and permits specified pension applications by post after checking documents.",
+      applicability: "Use Kita's procedure if Kita is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Kita City", receivingOffice: "National Pension Section at Kita City Office, First Building second floor, counter 26; residents' offices or Kita Pension Office for listed coverage changes",
+      actions: [
+        { title: "Complete the move-in step before the pension filing", description: "Kita asks people transferring in from overseas to complete resident move-in registration and then visit the ward's National Pension Section about the pension procedure. Its page does not give a first-arrival document list, so confirm what to bring, especially if no pension-number record exists. After leaving employee pension coverage or a spouse's dependent coverage, the ward instead lists the National Pension Section, a residents' office, or Kita Pension Office and asks for a pension-number record, visitor identity evidence, and proof of the retirement or dependent-status end date. A representative also needs authorization and their own identity evidence." },
+        { title: "Confirm documents before mailing a relief or joining form", description: "Kita's postal page lists National Pension enrollment or category-change forms, general exemption or postponement, and Student Special Payment among procedures that can be mailed to Kita Pension Office. Contact the office first to confirm required attachments; incomplete filings may be returned. For in-person contribution relief or student applications, Kita lists its main National Pension Section or Kita Pension Office. Student applicants need a valid student ID or enrollment certificate and pension-number evidence; unemployment-based applications may need separation evidence. The cited pages do not establish an electronic Kita filing route or say that an overseas arrival can use the postal joining form without confirming the case." },
+      ],
+      sourceIds: ["kita-national-pension-procedures","kita-national-pension-postal","kita-national-pension-exemption","kita-national-pension-student"],
+      sourceFormatNote: "Kita's procedure, postal, and contribution-relief pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "dated", records: ["kita-household-waste"], from: "2026-10-01", change: "Electronic payment for online bulky waste applications starts.", action: "Reword to present tense." },
+  ],
+});

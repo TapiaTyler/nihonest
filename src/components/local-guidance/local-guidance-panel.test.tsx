@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
 import { localGuidanceLocationStorageKey } from "@/lib/storage/local-guidance-location";
@@ -50,57 +50,87 @@ describe("LocalGuidancePanel", () => {
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
   });
 
-  it("offers general article advice for an unresearched prefecture and a designated-city ward", () => {
-    render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
+  it("offers general article advice for an unresearched prefecture and an unlisted designated city", () => {
+    const { unmount } = render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-01000" } });
     expect(screen.getByText(/Research for Hokkaido on this article has not been done yet/)).toBeInTheDocument();
     expect(screen.getByText(/municipality's official site, look up enrollment/)).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "jp-01101" } });
-    expect(screen.getByText(/Research for Chuo Ward, Sapporo on this article has not been done yet/)).toBeInTheDocument();
-    expect(screen.getByText(/ward of a designated city/)).toBeInTheDocument();
+    unmount();
+
+    // A saved municipality that is not listed still gets general guidance, with the ward note for a designated city.
+    window.localStorage.setItem(localGuidanceLocationStorageKey, "jp-01100");
+    render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
+    expect(screen.getByLabelText("Prefecture")).toHaveValue("jp-01000");
+    expect(screen.getByText(/Research for Sapporo City on this article has not been done yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Sapporo City is divided into wards. Each ward office may have its own procedures/)).toBeInTheDocument();
   });
-  it("lists municipalities in English, each designated city followed by its wards, and all of Tokyo", () => {
+
+  it("lists only researched municipalities and offers Other for the rest of the prefecture", () => {
+    render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
+    const municipality = screen.getByLabelText("Municipality");
+    expect(municipality).toHaveValue("");
+    expect(municipality).toHaveAccessibleDescription(/Only municipalities with researched guidance are listed/);
+    expect(within(municipality).queryByRole("option", { name: "Chofu City" })).not.toBeInTheDocument();
+
+    fireEvent.change(municipality, { target: { value: "other" } });
+    expect(municipality).toHaveValue("other");
+    expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("tokyo");
+    expect(screen.getByText(/Research for Tokyo on this article has not been done yet/)).toBeInTheDocument();
+
+    fireEvent.change(municipality, { target: { value: "jp-13201" } });
+    expect(screen.getByRole("heading", { name: /Hachioji/ })).toBeInTheDocument();
+  });
+
+  it("shows a saved municipality that is no longer listed as Other", () => {
+    window.localStorage.setItem(localGuidanceLocationStorageKey, "jp-13208");
+    render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
+    expect(screen.getByLabelText("Prefecture")).toHaveValue("tokyo");
+    expect(screen.getByLabelText("Municipality")).toHaveValue("other");
+    expect(screen.getByText(/Research for Chofu City on this article has not been done yet/)).toBeInTheDocument();
+  });
+  it("lists researched municipalities in English by official code, then Other", () => {
     render(<LocalGuidancePanel options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />);
     const municipalityNames = () => [...screen.getByLabelText("Municipality").querySelectorAll("option")].slice(1).map(({ textContent }) => textContent);
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
-    const osaka = municipalityNames();
-    expect(osaka[0]).toBe("Osaka City");
-    expect(osaka.indexOf("Sakai City")).toBe(osaka.findIndex((name) => name?.endsWith(", Sakai")) - 1);
-    expect(osaka.slice(1, osaka.indexOf("Sakai City")).every((name) => name?.endsWith("Ward, Osaka"))).toBe(true);
+    expect(municipalityNames()).toEqual(["Osaka City", "Sakai City", "Other"]);
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
     const tokyo = municipalityNames();
-    expect(tokyo).toHaveLength(62);
+    expect(tokyo).toHaveLength(28);
     expect(tokyo[0]).toBe("Chiyoda City");
-    expect(tokyo.indexOf("Hachioji City")).toBe(23);
-    expect(tokyo.at(-1)).toBe("Ogasawara Village");
+    expect(tokyo.slice(23)).toEqual(["Hachioji City", "Tachikawa City", "Fuchu City", "Machida City", "Other"]);
     const groups = [...screen.getByLabelText("Municipality").querySelectorAll("optgroup")];
-    expect(groups.map((group) => [group.label, group.querySelectorAll("option").length])).toEqual([["Special wards", 23], ["Tama area", 30], ["Island area", 9]]);
+    expect(groups.map((group) => [group.label, group.querySelectorAll("option").length])).toEqual([["Special wards", 23], ["Tama area", 4]]);
   });
-  it("disables the municipality selector with a prefecture-wide note when no municipalities are mapped", () => {
+  it("disables the municipality selector with a prefecture-wide note when no municipality is researched", () => {
     render(<LocalGuidancePanel articleId="registering-your-address-after-arrival" options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />);
     const municipality = screen.getByLabelText("Municipality");
     expect(municipality).toBeDisabled();
-    expect(screen.queryByText(/have not been mapped yet/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/has researched guidance yet/)).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-10000" } });
     expect(municipality).toBeDisabled();
-    expect(municipality).toHaveAccessibleDescription(/Municipalities in this prefecture have not been mapped yet/);
+    expect(municipality).toHaveAccessibleDescription(/No municipality in this prefecture has researched guidance yet/);
     expect(municipality.querySelector("option")).toHaveTextContent("Prefecture-wide only");
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
     expect(municipality).toBeEnabled();
-    expect(screen.queryByText(/have not been mapped yet/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/has researched guidance yet/)).not.toBeInTheDocument();
   });
 
-  it("shows a designated city's supplement for its wards, labeled as city-wide", () => {
+  it("notes that each ward of a designated city may have its own procedures", () => {
     render(<LocalGuidancePanel articleId="joining-national-health-insurance" options={getLocalGuidanceForArticle("joining-national-health-insurance")} locations={getSelectableLocalGuidanceLocations()} />);
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "aichi" } });
-    fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "jp-23101" } });
+    fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "nagoya" } });
 
     expect(screen.getByRole("heading", { name: "National Health Insurance in Nagoya" })).toBeInTheDocument();
-    expect(screen.getByText("Applies city-wide, including Chikusa Ward, Nagoya.")).toBeInTheDocument();
+    expect(screen.getByText(/Nagoya City is divided into wards. Each ward office may have its own procedures/)).toBeInTheDocument();
     expect(screen.queryByText(/has not been done yet/)).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
+    fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "shinjuku" } });
+    expect(screen.queryByText(/is divided into wards/)).not.toBeInTheDocument();
   });
 });

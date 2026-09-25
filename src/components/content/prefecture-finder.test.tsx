@@ -18,7 +18,7 @@ describe("PrefectureFinder", () => {
     fireEvent.change(select, { target: { value: "jp-13000" } });
     // Researched guidance appears only after a municipality or ward is chosen, and only for that area.
     expect(screen.queryByRole("heading", { name: "Researched local guidance" })).not.toBeInTheDocument();
-    const municipalitySelect = screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" });
+    const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
     expect(within(municipalitySelect).getByRole("option", { name: "Chiyoda City" })).toHaveValue("jp-13101");
     fireEvent.change(municipalitySelect, { target: { value: "jp-13104" } });
     expect(screen.getByRole("heading", { name: "Researched local guidance" })).toBeInTheDocument();
@@ -45,18 +45,30 @@ describe("PrefectureFinder", () => {
     expect(screen.getByRole("heading", { name: /Hokkaido/ })).toHaveTextContent("北海道");
     expect(screen.getByText(/Prefecture-wide procedures for these articles have not been researched/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01000#local-guidance-heading");
-    fireEvent.change(screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" }), { target: { value: "jp-01101" } });
-    expect(screen.getByText(/Research for Chuo Ward, Sapporo on the guides below/)).toBeInTheDocument();
-    expect(screen.getByText(/does not yet have researched local supplements for Chuo Ward, Sapporo/)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-01101#local-guidance-heading");
+    // No municipality in Hokkaido has researched guidance, so no municipality selector is offered.
+    expect(screen.queryByRole("combobox", { name: "Choose a municipality or ward" })).not.toBeInTheDocument();
   });
 
-  it("shows a designated city's researched guides for its wards", () => {
+  it("lists only researched municipalities and offers Other for general starting points", () => {
+    render(<PrefectureFinder locale="en" {...data} />);
+    fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-13000" } });
+    const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
+    expect(within(municipalitySelect).queryByRole("option", { name: "Chofu City" })).not.toBeInTheDocument();
+    expect(within(municipalitySelect).getAllByRole("option").at(-1)).toHaveTextContent("Other");
+    fireEvent.change(municipalitySelect, { target: { value: "other" } });
+    expect(screen.queryByRole("heading", { name: "Researched local guidance" })).not.toBeInTheDocument();
+    expect(screen.getByText(/Prefecture-wide procedures for these articles have not been researched/)).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain("/articles/joining-national-health-insurance?local=jp-13000#local-guidance-heading");
+  });
+
+  it("lists a designated city once and notes that its wards may differ", () => {
     render(<PrefectureFinder locale="en" {...data} />);
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-23000" } });
-    fireEvent.change(screen.getByRole("combobox", { name: "Choose a mapped municipality or ward" }), { target: { value: "jp-23101" } });
+    const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
+    expect(within(municipalitySelect).getAllByRole("option").map(({ textContent }) => textContent)).toEqual(["Select a municipality or ward", "Nagoya City", "Other"]);
+    fireEvent.change(municipalitySelect, { target: { value: "jp-23100" } });
 
-    expect(screen.getByText(/Nagoya City runs these procedures for all its wards, so its supplements apply to Chikusa Ward, Nagoya/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "National Health Insurance in Nagoya" })).toHaveAttribute("href", "/articles/joining-national-health-insurance?local=jp-23101#local-guidance-heading");
+    expect(screen.getByText(/Nagoya City is divided into wards. Each ward office may have its own procedures/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "National Health Insurance in Nagoya" })).toHaveAttribute("href", "/articles/joining-national-health-insurance?local=jp-23100#local-guidance-heading");
   });
 });

@@ -40,8 +40,24 @@ export const localGuidanceSupplementSchema = z.object({
   status: z.literal("needs-review"),
 });
 
+/**
+ * Something in a location's supplements to check again later. docs/LOCAL-GUIDANCE-RECHECK.md is generated from
+ * these (`npm run local-guidance -- recheck`), so each location file carries its own schedule.
+ */
+export const localGuidanceRecheckSchema = z.discriminatedUnion("kind", [
+  /** A statement that changes on a known date. */
+  z.object({ kind: z.literal("dated"), from: z.iso.date(), records: z.array(stableIdSchema).min(1), change: z.string().min(1), action: z.string().min(1) }),
+  /** A deadline or filing channel tied to one tax year; rechecked each January. */
+  z.object({ kind: z.literal("tax-year"), records: z.array(stableIdSchema).min(1), statement: z.string().min(1) }),
+  /** A cited page that is old or undated. */
+  z.object({ kind: z.literal("old-source"), records: z.array(stableIdSchema).min(1), source: z.string().min(1), date: z.string().min(1) }),
+  /** Information the cited pages did not give. */
+  z.object({ kind: z.literal("gap"), records: z.array(stableIdSchema).min(1), gap: z.string().min(1) }),
+]);
+
 export type SupportedGeography = z.infer<typeof supportedGeographySchema>;
 export type LocalGuidanceSupplement = z.infer<typeof localGuidanceSupplementSchema>;
+export type LocalGuidanceRecheck = z.infer<typeof localGuidanceRecheckSchema>;
 
 export function validateLocalGuidanceCollection(
   geographies: readonly SupportedGeography[],

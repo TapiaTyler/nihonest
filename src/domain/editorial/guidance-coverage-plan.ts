@@ -61,6 +61,8 @@ export const guidanceCoveragePlanSchema = z.object({
   articleBatches: z.array(batchSchema).min(1),
   residenceStatusBatches: z.array(batchSchema).min(1),
   coverageTracks: z.array(coverageTrackSchema).min(1),
+  /** Articles deliberately kept out of research batches, such as one-off specially requested guides. */
+  excludedArticles: z.array(z.object({ id: stableIdSchema, reason: z.string().min(1) })).default([]),
 });
 
 export const guidanceDiscoveryRecordSchema = z.object({
@@ -126,7 +128,8 @@ export function auditGuidanceCoverage(
 ): readonly GuidanceCoverageFinding[] {
   const plan = guidanceCoveragePlanSchema.parse(planInput);
   const findings = [
-    ...compareInventory("article", articleIds, plan.articleBatches.flatMap(({ articleIds: ids }) => ids)),
+    // An excluded article counts as accounted for, so it is still checked for unknown or duplicate IDs.
+    ...compareInventory("article", articleIds, [...plan.articleBatches.flatMap(({ articleIds: ids }) => ids), ...plan.excludedArticles.map(({ id }) => id)]),
     ...compareInventory("residence status", residenceStatusIds, plan.residenceStatusBatches.flatMap(({ residenceStatusIds: ids }) => ids)),
   ];
   const coveredDimensions = new Set(plan.coverageTracks.flatMap(({ dimensionIds }) => dimensionIds));

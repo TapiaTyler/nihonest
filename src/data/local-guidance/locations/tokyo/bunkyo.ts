@@ -1,0 +1,118 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Bunkyo City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13105", name: "Bunkyo City", aliases: ["Bunkyo","Bunkyō","Bunkyo Ward","Bunkyo-ku"] },
+  sources: [
+    { id: "bunkyo-moving-in-domestic", title: "Moving into Bunkyo from another municipality", url: "https://www.city.bunkyo.lg.jp/b013/p000263.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "bunkyo-moving-in-overseas", title: "Moving into Bunkyo from abroad", url: "https://www.city.bunkyo.lg.jp/b013/p000264.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "bunkyo-national-health-insurance-procedures", title: "National Health Insurance enrollment and qualification notifications", url: "https://www.city.bunkyo.lg.jp/b021/p000478/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-national-pension-procedures", title: "National Pension filing procedures", url: "https://www.city.bunkyo.lg.jp/b021/p005987.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-national-pension-relief", title: "National Pension contribution exemption and postponement", url: "https://www.city.bunkyo.lg.jp/b021/p000661.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-national-pension-student", title: "National Pension Student Special Payment System", url: "https://www.city.bunkyo.lg.jp/b021/p000662.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-household-waste-guide", title: "Sorting and putting out waste and recyclables", url: "https://www.city.bunkyo.lg.jp/b039/p000928.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-household-waste-bulky", title: "Putting out bulky waste", url: "https://www.city.bunkyo.lg.jp/b039/p000932/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-disaster-shelters", title: "Shelters", url: "https://www.city.bunkyo.lg.jp/b009/p000020.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-disaster-flood-map", title: "Bunkyo flood hazard map (March 2024)", url: "https://www.city.bunkyo.lg.jp/b009/p000028.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-foreign-resident-guidebook", title: "Living guidebook for foreign residents (rules and manners)", url: "https://www.city.bunkyo.lg.jp/b005/p007780.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-consultation-other", title: "Consultation by national, Tokyo, and other bodies", url: "https://www.city.bunkyo.lg.jp/b003/p001405.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-resident-tax-overview", title: "Resident tax", url: "https://www.city.bunkyo.lg.jp/b008/p000355/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-resident-tax-filing", title: "Filing tax returns", url: "https://www.city.bunkyo.lg.jp/b008/p000348/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "bunkyo-tax-faq", title: "Frequently asked questions about taxes", url: "https://www.city.bunkyo.lg.jp/b008/p007481.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "bunkyo-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Bunkyo",
+      summary: "Bunkyo City accepts moving-in notifications at the Resident Registration Section on the second floor of the Bunkyo Civic Center.",
+      applicability: "Use this route only when your actual home is in Bunkyo City.",
+      responsibleBody: "Bunkyo City", receivingOffice: "Resident Registration Section, Bunkyo Civic Center 2F",
+      actions: [
+        { title: "Choose the domestic or overseas moving-in procedure", description: "File within 14 days after you begin living at the address; Bunkyo does not accept advance or mail/email notifications. Its current pages list different documents for moves from another Japanese municipality and from abroad. Foreign residents arriving from abroad should check the required passports and residence cards for everyone moving, and whether family-relationship documents with Japanese translations apply. Community service corners do not handle this notification." },
+      ],
+      sourceIds: ["bunkyo-moving-in-domestic","bunkyo-moving-in-overseas"],
+      sourceFormatNote: "The detailed procedures are in Japanese; the ward also provides an English notification form. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Bunkyo",
+      summary: "Bunkyo asks residents to complete resident registration before enrolling after a move or birth, then contact its National Health Insurance Qualification Section.",
+      applicability: "Use Bunkyo's procedure if Bunkyo is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Bunkyo City", receivingOffice: "National Health Insurance Qualification Section, Bunkyo Civic Center, 11th floor south side",
+      actions: [
+        { title: "Register the move or birth first", description: "For a move into Bunkyo or a birth, complete the resident-registration procedure at the Family Registry and Residents Section first. Bunkyo generally asks you to file the insurance notification within 14 days of the event. Bring identity evidence and My Number documents for the household head and person joining; a representative from another household also needs authorization." },
+        { title: "Match the evidence to your reason for joining", description: "If you lost workplace coverage or dependent status, check the ward's qualification-loss certificate requirement. Foreign residents moving in should check its residence-card, passport, and Special Permanent Resident Certificate entries; Designated Activities residents may need their designation document. The ward's table gives different requirements for other events." },
+      ],
+      sourceIds: ["bunkyo-national-health-insurance-procedures"],
+      sourceFormatNote: "Bunkyo's current procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Bunkyo",
+      summary: "Bunkyo publishes its waste sorting guide in English, Chinese, and Korean, and collects bulky waste of about 30 cm or more by paid application.",
+      applicability: "Collection days differ by area; check the ward's sorting guide for your address.",
+      responsibleBody: "Bunkyo City",
+      actions: [
+        { title: "Use the sorting guide in your language", description: "Bunkyo's guide to sorting and putting out waste and recyclables is published in Japanese, with foreign-language editions in English, Chinese, and Korean. It explains how to sort each type and when to put it out." },
+        { title: "Book bulky waste early", description: "Household items of about 30 cm or more on a side are bulky waste. Apply to the bulky waste reception center by phone from Monday to Saturday, 8:00 to 19:00, or online or by chatbot at any time (closed December 28 to January 4); at year-end and in moving season, collection can take two to three weeks or more. Buy the quoted amount of Bunkyo bulky waste tickets at a shop with the sign. Appliances such as TVs, air conditioners, refrigerators, and washing machines, and computers, are not collected, and businesses cannot use the service." },
+      ],
+      sourceIds: ["bunkyo-household-waste-guide","bunkyo-household-waste-bulky"],
+      sourceFormatNote: "Bunkyo's waste pages are in Japanese; its sorting guide has English, Chinese, and Korean editions. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Bunkyo",
+      summary: "Bunkyo charges special ward inhabitant tax at your January 1 address on the previous year's income; if you move abroad after January 1, you still owe it and should name a tax agent.",
+      applicability: "Use Bunkyo's route when you lived in Bunkyo City on January 1 of the tax year.",
+      responsibleBody: "Bunkyo City",
+      actions: [
+        { title: "Know who is taxed and file if needed", description: "The tax is charged where you lived on January 1, on income from the previous January to December, with a flat per-person part and an income-based part; Bunkyo collects the Tokyo part with the ward part. People with only a business office or family residence in Bunkyo pay the per-person part. The ward asks for returns online (from the 2026 tax year) or by post rather than at the counter." },
+        { title: "Name a tax agent before moving abroad", description: "Moving abroad on or after January 2 does not change that year's tax, which is still charged by the municipality where you lived on January 1. Submit a tax agent (nozei kanrinin) declaration before you leave. To have the tax deducted from your salary, ask your employer to notify the ward." },
+      ],
+      sourceIds: ["bunkyo-resident-tax-overview","bunkyo-resident-tax-filing","bunkyo-tax-faq"],
+      sourceFormatNote: "Bunkyo's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Bunkyo",
+      summary: "Bunkyo assigns each neighborhood association an earthquake shelter, mostly ward schools, and publishes its flood hazard map in English, Chinese, and Korean.",
+      applicability: "Check the shelter assigned to your neighborhood and your flood risk before a disaster; during an event, follow the ward's instructions.",
+      responsibleBody: "Bunkyo City",
+      actions: [
+        { title: "Know your earthquake shelter", description: "If your home collapses, burns, or is at risk after an earthquake, go to your shelter (33 places, mainly ward elementary and junior high schools). If a large fire makes the shelter dangerous, go to an emergency evacuation place (7 in the ward). Shelters and evacuation places are assigned by neighborhood association." },
+        { title: "Check the flood hazard map", description: "The flood hazard map shows expected flooding and shelters, based on the largest assumed rainfall. It is available in Japanese, English, Chinese, and Korean, and in a color-vision-accessible version. Check the route from home to your shelter and how you will contact your family." },
+      ],
+      sourceIds: ["bunkyo-disaster-shelters","bunkyo-disaster-flood-map"],
+      sourceFormatNote: "Bunkyo's disaster pages are in Japanese; the flood hazard map has English, Chinese, and Korean editions. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Bunkyo",
+      summary: "Bunkyo gives new foreign residents a living guidebook in Easy Japanese, English, Chinese, and Korean, and points to Tokyo's consultation line for foreigners; it does not run its own multilingual consultation desk.",
+      applicability: "For foreign residents of Bunkyo. The consultation services listed are run by Tokyo.",
+      responsibleBody: "Bunkyo City", receivingOffice: "Diversity Promotion desk, Bunkyo Civic Center 14th floor (guidebook)",
+      actions: [
+        { title: "Get the living guidebook", description: "Bunkyo's living guidebook for foreign residents explains the rules and manners of daily life in Japan. It is handed to foreign nationals when they register their move at the Family Register and Resident Section, is available at the Diversity Promotion desk on the 14th floor of the Bunkyo Civic Center, and can be downloaded in Easy Japanese, English, Chinese, and Korean." },
+        { title: "Use Tokyo's consultation line for foreigners", description: "Bunkyo's list of consultation services includes Tokyo's consultation for foreign residents, in English from Monday to Friday, Chinese on Tuesdays and Fridays, and Korean on Wednesdays." },
+      ],
+      sourceIds: ["bunkyo-foreign-resident-guidebook","bunkyo-consultation-other"],
+      sourceFormatNote: "Bunkyo's pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "bunkyo-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "National Pension in Bunkyo",
+      summary: "Bunkyo uses its Civic Center pension counter or Pension Office for most filings, with event-specific electronic and postal rules.",
+      applicability: "Use Bunkyo's procedures if Bunkyo is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Bunkyo City", receivingOffice: "National Pension Section at Bunkyo Civic Center, 11th floor south, or Bunkyo Pension Office for most procedures",
+      actions: [
+        { title: "Check the Category I evidence for your event", description: "For a Category I notification after leaving employee pension coverage or spousal dependent status, Bunkyo lists a copy of proof showing when that coverage ended, a Basic Pension Number record, and identity evidence. Some ward-counter procedures require appointments. Its current procedure does not specify a document list for first enrollment after arriving from abroad, so ask the National Pension Section or Bunkyo Pension Office which route and records apply. Employer and dependent-spouse notifications are handled through the employer where appropriate." },
+        { title: "Keep electronic and postal routes distinct", description: "Bunkyo lists My Number Portal applications for Category I acquisition after retirement, contribution exemption or postponement, and the Student Special Payment System. When electronic or counter filing is difficult, its postal instructions accept the Category I notification with supporting records. For postal exemption or student applications, contact Bunkyo Pension Office first; the ward says it can receive an application after Japan Pension Service checks the pension data. For unemployment-based relief, check the additional separation evidence, and for student postponement bring student status evidence." },
+      ],
+      sourceIds: ["bunkyo-national-pension-procedures","bunkyo-national-pension-relief","bunkyo-national-pension-student"],
+      sourceFormatNote: "Bunkyo's procedure and contribution-relief pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "tax-year", records: ["bunkyo-resident-tax"], statement: "Online filing \"from the 2026 tax year\"." },
+  ],
+});

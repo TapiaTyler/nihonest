@@ -1,0 +1,116 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Minato City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13103", name: "Minato City", aliases: ["Minato","Minato Ward","Minato-ku"] },
+  sources: [
+    { id: "minato-moving-in-current", title: "Moving into Minato from another municipality or abroad", url: "https://www.city.minato.tokyo.jp/shibamadosa/kurashi/todokede/hikkoshi/tennyu.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "minato-moving-english", title: "Moving", url: "https://www.city.minato.tokyo.jp/easyjp/en/moving/residentregistration/moving.html", language: "en", lastCheckedAt: "2026-09-23" },
+    { id: "minato-national-health-insurance-procedures", title: "National Health Insurance events requiring notification", url: "https://www.city.minato.tokyo.jp/shikaku/kurashi/hoken/kenkohoken/todokede.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "minato-national-health-insurance-foreign-residents", title: "National Health Insurance eligibility for foreign residents", url: "https://www.city.minato.tokyo.jp/shikaku/kuse/kocho/faq/hoken/084.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "minato-national-pension-postal", title: "National Pension postal procedures", url: "https://www.city.minato.tokyo.jp/kokuminnenkin/kurashi/hoken/nenkin/yuusou.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "minato-national-pension-electronic", title: "National Pension electronic procedures", url: "https://www.city.minato.tokyo.jp/kokuminnenkin/kurashi/hoken/nenkin/denshishinsei.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "minato-household-waste-english", title: "Waste disposal rules and recycling (English)", url: "https://www.city.minato.tokyo.jp/easyjp/en/life/waste/index.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "minato-household-waste-bulky", title: "Putting out bulky waste", url: "https://www.city.minato.tokyo.jp/unei/kurashi/gomi/kate/sodai/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "minato-disaster-evacuation", title: "Evacuating in a disaster", url: "https://www.city.minato.tokyo.jp/bousai/saigaihinankoudou.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "minato-disaster-english", title: "Preparing for accidents and disasters (English)", url: "https://www.city.minato.tokyo.jp/easyjp/en/accidentanddisaster/disasterprevention/index.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "minato-foreign-resident-consultation", title: "Consultation desks for foreigners (English)", url: "https://www.city.minato.tokyo.jp/easyjp/en/consultation/index.html", language: "en", lastCheckedAt: "2026-09-24" },
+    { id: "minato-resident-tax-overview", title: "Overview of special ward inhabitant tax", url: "https://www.city.minato.tokyo.jp/kazei/kurashi/zekin/gaiyo.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "minato-resident-tax-filing-2026", title: "Filing deadline for the 2026 inhabitant tax", url: "https://www.city.minato.tokyo.jp/kazei/zyuuminnzei.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "minato-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Minato",
+      summary: "Minato City accepts moving-in notifications at its regional city office counters after you take up residence.",
+      applicability: "Use this route only for a home within Minato City.",
+      responsibleBody: "Minato City", receivingOffice: "Resident Support Section at a Regional City Office or the Daiba branch",
+      actions: [
+        { title: "Prepare for a domestic or overseas arrival", description: "File within 14 days after moving in. Minato's current procedure lists different documents for moves from another Japanese municipality and from abroad; foreign residents should bring the applicable residence cards, and overseas family arrivals may need original family-relationship documents with Japanese translations. The ward advises arriving by about 4 p.m. for overseas cases that require outside confirmation." },
+      ],
+      sourceIds: ["minato-moving-in-current","minato-moving-english"],
+      sourceFormatNote: "The current detailed procedure is in Japanese; the ward's English living guide is an older overview. Check the current page for documents and counter hours.",
+    },
+    {
+      id: "minato-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-23",
+      title: "National Health Insurance in Minato",
+      summary: "Minato receives enrollment and withdrawal notices at district general branch offices and the Daiba branch after the qualifying event occurs.",
+      applicability: "Use Minato's municipal route only if you live in Minato and are not covered by an employer plan or another applicable exclusion.",
+      responsibleBody: "Minato City", receivingOffice: "Resident Affairs counter at a district general branch office (consultation desk in Shiba) or the Daiba branch",
+      actions: [
+        { title: "File after the event and check its document row", description: "Minato says a notice cannot be filed for a future date; file within 14 days after the event. Its current table lists a moving-out certificate for a move from another municipality, proof of losing employer coverage for a switch into municipal insurance, and proof of the new plan when withdrawing. Check the ward's My Number, identity, and representative-document rules before visiting." },
+        { title: "Confirm foreign-resident eligibility with the ward", description: "Minato's foreign-resident FAQ lists exceptions including short-term stay, specified Designated Activities purposes, employer coverage, and certain social-security agreement certificates. Do not treat residence in the ward alone as proof of eligibility; ask the ward about your status and existing insurance." },
+      ],
+      sourceIds: ["minato-national-health-insurance-procedures","minato-national-health-insurance-foreign-residents"],
+      sourceFormatNote: "The detailed current procedure and foreign-resident FAQ are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "minato-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Minato",
+      summary: "Minato collects sorted waste at collection stations by 8 a.m. (7:30 a.m. in some areas) on set days, publishes its sorting guidebook in English, Chinese, and Korean, and collects bulky waste by application.",
+      applicability: "Collection days differ by area. Ask your building manager or landlord where your collection station is.",
+      responsibleBody: "Minato City",
+      actions: [
+        { title: "Sort waste and put it out by 8 a.m.", description: "Put sorted waste at your recycling and waste collection station by 8 a.m. (7:30 a.m. in special areas) on its collection day. The Waste Sorting Guidebook is available in English, Chinese, Korean, and Japanese, and the free Tokyo Minato City Waste Sorting App lets you search how to sort items, check collection days for your area, and set reminders. Recyclables can also go in collection boxes at city facilities." },
+        { title: "Apply before putting out bulky waste", description: "Items with a longest side of 30 cm or more are bulky waste. Apply to the Minato bulky waste reception center first, buy paid waste tickets for the fee, and put the items out as instructed, or take them in yourself. Minato collects only household bulky waste; businesses must use a licensed collector. Beware of unlicensed collectors who charge high fees." },
+      ],
+      sourceIds: ["minato-household-waste-english","minato-household-waste-bulky"],
+      sourceFormatNote: "Minato's bulky waste page is in Japanese; its waste rules page is in English. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "minato-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Minato",
+      summary: "Minato charges special ward inhabitant tax to people registered in the ward on January 1 with income above a set level the previous year, and takes returns at the counter or by post.",
+      applicability: "Use Minato's route when you were registered in Minato City on January 1 of the tax year.",
+      responsibleBody: "Minato City", receivingOffice: "Taxation Section, Tax Division, Minato City Office",
+      actions: [
+        { title: "Know who is taxed", description: "The tax is based on your registered address on January 1 and your income from the previous January to December. It has a flat per-person part and an income-based part, and Minato collects the Tokyo metropolitan part together with the ward part. People with only a business office or second home in Minato pay the per-person part there." },
+        { title: "File by the deadline, at the counter or by post", description: "For the 2026 tax year, the filing deadline was March 16, 2026. Minato accepts returns at the counter or by post, and will send a form and return envelope on request; it also answers filing questions by phone. Filing late can delay your tax notice and your tax certificate." },
+      ],
+      sourceIds: ["minato-resident-tax-overview","minato-resident-tax-filing-2026"],
+      sourceFormatNote: "Minato's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "minato-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Minato",
+      summary: "Minato reminds residents that people in a safe place do not need to go to an evacuation site, and offers a disaster prevention app, an e-mail service, and English preparedness information.",
+      applicability: "Check flood, landslide, and storm-surge risks for your address before a disaster; during an event, follow the ward's information on which shelters are open.",
+      responsibleBody: "Minato City",
+      actions: [
+        { title: "Evacuate only if you are in danger", description: "In a disaster, people in a dangerous place should evacuate, but people in a safe place do not need to go to an evacuation site; a safe relative's or friend's home is also an option. Moving outside in heavy rain, even by car, is dangerous. Shelters are opened depending on the scale of the disaster; the ward announces them on its website and by disaster information e-mail." },
+        { title: "Use the app, e-mail, and English guides", description: "Minato's English living guide covers daily earthquake precautions, what to do in an earthquake, the disaster information e-mail service, drills, and the NTT disaster message service 171. The ward also provides the Minato City Disaster Prevention App and a disaster preparedness card." },
+      ],
+      sourceIds: ["minato-disaster-evacuation","minato-disaster-english"],
+      sourceFormatNote: "Minato's evacuation page is in Japanese; its preparedness page is in English. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "minato-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Minato",
+      summary: "Minato offers free consultation for foreign residents in 14 languages on weekdays without a reservation, and the Minato International Association offers volunteer consultation by appointment.",
+      applicability: "For foreigners who live or are active in Minato. Consultation gives information and advice and may refer you to another office.",
+      responsibleBody: "Minato City", receivingOffice: "Minato City consultation services for foreign residents (Global Community Planning Subsection)",
+      actions: [
+        { title: "Use Minato's consultation service", description: "Call or visit on weekdays from 9 a.m. to noon and 1 to 5 p.m. (closed on holidays and December 29 to January 3); no reservation is needed. It covers Japanese, English, Chinese, Korean, Portuguese, Spanish, Thai, Russian, Tagalog, Nepali, Vietnamese, Indonesian, Hindi, and French, and gives information on ward procedures and daily life." },
+        { title: "Or talk to a volunteer, or use Tokyo's services", description: "The Minato International Association offers volunteer consultation in English, Chinese, Korean, Spanish, and French, Monday to Saturday, by appointment. Tokyo's consultation line for foreigners and its Multilingual Consultation Navi (TMC Navi) are also available to Minato residents." },
+      ],
+      sourceIds: ["minato-foreign-resident-consultation"],
+    },
+    {
+      id: "minato-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "National Pension in Minato",
+      summary: "Minato lists postal and My Number Portal routes for specified National Pension enrollment and payment-relief procedures.",
+      applicability: "Use Minato's procedures if Minato is your responsible municipality and your coverage category calls for a municipal National Pension filing.",
+      responsibleBody: "Minato City", receivingOffice: "National Pension Section of Minato City's National Health Insurance and Pension Division; eligible applications can be mailed or filed through My Number Portal",
+      actions: [
+        { title: "Match your change to the postal documents", description: "Minato's postal instructions use the National Pension insured-person notification form for Category I enrollment after leaving an employee pension plan or a spouse's dependent coverage. Include proof of the relevant coverage-loss date, such as a retirement or qualification-loss document. The page also gives separate postal forms and evidence for contribution exemption or postponement and the Student Special Payment System; a student application needs proof of enrollment. If you are joining after arrival from abroad, ask the National Pension Section which notification and supporting records apply to your case rather than assuming the retirement documents fit." },
+        { title: "Check the electronic route before applying", description: "Minato lists My Number Portal electronic applications for Category I enrollment after retirement or loss of spousal dependent coverage, contribution exemption or postponement, and the Student Special Payment System. A My Number card and compatible smartphone or other device are required. Exemption and student postponement applications are subject to review; submitting an application does not mean it has been approved." },
+      ],
+      sourceIds: ["minato-national-pension-postal","minato-national-pension-electronic"],
+      sourceFormatNote: "Minato's current postal and electronic procedure pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "tax-year", records: ["minato-resident-tax"], statement: "\"For the 2026 tax year, the filing deadline was March 16, 2026.\" Replace with the current year's deadline, or reword to a general \"by mid-March\"." },
+    { kind: "gap", records: ["minato-resident-tax"], gap: "Leaving-Japan (tax agent) step." },
+  ],
+});

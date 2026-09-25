@@ -1,0 +1,117 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Meguro City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13110", name: "Meguro City", aliases: ["Meguro","Meguro Ward","Meguro-ku"] },
+  sources: [
+    { id: "meguro-moving-in-domestic", title: "Moving into Meguro from another municipality", url: "https://www.city.meguro.tokyo.jp/koseki/kurashi/hikkoshi/tennyu_mado.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "meguro-moving-in-overseas", title: "Moving into Meguro from abroad", url: "https://www.city.meguro.tokyo.jp/koseki/kurashi/hikkoshi/tennyuukokugai.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "meguro-national-health-insurance-procedures", title: "National Health Insurance joining notifications", url: "https://www.city.meguro.tokyo.jp/kokuho/kurashi/kokuho/kanyu_todoke.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-national-health-insurance-online", title: "National Health Insurance online notifications", url: "https://www.city.meguro.tokyo.jp/kokuho/kurashi/kokuho/dattaidenshi.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-national-pension-notifications", title: "National Pension notifications by event", url: "https://www.city.meguro.tokyo.jp/kokuho/kurashi/nenkin/todokede.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "meguro-national-pension-relief", title: "National Pension contribution relief and student applications", url: "https://www.city.meguro.tokyo.jp/kokuho/kurashi/nenkin/nofutokurei.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "meguro-national-pension-postal", title: "National Pension postal joining after employee coverage ends", url: "https://www.city.meguro.tokyo.jp/kokuho/kurashi/kokuho/kokuhoyuusou.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "meguro-household-waste-burnable", title: "Putting out burnable waste", url: "https://www.city.meguro.tokyo.jp/recycle/kurashi/gomi/kanen.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-household-waste-bulky", title: "Bulky waste procedures", url: "https://www.city.meguro.tokyo.jp/recycle/kurashi/gomi/tetuzuki.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-disaster-shelters", title: "About evacuation and shelters", url: "https://www.city.meguro.tokyo.jp/bousaianzen/bousai/bousaitaisaku/hinanjo/hinan/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-disaster-flood-map", title: "Meguro flood hazard map", url: "https://www.city.meguro.tokyo.jp/bousai/bousaianzen/bousai/map.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-foreign-resident-consultation", title: "Consultation for foreign residents", url: "https://www.city.meguro.tokyo.jp/kouhou/kurashi/soudan/gaikokujin.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-resident-tax-filing", title: "Filing resident tax and income tax returns", url: "https://www.city.meguro.tokyo.jp/zeimu/kurashi/juuminzei/shinkoku.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "meguro-resident-tax-agent", title: "Appointing a tax agent when leaving Japan", url: "https://www.city.meguro.tokyo.jp/zeimu/kurashi/juuminzei/nouzeikanrinin.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "meguro-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Meguro",
+      summary: "Meguro City separates domestic and overseas moving-in procedures and lists weekday counters for each.",
+      applicability: "Use this route only when your actual home is in Meguro City.",
+      responsibleBody: "Meguro City", receivingOffice: "Resident Records Section at the Ward Office or one of the listed district service offices",
+      actions: [
+        { title: "Confirm documents for a domestic or overseas move", description: "File within 14 days after you begin living at the address. The overseas procedure lists passports for everyone moving and residence cards or special permanent resident certificates for foreign residents. If a foreign-only household wants family relationships recorded, original official relationship documents with translations are required; without them, registration can still proceed but relationships are recorded as cohabitants. The overseas page lists the Ward Office and four district service offices on weekdays from 8:30 a.m. to 5 p.m." },
+      ],
+      sourceIds: ["meguro-moving-in-domestic","meguro-moving-in-overseas"],
+      sourceFormatNote: "The detailed procedures are in Japanese. This summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Meguro",
+      summary: "Meguro's joining counter and remote-filing options depend on the event and, for a move, the resident's prior insurance and nationality.",
+      applicability: "Use Meguro's procedure if Meguro is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Meguro City", receivingOffice: "National Health Insurance and Pension Section, Qualification and Levy Desk at Meguro City General Government Building; selected cases can use district service offices other than the eastern office",
+      actions: [
+        { title: "Use the counter listed for your joining event", description: "Meguro asks for a joining notice within 14 days after a move, loss of workplace or dependent coverage, birth, or the end of public assistance. For a foreign resident moving into Meguro, the ward lists the main Qualification and Levy Desk and asks for a residence card or Special Permanent Resident Certificate, passport, and My Number evidence; a Designated Activities resident also needs the designation document. A district service office can handle a foreign resident's move only if the person was enrolled in National Health Insurance in the previous municipality." },
+        { title: "Check whether postal or online joining applies", description: "Meguro lists postal and online joining for loss of workplace coverage, voluntary continuation, or dependent status. When voluntary-continuation coverage ends, for example at the end of its term, Meguro accepts the joining procedure from 14 days before the loss date or scheduled loss date. Online filing requires a My Number card and evidence of the former coverage ending. Birth registration must be completed before a child's joining procedure; district service offices handle that event only for Japanese nationals. A representative from a different registered household needs authorization and cannot use the online route." },
+      ],
+      sourceIds: ["meguro-national-health-insurance-procedures","meguro-national-health-insurance-online"],
+      sourceFormatNote: "Meguro's current joining and online procedures are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Meguro",
+      summary: "Meguro explains how to sort burnable waste, including branches and dirty plastics, and collects bulky waste of about 30 cm or more by paid application only; it does not accept bulky waste brought in.",
+      applicability: "Collection days differ by area; check Meguro's sorting and collection search for your address.",
+      responsibleBody: "Meguro City",
+      actions: [
+        { title: "Sort burnable waste carefully", description: "Burnable waste includes kitchen waste (drained), small amounts of branches and leaves, leather and rubber goods, plastics that cannot be cleaned, and paper that cannot be recycled. Cut branches to about 50 cm and bundle them within 30 cm across, up to four bundles at a time; thicker branches and trunks are bulky waste. Cooking oil and reusable clothing can also be taken to the Meguro Eco Plaza." },
+        { title: "Book bulky waste by phone or online", description: "Items of about 30 cm or more on a side are bulky waste, collected for a fee by advance application only; Meguro does not accept bulky waste brought in, and businesses cannot use the service. Apply to the Meguro bulky waste reception center by phone from Monday to Saturday, 8 a.m. to 7 p.m., including holidays (closed Sundays and December 29 to January 3), or online at any time for most items. Collection can take about two weeks." },
+      ],
+      sourceIds: ["meguro-household-waste-burnable","meguro-household-waste-bulky"],
+      sourceFormatNote: "Meguro's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Meguro",
+      summary: "Meguro charges special ward inhabitant tax at your January 1 address; people with little or no income may still need to file if they use National Health Insurance or other ward services, and anyone leaving Japan with tax to pay must name a tax agent.",
+      applicability: "Use Meguro's route when you lived in Meguro City on January 1 of the tax year; moving later does not change that year's tax.",
+      responsibleBody: "Meguro City", receivingOffice: "Tax Division, Meguro City Office",
+      actions: [
+        { title: "File if you need to", description: "File with the ward if you lived in Meguro on January 1 and had income the previous year, unless you file an income-tax return or your employer sends a salary report. Even with no income, or low income, file if you are in National Pension, National Health Insurance, or long-term care insurance, receive child allowances or other ward support, or need a tax certificate. The ward asks for completed returns by post where possible." },
+        { title: "Name a tax agent before leaving Japan", description: "If you leave Japan between January 2 and receiving your tax notice, or with unpaid tax, submit a tax agent (nozei kanrinin) declaration to the Tax Division before you leave, by post or in person, with a copy of the submitter's identity document. If salary deduction stops when you leave, the rest is billed to you, so an agent is needed to receive it." },
+      ],
+      sourceIds: ["meguro-resident-tax-filing","meguro-resident-tax-agent"],
+      sourceFormatNote: "Meguro's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Meguro",
+      summary: "Meguro does not assign shelters by neighborhood, so you can go to any local shelter, and its flood hazard map is available in English and Chinese.",
+      applicability: "Check shelters near your home and your flood risk before a disaster; during an event, follow the ward's instructions.",
+      responsibleBody: "Meguro City",
+      actions: [
+        { title: "Know the shelters near you", description: "Local shelters are ward elementary and junior high schools, the Meguro School Support Center, Himonya Park, Meguro Kumin Campus, and metropolitan and private high schools in the ward. Meguro does not assign shelters by neighborhood. Some former school sites are no longer shelters, so check the current list." },
+        { title: "Check the flood hazard map", description: "Meguro's flood hazard map shows flood areas, depths, and shelters for the largest assumed flood, and is available in Japanese, English, and Chinese. Check what to do and how to prepare before a disaster." },
+      ],
+      sourceIds: ["meguro-disaster-shelters","meguro-disaster-flood-map"],
+      sourceFormatNote: "Meguro's disaster pages are in Japanese; the flood hazard map has English and Chinese editions. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Meguro",
+      summary: "Meguro offers consultation for foreign residents in English and Chinese on weekdays, in person at a dedicated desk.",
+      applicability: "For foreign residents of Meguro. Consultation covers ward services, facilities, events, and simple daily-life questions.",
+      responsibleBody: "Meguro City", receivingOffice: "Meguro foreign resident consultation desk",
+      actions: [
+        { title: "Use the English or Chinese desk", description: "Consultants who speak English or Chinese answer questions about ward services, facilities, events, and daily life in face-to-face consultations. English is available on weekdays from 9 a.m. to noon and 1 to 5 p.m.; Chinese on weekdays from 10 a.m. to noon and 1 to 5 p.m. Each language has its own phone number." },
+      ],
+      sourceIds: ["meguro-foreign-resident-consultation"],
+      sourceFormatNote: "Meguro's consultation page is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "meguro-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Meguro",
+      summary: "Meguro lists ward, district-office, and online routes for specified Category I changes, with postal joining limited to leaving employee pension coverage.",
+      applicability: "Use Meguro's procedure if Meguro is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Meguro City", receivingOffice: "National Pension Section at Meguro City Office, a district service office for listed coverage changes, or Meguro Pension Office",
+      actions: [
+        { title: "Match a coverage change to its counter documents", description: "After leaving an employee pension plan or a spouse's dependent coverage, Meguro lists the ward office, district service offices, or Meguro Pension Office for the Category I notification. Bring photo identity evidence and proof of the retirement or dependent-loss date, such as a retirement or qualification-loss certificate; ask the ward if event proof is unavailable. Employer pension enrollment and becoming a dependent spouse are handled through the employer. These pages do not specify a local pension document package or counter for first enrollment after arriving from abroad, so confirm that route with the National Pension Section." },
+        { title: "Keep postal and electronic events separate", description: "Meguro's postal joining instructions apply to a switch from employee pension coverage: send the insured-person notification, a copy of proof that coverage ended, and a copy of identity evidence to the ward's National Pension Section. If coverage-end proof is missing, the page directs an in-person filing. Meguro also lists My Number Portal applications for coverage-change notices and for contribution exemption, payment postponement, and Student Special Payment. The cited pages do not establish a postal relief or overseas-arrival route, so check the current procedure for those cases." },
+      ],
+      sourceIds: ["meguro-national-pension-notifications","meguro-national-pension-relief","meguro-national-pension-postal"],
+      sourceFormatNote: "Meguro's current notification, contribution-relief, and postal pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "gap", records: ["meguro-household-waste"], gap: "Burnable waste deadline." },
+    { kind: "gap", records: ["meguro-language-and-consultation"], gap: "Japanese classes." },
+  ],
+});

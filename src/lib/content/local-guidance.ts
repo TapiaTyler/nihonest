@@ -6,7 +6,16 @@ import { englishGeographyName } from "@/domain/geography/english-name";
 export type ArticleLocalGuidance = ReturnType<typeof getLocalGuidanceForArticle>[number];
 export type SelectableLocalGuidanceLocation = ReturnType<typeof getSelectableLocalGuidanceLocations>[number];
 
+/**
+ * Registry IDs of municipalities with researched guidance. Location selectors list only these; the full registry
+ * stays for future coverage.
+ */
+export function getResearchedMunicipalityIds(): ReadonlySet<string> {
+  return new Set(localGuidanceSupplements.flatMap(({ geographyId }) => getAdministrativeGeography(geographyId)?.id ?? []));
+}
+
 export function getSelectableLocalGuidanceLocations() {
+  const researched = getResearchedMunicipalityIds();
   return administrativeGeographies.map((record) => {
     const supported = supportedGeographies.find(({ id }) => getAdministrativeGeography(id)?.id === record.id);
     const prefecture = getAdministrativeGeographyAncestors(record.id)[0] ?? record;
@@ -25,6 +34,8 @@ export function getSelectableLocalGuidanceLocations() {
       },
       parentName: supportedPrefecture?.name ?? prefecture.names.en ?? prefecture.names.ja,
       prefectureId,
+      /** Prefectures are always listed; municipalities only when they have researched guidance. */
+      listed: record.type === "prefecture" || record.type === "metropolis" || researched.has(record.id),
     };
   });
 }

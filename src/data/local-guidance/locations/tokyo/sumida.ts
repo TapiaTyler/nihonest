@@ -1,0 +1,117 @@
+import { defineLocationGuidance } from "@/data/local-guidance/define-location";
+
+/** Sumida City: researched local guidance. Workflow: docs/LOCAL-GUIDANCE-WORKFLOW.md. */
+export const guidance = defineLocationGuidance({
+  geography: { id: "jp-13107", name: "Sumida City", aliases: ["Sumida","Sumida Ward","Sumida-ku"] },
+  sources: [
+    { id: "sumida-resident-registration", title: "Resident registration notifications", url: "https://www.city.sumida.lg.jp/kurashi/todokede_syoumei/zyuumintouroku/zyuumin_touroku.html", language: "ja", lastCheckedAt: "2026-09-23" },
+    { id: "sumida-national-health-insurance-procedures", title: "National Health Insurance joining procedure", url: "https://www.city.sumida.lg.jp/kurashi/kenkouhoken/kokuminkenkouhoken/kanyu/kokuhokanyu.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-national-pension-enrollment", title: "National Pension enrollment and event-specific notices", url: "https://www.city.sumida.lg.jp/kurashi/kokuminnenkin/kokuminnenkintoha/tetuduki1.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "sumida-national-pension-exemption", title: "National Pension contribution exemption and postponement", url: "https://www.city.sumida.lg.jp/kurashi/kokuminnenkin/genmenyuuyo/hokenryou_menzyo.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "sumida-national-pension-student", title: "National Pension Student Special Payment System", url: "https://www.city.sumida.lg.jp/kurashi/kokuminnenkin/genmenyuuyo/nouhu_tokurei.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "sumida-national-pension-channels", title: "National Pension filing channel table", url: "https://www.city.sumida.lg.jp/kurashi/kenkouhoken/tetuduki/tetudukihayami.html", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "sumida-household-waste-burnable", title: "Putting out burnable waste", url: "https://www.city.sumida.lg.jp/kurashi/gomi_recycle/kateikei/gomi_dashikata/moyasugomi.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-household-waste-bulky", title: "Putting out bulky waste", url: "https://www.city.sumida.lg.jp/kurashi/gomi_recycle/kateikei/gomi_dashikata/sodaidasu/index.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-disaster-earthquake-evacuation", title: "Where to evacuate after an earthquake", url: "https://www.city.sumida.lg.jp/anzen_anshin/bousai/hinanjo/hinanbasyo.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-disaster-flood-map", title: "Sumida flood hazard map", url: "https://www.city.sumida.lg.jp/anzen_anshin/bousai/suigai/suigai.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-foreign-language-consultation", title: "Consultation in foreign languages (Easy Japanese)", url: "https://www.city.sumida.lg.jp/kurashi/tabunka/yasasii-nihongo/gaikoku_soudan.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-japanese-volunteer-classes", title: "Volunteer Japanese classes (Easy Japanese)", url: "https://www.city.sumida.lg.jp/kurashi/tabunka/yasasii-nihongo/nihongovolunteer.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-resident-tax-filing", title: "Filing a resident tax return", url: "https://www.city.sumida.lg.jp/kurashi/zeikin/zyuuminzei/zyuminzei_shinkoku.html", language: "ja", lastCheckedAt: "2026-09-24" },
+    { id: "sumida-resident-tax-agent", title: "Tax agent when moving abroad", url: "https://www.city.sumida.lg.jp/kurashi/zeikin/nouzei/nouzeikanrinin1.html", language: "ja", lastCheckedAt: "2026-09-24" },
+  ],
+  supplements: [
+    {
+      id: "sumida-address-registration", articleId: "registering-your-address-after-arrival", lastCheckedAt: "2026-09-23",
+      title: "Registering an address in Sumida",
+      summary: "Sumida City accepts domestic moving-in notifications at its ward office and branches, with a narrower counter route for foreign residents arriving from abroad.",
+      applicability: "Use this route only when your actual home is in Sumida City.",
+      responsibleBody: "Sumida City", receivingOffice: "Resident Registration Counter; the main Ward Office only for foreign residents arriving from abroad",
+      actions: [
+        { title: "Check the overseas-arrival counter restriction", description: "File within 14 days after you begin living at the address. For foreign residents arriving from abroad, Sumida accepts the notification only at its main Ward Office, on weekdays from 9 a.m. to 4:30 p.m.; bring the passports and residence cards or special permanent resident certificates listed for everyone moving. Domestic moves can use the ward office or an eligible branch. The ward asks residents to call ahead to confirm documents, especially for proxy cases." },
+      ],
+      sourceIds: ["sumida-resident-registration"],
+      sourceFormatNote: "The current detailed procedure is in Japanese. This summary follows its foreign-resident overseas counter rule rather than an older, more general FAQ.",
+    },
+    {
+      id: "sumida-national-health-insurance", articleId: "joining-national-health-insurance", lastCheckedAt: "2026-09-24",
+      title: "National Health Insurance in Sumida",
+      summary: "Sumida lists event-specific joining documents and limits postal and online notices to residents leaving workplace or dependent health coverage.",
+      applicability: "Use Sumida's procedure if Sumida is your responsible municipality and municipal National Health Insurance is the right coverage route for you.",
+      responsibleBody: "Sumida City", receivingOffice: "National Health Insurance Qualification Section at the ward office or a branch office; resident-move or birth cases are handled by the Resident Move Section",
+      actions: [
+        { title: "Match your event to Sumida's counter and documents", description: "Sumida asks for the joining procedure within 14 days. Its table lists different evidence for moving in, losing workplace coverage, birth, and the end of public assistance. Foreign residents should check its residence-status and passport entries; a foreign resident joining after an overseas move generally must use the ward office, with an exception for permanent and special permanent residents who may use a branch office." },
+        { title: "Use remote filing only for eligible coverage changes", description: "Sumida offers postal or electronic joining notices when workplace coverage ends or a person leaves dependent coverage. Its postal and electronic routes are for the person or a member of the same registered household, not a representative from another household. Check the current supporting-document list before filing; other joining events use the counter route." },
+      ],
+      sourceIds: ["sumida-national-health-insurance-procedures"],
+      sourceFormatNote: "Sumida's current joining procedure is in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sumida-household-waste", articleId: "sorting-household-waste-and-arranging-disposal", lastCheckedAt: "2026-09-24",
+      title: "Sorting and disposing of waste in Sumida",
+      summary: "Sumida collects burnable waste twice a week in see-through bags or lidded containers, out by 8 a.m. and not the night before, and collects bulky waste over 30 cm by paid application.",
+      applicability: "Collection days differ by area; check Sumida's collection-day list or calendar for your address.",
+      responsibleBody: "Sumida City",
+      actions: [
+        { title: "Put waste out by 8 a.m., not at night", description: "Put burnable waste in a see-through bag or lidded container at your designated place by 8 a.m. on the collection day, twice a week. Do not put it out at night, which attracts crows and arson, or after collection has passed. Cut small branches under 50 cm and tie them; large amounts are charged." },
+        { title: "Book bulky waste online or by phone", description: "Household items with a side longer than 30 cm are bulky waste. Apply to the Sumida bulky waste reception center online at any time, where you can pay the fee by cashless payment, or by phone from Monday to Saturday, 8 a.m. to 7 p.m., including holidays but not the New Year period. If you do not pay online, buy Sumida's bulky waste tickets (other wards' tickets are not accepted). Put the items out by 8 a.m. on the collection day, not earlier. The chatbot Suminyaru can tell you whether an item is bulky and its fee. Businesses cannot use this service." },
+      ],
+      sourceIds: ["sumida-household-waste-burnable","sumida-household-waste-bulky"],
+      sourceFormatNote: "Sumida's waste pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sumida-resident-tax", articleId: "income-and-resident-tax-after-moving-to-japan", lastCheckedAt: "2026-09-24",
+      title: "Resident tax in Sumida",
+      summary: "Sumida charges special ward inhabitant tax to people living in the ward on January 1 with income; moving later does not change the tax, and you must submit a tax agent declaration at least 10 days before leaving Japan.",
+      applicability: "Use Sumida's route when you lived in Sumida City on January 1 of the tax year.",
+      responsibleBody: "Sumida City", receivingOffice: "Taxation Section, Taxation Division, Sumida City Office",
+      actions: [
+        { title: "File by March 15 if you need to", description: "If you lived in Sumida on January 1 and had income the previous year, file a return by March 15, unless you filed an income-tax return or your salary or public pension was reported to the ward. Even without that obligation, file if you need a non-taxation certificate or want deductions not on your withholding slip." },
+        { title: "Name a tax agent 10 days before leaving Japan", description: "Moving out during the year does not change that year's tax. If you leave Japan, submit a tax agent (nozei kanrinin) declaration to the Taxation Division at least 10 days before you leave. The agent handles your tax papers and payments and need not be a relative; a friend or a company is also possible." },
+      ],
+      sourceIds: ["sumida-resident-tax-filing","sumida-resident-tax-agent"],
+      sourceFormatNote: "Sumida's tax pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sumida-disaster-preparation", articleId: "preparing-for-disasters-and-evacuation-in-japan", lastCheckedAt: "2026-09-24",
+      title: "Disaster information for Sumida",
+      summary: "After an earthquake, Sumida residents stay home if it is safe, or go first to their neighborhood's temporary gathering place; the ward asks everyone to check its flood hazard map before the June-to-October flood season.",
+      applicability: "Check your gathering place, evacuation place, and shelter on the Sumida disaster map, and your flood risk, ahead of time.",
+      responsibleBody: "Sumida City",
+      actions: [
+        { title: "Know your gathering place, evacuation place, and shelter", description: "After an earthquake you do not have to go to a shelter; staying at home can be safer if it is not in danger. Otherwise go first to your neighborhood association's temporary gathering place (a park or school), then to an evacuation place if spreading fire makes the area unsafe, or to a shelter (mainly schools) if you cannot return home. You do not have to use your own neighborhood's shelter. The ward's shelter list shows accessible toilets and elevators." },
+        { title: "Check the flood hazard map before flood season", description: "Sumida asks residents to check its flood hazard map before the flood season, roughly June to October, and to prepare for large-scale flooding." },
+      ],
+      sourceIds: ["sumida-disaster-earthquake-evacuation","sumida-disaster-flood-map"],
+      sourceFormatNote: "Sumida's disaster pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sumida-language-and-consultation", articleId: "finding-japanese-language-and-local-support", lastCheckedAt: "2026-09-24",
+      title: "Language and consultation support in Sumida",
+      summary: "Sumida's Resident Consultation Room offers free consultation in Chinese and English on Wednesdays without a reservation, and the ward lists volunteer Japanese classes.",
+      applicability: "For people who live, work, or study in Sumida. Consultation gives information and advice and may refer you to another office.",
+      responsibleBody: "Sumida City", receivingOffice: "Sumida Resident Consultation Room, first floor of the ward office (Azumabashi)",
+      actions: [
+        { title: "Use the Wednesday consultation, or Tokyo's lines", description: "The Resident Consultation Room offers free consultation about problems in daily life in Chinese on Wednesdays from 10 a.m. to noon and in English on Wednesdays from 1 to 3 p.m.; no reservation is needed. For other days and languages, use Tokyo's consultation line for foreigners or the Multilingual Consultation Navi (TMC Navi), which covers many languages including Easy Japanese." },
+        { title: "Join a volunteer Japanese class", description: "Sumida lists volunteer Japanese classes at the Sumida Volunteer Center and other places, including an online class. Call the class before you go." },
+      ],
+      sourceIds: ["sumida-foreign-language-consultation","sumida-japanese-volunteer-classes"],
+      sourceFormatNote: "Sumida's pages for foreign residents are in Easy Japanese with readings. This English summary is Nihonest guidance, not an official translation.",
+    },
+    {
+      id: "sumida-national-pension", articleId: "national-pension-after-moving-to-japan", lastCheckedAt: "2026-09-25",
+      title: "National Pension in Sumida",
+      summary: "Sumida lists returning from overseas as a Category I enrollment event, while contribution-relief applications use the main ward counter or pension office.",
+      applicability: "Use Sumida's procedure if Sumida is your responsible municipality and your coverage category calls for a National Pension filing.",
+      responsibleBody: "Sumida City", receivingOffice: "National Pension Section at Sumida City Office; branch offices take eligible enrollment changes, while relief applications go to the main ward counter or Sumida Pension Office",
+      actions: [
+        { title: "Identify the enrollment event before gathering records", description: "Sumida's Category I procedure includes moving to Japan after living overseas, loss of employee pension coverage, and loss of spousal dependent status. The ward asks for a pension book or Basic Pension Number Notice, with identity evidence if that record is unavailable. A retirement-based filing also needs proof of the coverage-end date, such as a retirement or qualification-loss certificate. The page does not give a separate supporting-document list for arrival from abroad, so confirm that event's records with the National Pension Section. Eligible enrollment notices can be made at the ward office or a branch office." },
+        { title: "Use the main relief counter or an eligible remote route", description: "Sumida handles contribution exemption, payment postponement, and Student Special Payment applications at the main ward-office National Health Insurance and Pension Division or Sumida Pension Office, not its branch offices. Student applications need a student ID or enrollment certificate, and unemployment-based relief needs supporting evidence. The ward's general filing table lists counter, postal, and electronic routes for National Pension enrollment and these relief applications, but does not distinguish overseas-arrival enrollment from other joining events. Confirm that a remote form applies to your event before using it; electronic filing uses Japan Pension Service's system, and the ward does not handle My Number Portal operation or status questions." },
+      ],
+      sourceIds: ["sumida-national-pension-enrollment","sumida-national-pension-exemption","sumida-national-pension-student","sumida-national-pension-channels"],
+      sourceFormatNote: "Sumida's current enrollment, contribution-relief, and filing-channel pages are in Japanese. This English summary is Nihonest guidance, not an official translation.",
+    },
+  ],
+  recheck: [
+    { kind: "old-source", records: ["sumida-disaster-preparation"], source: "Earthquake evacuation page", date: "September 29, 2022" },
+  ],
+});
