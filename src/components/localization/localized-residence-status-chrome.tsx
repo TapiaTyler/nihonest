@@ -112,7 +112,7 @@ function ContextLink({ href, eyebrow, title }: Readonly<{ href: string; eyebrow:
   return (
     <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
       <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{eyebrow}</span>
-      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{title} →</span>
+      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{title}</span>
     </Link>
   );
 }

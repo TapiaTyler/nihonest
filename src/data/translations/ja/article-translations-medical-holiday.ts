@@ -6,7 +6,7 @@ const generator = { id: "codex-assisted", model: "gpt-6-luna" } as const;
 export const japaneseMedicalHolidayArticleTranslations = [
   defineJapaneseArticleTranslation(
     "medical-stay-visa",
-    "34454b9844f7e32ba60a78b773ae2c90da2b0f5d1110eb59779370e183276b96",
+    "7ab1654b39d25cd6a3d91ca4a6b6dbddbc3e211b1f641c871ca49c1aa091c032",
     "医療滞在ビザ",
     "短期または長期の医療滞在経路を選び、治療、身元保証機関、COE、付き添い、資金、複数回の訪問に関する資料を整理します。",
     `> **編集レビューが必要です：** 治療期間、入院、複数回の訪問、患者の状態、調整機関、在外公館、資金によって、適切な経路と必要資料が異なります。
@@ -35,7 +35,7 @@ export const japaneseMedicalHolidayArticleTranslations = [
 
 許可された在留資格が「[短期滞在](/glossary/tanki-taizai)」の場合は、その制限が引き続き適用されます。
 
-[短期滞在について詳しく見る →](/articles/temporary-visitor-and-short-stay)
+[短期滞在について詳しく見る](/articles/temporary-visitor-and-short-stay)
 
 ## 90日を超える場合は長期滞在として検討する
 
@@ -82,7 +82,7 @@ COEは、その後のビザ審査と上陸審査を支援する書類です。�
   ),
   defineJapaneseArticleTranslation(
     "working-holiday-in-japan",
-    "ed200195e8a60fa5a1d2cfa7f8e8423243c0a2b7a68e7f7817abdde54ec6e863",
+    "e2f0f082de0ad0a68cbe58cc8e1a78bd836d07b1e5d581978eeaf1b0fe61ad09",
     "日本のワーキング・ホリデー",
     "現在の協定相手、年齢、居住地、資金、参加回数、就労、自治体への届出、国・地域ごとの規則を確認します。",
     `> **編集レビューが必要です：** ワーキング・ホリデーは二国間・地域間の制度です。一般的な案内は、申請者を管轄する日本大使館、領事館、または日本台湾交流協会の最新規則に置き換えて確認してください。
@@ -132,7 +132,7 @@ COEは、その後のビザ審査と上陸審査を支援する書類です。�
 
 入管上は副次的な仕事でも、日本の税、労働、給与、保険に関する問題が生じることがあります。
 
-[日本に来た後の税について詳しく見る →](/articles/income-and-resident-tax-after-moving-to-japan)
+[日本に来た後の税について詳しく見る](/articles/income-and-resident-tax-after-moving-to-japan)
 
 ## 住む場所が決まった後に住所を届け出る
 
@@ -144,7 +144,7 @@ COEは、その後のビザ審査と上陸審査を支援する書類です。�
 
 認められた在留期間、国・地域ごとの参加の仕組み（回数や連続・非連続の別）、就労記録、税務書類、出国手続きを記録してください。仕事や交際関係が続いていても、ワーキング・ホリデーが自動的に延長されるわけではありません。別の根拠で在留するには、適切な在留資格と期限内の申請が必要です。
 
-[日本を出国する手続きについて詳しく見る →](/articles/leaving-japan-and-closing-out-procedures)`,
+[日本を出国する手続きについて詳しく見る](/articles/leaving-japan-and-closing-out-procedures)`,
     generator,
   ),
 ] as const;

@@ -4,7 +4,7 @@ import { defineJapaneseArticleTranslation } from "./article-translation-builder"
 export const japaneseTeachingEmploymentArticleTranslations = [
   defineJapaneseArticleTranslation(
     "choosing-a-residence-status-for-teaching-in-japan",
-    "283f01692e647d89147d69f04746597eaf0ff89347d8040611492d9b33a72d0a",
+    "0fe18c39c8d2767b51348de1149323eb5f2cb25544ad4198f3bdac9542b421c4",
     "日本で教える仕事にはどの在留資格が合うか",
     "英語教育、ALT、大学、学校、英会話、インターナショナルスクール、個人指導の仕事を比較します。",
     `> **編集レビューが必要です：** この比較は確認すべき経路を示すもので、資格の有無を決定するものではありません。教育機関の正式な日本での区分、完全な契約、勤務地、実際の職務を確認してください。
@@ -19,19 +19,19 @@ export const japaneseTeachingEmploymentArticleTranslations = [
 
 [教授](/glossary/kyoju)は、大学、これに準ずる機関、高等専門学校で教育、研究、研究指導を行う場合に最初に確認する経路です。職名には、大学の英語講師、語学講師、教授、客員教員、一部の学術研究職が含まれます。
 
-[教授について詳しく確認する →](/articles/professor-status)
+[教授について詳しく確認する](/articles/professor-status)
 
 ### 対象となる学校：教育
 
 [教育](/glossary/kyoiku)は、公式な定義に記載された学校区分で語学その他の教育を行う場合に最初に確認する経路です。一般的な職名には、英語教師、教科担当教員、通常ALTと呼ばれる[外国語指導助手](/glossary/gaikokugo-shido-joshu)が含まれます。
 
-[教育について詳しく確認する →](/articles/instructor-status)
+[教育について詳しく確認する](/articles/instructor-status)
 
 ### 民間企業での語学教育：技術・人文知識・国際業務
 
 [技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)では、民間企業の語学教師が公式な例として挙げられています。一部の[英会話](/glossary/eikaiwa)学校や企業向け語学研修が含まれる場合があります。
 
-[技術・人文知識・国際業務について詳しく確認する →](/articles/engineer-specialist-humanities-international-services-status)
+[技術・人文知識・国際業務について詳しく確認する](/articles/engineer-specialist-humanities-international-services-status)
 
 ## 一般的な勤務先を比較する
 

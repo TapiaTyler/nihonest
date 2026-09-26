@@ -138,7 +138,6 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys, jo
                     <Link href={`/my-journey#phase-${phase.id}`} className="group flex min-h-16 items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 hover:border-teal-400 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                       <span className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${phaseComplete ? "bg-teal-700 text-white" : "bg-white text-teal-800"}`}>{phaseComplete ? "✓" : index + 1}</span>
                       <span className="min-w-0 flex-1"><span className="block font-semibold text-slate-950 group-hover:text-teal-800">{phase.title}</span><span className="mt-1 block text-sm text-slate-500">{format("roadmap.phaseProgress", { complete: phase.complete, total: phase.total })}{phase.inProgress ? format("roadmap.inProgressSuffix", { count: phase.inProgress }) : ""}</span></span>
-                      <span aria-hidden="true" className="font-semibold text-teal-800">→</span>
                     </Link>
                   </li>
                 );
@@ -168,7 +167,7 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys, jo
           <ul className="mt-5 divide-y divide-slate-200">
             {stageItems.flatMap(({ definition, progressState }) => {
               const article = articlesById.get(definition.relatedArticleIds[0]);
-              return article ? [<li key={definition.id}><Link href={{ pathname: `/articles/${article.slug}`, query: { returnTo: "/roadmap" } }} className="flex min-h-16 items-center justify-between gap-4 py-3 font-semibold text-slate-900 hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span>{japanese ? articleText(article).title : definition.title}</span><span className="shrink-0 text-sm font-medium text-slate-500">{message(`progress.${progressState}`)} →</span></Link></li>] : [];
+              return article ? [<li key={definition.id}><Link href={{ pathname: `/articles/${article.slug}`, query: { returnTo: "/roadmap" } }} className="flex min-h-16 items-center justify-between gap-4 py-3 font-semibold text-slate-900 hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span>{japanese ? articleText(article).title : definition.title}</span><span className="shrink-0 text-sm font-medium text-slate-500">{message(`progress.${progressState}`)}</span></Link></li>] : [];
             })}
           </ul>
           <Link href={{ pathname: "/onboarding", query: { returnTo: "/roadmap" } }} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700">{message("roadmap.chooseJourney")}</Link>

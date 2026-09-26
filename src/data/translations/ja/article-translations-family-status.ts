@@ -4,7 +4,7 @@ import { defineJapaneseArticleTranslation } from "./article-translation-builder"
 export const japaneseFamilyStatusArticleTranslations = [
   defineJapaneseArticleTranslation(
     "choosing-a-family-or-personal-status-in-japan",
-    "e686c80cccf7fb761547f30a00abc5ac4a66ce08cb6565cb6ecc353319cfa54a",
+    "e2bd6d207c7a19e7d5efa7d8ef112a71e081358315d086f3ea3ab30c4714e8ad",
     "日本で家族関係または身分に基づく在留資格を選ぶ",
     "正確な家族関係と扶養者の立場を基に、家族滞在、日本人・永住者の配偶者等、定住者の経路を比較します。",
     `> **編集レビューが必要です：** この比較を、詳しく確認する経路を見つけるために使い、その後、正確な関係と手続きに対応する出入国在留管理庁の現在の提出資料一覧を確認してください。
@@ -17,25 +17,25 @@ export const japaneseFamilyStatusArticleTranslations = [
 
 [家族滞在](/glossary/kazoku-taizai)は、対象となる在留資格を持つ外国人の扶養を受ける配偶者または子のための在留資格です。通常の家族生活を行う活動に基づく資格であり、制限なく働ける資格ではありません。現在の扶養者の一覧には特定技能2号が含まれますが、特定技能1号は含まれません。報酬を得る仕事には別の許可が必要で、フルタイム勤務には一般に本人の就労資格が必要です。
 
-[家族滞在について詳しく確認する →](/articles/dependent-family-stay-visa)
+[家族滞在について詳しく確認する](/articles/dependent-family-stay-visa)
 
 ## 日本人の配偶者等
 
 [日本人の配偶者等](/glossary/nihonjin-no-haigusha-to)は、要件を満たす配偶者、日本人の子として出生した人、または要件を満たす特別養子を対象とします。職業上の制限がない身分に基づく在留資格ですが、配偶者は実体があり継続する婚姻を立証する必要があります。
 
-[日本人の配偶者等について詳しく確認する →](/articles/spouse-or-child-of-japanese-national)
+[日本人の配偶者等について詳しく確認する](/articles/spouse-or-child-of-japanese-national)
 
 ## 永住者の配偶者等
 
 [永住者の配偶者等](/glossary/eijusha-no-haigusha-to)は、要件を満たす永住者または特別永住者の配偶者を対象とします。子に関する経路はさらに狭く、日本で出生し、その後も引き続き日本に在留している実子が対象です。海外で出生した子には別の経路が必要となる場合があります。
 
-[永住者の配偶者等について詳しく確認する →](/articles/spouse-or-child-of-permanent-resident)
+[永住者の配偶者等について詳しく確認する](/articles/spouse-or-child-of-permanent-resident)
 
 ## 定住者
 
 [定住者](/glossary/teijusha)は、公表された告示の区分または特別な事情に基づく個別の判断によって認められます。現在の例には、一定の日系人、難民の第三国定住、定められた家族関係の事例などがあります。離婚したことや長期間日本にいたことだけで自動的に使える予備の資格ではありません。
 
-[定住者について詳しく確認する →](/articles/long-term-resident-status)
+[定住者について詳しく確認する](/articles/long-term-resident-status)
 
 ## 事情が変わったとき
 
@@ -97,7 +97,7 @@ COEは後の審査を支えますが、査証、上陸、特定の在留期間�
   ),
   defineJapaneseArticleTranslation(
     "spouse-or-child-of-japanese-national",
-    "e2f5fe2a0de153586969337f60de5cae58757f80d0db08be64fda3143b95624c",
+    "967faf2d66414c22b299a3c764972d198a79893283a83c1b2a92ed92db200fd0",
     "日本人の配偶者等の在留資格",
     "配偶者、子、特別養子の経路、証拠、就労上の権利、在留期間、更新、関係の変化を理解します。",
     `> **編集レビューが必要です：** 配偶者、子、特別養子の事例について、身分関係が法律上認められているか、現在の記録、翻訳、出入国在留管理庁の正確な手続きを確認してください。
@@ -128,17 +128,17 @@ COEは後の審査を支えますが、査証、上陸、特定の在留期間�
 
 定住者が検討される場合もありますが、公表された事例は自動的な在留資格変更の規則ではありません。
 
-[定住者について詳しく確認する →](/articles/long-term-resident-status)
+[定住者について詳しく確認する](/articles/long-term-resident-status)
 
 ## 永住許可
 
 要件を満たす配偶者または子は、在留歴に関する短縮された例外を利用できる場合があります。ただし、永住許可はその他の要件を伴う別の裁量的な許可です。
 
-[永住許可について詳しく確認する →](/articles/permanent-residence-in-japan)`,
+[永住許可について詳しく確認する](/articles/permanent-residence-in-japan)`,
   ),
   defineJapaneseArticleTranslation(
     "spouse-or-child-of-permanent-resident",
-    "59f065e28a076888b794dc89ff9a6ac6d055f0ecfb67cf1cb86ed95fc8cde8b7",
+    "45d6d884d23651f0c1105db0d5a9858b0eeb4b9650bdfdc1728bf75d52e1d851",
     "永住者の配偶者等の在留資格",
     "対象となる配偶者と、より限定された日本出生の子の経路、証拠、就労上の権利、在留期間、関係の変化を理解します。",
     `> **編集レビューが必要です：** 根拠が婚姻か、限定された日本出生の子に関する規定かを確認してください。親子関係があるだけで、すべての子がこの在留資格に該当するわけではありません。
@@ -174,7 +174,7 @@ COEは後の審査を支えますが、査証、上陸、特定の在留期間�
 
 この在留資格を持つことと、永住者であることは同じではありません。要件を満たす配偶者または子は、通常の在留歴の規則に対する例外を利用できる場合がありますが、別途申請し、該当する永住許可のガイドラインを満たす必要があります。
 
-[永住許可について詳しく確認する →](/articles/permanent-residence-in-japan)
+[永住許可について詳しく確認する](/articles/permanent-residence-in-japan)
 
 ## 確認する質問
 
@@ -186,7 +186,7 @@ COEは後の審査を支えますが、査証、上陸、特定の在留期間�
   ),
   defineJapaneseArticleTranslation(
     "long-term-resident-status",
-    "f4a09836e63a7a7076b6c8e84790b65b2111516862ecf9059374d29adf1fad12",
+    "1fca0dd787f6b3d757a8322de400cc3105dc3664f6da5821df99fa7f733826a5",
     "日本の定住者の在留資格",
     "永住者と混同せず、告示に基づく経路と特別な事情を個別に考慮する経路を理解します。",
     `> **編集レビューが必要です：** 要件に頼る前に、正確な告示の区分または個別の法的根拠を特定してください。定住者は一般的な予備の在留資格ではありません。
@@ -219,6 +219,6 @@ COEは後の審査を支えますが、査証、上陸、特定の在留期間�
 
 現在の永住許可ガイドラインには、定住者として継続して5年間在留する人に対する在留歴の例外があります。これは在留歴に関する例外にすぎず、許可を保証したり、その他の要件をなくしたりするものではありません。
 
-[永住許可について詳しく確認する →](/articles/permanent-residence-in-japan)`,
+[永住許可について詳しく確認する](/articles/permanent-residence-in-japan)`,
   ),
 ] as const;

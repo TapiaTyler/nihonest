@@ -181,7 +181,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
               {journeyContext.steps[journeyContext.index + 1] ? (
                 <Link href={articleJourneyHref(journeyContext.steps[journeyContext.index + 1].article.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="group rounded-2xl border border-teal-200 bg-white p-5 hover:border-teal-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                   <span className="text-xs font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id="article.next" /></span>
-                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journeyContext.steps[journeyContext.index + 1].article.metadata.title} japanese={japaneseArticleTitle(journeyContext.steps[journeyContext.index + 1].article.metadata.id)} /> →</span>
+                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journeyContext.steps[journeyContext.index + 1].article.metadata.title} japanese={japaneseArticleTitle(journeyContext.steps[journeyContext.index + 1].article.metadata.id)} /></span>
                 </Link>
               ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600"><InterfaceText id="article.finalGuide" /></div>}
             </div>
@@ -219,7 +219,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                     className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="journey.guidedJourney" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /> →</span>
+                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
                   </Link>
                 )),
                 ...relatedGroups.map((group) => (
@@ -229,7 +229,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                     className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                   >
                     <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="content.contentGroup" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /> →</span>
+                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
                   </Link>
                 )),
               ]}

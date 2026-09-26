@@ -64,9 +64,9 @@ describe("FAQ localization", () => {
       </ContentLocaleProvider>,
     );
 
-    const guideLink = screen.getByRole("link", { name: "ガイド: 永住許可の案内 →" });
+    const guideLink = screen.getByRole("link", { name: "ガイド: 永住許可の案内" });
     expect(guideLink).toHaveAttribute("lang", "ja");
-    const activityLink = screen.getByRole("link", { name: "活動を確認: Take or change work →" });
+    const activityLink = screen.getByRole("link", { name: "活動を確認: Take or change work" });
     expect(activityLink).toHaveAttribute("lang", "ja");
     expect(screen.getByText("Take or change work").closest("span")).toHaveAttribute("lang", "en");
   });

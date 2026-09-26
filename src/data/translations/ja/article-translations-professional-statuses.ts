@@ -48,7 +48,7 @@ export const japaneseProfessionalStatusArticleTranslations = [
 
 主な活動が、要件を満たす事業を実際に運営または管理することであれば、経営・管理が関係する場合があります。スタジオ経営者やクリエイティブディレクターと名乗るだけではこの経路は成立せず、経営・管理の資格が全ての制作活動を自動的に認めるわけでもありません。
 
-[創作・メディアの仕事に合う在留資格を確認する →](/articles/choosing-a-residence-status-for-creative-and-media-work)
+[創作・メディアの仕事に合う在留資格を確認する](/articles/choosing-a-residence-status-for-creative-and-media-work)
 
 ## 一貫した活動記録を作る
 
@@ -134,7 +134,7 @@ export const japaneseProfessionalStatusArticleTranslations = [
 
 広報、広告、ブランドコンテンツ、企業コミュニケーション、マーケティングは、取材、執筆、編集、動画の技能を使っていても、それだけで報道にはなりません。雇用された専門職は[技術・人文知識・国際業務](/articles/engineer-specialist-humanities-international-services-status)との比較が必要になる場合があります。
 
-[創作・メディアの仕事に合う在留資格を確認する →](/articles/choosing-a-residence-status-for-creative-and-media-work)
+[創作・メディアの仕事に合う在留資格を確認する](/articles/choosing-a-residence-status-for-creative-and-media-work)
 
 ## 在留期間と更新
 

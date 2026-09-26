@@ -46,7 +46,7 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo }: Re
           {entry.targets.map((target) => (
             <li key={`${target.kind}-${target.id}`}>
               <Link lang={locale} href={target.kind === "activity" ? activityCrossReferenceHref(target.id, returnTo) : target.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                <span><span lang={locale} className="font-normal text-slate-500">{targetKindLabels[target.kind]}:</span> <span lang={locale === "ja" && target.japaneseLabel ? "ja" : "en"}>{locale === "ja" ? target.japaneseLabel ?? target.label : target.label}</span> →</span>
+                <span><span lang={locale} className="font-normal text-slate-500">{targetKindLabels[target.kind]}:</span> <span lang={locale === "ja" && target.japaneseLabel ? "ja" : "en"}>{locale === "ja" ? target.japaneseLabel ?? target.label : target.label}</span></span>
               </Link>
             </li>
           ))}

@@ -8,6 +8,7 @@ import { getAllGlossaryTerms } from "./glossary";
 import {
   getArticleGroupSearchTranslations,
   getArticleSearchTranslations,
+  getActivityTranslations,
   getJourneyTranslations,
 } from "./translations";
 
@@ -32,6 +33,7 @@ const japaneseGroupTitles = new Map(getArticleGroupSearchTranslations()
 const japaneseJourneyTitles = new Map(getJourneyTranslations()
   .filter(({ targetLocale }) => targetLocale === "ja")
   .map(({ contentId, title }) => [contentId, title] as const));
+const japaneseActivityLabels = getActivityTranslations();
 
 validateFaqCollection(faqs, {
   articleIds: articles.map(({ id }) => id),
@@ -67,7 +69,7 @@ function resolveTargets(faq: Faq): readonly FaqTarget[] {
     }),
     ...faq.relatedActivityIds.flatMap((id) => {
       const activity = activityCrossReferences.find((candidate) => candidate.id === id);
-      return activity ? [{ kind: "activity" as const, id, label: activity.shortLabel, href: `/can-i-do-this?activity=${activity.id}` }] : [];
+      return activity ? [{ kind: "activity" as const, id, label: activity.shortLabel, japaneseLabel: japaneseActivityLabels[id]?.["short-label"], href: `/can-i-do-this?activity=${activity.id}` }] : [];
     }),
   ];
 }

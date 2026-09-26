@@ -6,7 +6,7 @@ const generator = { id: "codex-assisted", model: "gpt-6-luna" } as const;
 export const japaneseDiplomaticOfficialArticleTranslations = [
   defineJapaneseArticleTranslation(
     "diplomatic-visa",
-    "953a6aab1e7688bc43835e54d9ff1efe8a9c89e8c82dae89cc97588143dd4a22",
+    "435655693fb3ba95c8782371e9ae51df4802c217530a7243a1255fdf8c163214",
     "外交査証と外交の在留資格",
     "外交活動の対象者、同一世帯の家族、任務中の在留期間、公的な証明、免除、私的な渡航を確認します。",
     `> **編集レビューが必要です：** 派遣ごとの指示は、派遣元の機関と日本側の外交窓口が定めます。通常の在留手続きの案内を、その指示の代わりに使わないでください。
@@ -44,7 +44,7 @@ export const japaneseDiplomaticOfficialArticleTranslations = [
 
 査証免除の扱いは、外交旅券、公用旅券、一般旅券で異なり、国籍、公務の目的、滞在期間によって変わる場合があります。査証免除によって短期滞在となっても、外交上の特権や外交の在留資格が付与されるわけではありません。
 
-[短期滞在について詳しく見る →](/articles/temporary-visitor-and-short-stay)
+[短期滞在について詳しく見る](/articles/temporary-visitor-and-short-stay)
 
 ## 同一世帯の家族にも個別の根拠が必要です
 
@@ -67,7 +67,7 @@ export const japaneseDiplomaticOfficialArticleTranslations = [
   ),
   defineJapaneseArticleTranslation(
     "official-visa",
-    "d31580959338d2f7e69ef2d20094dc5ce63d2651f90c2c12c8bc212283198d0d",
+    "1b80f95e0e8b6d0f096ed3fc0f5d7931c5c5fb1fc5701059470fa011724fa2fb",
     "公用査証と公用の在留資格",
     "認められた公務、同一世帯の家族、利用できる在留期間、証明書類、旅券による免除、私的な渡航を確認します。",
     `> **編集レビューが必要です：** 派遣、承認、旅券、国籍、目的、二国間の取り決めについては、派遣元の組織と日本側の外交窓口を通じて調整してください。
@@ -82,7 +82,7 @@ export const japaneseDiplomaticOfficialArticleTranslations = [
 
 外交の在留資格に該当する活動は対象外です。この違いは、職位や名声、雇用主のブランド、名札に記載された英語の肩書きではなく、認められた任務によって決まります。
 
-[外交の在留資格と比較する →](/articles/diplomatic-visa)
+[外交の在留資格と比較する](/articles/diplomatic-visa)
 
 ## 利用できる在留期間
 
@@ -107,7 +107,7 @@ export const japaneseDiplomaticOfficialArticleTranslations = [
 
 外交旅券と公用旅券の査証免除は、国籍、旅券、目的、期間によって異なります。相互の取り決めの中には、公務での渡航に関するものもあります。また、一般旅券を対象とする査証免除の取り決めにより、外交旅券や公用旅券を持つ人が短期滞在となる場合もあります。旅券の表紙ではなく、上陸時に認められた在留資格が適用されます。
 
-[短期滞在について詳しく見る →](/articles/temporary-visitor-and-short-stay)
+[短期滞在について詳しく見る](/articles/temporary-visitor-and-short-stay)
 
 ## 同一世帯の家族も個別に申請します
 

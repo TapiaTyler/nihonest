@@ -4,7 +4,7 @@ import { defineJapaneseArticleTranslation } from "./article-translation-builder"
 export const japaneseCreativeSkilledArticleTranslations = [
   defineJapaneseArticleTranslation(
     "choosing-a-residence-status-for-creative-and-media-work",
-    "06ae9c6362d0d61473907177647139fc5320764388d956be691eec49b3e3caf5",
+    "c36e61360db49dac6df66589f4b8b3b1ae1b48f9a9e06c345437a3e1146f5f26",
     "創作・メディアの仕事にはどの在留資格が合うか",
     "デザイン、芸術、実演、映画、写真、報道、コンテンツ制作、フリーランス、創作事業を比較します。",
     `> **編集レビューが必要です：** この比較は確認すべき経路を示すものです。創作系の職名は特に広いため、結論を出す前に契約、組織、顧客、収入の仕組み、勤務地、職務の内訳を集めてください。
@@ -19,37 +19,37 @@ export const japaneseCreativeSkilledArticleTranslations = [
 
 [技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)は、日本の組織との契約に基づく専門的なデザイン、デジタル製品、広告その他の関連業務で検討する経路です。出入国在留管理庁はデザイナーを例に挙げますが、グラフィック、UI、UX、ウェブ、モーション、ゲーム、VFX、デジタルメディアの職名は、実際の職務によって決まります。何を調査、企画、設計、制作、決定するか、必要な専門知識・外国文化への理解、学歴または経験との関係、定型制作やサービス業務が主になっていないかを確認します。
 
-[技術・人文知識・国際業務について詳しく確認する →](/articles/engineer-specialist-humanities-international-services-status)
+[技術・人文知識・国際業務について詳しく確認する](/articles/engineer-specialist-humanities-international-services-status)
 
 ### 収入を得る芸術活動
 
 [芸術](/glossary/geijutsu)は、興行に当たらない収入を得る芸術活動を対象とします。作曲家、画家、作家、イラストレーター、美術家その他の実績ある創作者が検討する場合があります。契約に基づく活動と独立した活動の両方を検討できますが、具体的な計画、見込み収入、専門的実績が重要です。
 
-[芸術について詳しく確認する →](/articles/artist-status)
+[芸術について詳しく確認する](/articles/artist-status)
 
 ### 実演と商業制作
 
 [興行](/glossary/kogyo)は、実演、娯楽、プロスポーツを対象とします。公式資料では広告、放送・映画制作、商業写真、商業録音・撮影も扱われています。俳優・歌手だけに限定して考えないでください。
 
-[興行について詳しく確認する →](/articles/entertainer-status)
+[興行について詳しく確認する](/articles/entertainer-status)
 
 ### 外国報道機関での報道
 
 [報道](/glossary/hodo)は、外国の報道機関との契約に基づく取材その他の報道活動を対象とします。派遣、雇用、対象となるフリーランス契約が関係する場合があります。国内メディアの仕事や独立ドキュメンタリーは、作風や題材だけで報道にはなりません。
 
-[報道について詳しく確認する →](/articles/journalist-status)
+[報道について詳しく確認する](/articles/journalist-status)
 
 ### 無報酬の芸術・文化学習
 
 [文化活動](/glossary/bunka-katsudo)は、定められた無報酬の芸術活動または専門的な文化学習を対象とします。有償の顧客業務、販売、スポンサー収入、商業委託の経路ではありません。
 
-[文化活動について詳しく確認する →](/articles/cultural-activities-visa)
+[文化活動について詳しく確認する](/articles/cultural-activities-visa)
 
 ### 創作事業の運営・管理
 
 [経営・管理](/glossary/keiei-kanri)は、主な活動が要件を満たす会社、代理店、制作事業、スタジオを実際に運営・管理することである場合に関係します。創業者、フリーランサー、プロデューサー、クリエイティブディレクターという職名だけで管理の区分になるわけではありません。
 
-[経営・管理について詳しく確認する →](/articles/business-manager-status)
+[経営・管理について詳しく確認する](/articles/business-manager-status)
 
 ## よくある状況を比較する
 
@@ -171,7 +171,7 @@ export const japaneseCreativeSkilledArticleTranslations = [
 
 制作会社、代理店、チーム、会場を運営・管理することは別の活動の検討です。会社を所有する実演者は、一つの資格が両方を覆うと考えず、実演と管理の職務を分けます。
 
-[創作・メディアの仕事に合う在留資格を確認する →](/articles/choosing-a-residence-status-for-creative-and-media-work)
+[創作・メディアの仕事に合う在留資格を確認する](/articles/choosing-a-residence-status-for-creative-and-media-work)
 
 ## 在留期間と更新
 

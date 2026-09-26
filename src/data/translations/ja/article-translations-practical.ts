@@ -172,7 +172,7 @@ export const japanesePracticalArticleTranslations = [
 export const japaneseJapanBasicsArticleTranslations = [
   defineJapaneseArticleTranslation(
     "understanding-japan-geography-government-and-language",
-    "b38c510835e06d10cc54cee2dc54c5e0f985cf2a9829e2706101039294c0b614",
+    "f29d2cc9fd0b193dc39050e2479cf1a30905fb0ccd5528da0e6b407e6967dc93",
     "日本を理解する：地理、地方自治、言語",
     "日本の島々、地域、都道府県、市区町村、地域差、公式情報源を実用的に把握します。",
     `日本は、国の制度、地方自治体、地域によって大きく異なるコミュニティを持つ島国です。地域名は場所を把握する助けになりますが、実際の多くの手続きでは正確な住所、担当窓口、最新の地域案内を確認する必要があります。
@@ -188,6 +188,8 @@ export const japaneseJapanBasicsArticleTranslations = [
 [地方](/glossary/chiho)は、地理、天気、文化、交通、統計などを整理するための呼び方です。一般的な区分には、北海道、東北、関東、中部、関西または近畿、中国、四国、九州、沖縄があります。
 
 地域の境界は全国共通ではありません。行政機関、業界、出版物などが、特定の目的で都道府県を別の地域に分類する場合があります。そのため、地域名だけで、その地域全体の手続きを管理する一つの行政機関や窓口が分かるわけではありません。
+
+:::japan-region-map
 
 ## 都道府県と市区町村では役割が異なります
 
@@ -205,11 +207,7 @@ export const japaneseJapanBasicsArticleTranslations = [
 4. 現在の書式、期限、窓口はどれか。
 5. 引っ越しや状況の変化によって担当先が変わるか。
 
-## 47都道府県を見る
-
-以下のグループは、場所を把握するためによく使われる区分であり、固定された行政上の地域ではありません。特に、三重県や新潟県などを別の地域に分類する資料もあります。グループを開くと都道府県を確認できます。利用するサービスの地域区分は、その都度確認してください。
-
-:::japan-prefecture-regions
+:::japan-prefecture-finder
 
 ## 日本語は場所や状況によって異なります
 

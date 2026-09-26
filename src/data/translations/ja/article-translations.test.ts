@@ -239,6 +239,9 @@ describe("Japanese article translation registry", () => {
     expect(currentJapaneseArticleTranslations[75].fields.body).toContain("[文化活動](/glossary/bunka-katsudo)");
     expect(currentJapaneseArticleTranslations[76].fields.body).toContain("[研修](/glossary/kenshu)");
     expect(currentJapaneseArticleTranslations[77].fields.body).toContain("[特定活動](/glossary/tokutei-katsudo)");
-    expect(currentJapaneseArticleTranslations.find(({ contentId }) => contentId === "understanding-japan-geography-government-and-language")?.fields.body).toContain(":::japan-prefecture-regions");
+    const geographyBody = currentJapaneseArticleTranslations.find(({ contentId }) => contentId === "understanding-japan-geography-government-and-language")?.fields.body;
+    expect(geographyBody).toContain(":::japan-region-map");
+    expect(geographyBody).toContain(":::japan-prefecture-finder");
+    expect(geographyBody).not.toContain(":::japan-prefecture-regions");
   });
 });

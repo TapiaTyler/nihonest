@@ -13,4 +13,11 @@ describe("FAQ related-target presentation labels", () => {
     expect(japaneseLabel("glossary", "eiju-kyoka")).toBe("永住許可");
     expect(japaneseLabel("residence-status", "permanent-resident")).toBe("永住者");
   });
+
+  it("uses the existing Japanese short labels for every FAQ activity link", () => {
+    const activityTargets = getAllFaqEntries().flatMap(({ targets }) => targets.filter(({ kind }) => kind === "activity"));
+    expect(activityTargets.length).toBeGreaterThan(0);
+    expect(activityTargets.every(({ japaneseLabel }) => Boolean(japaneseLabel))).toBe(true);
+    expect(activityTargets.find(({ id }) => id === "add-side-work-or-freelancing")?.japaneseLabel).toBe("副業・フリーランス");
+  });
 });

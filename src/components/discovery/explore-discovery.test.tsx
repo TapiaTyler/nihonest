@@ -188,7 +188,7 @@ describe("ExploreDiscovery", () => {
     enterSearch("query-with-no-matches");
     expect(screen.getByRole("heading", { name: "一致する情報が見つかりません" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "すべてのグループを見る" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "この質問をFAQで検索する →" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "この質問をFAQで検索する" })).toBeInTheDocument();
   });
 
   it("localizes the activity-search wrapper while retaining canonical activity labels", () => {
@@ -219,7 +219,7 @@ describe("ExploreDiscovery", () => {
     fireEvent.change(screen.getByRole("combobox", { name: "Topic" }), { target: { value: "healthcare" } });
 
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Search FAQs for this question →" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Search FAQs for this question" })).toHaveAttribute(
       "href",
       "/faq?q=software+developer",
     );

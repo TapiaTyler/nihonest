@@ -30,7 +30,7 @@ describe("ActivityCrossReferenceExplorer", () => {
     renderExplorer();
     expect(screen.getByRole("heading", { name: "What are you trying to do?" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: new RegExp(handoff.shortLabel) }));
-    expect(screen.getByRole("link", { name: `${link.label} →` })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: `${link.label}` })).toBeInTheDocument();
   });
 
   it("applies overlays, translated link titles, and Japanese interface text, falling back per snippet", () => {
@@ -39,7 +39,7 @@ describe("ActivityCrossReferenceExplorer", () => {
     expect(screen.getByRole("heading", { name: "何をしようとしていますか？" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /翻訳した活動名/ }));
     expect(screen.getByRole("heading", { name: "確認が必要なこと" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "翻訳したリンク →" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "翻訳したリンク" })).toBeInTheDocument();
     // Description has no overlay in this fixture, so it stays English.
     expect(screen.getByText(handoff.description)).toBeInTheDocument();
   });

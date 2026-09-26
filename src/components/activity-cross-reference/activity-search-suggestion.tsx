@@ -19,7 +19,7 @@ export function ActivitySearchSuggestion({ query, returnTo }: Readonly<{ query: 
       <div className="mt-4 flex flex-wrap gap-2">
         {matches.map((activity) => (
           <Link key={activity.id} href={activityCrossReferenceHref(activity.id, returnTo)} className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-sm font-semibold text-teal-800 shadow-sm hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-            <span><span className="font-normal text-teal-700">{message("activity.checkPrefix")}</span> <span lang="en">{activity.shortLabel}</span> →</span>
+            <span><span className="font-normal text-teal-700">{message("activity.checkPrefix")}</span> <span lang="en">{activity.shortLabel}</span></span>
           </Link>
         ))}
       </div>

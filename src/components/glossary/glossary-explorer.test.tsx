@@ -53,7 +53,7 @@ describe("GlossaryExplorer", () => {
 
     expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(screen.getByRole("link", { name: "Residence Card" })).toHaveAttribute("href", "/glossary/zairyu-card");
-    expect(screen.getByText("View term and context →")).toBeInTheDocument();
+    expect(screen.getByText("View term and context")).toBeInTheDocument();
   });
 
   it("persists its query and topic in term links", () => {

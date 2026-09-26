@@ -6,7 +6,7 @@ const generator = { id: "codex-assisted", model: "gpt-6-luna" } as const;
 export const japaneseDesignatedRouteArticleTranslations = [
   defineJapaneseArticleTranslation(
     "continued-job-hunting-after-study",
-    "7fe601b812886b5a8f2fb72c4e00e51b1b323468153a166e45ec6912d56d930d",
+    "0f77506ad822f87a8efee10c46efb783da3502c4822121b926d1f38ad8afb596",
     "卒業後も日本で就職活動を続ける",
     "卒業後の対象者、学校の支援、在留期間、就労許可、内定後に入社を待つ別の経路を確認します。",
     `> **編集レビューが必要です：** 対象となる機関・資格、卒業前の就職活動、推薦、次に予定する在留資格は、個別に確認する必要があります。
@@ -43,7 +43,7 @@ export const japaneseDesignatedRouteArticleTranslations = [
 - 在留状況に問題がなく、生活費を確保していること。
 - 内定が取り消された場合に、雇用主が本人との連絡を保ち、必要な報告を行うこと。
 
-[入社後に必要な在留資格の選び方を見る →](/articles/choosing-a-work-status-and-coe)
+[入社後に必要な在留資格の選び方を見る](/articles/choosing-a-work-status-and-coe)
 
 ## 有給の仕事とインターンシップ
 
@@ -64,12 +64,12 @@ export const japaneseDesignatedRouteArticleTranslations = [
 
 内定だけで、許可された活動が自動的に変わるわけではありません。実際の業務を就労資格と照らし合わせ、働き始める前に適切な変更を申請してください。就職活動の終了、内定の取消し、学校からの支援終了、または最長期間が近づいた場合は、適法な次の手続きを早めに確認してください。
 
-[在留資格の更新・変更について詳しく見る →](/articles/renewing-or-changing-your-status-of-residence)`,
+[在留資格の更新・変更について詳しく見る](/articles/renewing-or-changing-your-status-of-residence)`,
     generator,
   ),
   defineJapaneseArticleTranslation(
     "future-creation-j-find",
-    "9c3d0c1d54f79cf4b487d0c04d38c4ce43894d9b66fba298d1b1cfd67d5e077c",
+    "d7873bfabe7bba9f27957294fc53ea7116ffde95e7337dcb3a1830b960c65f03",
     "J-Find「未来創造人材」の経路",
     "対象となる海外学位、大学ランキング、卒業からの期間、資金、活動、家族、在留期間、次の手続きを確認します。",
     `> **編集レビューが必要です：** 対象機関の一覧とランキング方法は変更される場合があります。対象校として扱う前に、現在の出入国在留管理庁の資料を確認してください。
@@ -98,11 +98,11 @@ J-Findは、[未来創造人材](/glossary/mirai-sozo-jinzai)として、[特定
 
 通常の雇用を始める前に、実際の業務、資格、契約、報酬、所属先を適切な就労資格と照合してください。
 
-[就労資格の選び方を見る →](/articles/choosing-a-work-status-and-coe)
+[就労資格の選び方を見る](/articles/choosing-a-work-status-and-coe)
 
 事業を設立・運営する前に、準備段階と「経営・管理」または他の適切な在留資格の要件を区別してください。
 
-[支援を受けるスタートアップ経路を見る →](/articles/startup-visa)
+[支援を受けるスタートアップ経路を見る](/articles/startup-visa)
 
 ## 在留には上限があり、累積で数えられる場合があります
 
@@ -131,7 +131,7 @@ J-Findでは最長2年間の在留が認められる場合があります。通�
   ),
   defineJapaneseArticleTranslation(
     "digital-nomad-designated-activities",
-    "c3692da084b1a4957bc8655ada3e8368e56431414baf5bb9987414fb0911f328",
+    "371d71d8d9982cc62064e7125a5650425982444307a21bc2426306cfd75abd41",
     "日本のデジタルノマド経路",
     "国籍、海外向け業務、収入、保険、家族、6か月の在留、更新不可、再利用の条件を確認します。",
     `> **編集レビューが必要です：** 対象国・地域、保険の証明、税務上の扱いは変更される場合があります。出入国在留管理庁と日本の在外公館の最新案内を確認してください。
@@ -157,7 +157,7 @@ J-Findでは最長2年間の在留が認められる場合があります。通�
 
 入管上の許可と税務上の扱いは別です。租税条約によって特定の所得に課税する国が変わる場合がありますが、国籍、滞在期間、雇用主、顧客、恒久的施設、実際の業務内容も関係します。
 
-[日本の税金について詳しく見る →](/articles/income-and-resident-tax-after-moving-to-japan)
+[日本の税金について詳しく見る](/articles/income-and-resident-tax-after-moving-to-japan)
 
 ## 6か月、更新不可、在留カードなし
 
@@ -184,12 +184,12 @@ J-Findでは最長2年間の在留が認められる場合があります。通�
 
 更新できないため、住居、契約、保険、口座、税務相談、帰国便を決まった出国日に合わせて手配してください。活動内容が変わる場合は、6か月の終了間際ではなく、変更した活動を行う前に再確認してください。
 
-[出国準備について詳しく見る →](/articles/leaving-japan-and-closing-out-procedures)`,
+[出国準備について詳しく見る](/articles/leaving-japan-and-closing-out-procedures)`,
     generator,
   ),
   defineJapaneseArticleTranslation(
     "long-stay-sightseeing-designated-activities",
-    "9b50076fe9cf375465c4d8b13f9ff710923a812e28c9d7b958c1d43f484fb5c6",
+    "6a98ddbc42e9181a08c5056005831583a63e95086704678d02e3317a3c318bbe",
     "観光・保養を目的とする長期滞在",
     "ビザ免除対象国の国籍、年齢、貯蓄、保険、配偶者、子ども、就労不可、最長1年の条件を確認します。",
     `> **編集レビューが必要です：** この経路は目的と自己資金が限定されています。一般的な退職、居住、リモートワークのためのビザではありません。
@@ -227,7 +227,7 @@ J-Findでは最長2年間の在留が認められる場合があります。通�
 
 この経路は観光・保養を目的としており、報酬を得る活動を認めません。オンラインで働く場合や海外から報酬を得る場合でも、デジタルノマド、雇用、フリーランス、事業の許可の代わりに使わないでください。
 
-[デジタルノマドの経路と比較する →](/articles/digital-nomad-designated-activities)
+[デジタルノマドの経路と比較する](/articles/digital-nomad-designated-activities)
 
 ## 整理する証拠
 
@@ -242,7 +242,7 @@ J-Findでは最長2年間の在留が認められる場合があります。通�
 
 最長期間を基準に、保険、住居、口座、旅行、出国を手配してください。日本に残りたい、働きたい、学びたい、退職後の生活を送りたい、または家族と合流したいという希望だけでは、この指定は延長されません。次の経路には、それぞれの要件と申請が必要です。
 
-[日本での滞在を終える手続きについて詳しく見る →](/articles/leaving-japan-and-closing-out-procedures)`,
+[日本での滞在を終える手続きについて詳しく見る](/articles/leaving-japan-and-closing-out-procedures)`,
     generator,
   ),
 ] as const;

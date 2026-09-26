@@ -6,7 +6,7 @@ const generator = { id: "codex-assisted", model: "gpt-6-luna" } as const;
 export const japaneseTrainingRouteArticleTranslations = [
   defineJapaneseArticleTranslation(
     "choosing-a-training-or-workforce-development-route-in-japan",
-    "0c99d1779f5ece35fa94cebbe9df8355b46f81572c3b6a8c32c36e3c4cdbc19c",
+    "250c8e3f10ba2efefe0058d151d96f9808d26a8b9462c2e34d245a6fd96c2666",
     "日本で研修・人材育成の経路を選ぶ",
     "文化活動、留学、研修、技能実習、育成就労、特定技能、通常の就労資格を比較します。",
     `> **経路選びのガイド：** この比較は、最初に確認する経路を示します。個別の制度を分類したり、要件を満たすと保証したりするものではありません。
@@ -31,7 +31,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 これは通常の有償就労を認めるものではありません。対象となる学校での正式な教育は「留学」に当たる場合があり、収入を得る芸術活動や専門的な活動は就労資格に当たる場合があります。
 
-[文化活動について詳しく見る →](/articles/cultural-activities-visa)
+[文化活動について詳しく見る](/articles/cultural-activities-visa)
 
 ## 対象となる学校での教育
 
@@ -39,7 +39,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 正規のカリキュラムに含まれる実習があるからといって、学生が自動的に労働者になるわけではありません。一方、生産的な労働を授業と呼んでも、経路が決まるわけではありません。任意のアルバイトには別途、資格外活動許可が必要で、学業が主であることに変わりはありません。
 
-[「留学」の在留資格とCOEの手続きについて詳しく見る →](/articles/student-visa-and-certificate-of-eligibility)
+[「留学」の在留資格とCOEの手続きについて詳しく見る](/articles/student-visa-and-certificate-of-eligibility)
 
 ## 雇用に基づかない組織的な研修
 
@@ -47,7 +47,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 研修は通常の仕事を認めるものではありません。生産的な実務は制限されており、現在の例外と保護措置の要件を満たす必要があります。受入先、送出しの関係、カリキュラム、指導者、参加者の処遇、事前準備、帰国後の活用予定が重要です。
 
-[「研修」の在留資格について詳しく見る →](/articles/training-visa)
+[「研修」の在留資格について詳しく見る](/articles/training-visa)
 
 ## 従来の雇用・研修制度
 
@@ -55,7 +55,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 後継制度が2027年4月1日に始まった後も、経過措置の下でこの制度は続きます。継続できるかどうかは、計画の日付と現在の段階によって決まり、新法によって全ての参加者の制度名が自動的に変わるわけではありません。
 
-[技能実習と移行計画について詳しく見る →](/articles/technical-intern-training-status)
+[技能実習と移行計画について詳しく見る](/articles/technical-intern-training-status)
 
 ## 特定技能の水準を目指す雇用
 
@@ -63,7 +63,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 この制度には認定計画、分野別の規則、受入機関と監理支援機関、評価、保護措置、条件付きの転籍があります。2026年に準備申請が始まっても、その時点から参加できるわけではありません。
 
-[育成就労について詳しく見る →](/articles/employment-for-skill-development-system)
+[育成就労について詳しく見る](/articles/employment-for-skill-development-system)
 
 ## 分野に基づく直接雇用
 
@@ -71,7 +71,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 特定技能は研修課程ではありません。技能実習または育成就労の修了歴が、移行や試験の扱いに関係する場合はありますが、新しい在留資格が保証されるわけではありません。育成就労に対応する分野がない特定技能の分野もあります。
 
-[特定技能について詳しく見る →](/articles/specified-skilled-worker-status)
+[特定技能について詳しく見る](/articles/specified-skilled-worker-status)
 
 ## 通常の専門職その他の就労
 
@@ -79,7 +79,7 @@ export const japaneseTrainingRouteArticleTranslations = [
 
 たとえば、転勤する企業の専門職には「企業内転勤」、ソフトウェア開発者には「技術・人文知識・国際業務」、外国料理の専門調理師には「技能」が該当する場合があります。職務内容から比較するには、[就労資格とCOEの選び方](/articles/choosing-a-work-status-and-coe)を確認してください。
 
-[活動内容に基づく就労資格の選び方について詳しく見る →](/articles/choosing-a-work-status-and-coe)
+[活動内容に基づく就労資格の選び方について詳しく見る](/articles/choosing-a-work-status-and-coe)
 
 ## 簡単な比較
 

@@ -40,6 +40,6 @@ describe("ResidenceStatusExplorer", () => {
       }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("Showing 3 of 30 draft statuses")).toBeInTheDocument();
-    expect(screen.getAllByText("View status and related guidance →")).toHaveLength(3);
+    expect(screen.getAllByText("View status and related guidance")).toHaveLength(3);
   });
 });

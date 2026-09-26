@@ -113,9 +113,10 @@ describe("localized article presentation", () => {
   });
 
   it("renders Japanese geography blocks from their supported directives", () => {
-    render(<TranslatedArticleBody markdown={":::japan-prefecture-regions\n\n:::japan-practical-basics"} />);
-    expect(screen.getByText("東北")).toBeInTheDocument();
-    expect(screen.getByText(/青森県、岩手県、宮城県/)).toBeInTheDocument();
+    render(<TranslatedArticleBody markdown={":::japan-region-map\n\n:::japan-prefecture-finder\n\n:::japan-practical-basics"} />);
+    fireEvent.click(screen.getAllByRole("button", { name: "東北" })[1]);
+    expect(screen.getByRole("status")).toHaveTextContent("青森県、岩手県、宮城県");
+    expect(screen.getByRole("heading", { name: "Guidance by location" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "緊急通報のガイド" })).toHaveAttribute("href", "/articles/calling-police-fire-and-ambulance-services-in-japan");
   });
 

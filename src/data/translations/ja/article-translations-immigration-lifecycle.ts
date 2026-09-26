@@ -63,7 +63,7 @@ COEの交付日を確認してください。通常の有効期間は現在3か�
   ),
   defineJapaneseArticleTranslation(
     "temporary-visitor-and-short-stay",
-    "37a293a67453fae7aa690d815333d70e1efc9ce8924e441d846568bccf975528",
+    "8926e046b3e1716f2b7a230dcbe23f5f2e5359d2fb858636b6aa0d091e18742d",
     "短期滞在の在留資格と短期滞在ビザ",
     "査証、査証免除、eVISA、上陸時の在留資格、在留期間、認められる活動、延長、住民登録の規則を区別します。",
     `> **編集レビューが必要です：** 査証免除、旅券、eVISA、在外公館の規則は変わります。渡航者の国籍、旅券、居住地、目的について、外務省の現在のページを確認してください。
@@ -92,7 +92,7 @@ COEの交付日を確認してください。通常の有効期間は現在3か�
 
 この在留資格では、日本で報酬を得る活動は認められません。商談や契約交渉を行えることは、日本の雇用に入ったり、滞在中に通常の有給労働を提供したりする許可ではありません。
 
-[短期留学について詳しく確認する →](/articles/short-term-study-in-japan)
+[短期留学について詳しく確認する](/articles/short-term-study-in-japan)
 
 ## 査証免除は旅券と条件ごとに決まる
 
@@ -127,7 +127,7 @@ JAPAN eVISAは現在、指定された国・地域に居住する対象者が、
 - 査証を提示できる期間と予定する滞在期間を別々に確認する。
 - 上陸時に実際に与えられた在留資格と期間を読む。
 
-[入国時の書類について詳しく確認する →](/articles/documents-received-when-entering-japan)`,
+[入国時の書類について詳しく確認する](/articles/documents-received-when-entering-japan)`,
   ),
   defineJapaneseArticleTranslation(
     "reentry-permission-and-temporary-travel",

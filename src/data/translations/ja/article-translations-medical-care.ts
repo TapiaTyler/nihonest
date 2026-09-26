@@ -4,7 +4,7 @@ import { defineJapaneseArticleTranslation } from "./article-translation-builder"
 export const japaneseMedicalCareArticleTranslations = [
   defineJapaneseArticleTranslation(
     "choosing-a-status-for-medical-and-care-work-in-japan",
-    "6ea25706a19443c6d4f3a7f722c2e2aaedd8ce13d1bfc88d67f2cba5776840be",
+    "3d249fa18cebcfa891fcc347dc7d0057f88d54bd6df4c653e288315de001c274",
     "日本の医療・介護の仕事に合う在留資格を選ぶ",
     "免許が必要な医療職、介護福祉士の雇用、特定技能の介護、EPA制度、隣接する職種を比較します。",
     `> **編集レビューが必要です：** この比較は、検討する経路を案内するものです。外国で取得した資格の認定、医療行為の許可を判断したり、日本の関係規制機関や出入国在留管理庁への相談に代わったりするものではありません。
@@ -21,7 +21,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 外国の資格だけでは、日本での業務は認められません。病院からの採用や在留申請だけで十分と考える前に、関係規制機関に日本の免許取得経路を確認してください。
 
-[「医療」の在留資格について詳しく見る →](/articles/medical-services-status)
+[「医療」の在留資格について詳しく見る](/articles/medical-services-status)
 
 ## 介護福祉士としての仕事：「介護」
 
@@ -29,7 +29,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 介護職員、看護助手、ホームヘルパー、ケアワーカーという職名は、介護福祉士の資格と同じ意味ではありません。本人の登録状況と実際の介護業務を確認してください。
 
-[「介護」の在留資格について詳しく見る →](/articles/nursing-care-status)
+[「介護」の在留資格について詳しく見る](/articles/nursing-care-status)
 
 ## 介護分野で働く：「特定技能」
 
@@ -37,7 +37,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 介護は専門資格に基づく「介護」の在留資格があるため、現在、特定技能2号の分野ではありません。特定技能の試験に合格しても介護福祉士の資格は得られません。また、介護福祉士の登録によって自動的に特定技能になるわけでもありません。
 
-[「特定技能」について詳しく見る →](/articles/specified-skilled-worker-status)
+[「特定技能」について詳しく見る](/articles/specified-skilled-worker-status)
 
 ## EPAの看護師、介護福祉士、候補者：「特定活動」
 
@@ -45,7 +45,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 該当するEPAの対象国制度、本人が候補者か有資格者か、受入れの仕組み、試験の段階、個別に指定された活動を確認してください。EPA経路の条件を、通常の「医療」または「介護」の申請に当てはめないでください。
 
-[「特定活動」について詳しく見る →](/articles/designated-activities-status)
+[「特定活動」について詳しく見る](/articles/designated-activities-status)
 
 ## 資格取得のための就学や、登録を待つ場合
 
@@ -53,7 +53,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 出入国在留管理庁は、対象となる経路で介護福祉士国家試験に合格したものの、「介護」へ変更するために必要な登録証を待つ一部の留学生について、限定的な一時的「特定活動」の措置も公表しています。全ての医療資格について使える一般的な待機用の在留資格ではありません。
 
-[「留学」の在留資格とCOEの手続きについて詳しく見る →](/articles/student-visa-and-certificate-of-eligibility)
+[「留学」の在留資格とCOEの手続きについて詳しく見る](/articles/student-visa-and-certificate-of-eligibility)
 
 ## 研究、技術、事務、翻訳
 
@@ -61,7 +61,7 @@ export const japaneseMedicalCareArticleTranslations = [
 
 医療機関で働くというだけで、これらの仕事が「医療」になるわけではありません。一方、技術や研究の在留資格によって、免許が必要な医療行為が認められるわけでもありません。
 
-[活動内容に基づく就労資格の選び方を詳しく見る →](/articles/choosing-a-work-status-and-coe)
+[活動内容に基づく就労資格の選び方を詳しく見る](/articles/choosing-a-work-status-and-coe)
 
 ## よくある状況を比較する
 

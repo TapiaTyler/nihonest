@@ -31,7 +31,7 @@ describe("ArticleCard", () => {
       "href",
       `/articles/${article.slug}`,
     );
-    expect(screen.getByText("Read guide →")).toBeInTheDocument();
+    expect(screen.getByText("Read guide")).toBeInTheDocument();
     expect(screen.getByText("Editorial review")).toBeInTheDocument();
   });
 
