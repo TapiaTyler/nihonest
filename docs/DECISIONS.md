@@ -1241,6 +1241,31 @@ One proposed activity can engage immigration, employment or contract, profession
 
 ---
 
+## ADR-065 — A local editorial CMS may assist the repository-first workflow
+
+**Status:** Accepted
+
+### Decision
+
+After Phase 14's current content work, build a single-editor CMS that runs locally against Nihonest's existing repository files. It is an editing, preview, validation, and Git-review interface, not a second canonical store or an online publication service. Follow [the local CMS requirements](LOCAL-CMS-REQUIREMENTS.md). Keep Git authoritative, preserve stable IDs and existing scripts, and require explicit human editorial approval for verified content and accepted source revisions. A commit and the normal deployment workflow remain separate deliberate actions.
+
+This decision does not revise ADR-056's completed Phase 12 scope. The hosted multi-user CMS and contributor portal described there remain deferred until collaborative editorial work demonstrates their need.
+
+### Reason
+
+The content catalog, source relationships, translations, and municipality supplements are now large enough that a local interface can make one editor's work easier to inspect and validate. Repository privacy permits the CMS code to live alongside the content. A local application avoids ongoing hosting and a second database while retaining full access to the project's schemas, scripts, and Git history.
+
+### Consequences
+
+- the local CMS must not expose an administrative route in the public web app or rely on Supabase for editorial state;
+- edits must preserve unrelated working-tree changes and stop on concurrent file revisions;
+- previews, diffs, validation results, source dependencies, and translation staleness must be visible before handoff;
+- machine translation artifacts retain their existing delegated workflow and review state;
+- source detection and AI assistance remain advisory; and
+- future multi-editor adoption still requires a separate authorization, canonical-data, hosting, and migration decision.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

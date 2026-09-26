@@ -942,6 +942,36 @@ feat: roll out reviewed multilingual content
 
 ---
 
+# Next Checkpoint — Local Editorial CMS
+
+**Planned next after the current Phase 14 work; before the hosted integration gate.** Build a locally run editorial workspace for the existing repository. [LOCAL-CMS-REQUIREMENTS.md](LOCAL-CMS-REQUIREMENTS.md) defines its scope, safety rules, workflows, and acceptance criteria. This is a single-editor tool for preparing and reviewing Git changes, not the deferred hosted multi-user CMS.
+
+Objectives:
+
+- make the existing English content catalogs, source records, relationships, and editorial states easier to inspect and edit without replacing their canonical files or stable IDs;
+- provide field-aware editing, rendered previews, dependency and revision impact, focused validation, and a reviewable Git diff;
+- preserve the distinction between draft, needs-review, verified, and archived content, and require the existing explicit human approval records for any verified revision;
+- show translation currency and handoff needs without generating, reviewing, or silently changing Japanese translation artifacts;
+- run only on the editor's machine, keep its working state local, and require a deliberate Git commit and existing deployment process to publish changes.
+
+Deliverables:
+
+- local CMS application and documented start command;
+- safe file adapters for an initial, explicitly supported content set, followed by bounded expansion to the remaining catalogs;
+- preview, validation, dependency review, and Git change review integrated with current repository commands;
+- end-to-end checks for preserving unrelated edits, blocking stale approvals, and preventing accidental publication;
+- operator instructions, recovery steps, and a demonstrated export path consisting of the canonical repository files.
+
+Exit condition: the editor can complete a representative article and structured-record change through the CMS, inspect the exact proposed diff and affected translations, run the relevant gates, and hand the result to the existing human approval and Git workflow without data loss or hidden publication.
+
+Suggested checkpoint:
+
+```text
+feat: add local editorial CMS for repository content
+```
+
+---
+
 # Post-Phase 14 — Hosted Integration and Public Deployment Gate
 
 This is the first planned continuously hosted application environment and public web launch. It occurs only after the features that need hosted validation and the major editorial pass have already been implemented locally.
@@ -1030,7 +1060,7 @@ Exact price and store configuration are deferred until release planning.
 These should remain visible but have no implementation commitment:
 
 - advanced search provider;
-- multi-user CMS and external contributor portal (see the adoption requirements below);
+- hosted multi-user CMS and external contributor portal (see the adoption requirements below);
 - analytics provider;
 - broad municipality coverage;
 - additional reminder channels;
@@ -1050,14 +1080,14 @@ In particular, defer until justified:
 - runtime translation API provider;
 - push provider;
 - search SaaS;
-- CMS;
+- hosted multi-user CMS;
 - analytics SaaS;
 - native database;
 - AI functionality.
 
 ## CMS Adoption Requirements
 
-A CMS should be reconsidered only when multiple independent editors or external contributors make the repository-first workflow materially limiting. Adoption would require:
+A hosted multi-user CMS should be reconsidered only when multiple independent editors or external contributors make the repository-first workflow materially limiting. This is separate from the planned local editorial CMS above. Hosted adoption would require:
 
 - authenticated editor, reviewer, publisher, and administrator roles with least-privilege authorization;
 - durable assignments, comments, review requests, approval gates, and conflict handling;
