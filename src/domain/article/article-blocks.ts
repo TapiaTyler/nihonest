@@ -13,6 +13,9 @@ export const articleComponentBlocks = {
   "tax-residence-scope": "TaxResidenceScopeTable",
   "training-route-comparison": "TrainingRouteComparisonTable",
   "japan-prefecture-regions": "JapanPrefectureRegionGrid",
+  "japan-prefecture-finder": "JapanPrefectureFinder",
+  "japan-prefecture-region-cards": "JapanPrefectureRegionCards",
+  "japan-region-map": "JapanRegionMap",
   "japan-practical-basics": "JapanPracticalBasics",
 } as const;
 

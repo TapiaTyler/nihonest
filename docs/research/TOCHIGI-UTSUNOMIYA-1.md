@@ -1,0 +1,15 @@
+# Utsunomiya City local guidance research
+
+Inspected 2026-09-26 using saved pages from Utsunomiya City's official website. Supplements describe citywide rules; counter selection, collection weekdays, and hazard details depend on address or district.
+
+| Guide | Official evidence | Claim boundary |
+|---|---|---|
+| Address registration | [Resident address procedures](https://www.city.utsunomiya.lg.jp/kurashi/jumin/koseki/1003508.html), updated 2025-04-01 | Lists city, district, and branch counters; online move-out and move-in booking; filing periods and records, including overseas and foreign-resident cases. Check current counter availability. |
+| National Health Insurance | [Enrollment and withdrawal](https://www.city.utsunomiya.lg.jp/kurashi/hokennenkin/kokuho/1003752.html), updated 2025-09-29 | Gives counter locations, event-specific records, and limited mail withdrawal options. Individual coverage eligibility and tax amounts are not assessed. |
+| Household waste | [Sorting guide](https://www.city.utsunomiya.lg.jp/kurashi/gomi/kateigomi/dashikata/index.html), [collection weekdays](https://www.city.utsunomiya.lg.jp/kurashi/gomi/kateigomi/dashikata/1004984.html), and [bulky waste](https://www.city.utsunomiya.lg.jp/kurashi/gomi/kateigomi/dashikata/1017157/1004977.html) | Directs residents to address-specific collection guidance and separate bulky-item handling. The bulky-waste page is older and its conditions should be checked. |
+| Resident tax | [Current-year filing requirements](https://www.city.utsunomiya.lg.jp/kurashi/zeikin/shinzei/1026230.html), [electronic filing](https://www.city.utsunomiya.lg.jp/kurashi/zeikin/shinzei/1043669.html), and [foreign-resident tax guide](https://www.city.utsunomiya.lg.jp/kurashi/zei-info/shiryo/1014683/1021110.html) | Identifies current annual filing and electronic routes and the city's departure guidance for foreign residents. Tax liability and applicability depend on personal facts and tax year. |
+| Disaster preparation | [Disaster hazard map](https://www.city.utsunomiya.lg.jp/kurashi/anshin/bosai/1035864.html), updated 2026-06-15 | Provides city map layers and updates for mapped risks. Use current location-specific layers and live alerts; a map does not establish whether a site is open during an event. |
+| Language and local support | [Foreign-resident consultation and Japanese classes](https://www.city.utsunomiya.lg.jp/kurashi/soudan/1004932.html), updated 2026-09-01 | Lists current monthly contact, class, and interpretation resources. Schedules and service terms change; confirm with the city or service provider. |
+| National Pension | [National Pension procedures](https://www.city.utsunomiya.lg.jp/kurashi/hokennenkin/nenkin/1003782.html), updated 2024-03-08, and [coverage categories](https://www.city.utsunomiya.lg.jp/kurashi/hokennenkin/nenkin/1003781.html), updated 2026-03-23 | Identifies municipal routes for several resident filings and distinguishes employer and pension-office procedures. The procedure list is older; verify current event-specific records with the city. |
+
+All seven supplements remain `needs-review`.

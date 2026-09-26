@@ -1,0 +1,17 @@
+# Suita City local-guidance research
+
+- Inspected: 2026-09-26
+- Location: `jp-27205` (Suita City, Osaka Prefecture)
+- Population context: Osaka Prefecture's [municipality population table as of January 1, 2026](https://www.pref.osaka.lg.jp/documents/136365/r8sichousonnbetsujinnkou.pdf) reports a resident-register total of 386,317 for Suita. This is administrative context, not a population check for selecting the coverage list.
+
+| Guide | Official evidence | Claim boundary |
+| --- | --- | --- |
+| Address registration | [Move-in notification](https://www.city.suita.osaka.jp/kurashi/1018370/1018372/1006647.html), [overseas move-in checklist](https://www.city.suita.osaka.jp/kurashi/1018370/1018372/1006650.html) | Covers domestic and overseas move-in deadlines, offices, and records. The overseas source excludes short stays; household documents depend on nationality and family-register circumstances. |
+| National Health Insurance | [Enrollment](https://www.city.suita.osaka.jp/kenko/1018391/1024368/1024865.html) | Covers the 14-day notification period, listed evidence, counter locations, and electronic/postal routes for listed events. Verify the route for any other change. |
+| Household waste | [Waste sorting and collection guidance](https://www.city.suita.osaka.jp/kurashi/1018418/1020112/1015183.html), [12-category guide](https://www.city.suita.osaka.jp/kurashi/1018418/1020112/1015188.html) | Covers no designated bags, colorless transparent/translucent bags for combustible waste, 8:00 a.m. set-out, and neighborhood-specific calendars. Item handling and exact collection days require the linked current lookup. |
+| Resident tax | [Municipal/prefectural resident-tax declarations](https://www.city.suita.osaka.jp/kurashi/1018404/1018406/1009310.html), [FY2026 filing information](https://www.city.suita.osaka.jp/shisei/1018880/1018881/1041420/1041682/1041694.html) | Covers the general filing deadline, counter/postal options, records, and FY2026 venue instructions. Filing responsibility and operational dates depend on the tax year and personal situation. |
+| Disaster preparation | [Flood hazard map](https://www.city.suita.osaka.jp/anzen/1017894/1017896/1017898/1004277.html), [disaster map with facilities](https://www.city.suita.osaka.jp/anzen/1017894/1017896/1004304.html) | Covers city maps for modeled flood/landslide risk and evacuation facilities. Maps cannot confirm live openings or all hazards; use current alerts. |
+| Language and consultation | [Multilingual one-stop consultation center](https://www.city.suita.osaka.jp/kurashi/1018346/1027745/1022709.html), [Japanese classes](https://www.city.suita.osaka.jp/kurashi/1018346/1027747/index.html) | Covers the city's weekday consultation contact, location, listed language rotation, and published class/activity types. Confirm current staffing, program capacity, schedules, and any fees with the provider. |
+| National Pension | [National Pension procedures](https://www.city.suita.osaka.jp/kurashi/1018398/1006814.html) | Covers listed foreign-resident and coverage-change procedures, evidence, counters, and available filing routes. Confirm the exact route for a specific category change or exemption case. |
+
+All city procedure evidence was fetched to `.local-guidance/location-suita/` and the saved Markdown captures were read before drafting. The official Osaka Prefecture population PDF was supplied for contextual citation and is not counted as a city procedure source. Records remain `needs-review`; no translations or shared sources were added.

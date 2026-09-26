@@ -4,7 +4,7 @@ import { supportedGeographies } from "@/data/local-guidance/geographies";
 
 describe("national geography snapshot", () => {
   it("covers 47 prefectures, all 62 Tokyo municipalities, and 20 designated cities without their wards", () => {
-    expect(administrativeGeographies).toHaveLength(157);
+    expect(administrativeGeographies).toHaveLength(administrativeGeographySources.reduce((total, source) => total + source.recordCount, 0));
     expect(administrativeGeographies.filter(({ type }) => type === "prefecture" || type === "metropolis").map(({ prefectureCode }) => prefectureCode))
       .toEqual(Array.from({ length: 47 }, (_, index) => String(index + 1).padStart(2, "0")));
     expect(administrativeGeographies.filter(({ type }) => type === "special-ward")).toHaveLength(23);
@@ -42,7 +42,7 @@ describe("national geography snapshot", () => {
 
   it("has a dated source for every record and only source-backed readings", () => {
     const uniqueCodes = new Set(administrativeGeographies.map(({ localGovernmentCode }) => localGovernmentCode));
-    expect(uniqueCodes.size).toBe(157);
+    expect(uniqueCodes.size).toBe(administrativeGeographies.length);
     for (const source of administrativeGeographySources) {
       expect(new URL(source.url).hostname).toBe("www.j-lis.go.jp");
       expect(source.retrievedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);

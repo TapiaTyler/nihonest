@@ -94,7 +94,10 @@ describe("LocalGuidancePanel", () => {
     const municipalityNames = () => [...screen.getByLabelText("Municipality").querySelectorAll("option")].slice(1).map(({ textContent }) => textContent);
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
-    expect(municipalityNames()).toEqual(["Osaka City", "Sakai City", "Other"]);
+    const osakaLocations = getSelectableLocalGuidanceLocations()
+      .filter(({ geography, prefectureId, listed }) => listed && prefectureId === "jp-27000" && geography.id !== prefectureId)
+      .sort((left, right) => left.geography.code.localeCompare(right.geography.code, "en"));
+    expect(municipalityNames()).toEqual([...osakaLocations.map(({ geography }) => geography.name), "Other"]);
 
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
     const tokyo = municipalityNames();
@@ -105,17 +108,20 @@ describe("LocalGuidancePanel", () => {
     expect(groups.map((group) => [group.label, group.querySelectorAll("option").length])).toEqual([["Special wards", 23], ["Tama area", 4]]);
   });
   it("disables the municipality selector with a prefecture-wide note when no municipality is researched", () => {
-    render(<LocalGuidancePanel articleId="registering-your-address-after-arrival" options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />);
+    const locations = getSelectableLocalGuidanceLocations().filter(({ geography, prefectureId }) => (
+      prefectureId !== "jp-27000" || geography.id === "jp-27000"
+    ));
+    render(<LocalGuidancePanel articleId="registering-your-address-after-arrival" options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={locations} />);
     const municipality = screen.getByLabelText("Municipality");
     expect(municipality).toBeDisabled();
     expect(screen.queryByText(/has researched guidance yet/)).not.toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-10000" } });
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
     expect(municipality).toBeDisabled();
     expect(municipality).toHaveAccessibleDescription(/No municipality in this prefecture has researched guidance yet/);
     expect(municipality.querySelector("option")).toHaveTextContent("Prefecture-wide only");
 
-    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "jp-27000" } });
+    fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
     expect(municipality).toBeEnabled();
     expect(screen.queryByText(/has researched guidance yet/)).not.toBeInTheDocument();
   });

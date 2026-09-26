@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ResidenceApplicationFeeSection } from "@/components/content/residence-application-fee-section";
 import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
 import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
-import { JapanPrefectureRegionGrid, JapanPracticalBasics } from "@/components/content/japan-geography-reference";
+import { JapanPrefectureFinder, JapanPrefectureRegionCards, JapanPrefectureRegionGrid, JapanPracticalBasics, JapanRegionMap } from "@/components/content/japan-geography-reference";
 import { parseArticleMarkdown, type ArticleComponentBlockKind } from "@/domain/article/article-blocks";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
@@ -45,6 +45,9 @@ const componentBlocks: Record<ArticleComponentBlockKind, () => ReactNode> = {
   "tax-residence-scope": () => <TaxResidenceScopeTable locale="ja" />,
   "training-route-comparison": () => <TrainingRouteComparisonTable locale="ja" />,
   "japan-prefecture-regions": () => <JapanPrefectureRegionGrid locale="ja" />,
+  "japan-prefecture-finder": () => <JapanPrefectureFinder locale="ja" />,
+  "japan-prefecture-region-cards": () => <JapanPrefectureRegionCards locale="ja" />,
+  "japan-region-map": () => <JapanRegionMap locale="ja" />,
   "japan-practical-basics": () => <JapanPracticalBasics locale="ja" />,
 };
 

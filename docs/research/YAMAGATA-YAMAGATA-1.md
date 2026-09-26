@@ -1,0 +1,18 @@
+# Yamagata City local-guidance research
+
+- Inspected: 2026-09-26
+- Location: Yamagata City (`jp-06201`), researched at city level.
+- Official municipal host: `www.city.yamagata-yamagata.lg.jp`
+- Registry identity: Yamagata City (`山形市`, `やまがたし`), local-government code `062014`, transcribed from the J-LIS Yamagata prefecture city-code source (`j-lis-06`).
+
+| Guide | Official evidence inspected | Claim boundary in the supplement |
+|---|---|---|
+| Address registration | [Move-in notice](https://www.city.yamagata-yamagata.lg.jp/kurashi/todokede/1006445/1004073.html), updated 2026-09-16 | Gives the main city counter, filing period, ordinary and overseas-move documents, representative rules, and foreign-resident records. Counter hours are changing in November, so check the current page. |
+| National Health Insurance | [Enrollment and withdrawal filings](https://www.city.yamagata-yamagata.lg.jp/kurashi/kokuho/1006489/1006491/1003899.html), updated 2025-07-01 | Summarizes the dedicated counter and records listed for common changes. Does not advise on eligibility, premium amounts, or personal exceptions. |
+| Household waste | [Sorting and collection rules](https://www.city.yamagata-yamagata.lg.jp/kurashi/gomi/1006506/1006508/1001857.html), [collection days](https://www.city.yamagata-yamagata.lg.jp/kurashi/gomi/1006506/1006508/1001917.html), and [bulky waste applications](https://www.city.yamagata-yamagata.lg.jp/kurashi/gomi/1006506/1006508/1001914.html) | Directs residents to the neighborhood-specific calendar and separate online or telephone bulky-waste requests. Item acceptance, fees, and pickup details must be confirmed in the current instructions. |
+| Resident tax | [FY2026 filing guide](https://www.city.yamagata-yamagata.lg.jp/kurashi/zeikin/1006468/1017267.html), updated 2025-12-22; [foreign-worker departure guidance](https://www.city.yamagata-yamagata.lg.jp/kurashi/zeikin/1006468/1006474/1017660.html), updated 2026-01-23 | Gives the January 1 municipality principle, yearly filing channels, and a pointer to the tax representative procedure. Filing exemptions and personal liability require current-year and individual confirmation. |
+| Disaster preparation | [Hazard-map directory](https://www.city.yamagata-yamagata.lg.jp/kurashi/bousai/1006395/1012705.html), updated 2026-04-28; [2026 flood-map revision](https://www.city.yamagata-yamagata.lg.jp/kurashi/bousai/1006404/1006408/1002193.html), updated 2026-05-22 | Directs residents to maps for relevant hazards and the current flood edition. Maps do not confirm which evacuation location is open during an event. |
+| Language and local support | [Foreign-resident consultation](https://www.city.yamagata-yamagata.lg.jp/shiseijoho/kokusai/1017767/1017606.html), updated 2026-01-27; [international-exchange directory](https://www.city.yamagata-yamagata.lg.jp/shiseijoho/kokusai/index.html), undated | Describes general and specialist consultation and links to the city association for Japanese classes and interpreting. Provider schedules and availability must be checked directly. |
+| National Pension | [National Pension filings](https://www.city.yamagata-yamagata.lg.jp/kurashi/kokuho/1006497/1006500/1004093.html), updated 2026-01-13 | Summarizes the city, employer, and pension-office routes for common events and premium relief. Does not establish a person's category or complete document checklist. |
+
+All cited pages were fetched and their saved Markdown extracts were read from `.local-guidance/location-yamagata/`. All seven supplements remain `needs-review`. No shared-source or translation changes were needed.

@@ -1,0 +1,15 @@
+# Tsu City local-guidance research
+
+Inspected 2026-09-26. Official Tsu City pages were fetched and their saved Markdown files read before preparing all seven English supplements. Each supplement remains `needs-review`.
+
+| Guide | Evidence | Claim boundary |
+|---|---|---|
+| Address registration | [Moving-in notification](https://www.info.city.tsu.mie.jp/kurashi/koseki_juuminhyou/1009823/1001545.html) | Covers counters, domestic and overseas-arrival records, foreign-resident counter limits, and city-stated filing period. Does not replace confirmation of family-specific records. |
+| National Health Insurance | [Enrollment and withdrawal](https://www.info.city.tsu.mie.jp/fukushi_kenkou/1003030/1003032.html) | Covers household-head filing, common records, counters, and the specific postal and online withdrawal routes. Does not reproduce premium amounts. |
+| Household waste | [Current-year calendars](https://www.info.city.tsu.mie.jp/kurashi/gomi_kankyo/1001596/1001609/index.html), [basic rules](https://www.info.city.tsu.mie.jp/kurashi/gomi_kankyo/1001596/1001597/1010233.html), [sorting guidebook](https://www.info.city.tsu.mie.jp/kurashi/gomi_kankyo/1001596/1001597/1001598.html) | Directs residents to the service-area and town-specific schedule, neighborhood collection point, and current sorting guide. Does not list individual schedules or fees. |
+| Resident tax | [Individual resident-tax filing](https://www.info.city.tsu.mie.jp/kurashi/zeikin/1001833/1001837/1001860/1001839.html) | Covers the city decision aid, common supporting records, and city and branch inquiry counters. Individual filing need, annual documents, and dates depend on the case and tax year. |
+| Disaster preparation | [Disaster-prevention measures and hazard-map resources](https://www.info.city.tsu.mie.jp/kurashi/bousai_kyuukyuu_shoubou/1003370/1003406/1003428/1003343.html) | Identifies Tsu's flood and landslide maps, coastal preparedness resources, and evacuation planning. Does not determine a specific address's hazard or the live status of a shelter. |
+| Language and local support | [Foreign-resident support](https://www.info.city.tsu.mie.jp/kurashi/soudan/1012262.html), [Tsu City International Association](https://www.info.city.tsu.mie.jp/shisei/keikaku_matizukuri_torikumi/1004498/1004499/1004502.html) | Identifies the city consultation desk and association activities including Japanese classes. Current languages, schedules, and enrollment details need direct confirmation. |
+| National Pension | [National Pension procedures](https://www.info.city.tsu.mie.jp/fukushi_kenkou/nenkin/1001947.html), [moving-in notification](https://www.info.city.tsu.mie.jp/kurashi/koseki_juuminhyou/1009823/1001545.html) | Covers common category 1 situations, documents, city counter routes, and online filing reference. The national guide remains authoritative for pension category and eligibility. |
+
+Registry identity was transcribed from J-LIS's Mie municipalities table: Tsu City, code 242012, kana つし, under [J-LIS Kinki municipalities](https://www.j-lis.go.jp/spd/code-address/kinki/cms_14514183.html).

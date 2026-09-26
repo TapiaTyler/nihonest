@@ -159,15 +159,15 @@ export function LocalGuidancePanel({
         <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">No researched guidance is available for this selection on this article. Check the responsible official website for your address.</p>
       ) : (
         <div className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+            <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
                 {geographyTypeLabels[selected.geography.type]}{selected.parentName ? ` · ${selected.parentName}` : ""}
               </p>
               <h3 className="mt-2 text-xl font-semibold text-slate-950">{selected.supplement.title}</h3>
               {wardNote && <p className="mt-1 text-sm leading-6 text-slate-600">{wardNote}</p>}
             </div>
-            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">Editorial review</span>
+            <span className="justify-self-end whitespace-nowrap rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">Editorial review</span>
           </div>
           <p className="mt-3 leading-7 text-slate-700">{selected.supplement.summary}</p>
           <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">

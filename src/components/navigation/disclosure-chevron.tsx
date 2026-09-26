@@ -1,10 +1,10 @@
-export function DisclosureChevron() {
+export function DisclosureChevron({ open }: Readonly<{ open?: boolean }>) {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 20 20"
       fill="none"
-      className="size-5 shrink-0 text-teal-700 transition-transform group-open:rotate-180"
+      className={`size-5 shrink-0 text-teal-700 transition-transform ${open === undefined ? "group-open:rotate-180" : open ? "rotate-180" : ""}`}
     >
       <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>

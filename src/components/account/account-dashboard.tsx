@@ -6,6 +6,7 @@ import { useAccountContentSync } from "@/components/account/account-content-sync
 import { useAccountSession } from "@/components/account/account-session-provider";
 import { NotificationPreferencesForm } from "@/components/notifications/notification-preferences-form";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import type { AnonymousPreferences } from "@/domain/personalization/preferences";
@@ -155,8 +156,8 @@ export function AccountDashboard({
 
       <NotificationPreferencesForm userId={userId} />
 
-      <details className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <summary className="cursor-pointer text-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("dashboard.privacy")}</summary>
+      <details className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span>{t("dashboard.privacy")}</span><DisclosureChevron /></summary>
         <div className="mt-6 space-y-8 border-t border-slate-100 pt-6">
           <section aria-labelledby="data-heading">
             <h2 id="data-heading" className="text-lg font-semibold text-slate-950">{t("dashboard.downloadHeading")}</h2>

@@ -9,7 +9,7 @@ native app), in what order, and how progress is tracked. Research method and ver
 Each prefecture gets local guidance for its **major areas**:
 
 - **Tokyo:** the 23 special wards, plus **Hachioji**, **Tachikawa**, **Fuchu**, and **Machida**.
-- **Osaka:** Osaka City and Sakai (complete). Osaka's other large cities wait for the broader coverage below.
+- **Osaka:** Osaka City and Sakai (complete), plus Higashiosaka, Toyonaka, Hirakata, Suita, Takatsuki, and Ibaraki. Ibaraki is included by explicit scope decision despite being below 300,000 residents.
 - **Everywhere else:**
   - the prefectural capital;
   - every designated city (20 nationally);
@@ -29,7 +29,7 @@ Communications' resident-register figures) when the city's record is imported, a
 300,000 line accordingly. Record the figure and its date in the batch's research note.
 
 **Deferred until after full deployment, including the native app:** broader coverage, meaning all other cities, towns,
-and villages, including the rest of the Tama area and Osaka's other large cities. Until then, unlisted locations keep
+and villages, including the rest of the Tama area and Osaka's remaining municipalities. Until then, unlisted locations keep
 the general advice and the prefecture-wide note.
 
 ## Status
@@ -43,9 +43,9 @@ Generated from the location files by `npm run local-guidance -- generate` (also 
 | Tokyo special wards | 23 | 23 | All 23 complete. |
 | Tokyo cities | 4 | 4 | All 4 complete. |
 | Designated cities | 20 | 20 | All 20 complete. |
-| Prefectural capitals (not designated cities) | 31 | 0 | None started. |
-| Additional major cities (preliminary) | 28 | 28 | All 28 complete. |
-| **Total** | **106** | **75** | About 217 new supplements remain. |
+| Prefectural capitals (not designated cities) | 31 | 31 | All 31 complete. |
+| Additional major cities (preliminary) | 34 | 34 | All 34 complete. |
+| **Total** | **112** | **112** | About 0 new supplements remain. |
 
 <!-- status:end -->
 
@@ -57,7 +57,7 @@ location's missing guides. All pilot records (Shinjuku and Nagoya) were rewritte
 
 Registry IDs are given where the location is already in `src/data/geography/`. "Import" means the city record must be
 added from the J-LIS table for that prefecture (code, check digit, name, and reading) before research. Additional
-cities marked † are close to 300,000 or qualify only as the largest city; confirm them first.
+cities marked † are close to 300,000, qualify only as the largest city, or are an explicit scope exception; confirm their basis first.
 
 | # | Prefecture | Capital and designated cities | Additional major cities (preliminary) | Registry |
 |---:|---|---|---|---|
@@ -87,7 +87,7 @@ cities marked † are close to 300,000 or qualify only as the largest city; conf
 | 24 | Mie | Tsu | Yokkaichi | import |
 | 25 | Shiga | Otsu | — | import |
 | 26 | Kyoto | Kyoto | — | `jp-26100` |
-| 27 | Osaka | Osaka City, Sakai (complete) | deferred | `jp-27100`, `jp-27140` |
+| 27 | Osaka | Osaka City, Sakai (complete) | Higashiosaka, Toyonaka, Hirakata, Suita, Takatsuki, Ibaraki† | `jp-27100`, `jp-27140`, `jp-27227`, `jp-27203`, `jp-27210`, `jp-27205`, `jp-27207`, `jp-27211` |
 | 28 | Hyogo | Kobe | Himeji, Nishinomiya, Amagasaki, Akashi† | `jp-28100`; import |
 | 29 | Nara | Nara | — | import |
 | 30 | Wakayama | Wakayama | — | import |
@@ -132,8 +132,9 @@ locations; their records are already in the registry. Suggested order, largest m
 13. Okayama
 14. Kumamoto
 
-**G3: Capitals and additional major cities (59, preliminary).** Import each city's record from J-LIS, confirming its
-population, then add it and its prefecture as selectable and research all seven guides. Work prefecture by prefecture,
+**G3: Capitals and additional major cities (65, preliminary).** Import each city's record from J-LIS, confirming its
+population, then add it and its prefecture as selectable and research all seven guides. Osaka's Ibaraki is an approved
+exception to the population threshold. Work prefecture by prefecture,
 region by region, so that neighboring batches share source patterns and each prefecture is finished at once.
 
 ## Batch method
@@ -148,7 +149,7 @@ region by region, so that neighboring batches share source patterns and each pre
   files. See "Working in parallel" in the workflow.
 - Record each batch in `docs/research/` and verify with `npm run local-guidance -- verify`. Data-only batches need
   nothing else; see the verification budget in the workflow.
-- Estimated size: about 104 location batches (27 in G1, 18 in G2, 59 in G3).
+- Estimated size: about 110 location batches (27 in G1, 18 in G2, 65 in G3).
 
 ## Translation
 

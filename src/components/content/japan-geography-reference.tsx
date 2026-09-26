@@ -1,9 +1,10 @@
-import { japanPrefectureRegions } from "@/data/geography/regions";
 import { getPrefectureFinderData } from "@/lib/content/prefecture-finder";
 import Link from "next/link";
 import { PrefectureFinder } from "./prefecture-finder";
+import { JapanRegionMap } from "./japan-region-map";
 
 export { japanPrefectureRegions } from "@/data/geography/regions";
+export { JapanRegionMap, JapanRegionMap as JapanPrefectureRegionCards } from "./japan-region-map";
 
 const practicalBasics = {
   en: [
@@ -23,28 +24,23 @@ const practicalBasics = {
 type Locale = "en" | "ja";
 
 export function JapanPrefectureRegionGrid({ locale = "en" }: Readonly<{ locale?: Locale }>) {
-  const { prefectures, municipalities, coverage } = getPrefectureFinderData();
   return (
     <div className="not-prose space-y-4">
-      <PrefectureFinder locale={locale} prefectures={prefectures} municipalities={municipalities} coverage={coverage} />
-      <div className="grid gap-3 sm:grid-cols-2">
-      {japanPrefectureRegions.map((region) => (
-        <details key={region.name.en} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <summary className="min-h-11 cursor-pointer font-semibold text-slate-950">{region.name[locale]}</summary>
-          <p className="mt-2 leading-7 text-slate-700">{region.prefectures[locale]}</p>
-        </details>
-      ))}
-      </div>
+      <JapanPrefectureFinder locale={locale} />
+      <JapanRegionMap locale={locale} />
     </div>
   );
 }
 
+export function JapanPrefectureFinder({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+  const { prefectures, municipalities, coverage } = getPrefectureFinderData();
+  return <PrefectureFinder locale={locale} prefectures={prefectures} municipalities={municipalities} coverage={coverage} />;
+}
+
 export function JapanPracticalBasics({ locale = "en" }: Readonly<{ locale?: Locale }>) {
   return (
-    <div className="not-prose rounded-2xl border border-teal-200 bg-teal-50 p-5 text-sm leading-7 text-teal-950">
-      <ul className="space-y-2">
-        {practicalBasics[locale].map((item, index) => <li key={index}>{item}</li>)}
-      </ul>
+    <div className="not-prose mt-4 space-y-4 text-slate-700">
+      {practicalBasics[locale].map((item, index) => <p key={index} className="leading-8">{item}</p>)}
     </div>
   );
 }

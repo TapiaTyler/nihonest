@@ -2,6 +2,7 @@
 
 import { useId, useMemo } from "react";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
@@ -79,8 +80,8 @@ export function ExploreFilterPanel({
         ))}
       </div>
 
-      <details className="mt-5 border-t border-slate-200 pt-5">
-        <summary className="min-h-11 cursor-pointer select-none font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("explore.moreFilters")}</summary>
+      <details className="group mt-5 border-t border-slate-200 pt-5">
+        <summary className="flex min-h-11 cursor-pointer list-none select-none items-center justify-between gap-4 font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span>{message("explore.moreFilters")}</span><DisclosureChevron /></summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <FilterSelect allLabel={message("explore.all")} label={message("explore.journeyStage")} value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage)} />
           <FilterSelect allLabel={message("explore.all")} label={message("explore.topic")} value={filters.topicId} onChange={(value) => updateFilter("topicId", value)} options={optionsFor(topics, japaneseTaxonomyLabels.topic)} />

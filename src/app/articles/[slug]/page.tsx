@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArticleTerminology } from "@/components/content/article-terminology";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import type { ArticleMetadata } from "@/domain/article/article";
 import { ArticleHeaderBadges, ArticleHeaderStages } from "@/components/content/article-card-metadata";
@@ -184,8 +185,8 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
                 </Link>
               ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600"><InterfaceText id="article.finalGuide" /></div>}
             </div>
-            <details className="mt-5 rounded-2xl border border-teal-200 bg-white p-5">
-              <summary className="cursor-pointer font-semibold text-teal-900"><InterfaceText id="article.showContents" /></summary>
+            <details className="group mt-5 rounded-2xl border border-teal-200 bg-white p-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span><InterfaceText id="article.showContents" /></span><DisclosureChevron /></summary>
               <ol className="mt-4 space-y-3">
                 {journeyContext.steps.map(({ article: outlineArticle, step }, index) => (
                   <li key={outlineArticle.metadata.id} className="flex gap-3 text-sm leading-6">

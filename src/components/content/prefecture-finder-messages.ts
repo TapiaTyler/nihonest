@@ -1,6 +1,6 @@
 /** English source contract. Claude owns the Japanese interface copy and integration. */
 export const prefectureFinderMessages = {
-  heading: "Find a prefecture",
+  heading: "Guidance by location",
   intro: "Search all 47 prefectures by English or Japanese name. Browsing here does not change your saved local guidance location.",
   searchLabel: "Search prefectures",
   searchPlaceholder: "Tokyo, 東京都, or a five-digit prefecture code",
@@ -8,7 +8,6 @@ export const prefectureFinderMessages = {
   selectPlaceholder: "Select a prefecture",
   clearSearch: "Clear search",
   clearSelection: "Clear selection",
-  resultCount: (count: number) => `${count} ${count === 1 ? "prefecture" : "prefectures"} found`,
   empty: "No prefectures match this search. Clear the search to see all 47.",
   selected: "Selected prefecture",
   filteredSelection: "Your selection is outside the current search results.",

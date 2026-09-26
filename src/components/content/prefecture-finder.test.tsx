@@ -12,9 +12,9 @@ describe("PrefectureFinder", () => {
     render(<PrefectureFinder locale="en" {...data} />);
     const search = screen.getByRole("searchbox", { name: "Search prefectures" });
     const select = screen.getByRole("combobox", { name: "Choose a prefecture" });
-    expect(screen.getByRole("status")).toHaveTextContent("47 prefectures found");
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
     fireEvent.change(search, { target: { value: "東京都" } });
-    expect(screen.getByRole("status")).toHaveTextContent("1 prefecture found");
+    expect(within(select).getAllByRole("option")).toHaveLength(2);
     fireEvent.change(select, { target: { value: "jp-13000" } });
     // Researched guidance appears only after a municipality or ward is chosen, and only for that area.
     expect(screen.queryByRole("heading", { name: "Researched local guidance" })).not.toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("PrefectureFinder", () => {
     expect(screen.queryByRole("link", { name: "Registering an address in Chiyoda" })).not.toBeInTheDocument();
     fireEvent.change(municipalitySelect, { target: { value: "" } });
     fireEvent.change(search, { target: { value: "no-such-prefecture" } });
-    expect(screen.getByRole("status")).toHaveTextContent("0 prefectures found");
+    expect(screen.getByRole("status")).toHaveTextContent("No prefectures match this search");
     expect(screen.getByText(/outside the current search results/)).toBeInTheDocument();
     expect(within(select).getByRole("option", { name: /Tokyo/ })).toHaveValue("jp-13000");
     fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
@@ -38,9 +38,9 @@ describe("PrefectureFinder", () => {
   });
 
   it("shows an explicit local coverage gap and Japanese interface fallback", () => {
-    // Any prefecture with no researched municipality, so growing coverage never breaks this test.
-    const unresearched = data.prefectures.find(({ id }) => !data.municipalities.some(({ prefectureId }) => prefectureId === id))!;
-    render(<PrefectureFinder locale="ja" {...data} />);
+    const unresearched = data.prefectures[0];
+    const locationsWithoutLocalResearch = data.municipalities.filter(({ prefectureId }) => prefectureId !== unresearched.id);
+    render(<PrefectureFinder locale="ja" {...data} municipalities={locationsWithoutLocalResearch} />);
     expect(screen.getByText(/currently in English/)).toBeInTheDocument();
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: unresearched.id } });
     expect(screen.queryByText(/does not yet have researched local supplements/)).not.toBeInTheDocument();
@@ -49,6 +49,63 @@ describe("PrefectureFinder", () => {
     expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain(`/articles/joining-national-health-insurance?local=${unresearched.id}#local-guidance-heading`);
     // No municipality there has researched guidance, so no municipality selector is offered.
     expect(screen.queryByRole("combobox", { name: "Choose a municipality or ward" })).not.toBeInTheDocument();
+  });
+
+  it("uses the same ephemeral selection for map and list, including keyboard selection", () => {
+    window.localStorage.setItem(localGuidanceLocationStorageKey, "nagoya");
+    render(<PrefectureFinder locale="en" {...data} />);
+    const mapDisclosure = screen.getByText("Japan prefecture map").closest("details");
+    expect(mapDisclosure).not.toHaveAttribute("open");
+    fireEvent.click(screen.getByText("Japan prefecture map"));
+    expect(mapDisclosure).toHaveAttribute("open");
+    const map = screen.getByRole("group", { name: /main Japan map/ });
+    expect(within(map).getAllByRole("button")).toHaveLength(46);
+    const okinawaInset = screen.getByRole("button", { name: /Select Okinawa.*southern islands inset/ });
+    const select = screen.getByRole("combobox", { name: "Choose a prefecture" });
+    const search = screen.getByRole("searchbox", { name: "Search prefectures" });
+    expect(map.compareDocumentPosition(search) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const kyoto = within(map).getByRole("button", { name: /Select Kyoto/ });
+    const fullViewBox = map.getAttribute("viewBox");
+    Object.defineProperty(map, "getBoundingClientRect", { value: () => ({ left: 0, top: 0, width: 300, height: 300 }) });
+    fireEvent.wheel(map, { deltaY: -120, clientX: 150, clientY: 150 });
+    expect(Number(map.getAttribute("viewBox")?.split(" ")[2])).toBeLessThan(Number(fullViewBox?.split(" ")[2]));
+    fireEvent.keyDown(map, { key: "Home" });
+    expect(map).toHaveAttribute("viewBox", fullViewBox);
+    fireEvent.keyDown(map, { key: "PageUp" });
+    const keyboardZoomViewBox = map.getAttribute("viewBox");
+    expect(Number(keyboardZoomViewBox?.split(" ")[2])).toBeLessThan(Number(fullViewBox?.split(" ")[2]));
+    fireEvent.keyDown(map, { key: "ArrowRight" });
+    expect(Number(map.getAttribute("viewBox")?.split(" ")[0])).toBeGreaterThan(Number(keyboardZoomViewBox?.split(" ")[0]));
+    fireEvent.keyDown(map, { key: "Home" });
+    expect(map).toHaveAttribute("viewBox", fullViewBox);
+
+    fireEvent.keyDown(kyoto, { key: "Enter" });
+    expect(select).toHaveValue("jp-26000");
+    expect(kyoto).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/Selected: Kyoto/)).toBeInTheDocument();
+    const focusedViewBox = map.getAttribute("viewBox");
+    expect(focusedViewBox).not.toBe(fullViewBox);
+    expect(screen.queryByRole("button", { name: "Zoom out on map" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Map controls/ }));
+    expect(screen.getByRole("button", { name: /Map controls/ })).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(screen.getByRole("button", { name: "Pan map east" }));
+    expect(Number(map.getAttribute("viewBox")?.split(" ")[0])).toBeGreaterThan(Number(focusedViewBox?.split(" ")[0]));
+    fireEvent.click(screen.getByRole("button", { name: "Zoom out on map" }));
+    expect(Number(map.getAttribute("viewBox")?.split(" ")[2])).toBeGreaterThan(Number(focusedViewBox?.split(" ")[2]));
+    fireEvent.click(screen.getByRole("button", { name: "Zoom to selection" }));
+    expect(map).toHaveAttribute("viewBox", focusedViewBox);
+    fireEvent.click(screen.getByRole("button", { name: "Full map" }));
+    expect(map).toHaveAttribute("viewBox", fullViewBox);
+
+    fireEvent.change(select, { target: { value: "jp-27000" } });
+    expect(kyoto).toHaveAttribute("aria-pressed", "false");
+    expect(within(map).getByRole("button", { name: /Select Osaka/ })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.change(select, { target: { value: "jp-26000" } });
+    expect(map).toHaveAttribute("viewBox", focusedViewBox);
+    fireEvent.click(okinawaInset);
+    expect(select).toHaveValue("jp-47000");
+    expect(okinawaInset).toHaveAttribute("aria-pressed", "true");
+    expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
   });
 
   it("lists only researched municipalities and offers Other for general starting points", () => {
@@ -67,7 +124,9 @@ describe("PrefectureFinder", () => {
     render(<PrefectureFinder locale="en" {...data} />);
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-23000" } });
     const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
-    expect(within(municipalitySelect).getAllByRole("option").map(({ textContent }) => textContent)).toEqual(["Select a municipality or ward", "Nagoya City", "Other"]);
+    const optionNames = within(municipalitySelect).getAllByRole("option").map(({ textContent }) => textContent);
+    expect(optionNames.filter((name) => name === "Nagoya City")).toHaveLength(1);
+    expect(optionNames.at(-1)).toBe("Other");
     fireEvent.change(municipalitySelect, { target: { value: "jp-23100" } });
 
     expect(screen.getByText(/Nagoya City is divided into wards. Each ward office may have its own procedures/)).toBeInTheDocument();

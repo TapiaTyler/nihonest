@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { documentLifecycleLabels } from "@/components/documents/annotated-document-labels";
+import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { AnnotatedDocumentQuickNavigation } from "@/components/documents/annotated-document-quick-navigation";
 import { AnnotatedDocumentSelectors } from "@/components/documents/annotated-document-selectors";
 import { AnnotatedDocumentVersionContent } from "@/components/documents/annotated-document-version-content";
@@ -71,7 +72,7 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
           <span role="heading" aria-level={3} className="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">{family.title}</span>
           <span lang="ja" className="mt-1 block font-medium text-slate-600">{family.japaneseName}</span>
         </span>
-        <svg aria-hidden="true" viewBox="0 0 20 20" className="size-5 shrink-0 text-slate-500 transition-transform group-open:rotate-180"><path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" /></svg>
+        <DisclosureChevron />
       </summary>
 
       <div className="border-t border-slate-200 p-5 sm:p-7">
