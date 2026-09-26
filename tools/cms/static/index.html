@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nihonest editorial workspace</title>
+    <link rel="stylesheet" href="/app.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div><p class="eyebrow">Nihonest · local editorial workspace</p><h1>Content inventory</h1></div>
+      <p class="mode">Local editorial workspace</p>
+    </header>
+    <main>
+      <p class="intro">Inspect and edit supported English content in articles, FAQs, residence statuses, and glossary terms. Filter by content kind and editorial status. Marking content reviewed requires your explicit approval of its exact revision. Refresh rereads canonical files; restart after external changes to TypeScript data modules or translation registries.</p>
+      <section class="summary" aria-label="Catalog summary" id="summary" aria-live="polite"></section>
+      <div class="workspace">
+        <section class="catalog" aria-labelledby="catalog-heading">
+          <div class="section-heading"><h2 id="catalog-heading">Content</h2><button type="button" id="refresh">Refresh</button></div>
+          <label for="search">Search title or ID</label>
+          <input id="search" type="search" autocomplete="off">
+          <label for="kind-filter">Content kind</label>
+          <select id="kind-filter"><option value="">All kinds</option><option value="article">Articles</option><option value="faq">FAQs</option><option value="residence-status">Residence statuses</option><option value="glossary-term">Glossary terms</option></select>
+          <label for="group-filter">Category or topic</label>
+          <select id="group-filter"><option value="">All categories and topics</option></select>
+          <label for="status-filter">Editorial status</label>
+          <select id="status-filter"><option value="">All statuses</option><option value="draft">Draft</option><option value="needs-review">Editorial review</option><option value="verified">Reviewed</option><option value="archived">Archived</option></select>
+          <p id="result-count" class="hint" aria-live="polite"></p>
+          <ul id="article-list" class="article-list"></ul>
+        </section>
+        <section class="detail" aria-labelledby="detail-heading">
+          <h2 id="detail-heading">Content detail</h2>
+          <div id="article-detail"><p>Select a record to inspect its content, sources, editorial status, and file details.</p></div>
+        </section>
+      </div>
+      <section class="system" aria-labelledby="system-heading"><h2 id="system-heading">Working tree</h2><p class="hint">This is the current Git checkout. Saving changes updates canonical source files and may create editorial approval records; the CMS does not commit or publish them.</p><pre id="git-status">Loading…</pre></section>
+      <section class="system" aria-labelledby="errors-heading"><h2 id="errors-heading">Files needing attention</h2><div id="failures"><p>Loading…</p></div></section>
+    </main>
+  </body>
+</html>

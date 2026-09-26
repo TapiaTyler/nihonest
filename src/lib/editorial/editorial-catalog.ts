@@ -16,13 +16,17 @@ function revision(value: string): string {
   return createHash("sha256").update(value.replaceAll("\r\n", "\n")).digest("hex");
 }
 
-function canonicalJson(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+export function canonicalEditorialJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalEditorialJson).join(",")}]`;
   if (value && typeof value === "object") {
     return `{${Object.entries(value).sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, item]) => `${JSON.stringify(key)}:${canonicalJson(item)}`).join(",")}}`;
+      .map(([key, item]) => `${JSON.stringify(key)}:${canonicalEditorialJson(item)}`).join(",")}}`;
   }
   return JSON.stringify(value) ?? "null";
+}
+
+export function structuredEditorialRevision(value: unknown): string {
+  return revision(canonicalEditorialJson(value));
 }
 
 function quotedValue(source: string, field: string): string | undefined {
@@ -54,7 +58,7 @@ function structuredTarget(
     kind,
     id: value.id,
     status: value.status,
-    revision: revision(canonicalJson(value)),
+    revision: structuredEditorialRevision(value),
     updatedAt: value.updatedAt,
     lastReviewedAt: value.lastReviewedAt,
   });

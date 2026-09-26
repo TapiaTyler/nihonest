@@ -20,6 +20,7 @@
 /.source-monitoring/
 /.glossary-drafts/
 /.local-guidance/
+/.cms/
 
 # logs and system files
 npm-debug.log*
