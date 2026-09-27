@@ -23,6 +23,10 @@ describe("CMS structured editorial workflow", () => {
     expect([...catalog.records.values()].filter((item) => item.kind === "glossary-term")).toHaveLength(glossaryTerms.length);
     const targetRevisions = new Map((await loadEditorialTargets(root)).map((item) => [`${item.kind}:${item.id}`, item.revision]));
     for (const [key, record] of catalog.records) expect(record.revision).toBe(targetRevisions.get(key));
+    // The translation catalog tests keep every artifact current, so the CMS must agree with them.
+    const translated = [...catalog.records.values()].filter((record) => record.translation !== "missing");
+    expect(translated.length).toBeGreaterThan(0);
+    expect(translated.filter((record) => record.translation !== "current").map(({ kind, id }) => `${kind}:${id}`)).toEqual([]);
   });
 
   it("changes and approves representative records without rewriting their neighbors", async () => {
@@ -95,6 +99,8 @@ describe("CMS structured editorial workflow", () => {
         const needsReview = (await readStructuredCatalog(fixtureRoot)).records.get(`${item.kind}:${item.id}`)!;
         expect(needsReview.status).toBe("needs-review");
         expect(needsReview.revision).toBe(edited.revision);
+        expect(record.translation).toBe("current");
+        expect(needsReview.translation).toBe("stale");
         for (const [field, expected] of Object.entries(fields)) expect(needsReview.value[field as keyof typeof needsReview.value]).toEqual(expected);
         if (item.kind === "faq") expect(needsReview.updatedAt).toBe("2026-09-26");
         if (item.kind !== "residence-status") expect(needsReview.lastReviewedAt).toBeUndefined();

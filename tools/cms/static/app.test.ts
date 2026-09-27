@@ -41,7 +41,11 @@ describe("CMS article detail", () => {
        json: async () => path === "/api/articles" ? { articles: [summary], failures: [] }
         : path === "/api/records" ? { records: [faqSummary], failures: [] }
         : path === "/api/records/faq/sample-faq" ? faq
-        : path === "/api/git" ? { status: "## main" }
+        : path === "/api/git" ? {
+          identity: { repository: "/repo", worktree: "/repo", branch: "main", startCommit: "c".repeat(40), startedAt: "2026-09-26T00:00:00.000Z", dirtyAtStart: ["src/data/faqs/work.ts"] },
+          currentBranch: "main", currentCommit: "c".repeat(40), cmsChanges: ["content/articles/sample-article.mdx"],
+          preexistingChanges: ["src/data/faqs/work.ts"], otherChanges: [], status: "## main",
+        }
           : path === "/api/session" ? { token: "test-token" }
             : path.endsWith("/preview") ? { blocks: [{ kind: "heading", level: 2, text: "Changed heading" }] }
               : ["/body", "/status", "/review", "/content"].some((suffix) => path.endsWith(suffix))
@@ -50,6 +54,12 @@ describe("CMS article detail", () => {
     });
     runInNewContext(script, { document, window, Event, fetch, setTimeout, clearTimeout });
     await waitFor(() => expect(document.querySelector("#article-list button")).not.toBeNull());
+    await waitFor(() => expect(document.querySelector("#git-status .git-files")).not.toBeNull());
+    const gitText = document.querySelector("#git-status")!.textContent!;
+    expect(gitText).toContain("Changed by this CMS session (1)");
+    expect(gitText).toContain("content/articles/sample-article.mdx");
+    expect(gitText).toContain("Already changed before this session (1)");
+    expect(gitText).toContain("The CMS will not write them");
     (document.querySelector("#article-list button") as HTMLButtonElement).click();
     await waitFor(() => expect(document.querySelector("#article-body-editor")).not.toBeNull());
     const previewPanel = document.querySelector("#cms-article-preview") as HTMLElement;

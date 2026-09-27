@@ -6,6 +6,7 @@ import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import { residenceStatusCategoryLabels, type ResidenceStatus } from "@/domain/residence-status/residence-status";
+import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
 import { useInterfaceMessages } from "./interface-text";
 
 /**
@@ -19,11 +20,37 @@ export function LocalizedStatusBackLink({ href, className }: Readonly<{ href: st
   return <Link href={href} className={className}>← {message(href === "/saved" ? "status.backToSaved" : "status.backToStatuses")}</Link>;
 }
 
-export function LocalizedStatusBadges({ category }: Readonly<{ category: ResidenceStatus["category"] }>) {
-  const { locale, message } = useInterfaceMessages();
+const statusMessages: Record<ResidenceStatus["status"], InterfaceMessageId> = {
+  draft: "article.statusDraft",
+  "needs-review": "article.statusEditorial",
+  verified: "article.statusReviewed",
+  archived: "article.statusArchived",
+};
+
+const statusBadgeColors: Record<ResidenceStatus["status"], string> = {
+  draft: "bg-amber-50 text-amber-800",
+  "needs-review": "bg-amber-50 text-amber-800",
+  verified: "bg-teal-50 text-teal-800",
+  archived: "bg-slate-100 text-slate-700",
+};
+
+export function LocalizedStatusBadge({ status }: Readonly<{ status: ResidenceStatus["status"] }>) {
+  const { message } = useInterfaceMessages();
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusBadgeColors[status]}`}>
+      {message(statusMessages[status])}
+    </span>
+  );
+}
+
+export function LocalizedStatusBadges({ category, status }: Readonly<{
+  category: ResidenceStatus["category"];
+  status: ResidenceStatus["status"];
+}>) {
+  const { locale } = useInterfaceMessages();
   return (
     <>
-      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">{message("status.draft")}</span>
+      <LocalizedStatusBadge status={status} />
       <span className="text-sm text-slate-500">
         {locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[category] : residenceStatusCategoryLabels[category]}
       </span>

@@ -28,7 +28,7 @@ describe("ResidenceStatusExplorer", () => {
     expect(new Set(statusNames).size).toBe(residenceStatuses.length);
   });
 
-  it("filters draft records by category", () => {
+  it("filters records by category without labeling every status a draft", () => {
     render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Study, culture, and training" }));
@@ -39,7 +39,16 @@ describe("ResidenceStatusExplorer", () => {
         name: "Engineer/Specialist in Humanities/International Services",
       }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText("Showing 3 of 30 draft statuses")).toBeInTheDocument();
+    expect(screen.getByText("3 / 30 statuses")).toBeInTheDocument();
     expect(screen.getAllByText("View status and related guidance")).toHaveLength(3);
+  });
+
+  it("shows the editorial status from each record", () => {
+    const records = residenceStatuses.map((record) => record.id === "artist"
+      ? { ...record, status: "verified" as const } : record);
+    render(<ResidenceStatusExplorer residenceStatuses={records} />);
+    fireEvent.click(screen.getByRole("button", { name: "Work" }));
+    expect(screen.getByRole("link", { name: "Artist" })).toHaveTextContent("Reviewed");
+    expect(screen.getByRole("link", { name: "Professor" })).toHaveTextContent("Draft");
   });
 });

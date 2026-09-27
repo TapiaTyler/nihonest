@@ -113,7 +113,7 @@ function renderList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(article.id === selectedId && article.kind === selectedKind));
-    button.append(el("strong", article.title), el("small", `${article.kind.replaceAll("-", " ")} · ${article.status}${article.kind === "article" ? ` · Japanese: ${article.translation}` : ""}`));
+    button.append(el("strong", article.title), el("small", `${article.kind.replaceAll("-", " ")} · ${article.status}${article.translation ? ` · Japanese: ${article.translation}` : ""}`));
     button.addEventListener("click", () => selectRecord(article.kind, article.id));
     item.append(button);
     list.append(item);
@@ -959,6 +959,9 @@ function renderStructuredRecord(record) {
   field(file, "Editorial revision", record.revision);
   field(file, "Source file revision", record.source.sourceRevision);
   field(file, "Last reviewed", record.lastReviewedAt || "Not recorded");
+  field(file, "Japanese translation", record.translation === "stale"
+    ? "stale: the English fields changed after the Japanese artifact was made; hand it to the translation workflow"
+    : record.translation);
   const editorial = structuredEditorialControls(record);
   editorial.id = "structured-editorial";
   const fileDetails = document.createElement("div");
@@ -1146,6 +1149,68 @@ async function selectRecord(kind, id) {
   }
 }
 
+/** One changed file with its diff, loaded when the disclosure opens. */
+function gitFileItem(path) {
+  const item = document.createElement("li");
+  const details = document.createElement("details");
+  const summaryLine = el("summary", path);
+  const body = el("pre", "Open to load the diff.");
+  details.append(summaryLine, body);
+  details.addEventListener("toggle", async () => {
+    if (!details.open || details.dataset.loaded) return;
+    body.textContent = "Loading diff…";
+    try {
+      const result = await json(`/api/git/diff?path=${encodeURIComponent(path)}`);
+      body.textContent = result.diff || "No textual difference.";
+      details.dataset.loaded = "true";
+    } catch (error) {
+      body.textContent = error.message;
+    }
+  });
+  item.append(details);
+  return item;
+}
+
+function gitGroup(heading, description, paths) {
+  const group = document.createElement("section");
+  group.append(el("h3", `${heading} (${paths.length})`), el("p", description, "hint"));
+  if (paths.length) {
+    const list = document.createElement("ul");
+    list.className = "git-files";
+    list.append(...paths.map(gitFileItem));
+    group.append(list);
+  } else group.append(el("p", "None."));
+  return group;
+}
+
+function renderGit(report) {
+  const container = document.querySelector("#git-status");
+  const { identity } = report;
+  const facts = document.createElement("dl");
+  field(facts, "Worktree", identity.worktree);
+  field(facts, "Repository", identity.repository);
+  field(facts, "Branch", report.currentBranch === identity.branch ? identity.branch : `${report.currentBranch} (session started on ${identity.branch})`);
+  field(facts, "Starting commit", identity.startCommit);
+  if (report.currentCommit !== identity.startCommit) field(facts, "Current commit", report.currentCommit);
+  field(facts, "Session started", identity.startedAt);
+  const parts = [facts];
+  if (report.currentBranch !== identity.branch || report.currentCommit !== identity.startCommit) {
+    parts.push(el("p", "The branch or commit changed after the CMS started. Restart the CMS before saving so its snapshot matches the checkout.", "error"));
+  }
+  if (identity.dirtyAtStart.length) {
+    parts.push(el("p", `${identity.dirtyAtStart.length} file(s) had uncommitted changes when the CMS started. The CMS will not write them; commit or set those changes aside and restart, or run the CMS from a separate worktree.`, "hint"));
+  }
+  parts.push(
+    gitGroup("Changed by this CMS session", "Files the CMS wrote since it started. Review these diffs before committing.", report.cmsChanges),
+    gitGroup("Already changed before this session", "Uncommitted work that existed when the CMS started. The CMS did not write these.", report.preexistingChanges),
+    gitGroup("Changed outside the CMS during this session", "Another editor or agent changed these after the CMS started.", report.otherChanges),
+  );
+  const raw = document.createElement("details");
+  raw.append(el("summary", "git status"), el("pre", report.status || "Clean working tree"));
+  parts.push(raw);
+  container.replaceChildren(...parts);
+}
+
 async function refresh() {
   if (hasUnsavedChanges && !window.confirm("Discard the unsaved content changes and refresh?")) return;
   hasUnsavedChanges = false;
@@ -1165,8 +1230,7 @@ async function refresh() {
     renderGroupFilter();
     renderList();
     if (selectedId) await selectRecord(selectedKind, selectedId);
-    const git = await json("/api/git");
-    document.querySelector("#git-status").textContent = git.status || "Clean working tree";
+    renderGit(await json("/api/git"));
   } catch (error) {
     summary.replaceChildren(el("p", error.message, "error"));
   }

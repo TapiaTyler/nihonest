@@ -11,6 +11,7 @@ import { articleSourceRevision } from "@/lib/content/content-bundle";
 import { loadEditorialReviewRecords } from "@/lib/editorial/editorial-catalog";
 import { CmsEditError } from "./article-writer";
 import { readArticleCatalog } from "./catalog";
+import { guardCmsWrite, noteCmsWrite } from "./git-session";
 
 type UnverifiedStatus = Exclude<ArticleMetadata["status"], "verified">;
 export type StatusChange = Readonly<{ expectedRevision: string; status: UnverifiedStatus }>;
@@ -73,6 +74,7 @@ function changeMetadata(original: string, id: string, status: ArticleMetadata["s
 }
 
 async function atomicReplace(projectRoot: string, id: string, target: string, original: string, next: string, expectedRevision: string) {
+  await guardCmsWrite(projectRoot, target);
   const tempDirectory = await localTempDirectory(projectRoot);
   const temporaryPath = join(tempDirectory, `${id}-${randomUUID()}.tmp`);
   try {
@@ -86,6 +88,7 @@ async function atomicReplace(projectRoot: string, id: string, target: string, or
   } finally {
     await rm(temporaryPath, { force: true });
   }
+  await noteCmsWrite(projectRoot, target);
   return { changed: next !== original, revision: articleSourceRevision(next) };
 }
 
@@ -157,6 +160,7 @@ export async function approveArticleReview(projectRoot: string, id: string, inpu
     try {
       // Hard-link creation is atomic and refuses to replace an existing approval.
       await link(temporaryRecord, recordPath);
+      await noteCmsWrite(projectRoot, recordPath);
     } catch (error) {
       if (articleSourceRevision(await readFile(target, "utf8")) === nextRevision) {
         await atomicReplace(projectRoot, id, target, next, original, nextRevision);

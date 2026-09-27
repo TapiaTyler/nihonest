@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { japaneseResidenceStatusTranslations } from "./residence-status-translations";
 
 vi.mock("server-only", () => ({}));
@@ -20,13 +21,7 @@ describe("Japanese residence-status translations", () => {
     const actualSourceRevisions = Object.fromEntries(japaneseResidenceStatusTranslations.map((artifact) => {
       const status = residenceStatuses.find(({ id }) => id === artifact.contentId);
       expect(status).toBeDefined();
-      return [artifact.contentId, createTranslationSourceRevision({
-        summary: status!.summary,
-        purpose: status!.purpose,
-        typicalActivities: JSON.stringify(status!.typicalActivities),
-        examples: JSON.stringify(status!.examples),
-        considerations: JSON.stringify(status!.considerations),
-      })];
+      return [artifact.contentId, createTranslationSourceRevision(translationSourceFields["residence-status"](status!))];
     }));
     expect(Object.fromEntries(japaneseResidenceStatusTranslations.map(({ contentId, sourceRevision }) => [contentId, sourceRevision]))).toEqual(actualSourceRevisions);
     for (const artifact of japaneseResidenceStatusTranslations) {

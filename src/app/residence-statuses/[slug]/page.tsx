@@ -107,7 +107,7 @@ export default async function ResidenceStatusPage({
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="residence-status" contentId={residenceStatus.id} /></div>
           <div className="flex flex-wrap items-center gap-3 pr-14">
-            <LocalizedStatusBadges category={residenceStatus.category} />
+            <LocalizedStatusBadges category={residenceStatus.category} status={residenceStatus.status} />
           </div>
           <LocalizedStatusHeading
             status={residenceStatus}
@@ -145,7 +145,7 @@ export default async function ResidenceStatusPage({
           />
         )}
 
-        <LocalizedLastReviewed date={residenceStatus.lastReviewedAt} />
+        {residenceStatus.status === "verified" && <LocalizedLastReviewed date={residenceStatus.lastReviewedAt} />}
         <OfficialSourceList sources={statusSources} />
       </div>
     </article>

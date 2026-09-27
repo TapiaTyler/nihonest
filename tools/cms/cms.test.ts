@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { execFileSync } from "node:child_process";
 import { once } from "node:events";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { request } from "node:http";
@@ -142,6 +143,11 @@ describe("local CMS foundation", () => {
       await expect(saveArticleBody(fixtureRoot, articleId, edit)).rejects.toMatchObject({ status: 409 });
       expect(await readFile(resolve(fixtureRoot, relativePath), "utf8")).toBe(written);
       expect(() => previewArticleBody("<script />")).toThrow(CmsEditError);
+      // The server's Git session needs a checkout; commit the fixture so its article starts clean.
+      for (const args of [["init", "-q"], ["config", "user.email", "cms-test@example.invalid"], ["config", "user.name", "CMS test"],
+        ["config", "core.autocrlf", "false"], ["add", "."], ["commit", "-q", "-m", "fixture"]]) {
+        execFileSync("git", args, { cwd: fixtureRoot, stdio: "ignore" });
+      }
       const fixtureServer = createCmsServer(fixtureRoot);
       fixtureServer.listen(0, "127.0.0.1");
       await once(fixtureServer, "listening");

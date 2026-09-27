@@ -1,5 +1,8 @@
 import { japaneseTermSchema } from "@/domain/glossary/glossary";
 
+/** Status each builder applies when a term omits it. The local CMS reads these to project records. */
+export const glossaryBuilderDefaultStatus = { residenceStatusTerm: "draft", occupationalRouteTerm: "needs-review" } as const;
+
 export function residenceStatusTerm({
   id,
   japanese,
@@ -12,7 +15,7 @@ export function residenceStatusTerm({
   articleId,
   sourceId,
   searchTerms,
-  status = "draft",
+  status = glossaryBuilderDefaultStatus.residenceStatusTerm,
   lastReviewedAt,
   topicIds = ["immigration", "employment"],
 }: {
@@ -65,7 +68,7 @@ export function occupationalRouteTerm({
   relatedTermIds,
   sourceIds,
   searchTerms,
-  status = "needs-review",
+  status = glossaryBuilderDefaultStatus.occupationalRouteTerm,
   lastReviewedAt,
 }: {
   id: string;

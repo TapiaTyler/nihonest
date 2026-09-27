@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { faqs } from "@/data/faqs";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { japaneseFaqTranslations } from "./faq-translations";
 
 vi.mock("server-only", () => ({}));
@@ -125,7 +126,7 @@ describe("Japanese FAQ translations", () => {
     const expectedSourceRevisions = Object.fromEntries(japaneseFaqTranslations.map(({ contentId }) => {
       const faq = faqs.find(({ id }) => id === contentId);
       expect(faq).toBeDefined();
-      return [contentId, createTranslationSourceRevision({ question: faq!.question, summary: faq!.summary })];
+      return [contentId, createTranslationSourceRevision(translationSourceFields.faq(faq!))];
     }));
     expect(Object.fromEntries(japaneseFaqTranslations.map(({ contentId, sourceRevision }) => [contentId, sourceRevision])))
       .toEqual(expectedSourceRevisions);

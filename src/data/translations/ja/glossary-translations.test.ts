@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { glossaryTerms } from "@/data/glossary";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { japaneseGlossaryPromptRevisions, japaneseGlossaryTranslations } from "./glossary-translations";
 
 vi.mock("server-only", () => ({}));
@@ -29,11 +30,7 @@ describe("Japanese glossary translations", () => {
     const actualSourceRevisions = Object.fromEntries(japaneseGlossaryTranslations.map((artifact) => {
       const term = glossaryTerms.find(({ id }) => id === artifact.contentId);
       expect(term).toBeDefined();
-      return [artifact.contentId, createTranslationSourceRevision({
-        shortDefinition: term!.shortDefinition,
-        detailedExplanation: term!.detailedExplanation,
-        commonContext: term!.commonContext,
-      })];
+      return [artifact.contentId, createTranslationSourceRevision(translationSourceFields["glossary-term"](term!))];
     }));
     expect(Object.fromEntries(japaneseGlossaryTranslations.map(({ contentId, sourceRevision }) => [contentId, sourceRevision]))).toEqual(actualSourceRevisions);
     for (const artifact of japaneseGlossaryTranslations) {

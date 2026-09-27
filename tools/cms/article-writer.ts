@@ -9,6 +9,7 @@ import { parseArticleMarkdown } from "@/domain/article/article-blocks";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
 import { articleSourceRevision } from "@/lib/content/content-bundle";
 import { readArticleCatalog } from "./catalog";
+import { guardCmsWrite, noteCmsWrite } from "./git-session";
 
 export class CmsEditError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
@@ -81,6 +82,7 @@ export async function saveArticleBody(projectRoot: string, id: string, edit: Bod
   const updatedPrefix = prefix.replace(/^([ \t]*updatedAt:[ \t]*["'])(\d{4}-\d{2}-\d{2})(["'][ \t]*,?)/m,
     (_match, start: string, _oldDate: string, end: string) => `${start}${edit.updatedAt}${end}`);
   const next = `${updatedPrefix}${body}`.replace(/\n/g, newline);
+  await guardCmsWrite(projectRoot, target);
   const temporaryDirectory = resolve(projectRoot, ".cms");
   await mkdir(temporaryDirectory, { recursive: true });
   const temporaryPath = join(temporaryDirectory, `${id}-${randomUUID()}.tmp`);
@@ -100,5 +102,6 @@ export async function saveArticleBody(projectRoot: string, id: string, edit: Bod
   } finally {
     await rm(temporaryPath, { force: true });
   }
+  await noteCmsWrite(projectRoot, target);
   return { changed: true, revision: articleSourceRevision(next) };
 }

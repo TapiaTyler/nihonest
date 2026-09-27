@@ -10,7 +10,7 @@ import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 export const metadata: Metadata = {
   title: "Residence Statuses | Nihonest",
   description:
-    "Browse draft residence-status records linked to official Japanese sources.",
+    "Browse residence-status records linked to official Japanese sources.",
 };
 
 export default function ResidenceStatusesPage() {
@@ -22,16 +22,8 @@ export default function ResidenceStatusesPage() {
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
           <InterfaceText id="statusesPage.heading" />
         </h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">
-          <InterfaceText id="statusesPage.intro" />
-        </p>
       </header>
-
-      <aside className="mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
-        <strong><InterfaceText id="statusesPage.draftStrong" /></strong> <InterfaceText id="statusesPage.draftBody" />
-      </aside>
-
-      <aside className="mt-4 max-w-3xl rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+      <aside className="mt-8 max-w-3xl rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
         <div>
           <p className="font-semibold text-teal-950"><InterfaceText id="statusesPage.activityPrompt" /></p>
           <p className="mt-1 text-sm leading-6 text-teal-900"><InterfaceText id="statusesPage.activityBody" /></p>

@@ -1,17 +1,15 @@
 /** Local-only CMS HTTP boundary. Writes require an origin check and process-scoped session capability. */
-import { execFile } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { join, resolve } from "node:path";
-import { promisify } from "node:util";
 import { readArticleCatalog } from "./catalog";
 import { CmsEditError, previewArticleBody, saveArticleBody, type BodyEdit } from "./article-writer";
 import { approveArticleReview, changeArticleStatus, type ReviewApproval, type StatusChange } from "./editorial-writer";
+import { gitFileDiff, gitSessionReport, startGitSession } from "./git-session";
 import { readStructuredCatalog, type StructuredKind } from "./structured-catalog";
 import { approveStructuredReview, changeStructuredStatus, saveStructuredContent } from "./structured-writer";
 
-const execFileAsync = promisify(execFile);
 const assets = new Map<string, readonly [string, string]>([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
@@ -54,6 +52,9 @@ export function createCmsServer(projectRoot: string) {
   const root = resolve(projectRoot);
   const staticDirectory = resolve(import.meta.dirname, "static");
   const sessionToken = randomBytes(32).toString("hex");
+  // Snapshot the checkout before any request can write, so pre-existing changes stay separate from CMS edits.
+  const gitSession = startGitSession(root);
+  gitSession.catch((error: unknown) => console.error("CMS could not read the Git checkout:", error));
   return createServer(async (request: IncomingMessage, response: ServerResponse) => {
     setSecurityHeaders(response);
     const port = (request.socket.address() as { port: number }).port;
@@ -149,8 +150,11 @@ export function createCmsServer(projectRoot: string) {
         return;
       }
       if (pathname === "/api/git") {
-        const { stdout } = await execFileAsync("git", ["status", "--short", "--branch"], { cwd: root, timeout: 5000 });
-        sendJson(response, 200, { status: stdout.trimEnd() });
+        sendJson(response, 200, await gitSessionReport(root));
+        return;
+      }
+      if (pathname === "/api/git/diff") {
+        sendJson(response, 200, await gitFileDiff(root, new URL(request.url ?? "/", origin).searchParams.get("path")));
         return;
       }
       const asset = assets.get(pathname);

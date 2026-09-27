@@ -23,7 +23,7 @@ function Chrome() {
   return (
     <>
       <LocalizedStatusBackLink href="/residence-statuses" className="" />
-      <LocalizedStatusBadges category={status.category} />
+      <LocalizedStatusBadges category={status.category} status={status.status} />
       <LocalizedStatusHeading status={status} glossaryTerm={glossaryTerm} reading="reading" />
       <LocalizedRelatedGuidance articles={articles} articleTitles={{ translated: "翻訳済みのガイド" }} />
       <LocalizedLastReviewed date="2026-09-06" />
@@ -46,7 +46,7 @@ describe("localized residence-status chrome", () => {
     window.localStorage.setItem(contentLocaleStorageKey, "ja");
     render(<ContentLocaleProvider><Chrome /></ContentLocaleProvider>);
     expect(screen.getByRole("link", { name: "← 在留資格一覧に戻る" })).toBeInTheDocument();
-    expect(screen.getByText("下書き")).toBeInTheDocument();
+    expect(screen.getByText("編集確認が必要")).toBeInTheDocument();
     expect(screen.getByText("家族")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(status.japaneseName);
     // The glossary popover also contains the English name; the subtitle is the paragraph marked as English.
@@ -54,5 +54,11 @@ describe("localized residence-status chrome", () => {
     expect(screen.getByRole("link", { name: "翻訳済みのガイド" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Untranslated guide" }).closest("li")).toHaveAttribute("lang", "en");
     expect(screen.getByText("2026年9月6日")).toBeInTheDocument();
+  });
+
+  it("shows the reviewed badge when a residence status is verified", () => {
+    render(<LocalizedStatusBadges category={status.category} status="verified" />);
+    expect(screen.getByText("Reviewed")).toBeInTheDocument();
+    expect(screen.queryByText("Draft")).not.toBeInTheDocument();
   });
 });

@@ -4,9 +4,16 @@ import { readdir, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import ts from "typescript";
 import { faqs } from "@/data/faqs";
+import { defaultFaqDates } from "@/data/faqs/faq-builder";
+import { glossaryBuilderDefaultStatus } from "@/data/glossary/term-builders";
 import { glossaryTerms } from "@/data/glossary";
-import { residenceStatuses } from "@/data/residence-statuses";
+import { residenceStatusDefaults, residenceStatuses } from "@/data/residence-statuses";
 import { sources } from "@/data/sources";
+import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
+import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
+import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
+import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
 import { faqSchema, type Faq } from "@/domain/faq/faq";
 import { japaneseTermSchema, type JapaneseTerm } from "@/domain/glossary/glossary";
 import { residenceStatusSchema, type ResidenceStatus } from "@/domain/residence-status/residence-status";
@@ -39,7 +46,10 @@ export type StructuredRecord = Readonly<{
   value: StructuredValue;
   sources: readonly Readonly<{ id: string; title: string; organization: string; url: string }>[];
   editableFields: readonly string[];
+  /** Whether the Japanese artifact matches this record's current English fields (the fields in the source file). */
+  translation: TranslationState;
 }>;
+export type TranslationState = "current" | "stale" | "missing";
 
 export const structuredContentFields: Readonly<Record<StructuredKind, readonly string[]>> = {
   faq: ["question", "summary"],
@@ -54,6 +64,22 @@ const values: Readonly<Record<StructuredKind, ReadonlyMap<string, StructuredValu
   "glossary-term": new Map(glossaryTerms.map((item) => [item.id, item])),
 };
 const sourceById = new Map(sources.map((item) => [item.id, item]));
+// Loaded at process start like the other registries; restart the CMS after integrating new translations.
+const translationRevisions: Readonly<Record<StructuredKind, ReadonlyMap<string, string>>> = {
+  faq: new Map(japaneseFaqTranslations.map((item) => [item.contentId, item.sourceRevision])),
+  "residence-status": new Map(japaneseResidenceStatusTranslations.map((item) => [item.contentId, item.sourceRevision])),
+  "glossary-term": new Map(japaneseGlossaryTranslations.map((item) => [item.contentId, item.sourceRevision])),
+};
+
+/** Same revision rule as the translation catalog tests, so an English edit shows its Japanese artifact as stale. */
+export function structuredTranslationState(kind: StructuredKind, value: StructuredValue): TranslationState {
+  const artifactRevision = translationRevisions[kind].get(value.id);
+  if (!artifactRevision) return "missing";
+  const fields = kind === "faq" ? translationSourceFields.faq(value as Faq)
+    : kind === "glossary-term" ? translationSourceFields["glossary-term"](value as JapaneseTerm)
+      : translationSourceFields["residence-status"](value as ResidenceStatus);
+  return artifactRevision === createTranslationSourceRevision(fields) ? "current" : "stale";
+}
 const knownSourceRevisions = new Map<string, string>();
 
 /** Only CMS writes advance the in-process source baseline; external edits require a restart. */
@@ -96,17 +122,21 @@ function findObject(call: ts.CallExpression, kind: StructuredKind): ts.ObjectLit
   return candidate && ts.isObjectLiteralExpression(candidate) ? candidate : undefined;
 }
 
+/** The status a builder applies when the source omits one, read from the builders so the two cannot drift. */
 function derivedStatus(kind: StructuredKind, call: ts.CallExpression, explicit?: string): string {
   if (explicit) return explicit;
-  if (kind === "faq" || kind === "residence-status" || call.expression.getText() === "residenceStatusTerm") return "draft";
-  if (call.expression.getText() === "occupationalRouteTerm") return "needs-review";
-  return "draft";
+  if (kind === "faq") return defaultFaqDates.status;
+  if (kind === "residence-status") return residenceStatusDefaults.status;
+  const builder = call.expression.getText();
+  if (builder === "residenceStatusTerm" || builder === "occupationalRouteTerm") return glossaryBuilderDefaultStatus[builder];
+  // Direct glossary entries must state their status; the schema rejects a missing one.
+  throw new Error("Glossary entries built without a helper must declare a status.");
 }
 
 function projectValue(kind: StructuredKind, base: StructuredValue, status: string, date?: string, datePropertyPresent = false,
   omitUndefinedDate = false, fields: Readonly<Record<string, string | string[]>> = {}): StructuredValue {
   const proposed = { ...base, ...fields, status } as Record<string, unknown>;
-  if (kind === "residence-status") proposed.lastReviewedAt = date ?? "2026-09-06";
+  if (kind === "residence-status") proposed.lastReviewedAt = date ?? residenceStatusDefaults.lastReviewedAt;
   else if (date === undefined && omitUndefinedDate) delete proposed.lastReviewedAt;
   else if (date !== undefined || datePropertyPresent || Object.hasOwn(base, "lastReviewedAt")) proposed.lastReviewedAt = date;
   else delete proposed.lastReviewedAt;
@@ -168,7 +198,7 @@ export async function readStructuredCatalog(projectRoot: string) {
               const statusItem = property(object, "status");
               const dateItem = property(object, "lastReviewedAt");
               const status = derivedStatus(kind, node, stringProperty(object, "status"));
-              const date = stringProperty(object, "lastReviewedAt") ?? (kind === "residence-status" ? "2026-09-06" : undefined);
+              const date = stringProperty(object, "lastReviewedAt") ?? (kind === "residence-status" ? residenceStatusDefaults.lastReviewedAt : undefined);
               const omitsUndefinedReviewDate = kind === "glossary-term" && node.expression.getText() !== "japaneseTermSchema.parse";
               const editableFields = structuredContentFields[kind].filter((field) =>
                 field !== "englishName" || !omitsUndefinedReviewDate);
@@ -204,6 +234,7 @@ export async function readStructuredCatalog(projectRoot: string) {
                 },
                 value,
                 editableFields,
+                translation: structuredTranslationState(kind, value),
                 sources: ("sourceIds" in value ? value.sourceIds : []).map((sourceId: string) =>
                   sourceById.get(sourceId) ?? { id: sourceId, title: "Unknown source", organization: "", url: "" }),
               });
@@ -215,6 +246,6 @@ export async function readStructuredCatalog(projectRoot: string) {
     }
     visit(file);
   }
-  return { records, failures, summaries: [...records.values()].map(({ kind, id, title, status, groups, revision, source }) =>
-    ({ kind, id, title, status, groups, revision, path: source.path })).sort((a, b) => a.title.localeCompare(b.title, "en")) };
+  return { records, failures, summaries: [...records.values()].map(({ kind, id, title, status, groups, revision, source, translation }) =>
+    ({ kind, id, title, status, groups, revision, path: source.path, translation })).sort((a, b) => a.title.localeCompare(b.title, "en")) };
 }

@@ -7,6 +7,7 @@ import { createEditorialReviewRecord } from "@/domain/editorial/editorial-review
 import { sourceReviewRecordSchema } from "@/domain/source/source-review";
 import { loadEditorialReviewRecords } from "@/lib/editorial/editorial-catalog";
 import { CmsEditError } from "./article-writer";
+import { guardCmsWrite, noteCmsWrite } from "./git-session";
 import { noteCmsSourceWrite, proposedStructuredValue, readStructuredCatalog, type StructuredKind, type StructuredRecord } from "./structured-catalog";
 import { structuredEditorialRevision } from "@/lib/editorial/editorial-catalog";
 
@@ -121,6 +122,7 @@ async function cmsDirectory(projectRoot: string) {
 }
 
 async function replaceSource(projectRoot: string, target: string, original: string, next: string) {
+  await guardCmsWrite(projectRoot, target);
   const temporaryPath = join(await cmsDirectory(projectRoot), `${randomUUID()}.tmp`);
   try {
     const handle = await open(temporaryPath, "wx", (await stat(target)).mode);
@@ -129,6 +131,7 @@ async function replaceSource(projectRoot: string, target: string, original: stri
     if (hash(await readFile(target, "utf8")) !== hash(original)) throw new CmsEditError("The source file changed during saving. Refresh.", 409);
     await rename(temporaryPath, target);
   } finally { await rm(temporaryPath, { force: true }); }
+  await noteCmsWrite(projectRoot, target);
 }
 
 export async function changeStructuredStatus(projectRoot: string, kind: StructuredKind, id: string, input: StatusInput) {
@@ -196,7 +199,7 @@ export async function approveStructuredReview(projectRoot: string, kind: Structu
   try {
     await writeFile(temporaryRecord, `${JSON.stringify(approval, null, 2)}\n`, { flag: "wx" });
     await replaceSource(projectRoot, target, original, next);
-    try { await link(temporaryRecord, recordPath); }
+    try { await link(temporaryRecord, recordPath); await noteCmsWrite(projectRoot, recordPath); }
     catch (error) {
       if (hash(await readFile(target, "utf8")) === hash(next)) await replaceSource(projectRoot, target, next, original);
       throw error;
