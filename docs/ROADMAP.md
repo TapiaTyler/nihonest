@@ -807,7 +807,7 @@ content: research visa guidance and add municipality coverage
 
 # Post–Phase 13 Structural Refactor Checkpoint
 
-Before multiplying the canonical catalog through Phase 14 localization, perform the behavior-preserving organization work described in `docs/refactor.md`. Priorities are to split oversized registries by domain, preserve stable IDs and public behavior, clarify module ownership and cross-module contracts, and add concise comments only where intent, state transitions, or non-obvious relationships are not clear from names and types.
+The behavior-preserving organization checkpoint before Phase 14 localization is complete, as recorded in the iteration notes below. It split oversized registries by domain, preserved stable IDs and public behavior, and clarified module ownership and cross-module contracts. Its completed working notes have been replaced by the next hosting and native readiness plan in [`docs/refactor.md`](refactor.md).
 
 **Iteration 1 complete locally — inventory, contracts, and source coverage:** `docs/STRUCTURAL-REFACTOR-PLAN.md` records the size and ownership inventory, dependency rules, eight bounded iterations, validation strategy, and explicit non-goals. Annotated-document families and local-guidance supplements are now direct members of the source dependency model and retain their associated canonical articles for risk and claim analysis. This closes the nineteen false `unused-source` warnings without changing public routes or content presentation and establishes the compatibility-first contract for later registry splits.
 
@@ -993,6 +993,8 @@ Remaining CMS checkpoints, in order. Each is a separate commit; follow the imple
 
 This is the first planned continuously hosted application environment and public web launch. It occurs only after the features that need hosted validation and the major editorial pass have already been implemented locally.
 
+Implementation sequence: follow [the hosting and native readiness refactor roadmap](refactor.md). **Batch 1 (H1–H5)** reduces browser catalog payloads, prebuilds public detail pages while preserving query behavior, adds configuration validation and CI/release gates, adds appropriate headers and health checks, and narrows session handling after testing refresh behavior. **Batch 2 (J1–J2)** adds the notification worker and scheduled source monitoring after choosing its execution location. These checkpoints are planned and require measured builds, regression checks, and review. Suggested ownership is Claude for Batch 1 and Codex for the notification worker, with reciprocal review. Deployment and delivery activation remain separate gates.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;
@@ -1020,6 +1022,8 @@ chore: deploy public web application
 ---
 
 # Phase 15 — Native Application Foundation
+
+Preparation: complete or explicitly schedule **Batch 3 (N1–N5)** in [the refactor roadmap](refactor.md): localized content-bundle coverage, portable component content and shared inline parsing, finder messages, a platform-independent account coordinator, and the lower-priority metadata/MDX boundary. These extend existing domain, storage, and sync contracts. Introduce workspaces only when the second application exists; select the offline engine against Phase 16 requirements. Claude owns Japanese catalog changes; the account coordinator is a suggested Codex assignment for Claude to review.
 
 Objectives:
 
