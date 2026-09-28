@@ -1,23 +1,12 @@
 "use client";
 
-import { createContext, useContext, useId, useState, type ReactNode } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
 import { searchPrefectures, type FinderPrefecture } from "@/domain/geography/prefecture";
 import { groupMunicipalityOptions, tokyoAreas } from "@/domain/geography/tokyo-areas";
-import type { FinderCoverage, FinderMunicipality } from "@/lib/content/prefecture-finder";
-import { prefectureGeneralGuides, prefectureNationalGuides } from "@/lib/content/prefecture-finder";
+import { prefectureGeneralGuides, prefectureNationalGuides, type FinderCoverage, type FinderMunicipality } from "@/lib/content/prefecture-finder-guides";
 import { prefectureFinderMessages } from "./prefecture-finder-messages";
 import { PrefectureMap } from "./prefecture-map";
-
-/**
- * Current Japanese supplement titles by supplement ID. The Japanese article body renders the finder on the client,
- * so the article page (a server component, where translations are revision-checked) provides them here.
- */
-const JapaneseSupplementTitlesContext = createContext<Readonly<Record<string, string>>>({});
-
-export function JapaneseSupplementTitlesProvider({ titles, children }: Readonly<{ titles: Readonly<Record<string, string>>; children: ReactNode }>) {
-  return <JapaneseSupplementTitlesContext.Provider value={titles}>{children}</JapaneseSupplementTitlesContext.Provider>;
-}
 
 const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
 const linkClass = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
@@ -27,7 +16,7 @@ export function PrefectureFinder({
   prefectures,
   municipalities,
   coverage,
-  japaneseSupplementTitles: providedTitles,
+  japaneseSupplementTitles = {},
 }: Readonly<{
   locale: "en" | "ja";
   prefectures: readonly FinderPrefecture[];
@@ -36,8 +25,6 @@ export function PrefectureFinder({
   /** Current Japanese supplement titles by supplement ID; supplements without one keep their English title. */
   japaneseSupplementTitles?: Readonly<Record<string, string>>;
 }>) {
-  const contextTitles = useContext(JapaneseSupplementTitlesContext);
-  const japaneseSupplementTitles = providedTitles ?? contextTitles;
   const japanese = locale === "ja";
   const message = prefectureFinderMessages[locale];
   const prefectureLabel = (names: FinderPrefecture["names"]) => (japanese ? names.ja : `${names.en} · ${names.ja}`);

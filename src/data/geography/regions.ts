@@ -30,3 +30,5 @@ export const japanPrefectureRegions = regionDefinitions.map(({ name, codes }) =>
     },
   };
 });
+
+export type JapanPrefectureRegion = (typeof japanPrefectureRegions)[number];

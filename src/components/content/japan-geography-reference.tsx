@@ -1,10 +1,11 @@
+import "server-only";
+
+import { japanPrefectureRegions } from "@/data/geography/regions";
 import { getPrefectureFinderData } from "@/lib/content/prefecture-finder";
 import Link from "next/link";
-import { PrefectureFinder } from "./prefecture-finder";
-import { JapanRegionMap } from "./japan-region-map";
+import { LazyJapanRegionMapView, LazyPrefectureFinder } from "./lazy-geography";
 
-export { japanPrefectureRegions } from "@/data/geography/regions";
-export { JapanRegionMap, JapanRegionMap as JapanPrefectureRegionCards } from "./japan-region-map";
+export { japanPrefectureRegions };
 
 const practicalBasics = {
   en: [
@@ -22,19 +23,30 @@ const practicalBasics = {
 } as const;
 
 type Locale = "en" | "ja";
+type SupplementTitles = Readonly<Record<string, string>>;
 
-export function JapanPrefectureRegionGrid({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+/**
+ * Server entry points for the geography blocks. They assemble catalog-derived payloads here and pass only those to
+ * client components, so browser code never imports the geography registry or municipality guidance catalogs.
+ */
+export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+  return <LazyJapanRegionMapView regions={japanPrefectureRegions} locale={locale} />;
+}
+
+export { JapanRegionMap as JapanPrefectureRegionCards };
+
+export function JapanPrefectureRegionGrid({ locale = "en", japaneseSupplementTitles }: Readonly<{ locale?: Locale; japaneseSupplementTitles?: SupplementTitles }>) {
   return (
     <div className="not-prose space-y-4">
-      <JapanPrefectureFinder locale={locale} />
+      <JapanPrefectureFinder locale={locale} japaneseSupplementTitles={japaneseSupplementTitles} />
       <JapanRegionMap locale={locale} />
     </div>
   );
 }
 
-export function JapanPrefectureFinder({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+export function JapanPrefectureFinder({ locale = "en", japaneseSupplementTitles }: Readonly<{ locale?: Locale; japaneseSupplementTitles?: SupplementTitles }>) {
   const { prefectures, municipalities, coverage } = getPrefectureFinderData();
-  return <PrefectureFinder locale={locale} prefectures={prefectures} municipalities={municipalities} coverage={coverage} />;
+  return <LazyPrefectureFinder locale={locale} prefectures={prefectures} municipalities={municipalities} coverage={coverage} japaneseSupplementTitles={japaneseSupplementTitles} />;
 }
 
 export function JapanPracticalBasics({ locale = "en" }: Readonly<{ locale?: Locale }>) {
