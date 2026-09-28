@@ -8,7 +8,6 @@ import { defaultFaqDates } from "@/data/faqs/faq-builder";
 import { glossaryBuilderDefaultStatus } from "@/data/glossary/term-builders";
 import { glossaryTerms } from "@/data/glossary";
 import { residenceStatusDefaults, residenceStatuses } from "@/data/residence-statuses";
-import { sources } from "@/data/sources";
 import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
 import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
@@ -18,6 +17,7 @@ import { faqSchema, type Faq } from "@/domain/faq/faq";
 import { japaneseTermSchema, type JapaneseTerm } from "@/domain/glossary/glossary";
 import { residenceStatusSchema, type ResidenceStatus } from "@/domain/residence-status/residence-status";
 import { structuredEditorialRevision } from "@/lib/editorial/editorial-catalog";
+import { knownSourceById } from "./known-sources";
 
 export type StructuredKind = "faq" | "residence-status" | "glossary-term";
 export type StructuredValue = Faq | ResidenceStatus | JapaneseTerm;
@@ -63,7 +63,20 @@ const values: Readonly<Record<StructuredKind, ReadonlyMap<string, StructuredValu
   "residence-status": new Map(residenceStatuses.map((item) => [item.id, item])),
   "glossary-term": new Map(glossaryTerms.map((item) => [item.id, item])),
 };
-const sourceById = new Map(sources.map((item) => [item.id, item]));
+// Records the CMS created in this process. The imported registries predate them, so the catalog falls back to these
+// validated values until the next restart loads them normally.
+const createdValues: Readonly<Record<StructuredKind, Map<string, StructuredValue>>> = {
+  faq: new Map(), "residence-status": new Map(), "glossary-term": new Map(),
+};
+
+export function registerCreatedStructuredValue(kind: StructuredKind, value: StructuredValue) {
+  createdValues[kind].set(value.id, value);
+}
+
+/** Every loaded or CMS-created value of a kind, for uniqueness and reference checks. */
+export function knownStructuredValues(kind: StructuredKind): readonly StructuredValue[] {
+  return [...values[kind].values(), ...[...createdValues[kind].values()].filter((value) => !values[kind].has(value.id))];
+}
 // Loaded at process start like the other registries; restart the CMS after integrating new translations.
 const translationRevisions: Readonly<Record<StructuredKind, ReadonlyMap<string, string>>> = {
   faq: new Map(japaneseFaqTranslations.map((item) => [item.contentId, item.sourceRevision])),
@@ -191,7 +204,7 @@ export async function readStructuredCatalog(projectRoot: string) {
         const object = findObject(node, kind);
         const id = object && stringProperty(object, "id");
         if (id && object) {
-          const base = values[kind].get(id);
+          const base = values[kind].get(id) ?? createdValues[kind].get(id);
           if (!base) failures.push({ path, error: `Source record ${kind}:${id} is not in the loaded registry. Restart the CMS if it was added externally.` });
           else {
             try {
@@ -236,7 +249,7 @@ export async function readStructuredCatalog(projectRoot: string) {
                 editableFields,
                 translation: structuredTranslationState(kind, value),
                 sources: ("sourceIds" in value ? value.sourceIds : []).map((sourceId: string) =>
-                  sourceById.get(sourceId) ?? { id: sourceId, title: "Unknown source", organization: "", url: "" }),
+                  knownSourceById(sourceId) ?? { id: sourceId, title: "Unknown source", organization: "", url: "" }),
               });
             } catch (error) { failures.push({ path, error: `${kind}:${id}: ${error instanceof Error ? error.message : String(error)}` }); }
           }

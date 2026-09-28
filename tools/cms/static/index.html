@@ -5,37 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nihonest editorial workspace</title>
     <link rel="stylesheet" href="/app.css">
+    <script src="/formatted-article.js" defer></script>
     <script src="/app.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#page-heading">Skip to page content</a>
     <header class="site-header">
-      <div><p class="eyebrow">Nihonest · local editorial workspace</p><h1>Content inventory</h1></div>
-      <p class="mode">Local editorial workspace</p>
-    </header>
-    <main>
-      <p class="intro">Inspect and edit supported English content in articles, FAQs, residence statuses, and glossary terms. Filter by content kind and editorial status. Marking content reviewed requires your explicit approval of its exact revision. Refresh rereads canonical files; restart after external changes to TypeScript data modules or translation registries.</p>
-      <section class="summary" aria-label="Catalog summary" id="summary" aria-live="polite"></section>
-      <div class="workspace">
-        <section class="catalog" aria-labelledby="catalog-heading">
-          <div class="section-heading"><h2 id="catalog-heading">Content</h2><button type="button" id="refresh">Refresh</button></div>
-          <label for="search">Search title or ID</label>
-          <input id="search" type="search" autocomplete="off">
-          <label for="kind-filter">Content kind</label>
-          <select id="kind-filter"><option value="">All kinds</option><option value="article">Articles</option><option value="faq">FAQs</option><option value="residence-status">Residence statuses</option><option value="glossary-term">Glossary terms</option></select>
-          <label for="group-filter">Category or topic</label>
-          <select id="group-filter"><option value="">All categories and topics</option></select>
-          <label for="status-filter">Editorial status</label>
-          <select id="status-filter"><option value="">All statuses</option><option value="draft">Draft</option><option value="needs-review">Editorial review</option><option value="verified">Reviewed</option><option value="archived">Archived</option></select>
-          <p id="result-count" class="hint" aria-live="polite"></p>
-          <ul id="article-list" class="article-list"></ul>
-        </section>
-        <section class="detail" aria-labelledby="detail-heading">
-          <h2 id="detail-heading">Content detail</h2>
-          <div id="article-detail"><p>Select a record to inspect its content, sources, editorial status, and file details.</p></div>
-        </section>
+      <div class="site-title"><p class="eyebrow">Nihonest · local editorial workspace</p><p class="site-name">Editorial workspace</p></div>
+      <div class="header-actions">
+        <p class="mode" id="data-freshness">Loading…</p>
+        <button type="button" id="refresh">Refresh</button>
       </div>
-      <section class="system" aria-labelledby="system-heading"><h2 id="system-heading">Working tree</h2><p class="hint">This is the current Git checkout. Saving changes updates canonical source files and may create editorial approval records; the CMS does not commit or publish them. Files that already had uncommitted changes when the CMS started are listed separately and are not written by the CMS.</p><div id="git-status"><p>Loading…</p></div></section>
-      <section class="system" aria-labelledby="errors-heading"><h2 id="errors-heading">Files needing attention</h2><div id="failures"><p>Loading…</p></div></section>
+    </header>
+    <nav class="page-nav" aria-label="Workspace pages">
+      <ul>
+        <li><a href="#/overview" data-page-link="overview">Overview</a></li>
+        <li><a href="#/content" data-page-link="content">Content <span class="nav-count" data-count="content"></span></a></li>
+        <li><a href="#/guidance" data-page-link="guidance">Municipality guidance</a></li>
+        <li><a href="#/sources" data-page-link="sources">Sources &amp; references</a></li>
+        <li><a href="#/translations" data-page-link="translations">Translations <span class="nav-count" data-count="translations"></span></a></li>
+        <li><a href="#/checks" data-page-link="checks">Checks</a></li>
+        <li><a href="#/changes" data-page-link="changes">Changes <span class="nav-count" data-count="changes"></span></a></li>
+        <li><a href="#/activity" data-page-link="activity">Activity</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h1 id="page-heading" tabindex="-1">Overview</h1>
+
+      <section class="page" data-page="overview" aria-labelledby="page-heading">
+        <p class="intro">Edit supported English content, review exact revisions, and prepare changes for Git. The CMS never commits or publishes. Refresh rereads canonical files; restart the CMS after changes to TypeScript data modules or translation registries made outside it.</p>
+        <section class="summary" aria-label="Catalog summary" id="summary" aria-live="polite"></section>
+        <section class="system" aria-labelledby="attention-heading">
+          <h2 id="attention-heading">Needs attention</h2>
+          <ul id="attention" class="attention-list"><li>Loading…</li></ul>
+        </section>
+        <section class="system" aria-labelledby="errors-heading"><h2 id="errors-heading">Files needing attention</h2><div id="failures"><p>Loading…</p></div></section>
+      </section>
+
+      <section class="page" data-page="content" aria-labelledby="page-heading" hidden>
+        <p class="page-intro">Articles, FAQs, residence statuses, and glossary terms. Marking content reviewed requires your explicit approval of its exact revision.</p>
+        <div class="workspace">
+          <section class="catalog" aria-labelledby="catalog-heading">
+            <h2 id="catalog-heading">Records</h2>
+            <div class="create-actions" role="group" aria-label="Create a record">
+              <button type="button" data-create-kind="article">New article</button>
+              <button type="button" data-create-kind="faq">New FAQ</button>
+              <button type="button" data-create-kind="glossary-term">New glossary term</button>
+            </div>
+            <label for="search">Search title, ID, category, or topic</label>
+            <input id="search" type="search" autocomplete="off">
+            <label for="kind-filter">Content kind</label>
+            <select id="kind-filter"><option value="">All kinds</option><option value="article">Articles</option><option value="faq">FAQs</option><option value="residence-status">Residence statuses</option><option value="glossary-term">Glossary terms</option></select>
+            <label for="group-filter">Category or topic</label>
+            <select id="group-filter"><option value="">All categories and topics</option></select>
+            <label for="status-filter">Editorial status</label>
+            <select id="status-filter"><option value="">All statuses</option><option value="draft">Draft</option><option value="needs-review">Editorial review</option><option value="verified">Reviewed</option><option value="archived">Archived</option></select>
+            <p id="result-count" class="hint" aria-live="polite"></p>
+            <ul id="article-list" class="article-list"></ul>
+          </section>
+          <section class="detail" aria-labelledby="detail-heading">
+            <h2 id="detail-heading" class="visually-hidden" tabindex="-1">Record workspace</h2>
+            <div id="article-detail"><p class="empty-state">Select a record to edit its content, review it, or inspect its links, sources, and file details.</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" data-page="guidance" aria-labelledby="page-heading" hidden>
+        <p class="page-intro">Municipality supplements by location. Edit supported English fields only; Japanese text and review state are read-only here.</p>
+        <details class="local-guidance-matrix-disclosure">
+          <summary>Coverage matrix by location and guide</summary>
+          <p class="hint">Each column is an article guide and each row is a registered location. Select an available cell to open its municipality supplement.</p>
+          <div id="local-guidance-matrix" class="local-guidance-matrix-scroll" tabindex="0" aria-label="Scrollable municipality guidance coverage matrix">
+            <p class="hint">Loading location and guide coverage…</p>
+          </div>
+        </details>
+        <div class="local-guidance-grid">
+          <section class="catalog local-guidance-catalog" aria-labelledby="local-guidance-catalog-heading">
+            <h2 id="local-guidance-catalog-heading">Locations and guides</h2>
+            <label for="local-guidance-location">Location</label>
+            <select id="local-guidance-location"><option value="">Loading locations…</option></select>
+            <label for="local-guidance-search">Filter guides</label>
+            <input id="local-guidance-search" type="search" autocomplete="off">
+            <p id="local-guidance-count" class="hint" aria-live="polite"></p>
+            <div id="local-guidance-failures" aria-live="polite"></div>
+            <ul id="local-guidance-list" class="article-list"></ul>
+          </section>
+          <section class="detail local-guidance-detail" aria-labelledby="local-guidance-detail-heading">
+            <h2 id="local-guidance-detail-heading" class="visually-hidden" tabindex="-1">Guide detail</h2>
+            <div id="local-guidance-detail"><p class="empty-state">Select a location and guide to inspect or edit its English guidance.</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" data-page="sources" aria-labelledby="page-heading" hidden>
+        <p class="page-intro">Official sources and the reference catalogs built on them. These records are read-only in this CMS; change them in the listed registry files.</p>
+        <section class="system source-impact" aria-labelledby="impact-heading">
+          <h2 id="impact-heading">Source impact</h2>
+          <p class="hint">Find an official source to see its direct and derived dependents in the repository source graph.</p>
+          <div class="impact-controls">
+            <div><label for="impact-search">Find a source</label>
+            <input id="impact-search" type="search" autocomplete="off" placeholder="Search title, organization, or source ID"></div>
+            <div><label for="impact-source">Official source</label>
+            <select id="impact-source"></select></div>
+          </div>
+          <p id="impact-count" class="hint" aria-live="polite"></p>
+          <div id="impact-result" aria-live="polite"><p>Loading source impact…</p></div>
+        </section>
+        <section class="reference-workspace" aria-labelledby="reference-heading">
+          <div class="section-heading"><h2 id="reference-heading">Reference catalogs</h2><button type="button" data-create-kind="source">New official source</button></div>
+          <div class="reference-grid">
+            <section class="catalog reference-catalog" aria-labelledby="reference-catalog-heading">
+              <h3 id="reference-catalog-heading">Reference records</h3>
+              <label for="reference-search">Search title or ID</label>
+              <input id="reference-search" type="search" autocomplete="off">
+              <label for="reference-kind">Reference kind</label>
+              <select id="reference-kind">
+                <option value="">All reference kinds</option>
+                <option value="source">Official sources</option>
+                <option value="journey">Guided journeys</option>
+                <option value="article-group">Article groups</option>
+                <option value="annotated-document">Annotated documents</option>
+              </select>
+              <p id="reference-count" class="hint" aria-live="polite"></p>
+              <ul id="reference-list" class="article-list"></ul>
+            </section>
+            <section class="detail reference-detail" aria-labelledby="reference-detail-heading">
+              <h3 id="reference-detail-heading">Reference detail</h3>
+              <div id="reference-detail"><p class="empty-state">Select a reference record to inspect its details.</p></div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" data-page="translations" aria-labelledby="page-heading" hidden>
+        <section class="system" aria-labelledby="handoff-heading">
+          <h2 id="handoff-heading">Japanese translation handoff</h2>
+          <p class="hint">Stale and missing artifacts for the content kinds this CMS supports. This list does not edit or generate Japanese translations.</p>
+          <a id="handoff-download" href="/api/translation-handoff.txt" download="nihonest-translation-handoff.txt">Download plain-text handoff</a>
+          <div id="handoff-status" role="status"><p>Loading translation state…</p></div>
+          <ul id="handoff-items" class="handoff-items"></ul>
+        </section>
+      </section>
+
+      <section class="page" data-page="checks" aria-labelledby="page-heading" hidden>
+        <section class="system checks-panel" aria-labelledby="checks-heading">
+          <h2 id="checks-heading">Validation checks</h2>
+          <p class="hint">Choose a fixed check and start it explicitly. Each result covers only the named command; a focused pass does not mean the full site passed.</p>
+          <div class="check-controls">
+            <div><label for="check-kind">Check</label><select id="check-kind"></select></div>
+            <button type="button" id="check-start">Run check</button>
+            <button type="button" id="check-cancel" hidden>Cancel run</button>
+          </div>
+          <p id="check-command" class="hint"></p>
+          <p id="check-status" role="status">Loading checks…</p>
+          <ol id="check-steps" class="check-steps"></ol>
+          <pre id="check-output" tabindex="0">No check has run in this CMS session.</pre>
+        </section>
+      </section>
+
+      <section class="page" data-page="changes" aria-labelledby="page-heading" hidden>
+        <section class="system working-tree" aria-labelledby="system-heading">
+          <h2 id="system-heading">Working tree</h2>
+          <p class="hint">This is the current Git checkout. Saving changes updates canonical source files and may create editorial approval records; the CMS does not commit or publish them. Files that already had uncommitted changes when the CMS started are listed separately and are not written by the CMS.</p>
+          <div id="git-status"><p>Loading…</p></div>
+        </section>
+        <section class="system" aria-labelledby="recovery-heading">
+          <h2 id="recovery-heading">Recovery drafts</h2>
+          <p class="hint">Unsaved English edits are saved locally in this checkout. Drafts are shown for comparison and are never loaded into an editor automatically.</p>
+          <div id="recovery-drafts" aria-live="polite"><p>Loading recovery drafts…</p></div>
+        </section>
+      </section>
+
+      <section class="page" data-page="activity" aria-labelledby="page-heading" hidden>
+        <section class="system" aria-labelledby="activity-heading">
+          <h2 id="activity-heading">Recent activity</h2>
+          <p class="hint">Local CMS operations and check results, newest first. Git history and approval files remain the durable record.</p>
+          <ol id="activity-events" class="activity-list" aria-live="polite"><li>Loading activity…</li></ol>
+        </section>
+      </section>
     </main>
   </body>
 </html>

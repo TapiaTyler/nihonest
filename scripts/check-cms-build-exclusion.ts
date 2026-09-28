@@ -11,8 +11,11 @@ async function main(): Promise<void> {
   const buildDirectory = resolve(projectRoot, ".next");
   const built = await stat(buildDirectory).catch(() => undefined);
   if (!built?.isDirectory()) throw new Error("No .next build output found. Run `npm run build` first.");
-  // The build cache holds inputs, not deployed output.
-  const findings = await findCmsMarkers(projectRoot, ".next", { skip: (path) => path.startsWith(".next/cache") });
+  // Build caches and Next.js dev output hold inputs, not deployed output.
+  const findings = await findCmsMarkers(projectRoot, ".next", {
+    skip: (path) => path === ".next/cache" || path.startsWith(".next/cache/")
+      || path === ".next/dev" || path.startsWith(".next/dev/"),
+  });
   if (findings.length) {
     for (const { path, marker } of findings) console.error(`${path}: contains "${marker}"`);
     throw new Error(`The production build contains CMS code (${findings.length} finding(s)).`);

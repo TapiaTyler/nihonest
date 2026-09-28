@@ -10,6 +10,9 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const server = createCmsServer(projectRoot);
+const stop = () => server.close();
+process.once("SIGINT", stop);
+process.once("SIGTERM", stop);
 server.listen(port, "127.0.0.1", () => {
   console.log(`Nihonest local editorial CMS: http://127.0.0.1:${port} (open this exact address; other host names are refused)`);
   startGitSession(projectRoot).then(({ identity }) => {

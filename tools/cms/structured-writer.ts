@@ -1,3 +1,4 @@
+import { withCmsFileLock } from "./write-locks";
 /** Revision-checked metadata writes for FAQ, residence-status, and glossary source entries. */
 import { randomUUID } from "node:crypto";
 import { link, mkdir, open, readFile, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
@@ -81,37 +82,42 @@ function patchSource(record: StructuredRecord, original: string, status: string,
 
 export async function saveStructuredContent(projectRoot: string, kind: StructuredKind, id: string, input: ContentInput) {
   const { record, target, original } = await current(projectRoot, kind, id, input.expectedRevision, input.expectedSourceRevision);
-  if (!input.fields || typeof input.fields !== "object" || Array.isArray(input.fields)) {
-    throw new CmsEditError("Provide the editable content fields.", 422);
-  }
-  const submitted: Record<string, string | string[]> = {};
-  for (const [field, value] of Object.entries(input.fields)) {
-    if (!record.editableFields.includes(field)) throw new CmsEditError(`Field ${field} is not editable for this record.`, 422);
-    if (typeof value === "string" && value.trim() && Buffer.byteLength(value, "utf8") <= 20_000) submitted[field] = value;
-    else if (Array.isArray(value) && value.length <= 100 && value.every((item) => typeof item === "string" && item.trim() && item.length <= 2000)) {
-      submitted[field] = value;
-    } else throw new CmsEditError(`Field ${field} must contain valid text or a list of text items.`, 422);
-  }
-  if (!Object.keys(submitted).length) throw new CmsEditError("Choose a content field to change.", 422);
-  const changed = Object.entries(submitted).some(([field, value]) => JSON.stringify(record.value[field as keyof typeof record.value]) !== JSON.stringify(value));
-  if (!changed) return { changed: false, revision: record.revision, sourceRevision: record.source.sourceRevision };
-  if (kind === "faq") {
-    if (typeof input.updatedAt !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(input.updatedAt)
-      || Number.isNaN(Date.parse(input.updatedAt)) || new Date(input.updatedAt).toISOString().slice(0, 10) !== input.updatedAt
-      || input.updatedAt < record.updatedAt! || input.updatedAt < (record.value as { createdAt: string }).createdAt) {
-      throw new CmsEditError("Choose a valid FAQ update date that does not precede its existing dates.", 422);
+  return withCmsFileLock(target, async () => {
+    if (hash(await readFile(target, "utf8")) !== input.expectedSourceRevision) {
+      throw new CmsEditError("The source file changed while waiting to save. Refresh.", 409);
     }
-    submitted.updatedAt = input.updatedAt;
-  }
-  const status = record.status === "draft" ? "draft" : "needs-review";
-  const date = kind === "residence-status" ? record.lastReviewedAt : undefined;
-  let value;
-  try { value = proposedStructuredValue(record, status, date, submitted); }
-  catch (error) { throw new CmsEditError(error instanceof Error ? error.message : "Invalid structured content.", 422); }
-  const next = patchSource(record, original, status, date, submitted);
-  await replaceSource(projectRoot, target, original, next);
-  noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
-  return { changed: true, revision: structuredEditorialRevision(value), sourceRevision: hash(next), status };
+    if (!input.fields || typeof input.fields !== "object" || Array.isArray(input.fields)) {
+      throw new CmsEditError("Provide the editable content fields.", 422);
+    }
+    const submitted: Record<string, string | string[]> = {};
+    for (const [field, value] of Object.entries(input.fields)) {
+      if (!record.editableFields.includes(field)) throw new CmsEditError(`Field ${field} is not editable for this record.`, 422);
+      if (typeof value === "string" && value.trim() && Buffer.byteLength(value, "utf8") <= 20_000) submitted[field] = value;
+      else if (Array.isArray(value) && value.length <= 100 && value.every((item) => typeof item === "string" && item.trim() && item.length <= 2000)) {
+        submitted[field] = value;
+      } else throw new CmsEditError(`Field ${field} must contain valid text or a list of text items.`, 422);
+    }
+    if (!Object.keys(submitted).length) throw new CmsEditError("Choose a content field to change.", 422);
+    const changed = Object.entries(submitted).some(([field, value]) => JSON.stringify(record.value[field as keyof typeof record.value]) !== JSON.stringify(value));
+    if (!changed) return { changed: false, revision: record.revision, sourceRevision: record.source.sourceRevision };
+    if (kind === "faq") {
+      if (typeof input.updatedAt !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(input.updatedAt)
+        || Number.isNaN(Date.parse(input.updatedAt)) || new Date(input.updatedAt).toISOString().slice(0, 10) !== input.updatedAt
+        || input.updatedAt < record.updatedAt! || input.updatedAt < (record.value as { createdAt: string }).createdAt) {
+        throw new CmsEditError("Choose a valid FAQ update date that does not precede its existing dates.", 422);
+      }
+      submitted.updatedAt = input.updatedAt;
+    }
+    const status = record.status === "draft" ? "draft" : "needs-review";
+    const date = kind === "residence-status" ? record.lastReviewedAt : undefined;
+    let value;
+    try { value = proposedStructuredValue(record, status, date, submitted); }
+    catch (error) { throw new CmsEditError(error instanceof Error ? error.message : "Invalid structured content.", 422); }
+    const next = patchSource(record, original, status, date, submitted);
+    await replaceSource(projectRoot, target, original, next);
+    noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
+    return { changed: true, revision: structuredEditorialRevision(value), sourceRevision: hash(next), status };
+  });
 }
 
 async function cmsDirectory(projectRoot: string) {
@@ -121,29 +127,36 @@ async function cmsDirectory(projectRoot: string) {
   return expected;
 }
 
-async function replaceSource(projectRoot: string, target: string, original: string, next: string) {
-  await guardCmsWrite(projectRoot, target);
-  const temporaryPath = join(await cmsDirectory(projectRoot), `${randomUUID()}.tmp`);
-  try {
-    const handle = await open(temporaryPath, "wx", (await stat(target)).mode);
-    try { await handle.writeFile(next, "utf8"); await handle.sync(); }
-    finally { await handle.close(); }
-    if (hash(await readFile(target, "utf8")) !== hash(original)) throw new CmsEditError("The source file changed during saving. Refresh.", 409);
-    await rename(temporaryPath, target);
-  } finally { await rm(temporaryPath, { force: true }); }
-  await noteCmsWrite(projectRoot, target);
+export async function replaceSource(projectRoot: string, target: string, original: string, next: string) {
+  return withCmsFileLock(target, async () => {
+    await guardCmsWrite(projectRoot, target);
+    const temporaryPath = join(await cmsDirectory(projectRoot), `${randomUUID()}.tmp`);
+    try {
+      const handle = await open(temporaryPath, "wx", (await stat(target)).mode);
+      try { await handle.writeFile(next, "utf8"); await handle.sync(); }
+      finally { await handle.close(); }
+      if (hash(await readFile(target, "utf8")) !== hash(original)) throw new CmsEditError("The source file changed during saving. Refresh.", 409);
+      await rename(temporaryPath, target);
+    } finally { await rm(temporaryPath, { force: true }); }
+    await noteCmsWrite(projectRoot, target);
+  });
 }
 
 export async function changeStructuredStatus(projectRoot: string, kind: StructuredKind, id: string, input: StatusInput) {
   if (!validStatus(kind, input.status)) throw new CmsEditError("Choose a supported status. Use Mark reviewed for verified content.", 422);
   const { record, target, original } = await current(projectRoot, kind, id, input.expectedRevision, input.expectedSourceRevision);
-  if (record.status === input.status) return { changed: false, revision: record.revision, sourceRevision: record.source.sourceRevision };
-  const date = kind === "residence-status" ? record.lastReviewedAt : undefined;
-  const value = proposedStructuredValue(record, input.status, date);
-  const next = patchSource(record, original, input.status, date);
-  await replaceSource(projectRoot, target, original, next);
-  noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
-  return { changed: true, revision: structuredEditorialRevision(value), sourceRevision: hash(next) };
+  return withCmsFileLock(target, async () => {
+    if (hash(await readFile(target, "utf8")) !== input.expectedSourceRevision) {
+      throw new CmsEditError("The source file changed while waiting to save. Refresh.", 409);
+    }
+    if (record.status === input.status) return { changed: false, revision: record.revision, sourceRevision: record.source.sourceRevision };
+    const date = kind === "residence-status" ? record.lastReviewedAt : undefined;
+    const value = proposedStructuredValue(record, input.status, date);
+    const next = patchSource(record, original, input.status, date);
+    await replaceSource(projectRoot, target, original, next);
+    noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
+    return { changed: true, revision: structuredEditorialRevision(value), sourceRevision: hash(next) };
+  });
 }
 
 async function validateReviewInput(projectRoot: string, input: ReviewInput, updatedAt?: string) {
@@ -176,36 +189,41 @@ async function validateReviewInput(projectRoot: string, input: ReviewInput, upda
 
 export async function approveStructuredReview(projectRoot: string, kind: StructuredKind, id: string, input: ReviewInput) {
   const { record, target, original } = await current(projectRoot, kind, id, input.expectedRevision, input.expectedSourceRevision);
-  if (record.status !== "needs-review") throw new CmsEditError("Move the record to editorial review before marking it reviewed.", 422);
-  await validateReviewInput(projectRoot, input, record.updatedAt);
-  const value = proposedStructuredValue(record, "verified", input.reviewedAt);
-  const next = patchSource(record, original, "verified", input.reviewedAt);
-  const nextRevision = structuredEditorialRevision(value);
-  const approval = createEditorialReviewRecord({
-    target: { kind, id, status: "verified", revision: nextRevision, updatedAt: record.updatedAt, lastReviewedAt: input.reviewedAt },
-    reviewedAt: input.reviewedAt, changeNote: input.changeNote.trim(), approvalNote: input.approvalNote.trim(),
-    validationPerformed: input.validationPerformed.map((item) => item.trim()), sourceReviewIds: input.sourceReviewIds,
-    recordedAt: new Date().toISOString(),
-  });
-  const reviewDirectory = resolve(projectRoot, "content/editorial-reviews");
-  const existing = await loadEditorialReviewRecords(reviewDirectory);
-  if (existing.some((item) => item.id === approval.id)) throw new CmsEditError("Approval already exists for this revision.", 409);
-  await mkdir(reviewDirectory, { recursive: true });
-  if (await realpath(reviewDirectory) !== join(await realpath(resolve(projectRoot, "content")), "editorial-reviews")) {
-    throw new CmsEditError("Approval directory escapes content.", 403);
-  }
-  const recordPath = join(reviewDirectory, `${approval.id}.json`);
-  const temporaryRecord = join(await cmsDirectory(projectRoot), `${approval.id}-${randomUUID()}.tmp`);
-  try {
-    await writeFile(temporaryRecord, `${JSON.stringify(approval, null, 2)}\n`, { flag: "wx" });
-    await replaceSource(projectRoot, target, original, next);
-    try { await link(temporaryRecord, recordPath); await noteCmsWrite(projectRoot, recordPath); }
-    catch (error) {
-      if (hash(await readFile(target, "utf8")) === hash(next)) await replaceSource(projectRoot, target, next, original);
-      throw error;
+  return withCmsFileLock(target, async () => {
+    if (hash(await readFile(target, "utf8")) !== input.expectedSourceRevision) {
+      throw new CmsEditError("The source file changed while waiting to save. Refresh.", 409);
     }
-  } finally { await rm(temporaryRecord, { force: true }); }
-  noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
-  return { changed: true, revision: nextRevision, sourceRevision: hash(next),
-    approvalRecord: `content/editorial-reviews/${approval.id}.json` };
+    if (record.status !== "needs-review") throw new CmsEditError("Move the record to editorial review before marking it reviewed.", 422);
+    await validateReviewInput(projectRoot, input, record.updatedAt);
+    const value = proposedStructuredValue(record, "verified", input.reviewedAt);
+    const next = patchSource(record, original, "verified", input.reviewedAt);
+    const nextRevision = structuredEditorialRevision(value);
+    const approval = createEditorialReviewRecord({
+      target: { kind, id, status: "verified", revision: nextRevision, updatedAt: record.updatedAt, lastReviewedAt: input.reviewedAt },
+      reviewedAt: input.reviewedAt, changeNote: input.changeNote.trim(), approvalNote: input.approvalNote.trim(),
+      validationPerformed: input.validationPerformed.map((item) => item.trim()), sourceReviewIds: input.sourceReviewIds,
+      recordedAt: new Date().toISOString(),
+    });
+    const reviewDirectory = resolve(projectRoot, "content/editorial-reviews");
+    const existing = await loadEditorialReviewRecords(reviewDirectory);
+    if (existing.some((item) => item.id === approval.id)) throw new CmsEditError("Approval already exists for this revision.", 409);
+    await mkdir(reviewDirectory, { recursive: true });
+    if (await realpath(reviewDirectory) !== join(await realpath(resolve(projectRoot, "content")), "editorial-reviews")) {
+      throw new CmsEditError("Approval directory escapes content.", 403);
+    }
+    const recordPath = join(reviewDirectory, `${approval.id}.json`);
+    const temporaryRecord = join(await cmsDirectory(projectRoot), `${approval.id}-${randomUUID()}.tmp`);
+    try {
+      await writeFile(temporaryRecord, `${JSON.stringify(approval, null, 2)}\n`, { flag: "wx" });
+      await replaceSource(projectRoot, target, original, next);
+      try { await link(temporaryRecord, recordPath); await noteCmsWrite(projectRoot, recordPath); }
+      catch (error) {
+        if (hash(await readFile(target, "utf8")) === hash(next)) await replaceSource(projectRoot, target, next, original);
+        throw error;
+      }
+    } finally { await rm(temporaryRecord, { force: true }); }
+    noteCmsSourceWrite(projectRoot, record.source.path, hash(next));
+    return { changed: true, revision: nextRevision, sourceRevision: hash(next),
+      approvalRecord: `content/editorial-reviews/${approval.id}.json` };
+  });
 }

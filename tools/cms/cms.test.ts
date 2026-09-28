@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { readArticleCatalog } from "./catalog";
 import { CmsEditError, previewArticleBody, saveArticleBody } from "./article-writer";
+import { createCheckRunner } from "./check-runs";
 import { approveArticleReview, changeArticleStatus } from "./editorial-writer";
 import { createCmsServer } from "./server";
 import { auditEditorialState } from "@/domain/editorial/editorial-review";
@@ -56,12 +57,86 @@ describe("local CMS foundation", () => {
       expect(body.editableKinds).toEqual(["article-body", "article-status", "article-review", "faq-content", "faq-review", "residence-status-content", "residence-status-review", "glossary-term-content", "glossary-term-review"]);
       expect(body.articles.length).toBeGreaterThan(90);
       expect(response.headers.get("cache-control")).toBe("no-store");
+      const chevron = await fetch(`${base}/select-chevron.svg`);
+      expect(chevron.status).toBe(200);
+      expect(chevron.headers.get("content-type")).toContain("image/svg+xml");
+      expect(chevron.headers.get("content-security-policy")).toContain("img-src 'self'");
+      expect(await chevron.text()).toContain('d="m6 8 4 4 4-4"');
       const structured = await fetch(`${base}/api/records`);
       expect(structured.status).toBe(200);
       const records = await structured.json();
       expect(records.records).toHaveLength(faqs.length + residenceStatuses.length + glossaryTerms.length);
       expect(records.failures).toEqual([]);
     });
+
+    it("serves source impact and a plain-text translation handoff without write capability", async () => {
+      const impactResponse = await fetch(`${base}/api/impact/sources`);
+      expect(impactResponse.status).toBe(200);
+      const impact = await impactResponse.json();
+      const source = impact.sources.find((item: { id: string }) => item.id === "isa-artist-status");
+      expect(source.dependents.some((item: { kind: string }) => item.kind === "article")).toBe(true);
+      expect(impact.coverageNote).toContain("FAQs");
+
+      const contentResponse = await fetch(`${base}/api/impact/content/article/visa-and-status-of-residence-explained`);
+      expect(contentResponse.status).toBe(200);
+      const content = await contentResponse.json();
+      expect(content.coverage).toBe("complete");
+      expect(content.sources.length).toBeGreaterThan(0);
+      const faq = await (await fetch(`${base}/api/impact/content/faq/work-in-japan-without-japanese`)).json();
+      expect(faq.coverage).toBe("unknown");
+      expect(faq.note).toContain("FAQs");
+
+      const handoffResponse = await fetch(`${base}/api/translation-handoff`);
+      expect(handoffResponse.status).toBe(200);
+      const handoff = await handoffResponse.json();
+      expect(handoff.complete).toBe(true);
+      expect(handoff.items.every((item: { state: string }) => item.state === "stale" || item.state === "missing")).toBe(true);
+      const textResponse = await fetch(`${base}/api/translation-handoff.txt`);
+      expect(textResponse.headers.get("content-type")).toContain("text/plain");
+      expect(await textResponse.text()).toBe(handoff.exportText);
+    }, 20_000);
+
+    it("serves all remaining catalogs as inspect-only references", async () => {
+      const response = await fetch(`${base}/api/reference`);
+      expect(response.status).toBe(200);
+      const { records } = await response.json();
+      for (const kind of ["source", "journey", "article-group", "annotated-document"]) {
+        const summary = records.find((item: { kind: string }) => item.kind === kind);
+        expect(summary).toMatchObject({ kind, capability: "inspect-only" });
+        const detailResponse = await fetch(`${base}/api/reference/${kind}/${summary.id}`);
+        expect(detailResponse.status).toBe(200);
+        const detail = await detailResponse.json();
+        expect(detail).toMatchObject({ kind, id: summary.id, title: summary.title, capability: "inspect-only" });
+        expect(detail.value.id).toBe(summary.id);
+        expect(detail.registryPath).toMatch(/^src\/data\//);
+        const write = await fetch(`${base}/api/reference/${kind}/${summary.id}`, { method: "PUT" });
+        expect(write.status).toBe(405);
+      }
+      expect((await fetch(`${base}/api/reference/source/not-a-real-source`)).status).toBe(404);
+      expect((await fetch(`${base}/api/reference/not-a-kind/example`)).status).toBe(404);
+    });
+
+    it("shows registered municipality guidance while guarding the English edit route", async () => {
+      const response = await fetch(`${base}/api/local-guidance`);
+      expect(response.status).toBe(200);
+      const matrix = await response.json();
+      expect(matrix.failures).toEqual([]);
+      expect(matrix.guides).toHaveLength(7);
+      const kyoto = matrix.locations.find((location: { id: string }) => location.id === "jp-26100");
+      expect(kyoto.supplements).toHaveLength(7);
+      const detailResponse = await fetch(`${base}/api/local-guidance/kyoto-household-waste`);
+      expect(detailResponse.status).toBe(200);
+      const detail = await detailResponse.json();
+      expect(detail).toMatchObject({ locationId: "jp-26100", id: "kyoto-household-waste", translation: expect.stringMatching(/^(current|stale|missing)$/) });
+      expect(detail.value.status).toBe("needs-review");
+      expect(detail.source.path).toBe("src/data/local-guidance/locations/kyoto/kyoto.ts");
+      const denied = await fetch(`${base}/api/local-guidance/kyoto-household-waste/content`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: { title: "Unauthorized" } }),
+      });
+      expect(denied.status).toBe(403);
+      expect((await fetch(`${base}/api/local-guidance/unknown-supplement`)).status).toBe(404);
+      expect((await fetch(`${base}/api/local-guidance/kyoto-household-waste/status`, { method: "PUT" })).status).toBe(405);
+    }, 20_000);
 
     it("rejects foreign host headers and write requests", async () => {
       const foreignHostStatus = await new Promise<number>((resolveStatus, reject) => {
@@ -104,6 +179,23 @@ describe("local CMS foundation", () => {
       expect(structuredContentWrite.status).toBe(403);
     });
 
+    it("exposes fixed checks and rejects unauthenticated or client-supplied commands", async () => {
+      const catalog = await fetch(`${base}/api/checks`);
+      expect(catalog.status).toBe(200);
+      const report = await catalog.json();
+      expect(report.definitions.map((item: { id: string }) => item.id)).toContain("production-build");
+      expect(report.definitions.every((item: { command: string }) => typeof item.command === "string")).toBe(true);
+      expect(report.definitions.find((item: { id: string }) => item.id === "cms-tests").scope).toBe("focused");
+      const token = (await (await fetch(`${base}/api/session`)).json()).token;
+      const options = (payload: unknown, origin = base) => ({
+        method: "POST", headers: { "Content-Type": "application/json", Origin: origin, "X-CMS-Token": token }, body: JSON.stringify(payload),
+      });
+      expect((await fetch(`${base}/api/checks/start`, options({ id: "cms-tests" }, "http://example.com"))).status).toBe(403);
+      expect((await fetch(`${base}/api/checks/start`, options({ id: "cms-tests", command: "whoami" }))).status).toBe(400);
+      expect((await fetch(`${base}/api/checks/start`, options({ id: "not-a-check" }))).status).toBe(400);
+      expect((await fetch(`${base}/api/checks/cancel`, options({ command: "whoami" }))).status).toBe(400);
+    });
+
     it("validates an unsaved preview with the local session capability", async () => {
       const session = await (await fetch(`${base}/api/session`)).json();
       const wrongOrigin = await fetch(`${base}/api/articles/understanding-japan-geography-government-and-language/preview`, {
@@ -120,7 +212,85 @@ describe("local CMS foundation", () => {
       expect(response.status).toBe(200);
       const result = await response.json();
       expect(result.blocks[0]).toEqual({ kind: "heading", level: 2, text: "Preview heading" });
+      const rejected = await fetch(`${base}/api/articles/understanding-japan-geography-government-and-language/preview`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": session.token },
+        body: JSON.stringify({ body: "Inline {value} expression." }),
+      });
+      expect(rejected.status).toBe(422);
+      expect(await rejected.json()).toMatchObject({ error: expect.stringMatching(/line 1, column \d+/) });
     });
+  });
+
+  it("starts and cancels only a named check through the guarded HTTP route", async () => {
+    let complete!: (result: { exitCode: number | null }) => void;
+    let killed = false;
+    const result = new Promise<{ exitCode: number | null }>((resolveResult) => { complete = resolveResult; });
+    const runner = createCheckRunner(root, () => ({ result, kill: () => { killed = true; } }));
+    const server = createCmsServer(root, runner);
+    server.listen(0, "127.0.0.1");
+    await once(server, "listening");
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Expected an IPv4 listener.");
+      const base = `http://127.0.0.1:${address.port}`;
+      const token = (await (await fetch(`${base}/api/session`)).json()).token;
+      const headers = { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token };
+      const started = await fetch(`${base}/api/checks/start`, { method: "POST", headers, body: JSON.stringify({ id: "cms-tests" }) });
+      expect(started.status).toBe(200);
+      expect((await started.json()).active).toMatchObject({ id: "cms-tests", status: "running" });
+      const busy = await fetch(`${base}/api/checks/start`, { method: "POST", headers, body: JSON.stringify({ id: "typecheck" }) });
+      expect(busy.status).toBe(409);
+      const canceled = await fetch(`${base}/api/checks/cancel`, { method: "POST", headers, body: "{}" });
+      expect(canceled.status).toBe(200);
+      expect((await canceled.json()).active.cancelRequested).toBe(true);
+      expect(killed).toBe(true);
+      complete({ exitCode: null });
+      await new Promise<void>((resolveDone) => setImmediate(resolveDone));
+      expect((await (await fetch(`${base}/api/checks`)).json()).active.status).toBe("canceled");
+    } finally {
+      server.close();
+      await once(server, "close");
+    }
+  });
+
+  it("refuses local-guidance verification when a generated document has existing edits", async () => {
+    const fixtureRoot = await mkdtemp(join(tmpdir(), "nihonest-cms-test-"));
+    const recheck = join(fixtureRoot, "docs", "LOCAL-GUIDANCE-RECHECK.md");
+    try {
+      await mkdir(join(fixtureRoot, "docs"));
+      await writeFile(recheck, "Original recheck notes.\n");
+      await writeFile(join(fixtureRoot, "docs", "LOCAL-GUIDANCE-COVERAGE-PLAN.md"), "Original coverage plan.\n");
+      for (const args of [["init", "-q"], ["config", "user.email", "cms-test@example.invalid"], ["config", "user.name", "CMS test"],
+        ["add", "."], ["commit", "-q", "-m", "fixture"]]) execFileSync("git", args, { cwd: fixtureRoot, stdio: "ignore" });
+      await writeFile(recheck, "Another editor's recheck notes.\n");
+      let launched = false;
+      const runner = createCheckRunner(fixtureRoot, () => { launched = true; throw new Error("A dirty document must block this command."); });
+      const server = createCmsServer(fixtureRoot, runner);
+      server.listen(0, "127.0.0.1");
+      await once(server, "listening");
+      try {
+        const address = server.address();
+        if (!address || typeof address === "string") throw new Error("Expected an IPv4 listener.");
+        const base = `http://127.0.0.1:${address.port}`;
+        const token = (await (await fetch(`${base}/api/session`)).json()).token;
+        const response = await fetch(`${base}/api/checks/start`, {
+          method: "POST", headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token },
+          body: JSON.stringify({ id: "local-guidance-verify" }),
+        });
+        expect(response.status).toBe(423);
+        expect(launched).toBe(false);
+        expect(await readFile(recheck, "utf8")).toBe("Another editor's recheck notes.\n");
+      } finally {
+        server.close();
+        await once(server, "close");
+      }
+    } finally {
+      if (!resolve(fixtureRoot).startsWith(`${resolve(tmpdir())}${sep}`) || !basename(fixtureRoot).startsWith("nihonest-cms-test-")) {
+        throw new Error("Refusing to remove a fixture outside the temporary directory.");
+      }
+      await rm(fixtureRoot, { recursive: true, force: true });
+    }
   });
 
   it("saves one body in an isolated fixture and rejects stale or invalid edits", async () => {
@@ -132,6 +302,12 @@ describe("local CMS foundation", () => {
       const original = await readFile(resolve(root, relativePath), "utf8");
       await writeFile(resolve(fixtureRoot, relativePath), original);
       const detail = (await readArticleCatalog(fixtureRoot)).details.get(articleId)!;
+      await expect(saveArticleBody(fixtureRoot, articleId, {
+        expectedRevision: detail.summary.revision,
+        body: "Invalid inline {value} expression.",
+        updatedAt: detail.metadata.updatedAt,
+      })).rejects.toMatchObject({ status: 422 });
+      expect(await readFile(resolve(fixtureRoot, relativePath), "utf8")).toBe(original);
       const revisedBody = `${detail.body.trimEnd()}\n\nA CMS fixture sentence.\n`;
       const edit = { expectedRevision: detail.summary.revision, body: revisedBody, updatedAt: detail.metadata.updatedAt };
       const saved = await saveArticleBody(fixtureRoot, articleId, edit);
@@ -142,7 +318,7 @@ describe("local CMS foundation", () => {
       expect(written.slice(0, written.indexOf("};") + 2)).toBe(original.slice(0, original.indexOf("};") + 2));
       await expect(saveArticleBody(fixtureRoot, articleId, edit)).rejects.toMatchObject({ status: 409 });
       expect(await readFile(resolve(fixtureRoot, relativePath), "utf8")).toBe(written);
-      expect(() => previewArticleBody("<script />")).toThrow(CmsEditError);
+      await expect(previewArticleBody("<script />")).rejects.toBeInstanceOf(CmsEditError);
       // The server's Git session needs a checkout; commit the fixture so its article starts clean.
       for (const args of [["init", "-q"], ["config", "user.email", "cms-test@example.invalid"], ["config", "user.name", "CMS test"],
         ["config", "core.autocrlf", "false"], ["add", "."], ["commit", "-q", "-m", "fixture"]]) {

@@ -157,8 +157,9 @@ export async function gitFileDiff(projectRoot: string, requestedPath: unknown): 
   if (!entry) throw new CmsEditError("That file has no uncommitted changes.", 404);
   let diff: string;
   if (entry.code === "??") {
-    const absolute = resolve(worktree, entry.path);
-    if (!absolute.startsWith(`${worktree}${sep}`) || !(await stat(absolute)).isFile()) throw new CmsEditError("Not a file in this worktree.", 403);
+    // Resolve links before the containment check so an untracked symlink cannot expose a file outside the worktree.
+    const [absolute, root] = await Promise.all([realpath(resolve(worktree, entry.path)), realpath(worktree)]);
+    if (!absolute.startsWith(`${root}${sep}`) || !(await stat(absolute)).isFile()) throw new CmsEditError("Not a file in this worktree.", 403);
     diff = `New untracked file ${entry.path}:\n\n${await readFile(absolute, "utf8")}`;
   } else {
     diff = await git(worktree, ["diff", "--no-color", "--no-ext-diff", "HEAD", "--", entry.path]);

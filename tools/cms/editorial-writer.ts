@@ -1,3 +1,4 @@
+import { withCmsFileLock } from "./write-locks";
 /** Guarded article status changes and exact-revision human approvals. */
 import { createHash, randomUUID } from "node:crypto";
 import { link, mkdir, open, readFile, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
@@ -74,22 +75,24 @@ function changeMetadata(original: string, id: string, status: ArticleMetadata["s
 }
 
 async function atomicReplace(projectRoot: string, id: string, target: string, original: string, next: string, expectedRevision: string) {
-  await guardCmsWrite(projectRoot, target);
-  const tempDirectory = await localTempDirectory(projectRoot);
-  const temporaryPath = join(tempDirectory, `${id}-${randomUUID()}.tmp`);
-  try {
-    const handle = await open(temporaryPath, "wx", (await stat(target)).mode);
-    try { await handle.writeFile(next, "utf8"); await handle.sync(); }
-    finally { await handle.close(); }
-    if (articleSourceRevision(await readFile(target, "utf8")) !== expectedRevision) {
-      throw new CmsEditError("The article changed during saving. Refresh before editing again.", 409);
+  return withCmsFileLock(target, async () => {
+    await guardCmsWrite(projectRoot, target);
+    const tempDirectory = await localTempDirectory(projectRoot);
+    const temporaryPath = join(tempDirectory, `${id}-${randomUUID()}.tmp`);
+    try {
+      const handle = await open(temporaryPath, "wx", (await stat(target)).mode);
+      try { await handle.writeFile(next, "utf8"); await handle.sync(); }
+      finally { await handle.close(); }
+      if (articleSourceRevision(await readFile(target, "utf8")) !== expectedRevision) {
+        throw new CmsEditError("The article changed during saving. Refresh before editing again.", 409);
+      }
+      await rename(temporaryPath, target);
+    } finally {
+      await rm(temporaryPath, { force: true });
     }
-    await rename(temporaryPath, target);
-  } finally {
-    await rm(temporaryPath, { force: true });
-  }
-  await noteCmsWrite(projectRoot, target);
-  return { changed: next !== original, revision: articleSourceRevision(next) };
+    await noteCmsWrite(projectRoot, target);
+    return { changed: next !== original, revision: articleSourceRevision(next) };
+  });
 }
 
 export async function changeArticleStatus(projectRoot: string, id: string, input: StatusChange) {
@@ -97,9 +100,14 @@ export async function changeArticleStatus(projectRoot: string, id: string, input
     throw new CmsEditError("Use the human review action to mark an article reviewed.", 422);
   }
   const { detail, target, original } = await currentArticle(projectRoot, id, input.expectedRevision);
-  if (detail.metadata.status === input.status) return { changed: false, revision: input.expectedRevision };
-  const next = changeMetadata(original, id, input.status);
-  return atomicReplace(projectRoot, id, target, original, next, input.expectedRevision);
+  return withCmsFileLock(target, async () => {
+    if (articleSourceRevision(await readFile(target, "utf8")) !== input.expectedRevision) {
+      throw new CmsEditError("The article changed while waiting to save. Refresh.", 409);
+    }
+    if (detail.metadata.status === input.status) return { changed: false, revision: input.expectedRevision };
+    const next = changeMetadata(original, id, input.status);
+    return atomicReplace(projectRoot, id, target, original, next, input.expectedRevision);
+  });
 }
 
 export async function approveArticleReview(projectRoot: string, id: string, input: ReviewApproval) {
@@ -117,57 +125,62 @@ export async function approveArticleReview(projectRoot: string, id: string, inpu
     throw new CmsEditError("Describe the review, approval, and at least one validation. Source review IDs must be valid.", 422);
   }
   const { detail, target, original } = await currentArticle(projectRoot, id, input.expectedRevision);
-  if (detail.metadata.status === "verified") throw new CmsEditError("This article is already reviewed. Move it to editorial review before approving a new revision.", 422);
-  if (detail.metadata.status !== "needs-review") throw new CmsEditError("Move the article to editorial review before marking it reviewed.", 422);
-  if (input.reviewedAt < detail.metadata.updatedAt) throw new CmsEditError("Review date cannot precede the article update date.", 422);
-  for (const sourceId of input.sourceReviewIds) {
-    const sourcePath = resolve(projectRoot, "content/source-reviews", `${sourceId}.json`);
-    try {
-      const contentDirectory = await realpath(resolve(projectRoot, "content"));
-      const sourceDirectory = await realpath(resolve(projectRoot, "content/source-reviews"));
-      if (sourceDirectory !== join(contentDirectory, "source-reviews")) throw new Error("Source review directory escapes content.");
-      if ((await realpath(sourcePath)) !== join(sourceDirectory, `${sourceId}.json`)) throw new Error("Source review path escapes its directory.");
-      const source = sourceReviewRecordSchema.parse(JSON.parse(await readFile(sourcePath, "utf8")));
-      if (source.status !== "resolved") throw new Error("Source review is not resolved.");
-    } catch { throw new CmsEditError(`Linked source review ${sourceId} is missing or unresolved.`, 422); }
-  }
-  const next = changeMetadata(original, id, "verified", input.reviewedAt);
-  const nextRevision = articleSourceRevision(next);
-  const nextEditorialRevision = editorialRevision(next);
-  const record = createEditorialReviewRecord({
-    target: { kind: "article", id, status: "verified", revision: nextEditorialRevision,
-      updatedAt: detail.metadata.updatedAt, lastReviewedAt: input.reviewedAt },
-    reviewedAt: input.reviewedAt,
-    changeNote: input.changeNote.trim(),
-    approvalNote: input.approvalNote.trim(),
-    validationPerformed: input.validationPerformed.map((item) => item.trim()),
-    sourceReviewIds: input.sourceReviewIds,
-    recordedAt: new Date().toISOString(),
-  });
-  const reviewDirectory = resolve(projectRoot, "content/editorial-reviews");
-  const existing = await loadEditorialReviewRecords(reviewDirectory);
-  if (existing.some((item) => item.id === record.id)) throw new CmsEditError("An approval for this exact revision already exists.", 409);
-  await mkdir(reviewDirectory, { recursive: true });
-  const contentDirectory = await realpath(resolve(projectRoot, "content"));
-  if (await realpath(reviewDirectory) !== join(contentDirectory, "editorial-reviews")) {
-    throw new CmsEditError("Approval directory escapes the canonical content directory.", 403);
-  }
-  const recordPath = join(reviewDirectory, `${record.id}.json`);
-  const temporaryRecord = join(await localTempDirectory(projectRoot), `${record.id}-${randomUUID()}.tmp`);
-  try {
-    await writeFile(temporaryRecord, `${JSON.stringify(record, null, 2)}\n`, { flag: "wx" });
-    await atomicReplace(projectRoot, id, target, original, next, input.expectedRevision);
-    try {
-      // Hard-link creation is atomic and refuses to replace an existing approval.
-      await link(temporaryRecord, recordPath);
-      await noteCmsWrite(projectRoot, recordPath);
-    } catch (error) {
-      if (articleSourceRevision(await readFile(target, "utf8")) === nextRevision) {
-        await atomicReplace(projectRoot, id, target, next, original, nextRevision);
-      }
-      throw error;
+  return withCmsFileLock(target, async () => {
+    if (articleSourceRevision(await readFile(target, "utf8")) !== input.expectedRevision) {
+      throw new CmsEditError("The article changed while waiting to approve. Refresh.", 409);
     }
-  } finally { await rm(temporaryRecord, { force: true }); }
-  return { changed: true, revision: nextRevision, approvalRevision: nextEditorialRevision,
-    approvalRecord: `content/editorial-reviews/${record.id}.json` };
+    if (detail.metadata.status === "verified") throw new CmsEditError("This article is already reviewed. Move it to editorial review before approving a new revision.", 422);
+    if (detail.metadata.status !== "needs-review") throw new CmsEditError("Move the article to editorial review before marking it reviewed.", 422);
+    if (input.reviewedAt < detail.metadata.updatedAt) throw new CmsEditError("Review date cannot precede the article update date.", 422);
+    for (const sourceId of input.sourceReviewIds) {
+      const sourcePath = resolve(projectRoot, "content/source-reviews", `${sourceId}.json`);
+      try {
+        const contentDirectory = await realpath(resolve(projectRoot, "content"));
+        const sourceDirectory = await realpath(resolve(projectRoot, "content/source-reviews"));
+        if (sourceDirectory !== join(contentDirectory, "source-reviews")) throw new Error("Source review directory escapes content.");
+        if ((await realpath(sourcePath)) !== join(sourceDirectory, `${sourceId}.json`)) throw new Error("Source review path escapes its directory.");
+        const source = sourceReviewRecordSchema.parse(JSON.parse(await readFile(sourcePath, "utf8")));
+        if (source.status !== "resolved") throw new Error("Source review is not resolved.");
+      } catch { throw new CmsEditError(`Linked source review ${sourceId} is missing or unresolved.`, 422); }
+    }
+    const next = changeMetadata(original, id, "verified", input.reviewedAt);
+    const nextRevision = articleSourceRevision(next);
+    const nextEditorialRevision = editorialRevision(next);
+    const record = createEditorialReviewRecord({
+      target: { kind: "article", id, status: "verified", revision: nextEditorialRevision,
+        updatedAt: detail.metadata.updatedAt, lastReviewedAt: input.reviewedAt },
+      reviewedAt: input.reviewedAt,
+      changeNote: input.changeNote.trim(),
+      approvalNote: input.approvalNote.trim(),
+      validationPerformed: input.validationPerformed.map((item) => item.trim()),
+      sourceReviewIds: input.sourceReviewIds,
+      recordedAt: new Date().toISOString(),
+    });
+    const reviewDirectory = resolve(projectRoot, "content/editorial-reviews");
+    const existing = await loadEditorialReviewRecords(reviewDirectory);
+    if (existing.some((item) => item.id === record.id)) throw new CmsEditError("An approval for this exact revision already exists.", 409);
+    await mkdir(reviewDirectory, { recursive: true });
+    const contentDirectory = await realpath(resolve(projectRoot, "content"));
+    if (await realpath(reviewDirectory) !== join(contentDirectory, "editorial-reviews")) {
+      throw new CmsEditError("Approval directory escapes the canonical content directory.", 403);
+    }
+    const recordPath = join(reviewDirectory, `${record.id}.json`);
+    const temporaryRecord = join(await localTempDirectory(projectRoot), `${record.id}-${randomUUID()}.tmp`);
+    try {
+      await writeFile(temporaryRecord, `${JSON.stringify(record, null, 2)}\n`, { flag: "wx" });
+      await atomicReplace(projectRoot, id, target, original, next, input.expectedRevision);
+      try {
+        // Hard-link creation is atomic and refuses to replace an existing approval.
+        await link(temporaryRecord, recordPath);
+        await noteCmsWrite(projectRoot, recordPath);
+      } catch (error) {
+        if (articleSourceRevision(await readFile(target, "utf8")) === nextRevision) {
+          await atomicReplace(projectRoot, id, target, next, original, nextRevision);
+        }
+        throw error;
+      }
+    } finally { await rm(temporaryRecord, { force: true }); }
+    return { changed: true, revision: nextRevision, approvalRevision: nextEditorialRevision,
+      approvalRecord: `content/editorial-reviews/${record.id}.json` };
+  });
 }

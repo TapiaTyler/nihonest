@@ -3,12 +3,12 @@ import { readdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
 import { runInNewContext } from "node:vm";
-import { sources } from "@/data/sources";
 import { currentJapaneseArticleTranslations } from "@/data/translations/ja/article-translations";
 import { articleMetadataSchema, type ArticleMetadata } from "@/domain/article/article";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
 import { articleComponentBlocks, parseArticleMarkdown, type ArticleBlock } from "@/domain/article/article-blocks";
 import { articleSourceRevision } from "@/lib/content/content-bundle";
+import { knownSourceById } from "./known-sources";
 
 export type ArticleSummary = Readonly<{
   id: string;
@@ -45,7 +45,6 @@ export type ArticleCatalog = Readonly<{
 }>;
 
 const translationByArticle = new Map(currentJapaneseArticleTranslations.map((artifact) => [artifact.contentId, artifact]));
-const sourceById = new Map(sources.map((source) => [source.id, source]));
 
 /** Re-read files on each request so the workspace never displays a stale in-memory catalog. */
 export async function readArticleCatalog(projectRoot: string): Promise<ArticleCatalog> {
@@ -102,7 +101,7 @@ export async function readArticleCatalog(projectRoot: string): Promise<ArticleCa
       body,
       blocks,
       componentTags: articleComponentBlocks,
-      sources: metadata.sourceIds.map((id) => sourceById.get(id) ?? { id, title: "Unknown source", organization: "", url: "" }),
+      sources: metadata.sourceIds.map((id) => knownSourceById(id) ?? { id, title: "Unknown source", organization: "", url: "" }),
       outboundRelationships: metadata.relationships.map((relationship) => ({
         id: relationship.articleId,
         title: titleById.get(relationship.articleId) ?? relationship.articleId,
