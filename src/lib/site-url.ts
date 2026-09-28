@@ -1,5 +1,8 @@
-// Production URL metadata stays opt-in until the hosted-integration gate; local builds must never imply that localhost is the public canonical host.
-const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+import { readPublicSiteOrigin } from "@/lib/config/deployment-config";
 
-export const hasConfiguredPublicSiteUrl = Boolean(configuredSiteUrl);
-export const siteUrl = new URL(configuredSiteUrl ?? "http://localhost:3000");
+// Production URL metadata stays opt-in until the hosted-integration gate; local builds must never imply that localhost is the public canonical host.
+// The shared reader rejects credentials, paths, queries, and fragments, so only the normalized origin reaches metadata and the sitemap.
+const configuredSiteOrigin = readPublicSiteOrigin({ NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL });
+
+export const hasConfiguredPublicSiteUrl = Boolean(configuredSiteOrigin);
+export const siteUrl = new URL(configuredSiteOrigin ?? "http://localhost:3000");

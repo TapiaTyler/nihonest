@@ -1,29 +1,11 @@
 import "server-only";
-import { z } from "zod";
+import { ConfigurationError, readEmailDeliveryConfig, type EmailDeliveryConfig } from "@/lib/config/deployment-config";
 
-const emailDeliveryConfigSchema = z.discriminatedUnion("enabled", [
-  z.object({ enabled: z.literal(false) }),
-  z.object({
-    enabled: z.literal(true),
-    provider: z.literal("amazon-ses"),
-    awsRegion: z.string().trim().min(1),
-    fromName: z.string().trim().min(1).max(80),
-    fromAddress: z.email(),
-    siteOrigin: z.url().refine((value) => value.startsWith("https://")),
-  }),
-]);
-
-export type EmailDeliveryConfig = z.infer<typeof emailDeliveryConfigSchema>;
+export type { EmailDeliveryConfig };
 
 /** Email remains fail-closed until every production-only setting is explicitly present. */
 export function getEmailDeliveryConfig(): EmailDeliveryConfig {
-  if (process.env.EMAIL_DELIVERY_ENABLED !== "true") return { enabled: false };
-  return emailDeliveryConfigSchema.parse({
-    enabled: true,
-    provider: process.env.EMAIL_PROVIDER,
-    awsRegion: process.env.AWS_REGION,
-    fromName: process.env.EMAIL_FROM_NAME,
-    fromAddress: process.env.EMAIL_FROM_ADDRESS,
-    siteOrigin: process.env.NEXT_PUBLIC_SITE_URL,
-  });
+  const { value, issues } = readEmailDeliveryConfig(process.env);
+  if (!value) throw new ConfigurationError("Email delivery is enabled but its configuration is incomplete", issues);
+  return value;
 }
