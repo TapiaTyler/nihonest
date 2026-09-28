@@ -13,7 +13,8 @@ vi.mock("./structured-writer", async (original) => ({
 const { createArticle, planArticleCreation } = await import("./article-creator");
 const root = resolve(import.meta.dirname, "../..");
 
-describe("CMS article creation rollback", () => {
+// Fixtures copy the article catalog and run Git, which can exceed the 5-second default under full-suite load.
+describe("CMS article creation rollback", { timeout: 30_000 }, () => {
   it("removes the new MDX file when the registry write fails", async () => {
     const fixtureRoot = await mkdtemp(join(tmpdir(), "nihonest-cms-test-"));
     try {

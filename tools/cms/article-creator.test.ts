@@ -40,7 +40,8 @@ export const articleFields = (id: string, sourceIds: string[] = ["jma-emergency-
   body: "## First section\n\nThe fixture body links to [a guide](/articles/preparing-for-disasters-and-evacuation-in-japan).",
 });
 
-describe("CMS article and source creation", () => {
+// Fixtures copy the article catalog and run Git, which can exceed the 5-second default under full-suite load.
+describe("CMS article and source creation", { timeout: 30_000 }, () => {
   it("creates an official source, then an article that cites it, without touching surrounding source", async () => {
     const fixtureRoot = await fixture();
     try {

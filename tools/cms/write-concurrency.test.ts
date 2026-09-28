@@ -16,8 +16,10 @@ const repo = resolve(import.meta.dirname, "../..");
 const today = new Date().toISOString().slice(0, 10);
 const registry = "src/lib/content/article-registry/transport-safety-and-daily-life.ts";
 
+// Retry once: under parallel test load on Windows, antivirus scanning new objects can briefly deny Git's writes.
 function git(root: string, ...args: string[]) {
-  execFileSync("git", args, { cwd: root, stdio: "ignore" });
+  try { execFileSync("git", args, { cwd: root, stdio: "ignore" }); }
+  catch { execFileSync("git", args, { cwd: root, stdio: "ignore" }); }
 }
 
 async function fixture() {
@@ -29,7 +31,9 @@ async function fixture() {
   git(root, "config", "user.email", "cms-test@example.invalid");
   git(root, "config", "user.name", "CMS concurrency test");
   git(root, "config", "core.autocrlf", "false");
-  git(root, "add", ".");
+  // Commit only the modules the tests write; new article files are created during the session, and a small
+  // commit avoids the parallel-load failures a full copy of the article catalog caused.
+  git(root, "add", "src");
   git(root, "commit", "-q", "-m", "fixture baseline");
   await startGitSession(root);
   return root;
@@ -53,7 +57,8 @@ const articleFields = (id: string) => ({
   contentType: "guide", status: "draft", body: "## Fixture section\n\nInitial body.",
 });
 
-describe("CMS write concurrency", () => {
+// Fixtures copy the article catalog and run Git, which can exceed the 5-second default under full-suite load.
+describe("CMS write concurrency", { timeout: 30_000 }, () => {
   it("keeps an approval bound to the winning revision when a status change competes", async () => {
     const root = await fixture();
     try {

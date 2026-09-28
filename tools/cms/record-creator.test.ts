@@ -46,7 +46,8 @@ const termFields = (id: string) => ({
   commonContext: "Appears only in automated tests.", topicIds: ["banking"], relatedArticleIds: [articleId], status: "draft",
 });
 
-describe("CMS record creation", () => {
+// Fixtures copy the article catalog and run Git, which can exceed the 5-second default under full-suite load.
+describe("CMS record creation", { timeout: 30_000 }, () => {
   it("previews and appends a FAQ and a glossary term without touching the surrounding source", async () => {
     const fixtureRoot = await fixture();
     try {
