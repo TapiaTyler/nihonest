@@ -70,6 +70,19 @@ export function getFaqSearchTranslations(): readonly FaqSearchTranslation[] {
   })).filter(({ question, summary }) => Boolean(question && summary));
 }
 
+/** Localized text for one glossary term, keyed by locale: a translated name (future locales) and short definition. */
+export type LocalizedGlossaryText = Readonly<Record<string, Readonly<{ name?: string; shortDefinition?: string }>>>;
+
+/** Only active artifacts are used, so a term whose English changed shows English instead of an outdated definition. */
+export function getLocalizedGlossaryText(termId: string): LocalizedGlossaryText {
+  const result: Record<string, { name?: string; shortDefinition?: string }> = {};
+  for (const artifact of getActiveTranslations(japaneseGlossaryTranslations)) {
+    if (artifact.contentId !== termId || !artifact.fields["short-definition"]) continue;
+    result[artifact.targetLocale] = { shortDefinition: artifact.fields["short-definition"] };
+  }
+  return result;
+}
+
 export function getGlossarySearchTranslations(): readonly GlossarySearchTranslation[] {
   return getActiveTranslations(japaneseGlossaryTranslations).map((artifact) => ({
     contentId: artifact.contentId,

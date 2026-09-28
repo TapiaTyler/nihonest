@@ -26,7 +26,8 @@ describe("LocalGuidancePanel", () => {
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
     expect(screen.getByRole("heading", { name: "Registering an address in Nagoya" })).toBeInTheDocument();
     expect(screen.getByText(/designated city · Aichi/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Nagoya City: Moving procedures/i })).toHaveAttribute("lang", "ja");
+    // English readers see English source names without a language override.
+    expect(screen.getByRole("link", { name: /Nagoya City: Moving procedures/i })).not.toHaveAttribute("lang");
   });
 
   it("shows a linked municipality without replacing the saved location", () => {
@@ -169,6 +170,29 @@ describe("LocalGuidancePanel", () => {
       expect(screen.getByRole("option", { name: "名古屋市" })).toBeInTheDocument();
       expect(screen.getByText(/政令指定都市 · 愛知県/)).toBeInTheDocument();
       expect(screen.getByText(/名古屋市は区に分かれています/)).toBeInTheDocument();
+      // Sources show the organization's Japanese name; a title without a recorded Japanese title stays English, marked as English.
+      const sourceLink = screen.getAllByRole("link", { name: /名古屋市：/ })[0]!;
+      expect(within(sourceLink).getByText("名古屋市")).toHaveAttribute("lang", "ja");
+    });
+
+    it("shows Japanese general advice for a location without researched guidance, or English with a note", async () => {
+      window.localStorage.setItem(contentLocaleStorageKey, "ja");
+      window.localStorage.setItem(localGuidanceLocationStorageKey, "tokyo");
+      const props = { articleId: "registering-your-address-after-arrival", options: getLocalGuidanceForArticle("registering-your-address-after-arrival"), locations: getSelectableLocalGuidanceLocations() };
+      const { unmount } = render(
+        <ContentLocaleProvider>
+          <LocalGuidancePanel {...props} japaneseGeneralAdvice={{ title: "住所地の転入手続きを確認する", steps: ["公式ページを探してください。", "受付時間を確認してください。"] }} />
+        </ContentLocaleProvider>,
+      );
+      const heading = await screen.findByRole("heading", { name: "住所地の転入手続きを確認する" });
+      expect(heading).not.toHaveAttribute("lang");
+      expect(screen.getByText("公式ページを探してください。")).toBeInTheDocument();
+      expect(screen.getByText(/機械翻訳したもの/)).toBeInTheDocument();
+      expect(screen.queryByText("この一般的な手順は英語のみです。")).not.toBeInTheDocument();
+      unmount();
+      render(<ContentLocaleProvider><LocalGuidancePanel {...props} /></ContentLocaleProvider>);
+      expect(await screen.findByRole("heading", { name: "Check the moving-in procedure for your address" })).toHaveAttribute("lang", "en");
+      expect(screen.getByText("この一般的な手順は英語のみです。")).toBeInTheDocument();
     });
 
     it("keeps English guidance when no current Japanese exists", async () => {

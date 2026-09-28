@@ -37,18 +37,36 @@ describe("PrefectureFinder", () => {
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
   });
 
-  it("shows an explicit local coverage gap and Japanese interface fallback", () => {
+  it("shows an explicit local coverage gap in Japanese", () => {
     const unresearched = data.prefectures[0];
     const locationsWithoutLocalResearch = data.municipalities.filter(({ prefectureId }) => prefectureId !== unresearched.id);
-    render(<PrefectureFinder locale="ja" {...data} municipalities={locationsWithoutLocalResearch} />);
-    expect(screen.getByText(/currently in English/)).toBeInTheDocument();
-    fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: unresearched.id } });
-    expect(screen.queryByText(/does not yet have researched local supplements/)).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: new RegExp(unresearched.names.en) })).toHaveTextContent(unresearched.names.ja);
-    expect(screen.getByText(/Prefecture-wide procedures for these articles have not been researched/)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "National Health Insurance" }).map((link) => link.getAttribute("href"))).toContain(`/articles/joining-national-health-insurance?local=${unresearched.id}#local-guidance-heading`);
-    // No municipality there has researched guidance, so no municipality selector is offered.
-    expect(screen.queryByRole("combobox", { name: "Choose a municipality or ward" })).not.toBeInTheDocument();
+    const { container } = render(<PrefectureFinder locale="ja" {...data} municipalities={locationsWithoutLocalResearch} />);
+    expect(container.querySelector("section")).toHaveAttribute("lang", "ja");
+    expect(screen.queryByText(/currently in English/)).not.toBeInTheDocument();
+    const select = screen.getByRole("combobox", { name: "都道府県を選択" });
+    expect(within(select).getByRole("option", { name: unresearched.names.ja })).toHaveValue(unresearched.id);
+    fireEvent.change(select, { target: { value: unresearched.id } });
+    expect(screen.getByRole("heading", { name: `選択中の都道府県：${unresearched.names.ja}` })).toBeInTheDocument();
+    expect(screen.getByText(/都道府県全体の手続きはまだ調査していません/)).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "国民健康保険" }).map((link) => link.getAttribute("href"))).toContain(`/articles/joining-national-health-insurance?local=${unresearched.id}#local-guidance-heading`);
+    expect(screen.queryByRole("combobox", { name: "市区町村を選択" })).not.toBeInTheDocument();
+    expect(screen.getByText("日本の都道府県地図")).toBeInTheDocument();
+  });
+
+  it("names municipalities, Tokyo areas, dates, and translated supplements in Japanese", () => {
+    const supplement = data.coverage.flatMap(({ municipalities }) => municipalities).find(({ id }) => id === "jp-13104")!.supplements[0]!;
+    render(<PrefectureFinder locale="ja" {...data} japaneseSupplementTitles={{ [supplement.id]: "新宿区での住所の登録" }} />);
+    fireEvent.change(screen.getByRole("combobox", { name: "都道府県を選択" }), { target: { value: "jp-13000" } });
+    const municipalitySelect = screen.getByRole("combobox", { name: "市区町村を選択" });
+    expect(within(municipalitySelect).getByRole("option", { name: "新宿区" })).toHaveValue("jp-13104");
+    expect(municipalitySelect.querySelector("optgroup")).toHaveAttribute("label", "特別区");
+    fireEvent.change(municipalitySelect, { target: { value: "jp-13104" } });
+    expect(screen.getByText(/これらの補足は新宿区だけを対象/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "新宿区での住所の登録" })).not.toHaveAttribute("lang");
+    // Supplements without a current translation keep their English title, marked as English.
+    const untranslated = screen.getAllByRole("link").find((link) => link.getAttribute("lang") === "en");
+    expect(untranslated).toBeDefined();
+    expect(screen.getAllByText(/出典の最終確認日：\d{4}年\d{1,2}月\d{1,2}日/).length).toBeGreaterThan(0);
   });
 
   it("uses the same ephemeral selection for map and list, including keyboard selection", () => {

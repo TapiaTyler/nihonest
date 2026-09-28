@@ -1,13 +1,23 @@
 "use client";
 
-import { useId, useState } from "react";
+import { createContext, useContext, useId, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { searchPrefectures, type FinderPrefecture } from "@/domain/geography/prefecture";
-import { groupMunicipalityOptions } from "@/domain/geography/tokyo-areas";
+import { groupMunicipalityOptions, tokyoAreas } from "@/domain/geography/tokyo-areas";
 import type { FinderCoverage, FinderMunicipality } from "@/lib/content/prefecture-finder";
 import { prefectureGeneralGuides, prefectureNationalGuides } from "@/lib/content/prefecture-finder";
-import { prefectureFinderMessages as message } from "./prefecture-finder-messages";
+import { prefectureFinderMessages } from "./prefecture-finder-messages";
 import { PrefectureMap } from "./prefecture-map";
+
+/**
+ * Current Japanese supplement titles by supplement ID. The Japanese article body renders the finder on the client,
+ * so the article page (a server component, where translations are revision-checked) provides them here.
+ */
+const JapaneseSupplementTitlesContext = createContext<Readonly<Record<string, string>>>({});
+
+export function JapaneseSupplementTitlesProvider({ titles, children }: Readonly<{ titles: Readonly<Record<string, string>>; children: ReactNode }>) {
+  return <JapaneseSupplementTitlesContext.Provider value={titles}>{children}</JapaneseSupplementTitlesContext.Provider>;
+}
 
 const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
 const linkClass = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
@@ -17,19 +27,33 @@ export function PrefectureFinder({
   prefectures,
   municipalities,
   coverage,
+  japaneseSupplementTitles: providedTitles,
 }: Readonly<{
   locale: "en" | "ja";
   prefectures: readonly FinderPrefecture[];
   municipalities: readonly FinderMunicipality[];
   coverage: readonly FinderCoverage[];
+  /** Current Japanese supplement titles by supplement ID; supplements without one keep their English title. */
+  japaneseSupplementTitles?: Readonly<Record<string, string>>;
 }>) {
+  const contextTitles = useContext(JapaneseSupplementTitlesContext);
+  const japaneseSupplementTitles = providedTitles ?? contextTitles;
+  const japanese = locale === "ja";
+  const message = prefectureFinderMessages[locale];
+  const prefectureLabel = (names: FinderPrefecture["names"]) => (japanese ? names.ja : `${names.en} · ${names.ja}`);
+  const municipalityName = (municipality: FinderMunicipality) => (japanese ? municipality.japaneseName : municipality.name);
+  const areaLabel = (label: string) => (japanese ? tokyoAreas.find(({ en }) => en === label)?.ja ?? label : label);
+  const formatDate = (date: string) => new Intl.DateTimeFormat(japanese ? "ja-JP" : "en", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
   const searchId = useId();
   const selectId = useId();
   const municipalityId = useId();
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selectedMunicipalityId, setSelectedMunicipalityId] = useState("");
-  const matches = searchPrefectures(prefectures, query);
+  // Japanese readers expect the official order by prefecture code (北海道 to 沖縄県), not English alphabetical order.
+  const matches = locale === "ja"
+    ? [...searchPrefectures(prefectures, query)].sort((left, right) => left.code.localeCompare(right.code))
+    : searchPrefectures(prefectures, query);
   const selected = prefectures.find(({ id }) => id === selectedId);
   const selectedIsHidden = Boolean(selected && !matches.some(({ id }) => id === selectedId));
   const localCoverage = coverage.find(({ prefectureId }) => prefectureId === selectedId);
@@ -40,11 +64,12 @@ export function PrefectureFinder({
   const municipalityCoverage = localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.id);
 
   return (
-    <section className="not-prose mt-8 rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby={`${searchId}-heading`} lang="en">
+    <section className="not-prose mt-8 rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby={`${searchId}-heading`} lang={locale}>
       <h3 id={`${searchId}-heading`} className="text-xl font-semibold text-slate-950">{message.heading}</h3>
 
       <div className="mt-4">
         <PrefectureMap
+          locale={locale}
           prefectures={prefectures}
           selectedId={selectedId}
           onSelect={(id) => {
@@ -53,7 +78,6 @@ export function PrefectureFinder({
           }}
         />
         <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-700">{message.intro}</p>
-        {locale === "ja" && <p className="mt-2 text-sm leading-6 text-slate-700">{message.fallbackNotice}</p>}
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-semibold text-slate-900" htmlFor={searchId}>{message.searchLabel}</label>
@@ -64,8 +88,8 @@ export function PrefectureFinder({
             <label className="block text-sm font-semibold text-slate-900" htmlFor={selectId}>{message.selectLabel}</label>
             <select id={selectId} className={`app-select ${controlClass}`} value={selectedId} onChange={(event) => { setSelectedId(event.target.value); setSelectedMunicipalityId(""); }}>
               <option value="">{message.selectPlaceholder}</option>
-              {selectedIsHidden && selected && <option value={selected.id}>{selected.names.en} · {selected.names.ja}</option>}
-              {matches.map((prefecture) => <option key={prefecture.id} value={prefecture.id}>{prefecture.names.en} · {prefecture.names.ja}</option>)}
+              {selectedIsHidden && selected && <option value={selected.id}>{prefectureLabel(selected.names)}</option>}
+              {matches.map((prefecture) => <option key={prefecture.id} value={prefecture.id}>{prefectureLabel(prefecture.names)}</option>)}
             </select>
             {selected && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-teal-900 underline focus:outline-2 focus:outline-offset-2 focus:outline-teal-700" onClick={() => { setSelectedId(""); setSelectedMunicipalityId(""); }}>{message.clearSelection}</button>}
           </div>
@@ -75,15 +99,15 @@ export function PrefectureFinder({
 
       {selected && (
         <div className="mt-5 rounded-xl border border-teal-200 bg-white p-4">
-          <h4 className="text-lg font-semibold text-slate-950">{message.selected}: {selected.names.en} <span lang="ja">{selected.names.ja}</span></h4>
+          <h4 className="text-lg font-semibold text-slate-950">{message.selected}{japanese ? "：" : ": "}{japanese ? selected.names.ja : <>{selected.names.en} <span lang="ja">{selected.names.ja}</span></>}</h4>
           {selectedIsHidden && <p className="mt-1 text-sm text-slate-600">{message.filteredSelection}</p>}
           {municipalityOptions.length > 0 && <>
             <label className="mt-4 block text-sm font-semibold text-slate-900" htmlFor={municipalityId}>{message.municipalityLabel}</label>
             <select id={municipalityId} className={`app-select ${controlClass}`} value={selectedMunicipalityId} onChange={(event) => setSelectedMunicipalityId(event.target.value)}>
               <option value="">{message.municipalityPlaceholder}</option>
               {groupMunicipalityOptions(municipalityOptions, ({ code }) => code).map(({ label, options }) => {
-                const items = options.map((municipality) => <option key={municipality.id} value={municipality.id}>{municipality.name}</option>);
-                return label ? <optgroup key={label} label={label}>{items}</optgroup> : items;
+                const items = options.map((municipality) => <option key={municipality.id} value={municipality.id}>{municipalityName(municipality)}</option>);
+                return label ? <optgroup key={label} label={areaLabel(label)}>{items}</optgroup> : items;
               })}
               {/* Any value that matches no municipality shows the prefecture-wide starting points. */}
               <option value="other">{message.otherMunicipality}</option>
@@ -91,10 +115,10 @@ export function PrefectureFinder({
             <p className="mt-2 text-xs leading-5 text-slate-600">{message.municipalityScope}</p>
           </>}
           <h5 className="mt-4 font-semibold text-slate-900">{message.generalHeading}</h5>
-          <p className="mt-1 text-sm leading-6 text-slate-700">{selectedMunicipality ? message.municipalityNotice(selectedMunicipality.name) : message.generalNotice}</p>
+          <p className="mt-1 text-sm leading-6 text-slate-700">{selectedMunicipality ? message.municipalityNotice(municipalityName(selectedMunicipality)) : message.generalNotice}</p>
           <ul className="mt-2 grid list-inside list-disc gap-1 text-sm sm:grid-cols-2">
-            {prefectureGeneralGuides.map(({ articleId, title }) => (
-              <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}?local=${guidanceLocationId}#local-guidance-heading`}>{title}</Link></li>
+            {prefectureGeneralGuides.map(({ articleId, title, japaneseTitle }) => (
+              <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}?local=${guidanceLocationId}#local-guidance-heading`}>{japanese ? japaneseTitle : title}</Link></li>
             ))}
           </ul>
           {selectedMunicipality && (
@@ -102,18 +126,21 @@ export function PrefectureFinder({
               <h5 className="mt-4 font-semibold text-slate-900">{message.localHeading}</h5>
               {municipalityCoverage ? (
                 <>
-                  <p className="mt-1 text-sm leading-6 text-slate-700">{message.localPilot(selectedMunicipality.name)}</p>
-                  {selectedMunicipality.isDesignatedCity && <p className="mt-1 text-sm leading-6 text-slate-700">{message.wardNote(selectedMunicipality.name)}</p>}
+                  <p className="mt-1 text-sm leading-6 text-slate-700">{message.localPilot(municipalityName(selectedMunicipality))}</p>
+                  {selectedMunicipality.isDesignatedCity && <p className="mt-1 text-sm leading-6 text-slate-700">{message.wardNote(municipalityName(selectedMunicipality))}</p>}
                   <ul className="mt-2 list-inside list-disc space-y-1 text-sm leading-6">
-                    {municipalityCoverage.supplements.map((supplement) => (
+                    {municipalityCoverage.supplements.map((supplement) => {
+                      const japaneseTitle = japanese ? japaneseSupplementTitles[supplement.id] : undefined;
+                      return (
                       <li key={supplement.id}>
-                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${selectedMunicipality.id}#local-guidance-heading`}>{supplement.title}</Link>
-                        <span className="text-slate-600"> · {message.reviewStatus} · {message.checked}: {supplement.lastCheckedAt}</span>
+                        <Link className={linkClass} href={`/articles/${supplement.articleId}?local=${selectedMunicipality.id}#local-guidance-heading`} lang={japanese && !japaneseTitle ? "en" : undefined}>{japaneseTitle ?? supplement.title}</Link>
+                        <span className="text-slate-600"> · {message.reviewStatus} · {message.checked}{japanese ? "：" : ": "}{formatDate(supplement.lastCheckedAt)}</span>
                       </li>
-                    ))}
+                      );
+                    })}
                   </ul>
                 </>
-              ) : <p className="mt-1 text-sm leading-6 text-slate-700">{message.localUnavailable(selectedMunicipality.name)}</p>}
+              ) : <p className="mt-1 text-sm leading-6 text-slate-700">{message.localUnavailable(municipalityName(selectedMunicipality))}</p>}
             </>
           )}
         </div>
@@ -122,7 +149,7 @@ export function PrefectureFinder({
       <div className="mt-5">
         <h4 className="font-semibold text-slate-900">{message.nationalHeading}</h4>
         <ul className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
-          {prefectureNationalGuides.map(({ articleId, title }) => <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}`}>{title}</Link></li>)}
+          {prefectureNationalGuides.map(({ articleId, title, japaneseTitle }) => <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}`}>{japanese ? japaneseTitle : title}</Link></li>)}
         </ul>
       </div>
     </section>

@@ -19,6 +19,10 @@ export const officialSourceSchema = z.object({
   url: z.url({ protocol: /^https$/ }),
   authorityLevel: authorityLevelSchema,
   language: z.enum(["en", "ja"]),
+  /** The page's own Japanese title, for Japanese-language sources; shown to Japanese readers in place of `title`. */
+  japaneseTitle: z.string().min(1).optional(),
+  /** The organization's official Japanese name; shown to Japanese readers in place of `organization`. */
+  japaneseOrganization: z.string().min(1).optional(),
   /** Records a successful reachability check, not substantive verification of the source's claims. */
   lastCheckedAt: isoDateSchema.optional(),
   /** Records when a human editor last reviewed the source's substance for dependent guidance. */

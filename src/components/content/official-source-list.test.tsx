@@ -31,6 +31,21 @@ describe("OfficialSourceList", () => {
     expect(sourceMetadata).toHaveTextContent("国の機関 · 英語");
   });
 
+  it("shows Japanese readers the page's Japanese title and the organization's Japanese name", async () => {
+    localStorage.setItem(contentLocaleStorageKey, "ja");
+    render(<ContentLocaleProvider><OfficialSourceList sources={[{ ...source, language: "ja", japaneseTitle: "見本の案内", japaneseOrganization: "見本庁" }]} /></ContentLocaleProvider>);
+    expect(await screen.findByText("見本の案内")).toHaveAttribute("lang", "ja");
+    expect(screen.getByText("見本庁")).toHaveAttribute("lang", "ja");
+    expect(screen.queryByText(/Sample guidance/)).not.toBeInTheDocument();
+  });
+
+  it("marks English titles as English for Japanese readers when no Japanese title is recorded", async () => {
+    localStorage.setItem(contentLocaleStorageKey, "ja");
+    render(<ContentLocaleProvider><OfficialSourceList sources={[{ ...source, language: "ja" }]} /></ContentLocaleProvider>);
+    expect(await screen.findByText("Sample guidance")).toHaveAttribute("lang", "en");
+    expect(screen.getByText("Sample Agency")).toHaveAttribute("lang", "en");
+  });
+
   it("shows long lists in batches of four", () => {
     const sources = Array.from({ length: 9 }, (_, index) => ({
       ...source,

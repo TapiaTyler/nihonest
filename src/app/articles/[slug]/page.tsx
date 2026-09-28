@@ -22,13 +22,15 @@ import {
   LocalizedArticleBody,
   LocalizedArticleHeading,
 } from "@/components/localization/localized-article";
-import { getArticleGroupSearchTranslations, getJapaneseArticleTranslation, getJourneyTranslations } from "@/lib/content/translations";
+import { getArticleGroupSearchTranslations, getJapaneseArticleTranslation, getJourneyTranslations, getLocalizedGlossaryText } from "@/lib/content/translations";
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
 import { InterfaceFormat, InterfaceText, LocalizedText } from "@/components/localization/interface-text";
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
-import { getJapaneseLocalGuidanceFields } from "@/lib/content/local-guidance-translations";
+import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields, getJapaneseSupplementTitles } from "@/lib/content/local-guidance-translations";
+import { localGuidanceSupplements } from "@/data/local-guidance";
+import { JapaneseSupplementTitlesProvider } from "@/components/content/prefecture-finder";
 import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
@@ -149,17 +151,19 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
         </header>
 
         <div className="mt-8">
-          <LocalizedArticleBody translation={japaneseTranslation}>
-            <Content />
-          </LocalizedArticleBody>
+          <JapaneseSupplementTitlesProvider titles={japaneseTranslation?.fields.body?.includes("japan-prefecture-finder") ? getJapaneseSupplementTitles(localGuidanceSupplements) : {}}>
+            <LocalizedArticleBody translation={japaneseTranslation}>
+              <Content />
+            </LocalizedArticleBody>
+          </JapaneseSupplementTitlesProvider>
         </div>
 
         <AnnotatedDocumentViewer key={`documents-${linkedLocalGuidanceId ?? "saved"}`} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
 
-        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} japaneseFields={getJapaneseLocalGuidanceFields(localGuidance.map(({ supplement }) => supplement))} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
+        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} japaneseFields={getJapaneseLocalGuidanceFields(localGuidance.map(({ supplement }) => supplement))} japaneseGeneralAdvice={getJapaneseGeneralLocalAdvice(metadata.id)} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
 
         <div className="mt-12">
-          <ArticleTerminology terms={glossaryTerms} />
+          <ArticleTerminology terms={glossaryTerms} localized={Object.fromEntries(glossaryTerms.map((term) => [term.id, getLocalizedGlossaryText(term.id)]))} />
         </div>
 
         {journeyContext && (

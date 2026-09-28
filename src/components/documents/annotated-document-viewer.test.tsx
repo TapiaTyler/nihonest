@@ -4,6 +4,8 @@ import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documen
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
 import { localGuidanceLocationStorageKey } from "@/lib/storage/local-guidance-location";
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import { AnnotatedDocumentViewer } from "./annotated-document-viewer";
 
 describe("AnnotatedDocumentViewer", () => {
@@ -103,5 +105,36 @@ describe("AnnotatedDocumentViewer", () => {
     expect(document.getElementById("local-guidance-prefecture")).toHaveValue("aichi");
     expect(document.getElementById("local-guidance-location")).toHaveValue("nagoya");
     expect(window.localStorage.getItem(localGuidanceLocationStorageKey)).toBe("nagoya");
+  });
+
+  it("shows Japanese interface text, document content, and dates to Japanese readers", async () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    try {
+      render(<ContentLocaleProvider><AnnotatedDocumentViewer families={getAnnotatedDocumentsForArticle("documents-received-when-entering-japan")} /></ContentLocaleProvider>);
+      expect(await screen.findByRole("heading", { name: "書類の見方" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "在留カード" })).toHaveAttribute("lang", "ja");
+      expect(screen.queryByText("Residence Card")).not.toBeInTheDocument();
+      expect(screen.getByText("2026年6月14日から")).toBeInTheDocument();
+      expect(screen.getAllByText(/架空の学習用の模式図です/)[0]).not.toHaveAttribute("lang");
+      expect(screen.getAllByRole("button", { name: "就労制限の有無の説明を表示" }).length).toBeGreaterThan(0);
+      expect(screen.getByText(/職名だけでは、就労が認められているかどうかは判断できません/)).toBeInTheDocument();
+      fireEvent.change(screen.getByLabelText("書類の版"), { target: { value: "issued-through-2026-06-13" } });
+      expect(screen.getByText("過去の版：")).toBeInTheDocument();
+      expect(screen.getByText("2026年6月13日までに交付")).toBeInTheDocument();
+    } finally {
+      window.localStorage.removeItem(contentLocaleStorageKey);
+    }
+  });
+
+  it("falls back to English content, marked as English, when a family's translation is stale", async () => {
+    window.localStorage.setItem(contentLocaleStorageKey, "ja");
+    try {
+      const [family] = getAnnotatedDocumentsForArticle("visa-and-status-of-residence-explained");
+      render(<ContentLocaleProvider><AnnotatedDocumentViewer families={[{ ...family!, japanese: undefined }]} /></ContentLocaleProvider>);
+      expect(await screen.findByRole("heading", { name: "書類の見方" })).toBeInTheDocument();
+      expect(screen.getByText(family!.description)).toHaveAttribute("lang", "en");
+    } finally {
+      window.localStorage.removeItem(contentLocaleStorageKey);
+    }
   });
 });

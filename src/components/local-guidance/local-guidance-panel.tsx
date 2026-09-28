@@ -1,5 +1,6 @@
 "use client";
 
+import { LocalizedSourceName } from "@/components/content/localized-source-name";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import type { ArticleLocalGuidance, SelectableLocalGuidanceLocation } from "@/lib/content/local-guidance";
 import type { LocalGuidanceJapaneseFields } from "@/lib/content/local-guidance-translations";
@@ -32,6 +33,7 @@ export function LocalGuidancePanel({
   articleId,
   options,
   japaneseFields = {},
+  japaneseGeneralAdvice,
   locations,
   linkedLocationId,
 }: {
@@ -39,6 +41,8 @@ export function LocalGuidancePanel({
   options: readonly ArticleLocalGuidance[];
   /** Current Japanese text by supplement ID; each missing field falls back to English. */
   japaneseFields?: Readonly<Record<string, LocalGuidanceJapaneseFields>>;
+  /** Current Japanese general advice for this article, shown for unresearched locations; English when absent. */
+  japaneseGeneralAdvice?: Readonly<{ title: string; steps: readonly string[] }>;
   locations: readonly SelectableLocalGuidanceLocation[];
   linkedLocationId?: string;
 }) {
@@ -68,6 +72,10 @@ export function LocalGuidancePanel({
     ? format("localGuidance.wardNote", { name: placeName(selectedLocation.geography.name, selectedLocation.geography.japaneseName) })
     : undefined;
   const generalAdvice = getGeneralLocalAdvice(articleId ?? options[0]?.supplement.articleId ?? "");
+  const generalTranslated = japanese && Boolean(japaneseGeneralAdvice);
+  const generalTitle = generalTranslated ? japaneseGeneralAdvice!.title : generalAdvice?.title;
+  const generalSteps = generalTranslated ? japaneseGeneralAdvice!.steps : generalAdvice?.steps ?? [];
+  const generalLang = japanese && !generalTranslated ? "en" : undefined;
   const [pendingPrefectureId, setPendingPrefectureId] = useState("");
   // "Other" is stored as the prefecture itself; this remembers that it was chosen, not just the prefecture.
   const [otherPrefectureId, setOtherPrefectureId] = useState("");
@@ -168,11 +176,11 @@ export function LocalGuidancePanel({
       ) : !selected && selectedLocation && generalAdvice ? (
         <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">{message("localGuidance.generalEyebrow")}</p>
-          <h3 className="mt-2 text-xl font-semibold text-slate-950" lang={japanese ? "en" : undefined}>{generalAdvice.title}</h3>
+          <h3 className="mt-2 text-xl font-semibold text-slate-950" lang={generalLang}>{generalTitle}</h3>
           <p className="mt-3 leading-7 text-slate-700">{format("localGuidance.generalIntro", { name: placeName(selectedLocation.geography.name, selectedLocation.geography.japaneseName) })}</p>
           {wardNote && <p className="mt-2 leading-7 text-slate-700">{wardNote}</p>}
-          {japanese && <p className="mt-2 text-sm leading-6 text-slate-600">{message("localGuidance.generalEnglishOnly")}</p>}
-          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-700" lang={japanese ? "en" : undefined}>{generalAdvice.steps.map((step) => <li key={step}>{step}</li>)}</ul>
+          {japanese && <p className="mt-2 text-sm leading-6 text-slate-600">{message(generalTranslated ? "localGuidance.machineTranslated" : "localGuidance.generalEnglishOnly")}</p>}
+          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-700" lang={generalLang}>{generalSteps.map((step) => <li key={step}>{step}</li>)}</ul>
         </div>
       ) : !selected ? (
         <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">{message("localGuidance.noResearch")}</p>
@@ -211,8 +219,8 @@ export function LocalGuidancePanel({
             <ul className="mt-3 space-y-2 text-sm">
               {selected.sources.map((source) => (
                 <li key={source.id}>
-                  <a href={source.url} target="_blank" rel="noreferrer" lang={source.language} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                    {source.organization}: {source.title}
+                  <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                    <LocalizedSourceName source={source} order="organization-first" />
                   </a>
                   <span className="ml-2 text-slate-500">({message(source.language === "en" ? "localGuidance.sourceEnglish" : "localGuidance.sourceJapanese")})</span>
                 </li>

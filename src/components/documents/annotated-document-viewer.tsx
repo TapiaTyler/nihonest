@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { documentLifecycleLabels } from "@/components/documents/annotated-document-labels";
+import { documentLifecycleMessageIds, documentText } from "@/components/documents/annotated-document-labels";
+import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { AnnotatedDocumentQuickNavigation } from "@/components/documents/annotated-document-quick-navigation";
 import { AnnotatedDocumentSelectors } from "@/components/documents/annotated-document-selectors";
@@ -15,6 +16,8 @@ import {
 
 /** Owns jurisdiction, version, callout, announcement, and cross-panel location state for one family. */
 function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: ArticleAnnotatedDocument; linkedLocationId?: string }>) {
+  const { locale, message, format } = useInterfaceMessages();
+  const content = documentText(family, locale);
   const savedLocationId = useSyncExternalStore(
     subscribeToLocalGuidanceLocation,
     getLocalGuidanceLocationSnapshot,
@@ -38,8 +41,12 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
   const [announcement, setAnnouncement] = useState("");
   const version = availableVersions.find(({ id }) => id === versionId) ?? defaultVersion;
   const selectionKey = jurisdictionVariant?.id ?? "general";
-  const issuer = jurisdictionVariant?.issuer ?? family.issuer;
-  const jurisdiction = jurisdictionVariant?.jurisdiction ?? family.jurisdiction;
+  const issuer = jurisdictionVariant
+    ? content.text(`variants.${jurisdictionVariant.id}.issuer`, jurisdictionVariant.issuer)
+    : content.text("issuer", family.issuer);
+  const jurisdiction = jurisdictionVariant
+    ? content.text(`variants.${jurisdictionVariant.id}.jurisdiction`, jurisdictionVariant.jurisdiction)
+    : content.text("jurisdiction", family.jurisdiction);
   const documentVersionKey = jurisdictionVariant ? `${family.id}-${selectionKey}-${version.id}` : `${family.id}-${version.id}`;
 
   function selectJurisdiction(nextVariant: (typeof sortedVariants)[number] | undefined) {
@@ -49,18 +56,24 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
     writeLocalGuidanceLocation(nextVariant.geographyId);
     setVersionId(nextVersion.id);
     setActiveFieldId(undefined);
-    setAnnouncement(`${nextVariant.label}, ${nextVersion.label}, selected. Local guidance on this page was updated.`);
+    setAnnouncement(format("documents.announceJurisdiction", {
+      variant: content.text(`variants.${nextVariant.id}.label`, nextVariant.label),
+      version: content.text(`${content.versionPath(nextVersion, nextVariant)}.label`, nextVersion.label),
+    }));
   }
 
   function selectVersion(nextVersion: typeof version) {
     setVersionId(nextVersion.id);
     setActiveFieldId(undefined);
-    setAnnouncement(`${nextVersion.label}, ${documentLifecycleLabels[nextVersion.lifecycle]}, selected.`);
+    setAnnouncement(format("documents.announceVersion", {
+      version: content.text(`${content.versionPath(nextVersion, jurisdictionVariant)}.label`, nextVersion.label),
+      lifecycle: message(documentLifecycleMessageIds[nextVersion.lifecycle]),
+    }));
   }
 
   function selectField(fieldId: string, label: string) {
     setActiveFieldId(fieldId);
-    setAnnouncement(`${label} explanation selected.`);
+    setAnnouncement(format("documents.announceField", { label }));
     requestAnimationFrame(() => document.getElementById(`${documentVersionKey}-${fieldId}-explanation`)?.focus());
   }
 
@@ -68,9 +81,15 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
     <details id={`document-${family.id}`} open className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-slate-50">
       <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 rounded-3xl bg-white p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden sm:p-7">
         <span>
-          <span className="block text-xs font-semibold uppercase tracking-wide text-teal-700">Annotated document</span>
-          <span role="heading" aria-level={3} className="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">{family.title}</span>
-          <span lang="ja" className="mt-1 block font-medium text-slate-600">{family.japaneseName}</span>
+          <span className="block text-xs font-semibold uppercase tracking-wide text-teal-700">{message("documents.eyebrow")}</span>
+          {locale === "ja" ? (
+            <span role="heading" aria-level={3} lang="ja" className="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">{family.japaneseName}</span>
+          ) : (
+            <>
+              <span role="heading" aria-level={3} className="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">{family.title}</span>
+              <span lang="ja" className="mt-1 block font-medium text-slate-600">{family.japaneseName}</span>
+            </>
+          )}
         </span>
         <DisclosureChevron />
       </summary>
@@ -78,14 +97,15 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
       <div className="border-t border-slate-200 p-5 sm:p-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <p className="leading-7 text-slate-600">{family.description}</p>
+            <p lang={content.lang} className="leading-7 text-slate-600">{content.text("description", family.description)}</p>
             <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-              <div><dt className="inline font-semibold text-slate-800">Issuer: </dt><dd className="inline text-slate-600">{issuer}</dd></div>
-              <div><dt className="inline font-semibold text-slate-800">Jurisdiction: </dt><dd className="inline text-slate-600">{jurisdiction}</dd></div>
+              <div><dt className="inline font-semibold text-slate-800">{message("documents.issuer")}</dt><dd lang={content.lang} className="inline text-slate-600">{issuer}</dd></div>
+              <div><dt className="inline font-semibold text-slate-800">{message("documents.jurisdiction")}</dt><dd lang={content.lang} className="inline text-slate-600">{jurisdiction}</dd></div>
             </dl>
           </div>
           <AnnotatedDocumentSelectors
             familyId={family.id}
+            content={content}
             sortedVariants={sortedVariants}
             selectedVariant={jurisdictionVariant}
             availableVersions={availableVersions}
@@ -96,6 +116,7 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
         </div>
         <AnnotatedDocumentVersionContent
           family={family}
+          content={content}
           version={version}
           jurisdictionVariant={jurisdictionVariant}
           jurisdiction={jurisdiction}
@@ -110,11 +131,12 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
 }
 
 export function AnnotatedDocumentViewer({ families, linkedLocationId }: Readonly<{ families: readonly ArticleAnnotatedDocument[]; linkedLocationId?: string }>) {
+  const { message } = useInterfaceMessages();
   if (families.length === 0) return null;
   return (
     <section className="mt-12" aria-labelledby="document-examples-heading">
-      <h2 id="document-examples-heading" className="text-2xl font-semibold tracking-tight text-slate-950">Understand the documents</h2>
-      <p className="mt-3 leading-7 text-slate-600">These accessible concept maps explain important fields without reproducing a usable identity or immigration document.</p>
+      <h2 id="document-examples-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("documents.heading")}</h2>
+      <p className="mt-3 leading-7 text-slate-600">{message("documents.intro")}</p>
       <AnnotatedDocumentQuickNavigation families={families} />
       <div className="mt-6 space-y-8">{families.map((family) => <DocumentFamilyViewer key={family.id} family={family} linkedLocationId={linkedLocationId} />)}</div>
     </section>

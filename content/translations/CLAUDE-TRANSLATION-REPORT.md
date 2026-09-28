@@ -76,7 +76,27 @@ All 116 FAQs have Japanese question and summary translations: 104 Codex drafts a
 
 ## Municipality guidance
 
-Infrastructure ready on 2026-09-26; no artifacts yet. One Japanese file per location mirrors the English location files, so Codex and Claude can translate different locations at once. `npm run local-guidance:ja` provides worksheets for Codex, the Claude draft pipeline, integration, mechanical checks (key parity, every number kept, no untranslated or English boilerplate), status, and `review` for marking checked Codex drafts. The panel shows current Japanese field by field with English fallback, official Japanese place names, localized labels, and a machine-translation notice. The workflow, roles, and decisions are in `LOCAL-GUIDANCE-TRANSLATION.md`; the prompt is `JAPANESE-LOCAL-GUIDANCE-PROMPT.md`. The general-advice fallback shown for unresearched locations is still English only.
+All 784 supplements across 112 locations are translated and checked (2026-09-28): Claude drafted all locations outside Kansai, and Codex drafted Kansai for Claude's check. One Japanese file per location mirrors the English location files, so Codex and Claude can translate different locations at once. `npm run local-guidance:ja` provides worksheets for Codex, the Claude draft pipeline, integration, mechanical checks (key parity, every number kept, no untranslated or English boilerplate), status, and `review` for marking checked Codex drafts. The panel shows current Japanese field by field with English fallback, official Japanese place names, localized labels, and a machine-translation notice. The workflow, roles, and decisions are in `LOCAL-GUIDANCE-TRANSLATION.md`; the prompt is `JAPANESE-LOCAL-GUIDANCE-PROMPT.md`. The general-advice fallback for unresearched locations is translated too (below).
+
+## General local advice
+
+`src/data/translations/ja/local-guidance-general-advice.ts` holds the Japanese title and steps shown for a location without researched guidance ("Other"), one `local-guidance-general-advice` artifact per article, addressed to `translationSourceFields["local-guidance-general-advice"]` of `src/data/local-guidance/general-advice.ts`. An English change makes the artifact stale: the panel then shows English with the English-only note, and `local-guidance-general-advice.test.ts` fails until the entry is translated again. Use the municipality-guidance prompt and decisions.
+
+## Glossary term names in other languages
+
+Beside a Japanese term, English readers see its English name and Japanese readers its kana reading (`src/domain/glossary/term-display.ts`); Japanese readers do not need a translated name. A future interface language needs the term name translated into that language, supplied per locale through `getLocalizedGlossaryText` (`name`) alongside the short definition; until then the English name is shown, marked as English. Add those names as part of that locale's glossary translations; the components need no change.
+
+## Annotated documents
+
+`src/data/translations/ja/annotated-documents.ts` holds one `annotated-document` artifact per document family (6 families, 366 fields, translated and checked by Claude on 2026-09-28). Fields are keyed by stable IDs (`versions.<id>.sections.<id>.fields.<id>.explanation`, `variants.<id>.label`, …) as defined by `translationSourceFields["annotated-document"]`, so reordering does not invalidate them. The official printed labels (`japaneseLabel`) and `japaneseName` are not translated; the field heading adds the printed label only when it differs from the translated label. Example values are Japanese placeholders, except fictional romanized names such as NIHONEST TARO, which stay as printed on the card. An English change makes the family stale: the viewer then shows that family in English, marked as English, and `annotated-documents.test.ts` fails until it is translated again. The viewer's interface text is in the `documents.*` interface messages.
+
+## Prefecture finder
+
+The finder's interface text, in Japanese and English, is in `src/components/content/prefecture-finder-messages.ts`, and its short guide-link labels are the `japaneseTitle` entries in `src/lib/content/prefecture-finder.ts`. Place names use the official `names.ja`, and Japanese readers see prefectures in code order. Supplement titles come from the current municipality-guidance translations, which the article page provides through `JapaneseSupplementTitlesProvider`.
+
+## Source titles and organizations
+
+Japanese readers see each Japanese-language source's own Japanese page title (`src/data/sources/japanese-source-titles.ts`, 1,339 of 1,451 sources, taken from each page's title with the site name removed and reviewed by Claude on 2026-09-28) and the organization's official Japanese name (`src/data/sources/japanese-organization-names.ts`, all 146). Sources without a Japanese title are PDFs, images, unreachable pages, or pages whose title gives only the site name; they keep their English title, marked as English, as do English-language sources. When a source is added or its URL changes, add or refresh its title from the cached page in `.local-guidance/` (`npm run local-guidance -- fetch <url>`). `src/data/sources/japanese-names.test.ts` requires a Japanese name for every organization.
 
 ## How the pipeline was developed (background)
 

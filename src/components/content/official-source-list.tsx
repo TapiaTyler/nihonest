@@ -2,6 +2,7 @@ import type { OfficialSource } from "@/domain/source/source";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { OfficialSourceMetadata } from "./official-source-metadata";
 import { OfficialSourceItems } from "./official-source-items";
+import { LocalizedSourceName } from "./localized-source-name";
 
 type OfficialSourceListProps = Readonly<{
   sources: readonly OfficialSource[];
@@ -27,7 +28,8 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
               rel="noreferrer"
               className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
             >
-              <span lang={source.language}>{source.title} — {source.organization}</span>
+              {/* Japanese readers see the page's own Japanese title and the organization's Japanese name where recorded. */}
+              <LocalizedSourceName source={source} />
               <span className="sr-only"><InterfaceText id="sources.openNewTab" /></span>
             </a>
             <OfficialSourceMetadata source={{

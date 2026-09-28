@@ -1,5 +1,6 @@
 "use client";
 
+import { LocalizedSourceName } from "@/components/content/localized-source-name";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { ActivityCrossReference, ActivityCrossReferenceAnswers } from "@/domain/activity-cross-reference/activity-cross-reference";
@@ -193,7 +194,7 @@ export function ActivityCrossReferenceExplorer({
                   <div className="mt-5 border-t border-slate-200 pt-4">
                     <p className="text-sm font-semibold text-slate-950">{t("activity.readNext")}</p>
                     <ul className="mt-2 space-y-1">{rule.links.map((link) => <li key={`${link.kind}-${link.id}`}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{(japanese ? linkTitles[`${link.kind}:${link.id}`] : undefined) ?? link.label}</Link></li>)}</ul>
-                    {sourceRecords.length > 0 && <><p className="mt-3 text-sm font-semibold text-slate-950">{t("sources.heading")}</p><ul className="mt-2 space-y-1">{sourceRecords.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{source.organization}: {source.title}<span className="sr-only">{t("sources.openNewTab")}</span></a></li>)}</ul></>}
+                    {sourceRecords.length > 0 && <><p className="mt-3 text-sm font-semibold text-slate-950">{t("sources.heading")}</p><ul className="mt-2 space-y-1">{sourceRecords.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span><LocalizedSourceName source={source} order="organization-first" /></span><span className="sr-only">{t("sources.openNewTab")}</span></a></li>)}</ul></>}
                   </div>
                 </article>
               );

@@ -54,6 +54,7 @@ const portableLibraryRoots = ["src/lib/search/", "src/lib/sync/", "src/lib/trans
 /** Files inside portable subtrees that run only on the server or at build time, with the reason. */
 const serverOnlyFiles = new Map([
   ["src/lib/translation/source-revision.ts", "hashes canonical sources for revision checks during builds and audits"],
+  ["src/lib/translation/source-revision-core.ts", "the same hashing without the server-only marker, for scripts, tests, and the local CMS"],
 ]);
 const webPlatformImport = /^(?:next(?:\/|$)|react(?:\/|$)|react-dom(?:\/|$)|@supabase\/ssr$|server-only$)|^@\/(?:app|components)\/|^@\/lib\/(?:supabase|storage|accounts)\//;
 const browserGlobal = /\b(?:window|document|localStorage|sessionStorage|navigator)\s*[.[]|\btypeof\s+(?:window|document|navigator)\b/;
@@ -61,6 +62,11 @@ const browserGlobal = /\b(?:window|document|localStorage|sessionStorage|navigato
 /** Removes comments so documentation that mentions `window` or `document` is not flagged. */
 function withoutComments(source: string): string {
   return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\s)\/\/.*$/gm, "$1");
+}
+
+/** Empties quoted strings so interface text such as "…a usable identity or immigration document." is not flagged. */
+function withoutStrings(source: string): string {
+  return source.replace(/"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, '""');
 }
 
 const files = await sourceFiles(sourceRoot);
@@ -84,7 +90,7 @@ for (const file of files) {
   }
   const portableLibrary = portableLibraryRoots.some((root) => normalizedFile.startsWith(root)) && !serverOnlyFiles.has(normalizedFile);
   if (normalizedFile.startsWith("src/domain/") || portableLibrary) {
-    const line = withoutComments(source).split("\n").findIndex((text) => browserGlobal.test(text));
+    const line = withoutStrings(withoutComments(source)).split("\n").findIndex((text) => browserGlobal.test(text));
     if (line >= 0) violations.push(`${normalizedFile}:${line + 1} uses a browser global in portable code`);
   }
   if (portableLibrary) {

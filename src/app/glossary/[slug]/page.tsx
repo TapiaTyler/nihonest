@@ -9,6 +9,7 @@ import { getArticleById } from "@/lib/content/articles";
 import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from "@/lib/content/glossary";
 import { PronunciationButton } from "@/components/glossary/pronunciation-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";
+import { LocalizedTermGloss } from "@/components/glossary/localized-term-gloss";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { getAnnotatedDocumentsForGlossaryTerm } from "@/lib/content/annotated-documents";
 import { getArticleSearchTranslations, getGlossarySearchTranslations } from "@/lib/content/translations";
@@ -53,7 +54,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
     .map(({ contentId, title }) => [contentId, title]));
   const localizedDocuments = documentExamples.flatMap((family) => {
     const article = getArticleById(family.articleId);
-    return article ? [{ id: family.id, title: family.title, href: `/articles/${article.metadata.slug}#document-${family.id}` }] : [];
+    return article ? [{ id: family.id, title: family.title, japaneseTitle: family.japaneseName, href: `/articles/${article.metadata.slug}#document-${family.id}` }] : [];
   });
 
   return (
@@ -80,7 +81,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
             <h2 id="related-terms-heading" className="text-xl font-semibold tracking-tight text-slate-950"><InterfaceText id="glossary.relatedTerms" /></h2>
             <ul className="mt-4 flex flex-wrap gap-2">
               {relatedTerms.map((relatedTerm) => (
-                <li key={relatedTerm.id}><Link href={`/glossary/${relatedTerm.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span lang="ja">{relatedTerm.japanese}</span><span className="ml-2 text-slate-500">{relatedTerm.englishName}</span></Link></li>
+                <li key={relatedTerm.id}><Link href={`/glossary/${relatedTerm.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span lang="ja">{relatedTerm.japanese}</span><LocalizedTermGloss term={relatedTerm} className="ml-2 text-slate-500" /></Link></li>
               ))}
             </ul>
           </section>

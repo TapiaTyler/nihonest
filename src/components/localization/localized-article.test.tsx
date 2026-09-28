@@ -116,7 +116,7 @@ describe("localized article presentation", () => {
     render(<TranslatedArticleBody markdown={":::japan-region-map\n\n:::japan-prefecture-finder\n\n:::japan-practical-basics"} />);
     fireEvent.click(screen.getAllByRole("button", { name: "東北" })[1]);
     expect(screen.getByRole("status")).toHaveTextContent("青森県、岩手県、宮城県");
-    expect(screen.getByRole("heading", { name: "Guidance by location" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "地域別のガイド" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "緊急通報のガイド" })).toHaveAttribute("href", "/articles/calling-police-fire-and-ambulance-services-in-japan");
   });
 

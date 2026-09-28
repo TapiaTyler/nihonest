@@ -8,6 +8,7 @@ import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import { useContentLocale } from "./content-locale-provider";
 import { useInterfaceMessages } from "./interface-text";
+import { LocalizedTermGloss } from "@/components/glossary/localized-term-gloss";
 
 function activeTranslation(term: JapaneseTerm, translation?: GlossarySearchTranslation, locale = "en") {
   return translation?.contentId === term.id && translation.targetLocale === locale ? translation : undefined;
@@ -20,9 +21,9 @@ export function LocalizedGlossarySummary({ term, translation }: Readonly<{
   const { locale } = useContentLocale();
   const active = activeTranslation(term, translation, locale);
   return (
-    <div lang={active ? "ja" : "en"}>
-      <p className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">{term.englishName}</p>
-      <p className="mt-4 text-lg leading-8 text-slate-600">{active?.shortDefinition ?? term.shortDefinition}</p>
+    <div>
+      <p className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 empty:hidden"><LocalizedTermGloss term={term} variant="name" /></p>
+      <p lang={active ? "ja" : "en"} className="mt-4 text-lg leading-8 text-slate-600">{active?.shortDefinition ?? term.shortDefinition}</p>
     </div>
   );
 }
@@ -44,7 +45,7 @@ export function LocalizedGlossaryExplanation({ term, translation }: Readonly<{
   );
 }
 
-type GlossaryDetailDocument = Readonly<{ id: string; title: string; href: string }>;
+type GlossaryDetailDocument = Readonly<{ id: string; title: string; japaneseTitle?: string; href: string }>;
 type GlossaryDetailArticle = Readonly<{ id: string; title: string; slug: string }>;
 
 export function LocalizedGlossaryDetailSections({
@@ -65,7 +66,7 @@ export function LocalizedGlossaryDetailSections({
       <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("glossary.visualReference")}</p>
       <h2 id="document-example-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">{message("glossary.annotatedDocumentExample")}</h2>
       <p className="mt-3 leading-7 text-slate-600">{message("glossary.annotatedDocumentIntro")}</p>
-      <ul className="mt-4 space-y-3">{documents.map(({ id, title, href }) => <li key={id}><Link href={href} className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("glossary.viewDocumentExample").replace("{title}", title)}</Link></li>)}</ul>
+      <ul className="mt-4 space-y-3">{documents.map(({ id, title, japaneseTitle, href }) => <li key={id}><Link href={href} className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("glossary.viewDocumentExample").replace("{title}", locale === "ja" ? japaneseTitle ?? title : title)}</Link></li>)}</ul>
     </section>}
     {articles.length > 0 && <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="term-articles-heading">
       <h2 id="term-articles-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("glossary.guidesUsingTerm")}</h2>

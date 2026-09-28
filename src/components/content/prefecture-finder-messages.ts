@@ -1,5 +1,5 @@
-/** English source contract. Claude owns the Japanese interface copy and integration. */
-export const prefectureFinderMessages = {
+/** English source contract with Claude's Japanese interface copy. Both locales must keep the same shape. */
+const english = {
   heading: "Guidance by location",
   intro: "Search all 47 prefectures by English or Japanese name. Browsing here does not change your saved local guidance location.",
   searchLabel: "Search prefectures",
@@ -25,5 +25,83 @@ export const prefectureFinderMessages = {
   localUnavailable: (name: string) => `Nihonest does not yet have researched local supplements for ${name}. Use the general starting points above, and check the responsible office for your address.`,
   reviewStatus: "Editorial review pending",
   checked: "Sources last checked",
-  fallbackNotice: "Finder controls and guidance details are currently in English. Prefecture and region names are shown in Japanese too.",
-} as const;
+  map: {
+    summary: "Japan prefecture map",
+    instructions: "Select a prefecture to zoom in. Drag to pan; scroll over the map or pinch to zoom. Focus the map for arrow keys and Page Up/Down. The searchable list helps with small prefectures and islands.",
+    mapLabel: "Select a prefecture on the main Japan map",
+    selectPrefecture: (names: PrefectureNames) => `Select ${names.en} (${names.ja})`,
+    selectInset: (names: PrefectureNames) => `Select ${names.en} (${names.ja}) in the southern islands inset`,
+    insetLabel: "Okinawa",
+    controls: "Map controls",
+    controlsLabel: "Map zoom and pan controls",
+    zoomIn: "Zoom in on map",
+    zoomOut: "Zoom out on map",
+    panNorth: "Pan map north",
+    panWest: "Pan map west",
+    panSouth: "Pan map south",
+    panEast: "Pan map east",
+    zoomToSelection: "Zoom to selection",
+    fullMap: "Full map",
+    zoomLevel: (level: string) => `Map zoom: ${level}×.`,
+    selected: (names: PrefectureNames) => `Selected: ${names.en} · ${names.ja}`,
+    choose: "Choose a prefecture to see its starting points.",
+    attribution: "Boundaries are simplified for orientation. Check current official maps for exact locations. Map geometry adapted from",
+    attributionSource: "MLIT National Land Numerical Information",
+  },
+};
+
+type PrefectureNames = Readonly<{ en: string; ja: string }>;
+export type PrefectureFinderMessages = typeof english;
+
+const japanese: PrefectureFinderMessages = {
+  heading: "地域別のガイド",
+  intro: "47都道府県を日本語または英語の名前で検索できます。ここで選んでも、保存している地域ガイドの場所は変わりません。",
+  searchLabel: "都道府県を検索",
+  searchPlaceholder: "東京都、Tokyo、または5桁の都道府県コード",
+  selectLabel: "都道府県を選択",
+  selectPlaceholder: "都道府県を選んでください",
+  clearSearch: "検索をクリア",
+  clearSelection: "選択を解除",
+  empty: "検索に一致する都道府県はありません。検索をクリアすると、47都道府県すべてが表示されます。",
+  selected: "選択中の都道府県",
+  filteredSelection: "選択中の都道府県は、現在の検索結果に含まれていません。",
+  nationalHeading: "すべての都道府県に共通するガイド",
+  localHeading: "調査済みの地域ガイド",
+  generalHeading: "この都道府県で調べ始めるための一般的な案内",
+  generalNotice: "これらの記事について、都道府県全体の手続きはまだ調査していません。以下のガイドを使って、担当する都道府県や市区町村のウェブサイトで確認すべき点を探してください。この都道府県について確認済みの手順ではありません。",
+  municipalityLabel: "市区町村を選択",
+  municipalityPlaceholder: "市区町村を選んでください",
+  otherMunicipality: "その他",
+  municipalityScope: "調査済みの案内がある市区町村だけを表示しています。都道府県内のそれ以外の地域については、「その他」を選ぶと一般的な案内が表示されます。",
+  municipalityNotice: (name) => `以下のガイドについて、${name}の調査が済んでいるとは限りません。各記事では、調査済みの補足があればそれを表示し、なければ一般的な助言であることを明示して表示します。`,
+  localPilot: (name) => `これらの補足は${name}だけを対象としており、都道府県全体には当てはまりません。ガイドを開くと、そのページで${name}が選ばれた状態になります。保存している地域ガイドの場所は変わりません。`,
+  wardNote: (city) => `${city}は区に分かれています。窓口、受付時間、ごみの収集日、避難場所など、手続きや地域の詳細は区役所ごとに異なる場合があるため、お住まいの住所の区役所で確認してください。`,
+  localUnavailable: (name) => `Nihonestには、${name}について調査済みの地域補足はまだありません。上の一般的な案内を使い、住所を管轄する窓口で確認してください。`,
+  reviewStatus: "編集部の確認待ち",
+  checked: "出典の最終確認日",
+  map: {
+    summary: "日本の都道府県地図",
+    instructions: "都道府県を選ぶと拡大表示されます。ドラッグで移動し、地図上でのスクロールやピンチ操作で拡大・縮小できます。地図にフォーカスすると、矢印キーとPage Up／Page Downも使えます。小さな都道府県や島は、検索できる一覧から選ぶと便利です。",
+    mapLabel: "日本全図から都道府県を選択",
+    selectPrefecture: (names) => `${names.ja}を選択`,
+    selectInset: (names) => `南西諸島の枠内で${names.ja}を選択`,
+    insetLabel: "沖縄",
+    controls: "地図の操作",
+    controlsLabel: "地図の拡大・縮小と移動の操作",
+    zoomIn: "地図を拡大",
+    zoomOut: "地図を縮小",
+    panNorth: "地図を北へ移動",
+    panWest: "地図を西へ移動",
+    panSouth: "地図を南へ移動",
+    panEast: "地図を東へ移動",
+    zoomToSelection: "選択した都道府県を拡大",
+    fullMap: "全体を表示",
+    zoomLevel: (level) => `地図の倍率：${level}倍`,
+    selected: (names) => `選択中：${names.ja}`,
+    choose: "都道府県を選ぶと、調べ始めるための案内が表示されます。",
+    attribution: "境界は位置の目安として簡略化しています。正確な位置は最新の公式地図で確認してください。地図の形状は次のデータを加工したものです：",
+    attributionSource: "国土交通省「国土数値情報（行政区域データ）」",
+  },
+};
+
+export const prefectureFinderMessages: Readonly<Record<"en" | "ja", PrefectureFinderMessages>> = { en: english, ja: japanese };

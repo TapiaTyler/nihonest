@@ -5,6 +5,7 @@ import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope
 import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
 import { JapanPrefectureFinder, JapanPrefectureRegionCards, JapanPrefectureRegionGrid, JapanPracticalBasics, JapanRegionMap } from "@/components/content/japan-geography-reference";
 import { getGlossaryTermBySlug } from "@/lib/content/glossary";
+import { getLocalizedGlossaryText } from "@/lib/content/translations";
 
 const components = {
   ResidenceApplicationFeeSection,
@@ -32,7 +33,7 @@ const components = {
   a: ({ children, href }) => {
     const glossarySlug = href?.match(/^\/glossary\/([a-z0-9-]+)$/)?.[1];
     const glossaryTerm = glossarySlug ? getGlossaryTermBySlug(glossarySlug) : undefined;
-    if (glossaryTerm) return <InlineGlossaryTerm term={glossaryTerm}>{children}</InlineGlossaryTerm>;
+    if (glossaryTerm) return <InlineGlossaryTerm term={glossaryTerm} localized={getLocalizedGlossaryText(glossaryTerm.id)}>{children}</InlineGlossaryTerm>;
 
     return (
       <a

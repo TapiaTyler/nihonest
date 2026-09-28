@@ -12,6 +12,8 @@ import { SaveContentButton } from "./save-content-button";
 import { useSavedContent } from "./saved-content-provider";
 import { GlossaryStudyPanel } from "@/components/glossary-study/glossary-study-panel";
 import { InterfaceText, useInterfaceMessages } from "@/components/localization/interface-text";
+import { LocalizedTermGloss } from "@/components/glossary/localized-term-gloss";
+import { glossaryTermGloss } from "@/domain/glossary/term-display";
 import type { ResidenceStatusTranslation } from "@/lib/content/translations";
 import type { ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
@@ -132,8 +134,8 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
           <ul className="mt-5 space-y-3">
             {savedTerms.map((term) => (
               <li key={term.id} className="relative">
-                <Link href={{ pathname: `/glossary/${term.slug}`, query: { returnTo: "/saved" } }} aria-label={`${term.japanese} — ${term.englishName}`} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700"><span lang="ja">{term.japanese}</span> — {term.englishName}</span>
+                <Link href={{ pathname: `/glossary/${term.slug}`, query: { returnTo: "/saved" } }} aria-label={[term.japanese, glossaryTermGloss(term, locale)?.text].filter(Boolean).join(" — ")} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                  <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700"><span lang="ja">{term.japanese}</span><LocalizedTermGloss term={term} separator=" — " /></span>
                   <p lang={termTranslation(term.id) ? "ja" : "en"} className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{termTranslation(term.id)?.shortDefinition ?? term.shortDefinition}</p>
                   <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.viewTerm" /></span>
                 </Link>

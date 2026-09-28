@@ -1,5 +1,7 @@
 import "server-only";
+import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { japaneseLocalGuidanceTranslations } from "@/data/translations/ja/local-guidance";
+import { japaneseGeneralLocalAdviceTranslations } from "@/data/translations/ja/local-guidance-general-advice";
 import type { LocalGuidanceSupplement } from "@/domain/geography/local-guidance";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision";
@@ -23,4 +25,24 @@ export function getJapaneseLocalGuidanceFields(supplements: readonly LocalGuidan
     result[supplement.id] = artifact.fields;
   }
   return result;
+}
+
+let japaneseSupplementTitles: Readonly<Record<string, string>> | undefined;
+
+/** Current Japanese titles of every supplement, keyed by supplement ID, for the prefecture finder. */
+export function getJapaneseSupplementTitles(supplements: readonly LocalGuidanceSupplement[]): Readonly<Record<string, string>> {
+  japaneseSupplementTitles ??= Object.fromEntries(Object.entries(getJapaneseLocalGuidanceFields(supplements))
+    .flatMap(([id, fields]) => (fields.title ? [[id, fields.title]] : [])));
+  return japaneseSupplementTitles;
+}
+
+/** Japanese general advice for an article when its artifact is current and complete; otherwise undefined. */
+export function getJapaneseGeneralLocalAdvice(articleId: string): Readonly<{ title: string; steps: readonly string[] }> | undefined {
+  const advice = getGeneralLocalAdvice(articleId);
+  const artifact = japaneseGeneralLocalAdviceTranslations.find((item) => item.contentId === articleId);
+  if (!advice || !artifact || artifact.availability !== "active") return undefined;
+  if (artifact.sourceRevision !== createTranslationSourceRevision(translationSourceFields["local-guidance-general-advice"](advice))) return undefined;
+  const steps = advice.steps.map((_, index) => artifact.fields[`steps.${index}`]);
+  if (!artifact.fields.title || steps.some((step) => !step)) return undefined;
+  return { title: artifact.fields.title, steps: steps as string[] };
 }
