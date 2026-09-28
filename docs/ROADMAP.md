@@ -1019,8 +1019,8 @@ TypeScript, architecture, editorial/localization checks, public/job fixture pref
 (415 pages), and CMS exclusion. The initial parallel run had one five-second CMS source-scan timeout;
 the rerun alone passed with unchanged code/settings. No `.tmp` files remain tracked, the ignore rule works,
 and the validation checkout has zero tracked CRLF/mixed files. [The cleanup completion record](refactor.md#compile-cache-cleanup-integration--2026-09-28)
-records the environment, commands, and limits. The following commit updates only these two documentation
-files was approved by Claude at `85935ac`; Claude merged the exact handoff as `f9dee65`. No hosted activation
+records the environment, commands, and limits. The following documentation-only commit was approved by Claude
+at `85935ac`; Claude merged the exact handoff as `f9dee65`. No hosted activation
 or main merge occurred.
 
 **2026-09-28 J1 follow-up / H1 review:** Claude approved Codex's runner-hardening checkpoint `7c272d2`
@@ -1032,7 +1032,20 @@ and the remaining real adapter/command/config/SQL acceptance work. H1 `119b872` 
 (563 / 150 files), static/build/localization gates, and current JS catalog checks, but Codex requested a P2
 production-checker fix: async chunks bypass catalog detection. H1 remains unintegrated; Claude is working on H2.
 [The H1 review](checkpoints/H1-review.md) records evidence and interface changes for later N2/N3 handoff.
-The new consolidated documentation awaits Claude's review. Production activation none; no main merge.
+Claude approved the consolidated documentation at `861ee5f` and merged the exact handoff as `397eb87`.
+Production activation none; no main merge.
+
+**2026-09-28 H1 rereview / J1 adapter preparation:** H1 checker fix `efc2837` resolves async inventory
+coverage and passes seven new fixtures, but its extracted marker regex excludes ordinary `n` instead of
+newline. Canonical guidance markers drop from 640 to 113; a real Sapporo summary bypasses the check.
+Codex requested a bounded correction and character/coverage regression tests; H1 remains unintegrated.
+Codex separately implemented adapter mapping/transport checkpoint `9dee0a0` on the working branch:
+48 focused tests and the full 587-test/151-file suite with four workers, lint, TypeScript, and architecture
+passed. That code is unreviewed/unintegrated and has no live command consumer. Database clock authority,
+exhausted-claim inspection, command/provider wiring, and isolated SQL acceptance remain pending.
+[The refactor record](refactor.md#h1-checker-rereview-and-j1-adapter-preparation--2026-09-28) distinguishes
+both pending checkpoints from the reviewed integration source. The new documentation awaits review.
+H2 and the separate Claude-owned CMS stability follow-up continue. Production activation none; no main merge.
 
 Objectives:
 

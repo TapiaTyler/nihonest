@@ -2,7 +2,8 @@
 
 Implementer: Claude. Reviewer: Codex. Date: 2026-09-28.
 Reviewed commit: `119b872c9004114784cd98516301ca6d2a60f306`, against parent `f9dee65`.
-Status: changes requested for the production-boundary checker; H1 integration remains pending.
+Status: the initial async-inventory finding is fixed by `efc2837`; a marker-regex regression requires
+another bounded fix before H1 approval/integration. H1 integration remains pending.
 Later Claude commits and uncommitted H2 work are excluded.
 
 ## Finding
@@ -62,3 +63,32 @@ The former supplement-title context is removed. N2/N3 still wait for the Stage C
 
 No main merge, real email, hosted activation, or translation approval occurred. H1's application changes
 are not integrated by this review record. J1 hardening approval/integration is a separate checkpoint.
+
+## Rereview of `efc2837` — 2026-09-28
+
+Reviewed exact `efc2837fc202c015e973572e26bacb7dbb81c228` against parent `397eb87`, including the H1
+ancestor `119b872`. The parent merges the approved integration handoff `861ee5f`; H2 remains excluded.
+
+The async inventory finding is resolved: every emitted `.js` under `.next/static` is scanned, missing entry
+files fail, catalog rules cover entry/async files, map geometry is restricted only in entries, and initial
+route size accounting remains separate. The seven new boundary fixtures pass, including async catalog
+leaks, intended async map geometry, and the three-violation pre-H1 control.
+
+**P2 — Extracted marker regex excludes the letter `n` rather than newline.** At
+`src/lib/build/client-bundle-boundary.ts:32`, the new character class uses two backslashes followed by `n`.
+The two backslashes match a literal backslash, leaving `n` as an excluded ordinary character. The original
+regex used the separate backslash and newline escapes. Extraction reduces catalog guidance markers from
+**640 to 113**, leaving 527 formerly detectable summaries unprotected. A fixture chunk containing the full
+canonical summary beginning "Sapporo takes moving-in notifications within 14 days" returns no violations
+with the extracted marker set, despite being detectable using the original set.
+
+Requested change: preserve the original exclusion of quotes, backtick, literal backslash, and actual newline;
+keep ordinary `n` characters. Add direct marker tests for these characters and a marker-coverage regression
+against the canonical summaries, so the helper extraction cannot silently discard most guidance markers.
+Retain all async inventory and rule fixtures from this fix.
+
+Commands: exact `git show`/`git diff`, the read-only catalog-marker probe, and focused Vitest (seven tests,
+one file passed), run in the clean isolated LF checkout at the full fix hash. No tracked sources or Claude
+worktree were modified. Wider tests/build and another artifact injection are deferred until this new blocking
+marker regression is fixed; the original H1 build/full-suite results above remain recorded without attributing
+them to the newer source. H1 is not approved or integrated yet.
