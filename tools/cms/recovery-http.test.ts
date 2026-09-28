@@ -13,8 +13,16 @@ const projectRoot = resolve(import.meta.dirname, "../..");
 const articleId = "artist-status";
 const articlePath = `content/articles/${articleId}.mdx`;
 
+/** Runs a fixture Git command; a failure reports Git's output (for example "nothing to commit"), not just the command. */
 function git(root: string, ...args: string[]) {
-  execFileSync("git", args, { cwd: root, stdio: "ignore" });
+  try {
+    execFileSync("git", args, { cwd: root, stdio: "pipe", encoding: "utf8" });
+  }
+  catch (error) {
+    const { stdout = "", stderr = "" } = error as { stdout?: string; stderr?: string };
+    throw new Error(`git ${args.join(" ")} failed:
+${`${stderr}${stdout}`.trim()}`, { cause: error });
+  }
 }
 
 async function start(root: string) {

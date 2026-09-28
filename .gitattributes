@@ -1,0 +1,2 @@
+# Check out text with LF everywhere; the local CMS, its tests, and CI assume LF regardless of core.autocrlf.
+* text=auto eol=lf
