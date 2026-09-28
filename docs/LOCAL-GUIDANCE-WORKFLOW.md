@@ -61,7 +61,8 @@ npm run local-guidance -- verify
 - **add-location** creates `locations/<prefecture>/<location>.ts` from the registry ID (e.g. `jp-14100` for
   Yokohama), registers it in the prefecture's `index.ts`, and creates the prefecture folder the first time. The
   location must be in the geography registry (`src/data/geography`); cities outside Tokyo that are not designated
-  cities need `--plan-group`.
+  cities need `--plan-group`. Then run `npm run local-guidance:ja -- sync` to create the location's Japanese translation file
+  (`content/translations/LOCAL-GUIDANCE-TRANSLATION.md`); the translation catalog test requires one per location.
 - **worksheet --location** writes `.local-guidance/location-<name>/WORKSHEET.md` for every guide at once: the
   location's IDs and file, official host, which guides exist, each guide's keywords and general fallback advice, the
   conventions, a model file, and a fetch command. (`worksheet --article <guide> --wards <ids>` still makes a

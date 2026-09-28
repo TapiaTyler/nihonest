@@ -1,6 +1,6 @@
 # Japanese glossary translation
 
-Claude owns Japanese translation work for Nihonest, drafting and reviewing it; the user delegated it on 2026-09-23. There is no Codex review step. Every artifact stays `machine-translated` until a qualified human reviews it: Claude's review is not human review.
+Claude owns Japanese translation work for Nihonest, drafting and reviewing it; the user delegated it on 2026-09-23. There is no Codex review step. Since 2026-09-26, Codex may also draft municipality guidance for locations the user assigns, and Claude checks those drafts (see `LOCAL-GUIDANCE-TRANSLATION.md`). Every artifact stays `machine-translated` until a qualified human reviews it: Claude's review is not human review.
 
 ## Workflow
 
@@ -73,6 +73,10 @@ All 8 "Can I do this?" activities are translated with `npm run activity:draft` (
 ## FAQs
 
 All 116 FAQs have Japanese question and summary translations: 104 Codex drafts and 12 drafted with `npm run faq:draft` on 2026-09-25 ($0.43) and reviewed by Claude. New or changed English FAQs are drafted with `npm run faq:draft`, which uses the shared overlay pipeline. Each prompt includes the FAQ's linked glossary headwords and three accepted FAQ translations from the same browse group. Review the drafts in `.glossary-drafts/faq-<run>/`, then run `npm run faq:draft -- --integrate <dir>`: it refreshes an outdated FAQ's catalog line in place and appends new ones under the `claude-code-claude-reviewed` generator. `npm run faq:coverage` lists untranslated and outdated FAQs, along with gaps in English coverage (articles no FAQ links to, likely duplicate questions, shared search terms, and long summaries).
+
+## Municipality guidance
+
+Infrastructure ready on 2026-09-26; no artifacts yet. One Japanese file per location mirrors the English location files, so Codex and Claude can translate different locations at once. `npm run local-guidance:ja` provides worksheets for Codex, the Claude draft pipeline, integration, mechanical checks (key parity, every number kept, no untranslated or English boilerplate), status, and `review` for marking checked Codex drafts. The panel shows current Japanese field by field with English fallback, official Japanese place names, localized labels, and a machine-translation notice. The workflow, roles, and decisions are in `LOCAL-GUIDANCE-TRANSLATION.md`; the prompt is `JAPANESE-LOCAL-GUIDANCE-PROMPT.md`. The general-advice fallback shown for unresearched locations is still English only.
 
 ## How the pipeline was developed (background)
 

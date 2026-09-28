@@ -234,7 +234,7 @@ Content catalogs (articles, FAQs, glossary, residence statuses and their structu
 ### Deferred until the geography work lands
 
 - **Annotated documents:** about 10 interface strings in `src/components/documents/annotated-document-version-content.tsx` (for example "Field explanations", "Official visual reference", "Verify the current official document", "Archived version:"), plus document field explanations. Some documents depend on location-specific information, so localize them after the geography work.
-- **Local-guidance panels and the prefecture finder:** translate their interface and the Shinjuku/Nagoya supplement prose as revision-addressed artifacts with English fallback (see Geography A–C in `docs/ROADMAP.md`).
+- **Local-guidance panels and the prefecture finder:** the local-guidance panel's interface is localized and shows revision-addressed supplement artifacts with per-field English fallback (infrastructure ready 2026-09-26; artifacts are drafted per location with `npm run local-guidance:ja`, see `content/translations/LOCAL-GUIDANCE-TRANSLATION.md`). The general-advice fallback for unresearched locations remains English.
 
 ### Article translation verification
 

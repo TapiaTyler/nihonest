@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
+import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
 import { localGuidanceLocationStorageKey } from "@/lib/storage/local-guidance-location";
 import { LocalGuidancePanel } from "./local-guidance-panel";
 
@@ -138,5 +140,48 @@ describe("LocalGuidancePanel", () => {
     fireEvent.change(screen.getByLabelText("Prefecture"), { target: { value: "tokyo" } });
     fireEvent.change(screen.getByLabelText("Municipality"), { target: { value: "shinjuku" } });
     expect(screen.queryByText(/is divided into wards/)).not.toBeInTheDocument();
+  });
+
+  describe("in Japanese", () => {
+    afterEach(() => window.localStorage.removeItem(contentLocaleStorageKey));
+
+    it("shows official Japanese place names, translated fields, and English for fields without Japanese", async () => {
+      window.localStorage.setItem(contentLocaleStorageKey, "ja");
+      window.localStorage.setItem(localGuidanceLocationStorageKey, "nagoya");
+      const options = getLocalGuidanceForArticle("registering-your-address-after-arrival");
+      const nagoya = options.find(({ geography }) => geography.id === "nagoya")!;
+      render(
+        <ContentLocaleProvider>
+          <LocalGuidancePanel
+            options={options}
+            japaneseFields={{ [nagoya.supplement.id]: { title: "名古屋市での住所の届出", summary: "名古屋市の転入届の概要です。" } }}
+            locations={getSelectableLocalGuidanceLocations()}
+          />
+        </ContentLocaleProvider>,
+      );
+
+      expect(await screen.findByRole("heading", { name: "名古屋市での住所の届出" })).toBeInTheDocument();
+      expect(screen.getByText("名古屋市の転入届の概要です。")).toBeInTheDocument();
+      expect(screen.getByText(/機械翻訳したもの/)).toHaveTextContent(/まだ翻訳されていない部分は英語で表示しています/);
+      // A field without Japanese stays in English and is marked as English for assistive technology.
+      expect(screen.getByText(nagoya.supplement.applicability)).toHaveAttribute("lang", "en");
+      expect(screen.getByRole("option", { name: "愛知県" })).toBeInTheDocument();
+      expect(screen.getByRole("option", { name: "名古屋市" })).toBeInTheDocument();
+      expect(screen.getByText(/政令指定都市 · 愛知県/)).toBeInTheDocument();
+      expect(screen.getByText(/名古屋市は区に分かれています/)).toBeInTheDocument();
+    });
+
+    it("keeps English guidance when no current Japanese exists", async () => {
+      window.localStorage.setItem(contentLocaleStorageKey, "ja");
+      window.localStorage.setItem(localGuidanceLocationStorageKey, "shinjuku");
+      render(
+        <ContentLocaleProvider>
+          <LocalGuidancePanel options={getLocalGuidanceForArticle("registering-your-address-after-arrival")} locations={getSelectableLocalGuidanceLocations()} />
+        </ContentLocaleProvider>,
+      );
+      expect(await screen.findByRole("heading", { name: "Registering an address in Shinjuku" })).toBeInTheDocument();
+      expect(screen.queryByText(/機械翻訳したもの/)).not.toBeInTheDocument();
+      expect(screen.getByText("担当機関")).toBeInTheDocument();
+    });
   });
 });

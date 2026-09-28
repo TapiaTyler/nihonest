@@ -31,8 +31,11 @@ export function getSelectableLocalGuidanceLocations() {
         name: supported?.name ?? englishGeographyName(record, record.parentId ? getAdministrativeGeography(record.parentId) : undefined),
         type: record.type,
         parentId: record.parentId,
+        /** Official Japanese name from the registry, shown when Japanese is selected. */
+        japaneseName: record.names.ja,
       },
       parentName: supportedPrefecture?.name ?? prefecture.names.en ?? prefecture.names.ja,
+      parentJapaneseName: prefecture.names.ja,
       prefectureId,
       /** Prefectures are always listed; municipalities only when they have researched guidance. */
       listed: record.type === "prefecture" || record.type === "metropolis" || researched.has(record.id),
@@ -52,7 +55,10 @@ export function getLocalGuidanceForArticle(articleId: string) {
       return {
         supplement,
         geography,
+        /** Official Japanese names from the registry, shown when Japanese is selected. */
+        japaneseName: getAdministrativeGeography(geography.id)?.names.ja,
         parentName: parent?.name,
+        parentJapaneseName: parent ? getAdministrativeGeography(parent.id)?.names.ja : undefined,
         sources: supplement.sourceIds.flatMap((sourceId) => {
           const source = sources.find(({ id }) => id === sourceId);
           return source ? [source] : [];

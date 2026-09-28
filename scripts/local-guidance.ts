@@ -165,6 +165,7 @@ async function addLocationCommand(argv: readonly string[]): Promise<void> {
   }
   console.log(`Created ${shown(path)} for ${name} (${record.id}) and registered it in ${shown(prefectureIndex)}.`);
   console.log(`Next: npm run local-guidance -- worksheet --location ${record.id}`);
+  console.log("Also run `npm run local-guidance:ja -- sync` to create the location's Japanese translation file; the translation catalog test requires one per location.");
 }
 
 /** A research worksheet covering every guide for one location, so the location's research shares its context. */

@@ -28,6 +28,7 @@ import { InterfaceFormat, InterfaceText, LocalizedText } from "@/components/loca
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
+import { getJapaneseLocalGuidanceFields } from "@/lib/content/local-guidance-translations";
 import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
@@ -155,7 +156,7 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
 
         <AnnotatedDocumentViewer key={`documents-${linkedLocalGuidanceId ?? "saved"}`} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
 
-        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
+        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} japaneseFields={getJapaneseLocalGuidanceFields(localGuidance.map(({ supplement }) => supplement))} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
 
         <div className="mt-12">
           <ArticleTerminology terms={glossaryTerms} />

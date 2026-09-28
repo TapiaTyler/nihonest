@@ -8,6 +8,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-Japanese translation work is delegated to Claude, which drafts, reviews, and integrates it without a Codex review step. Follow `content/translations/CLAUDE-TRANSLATION-REPORT.md`. Preserve existing translation artifacts, do not regenerate unchanged terms, and keep artifacts `machine-translated` until a qualified human reviews them.
+Claude owns Japanese translation: the prompts, shared translation modules, decisions, and final checks. Codex may draft Japanese only for the municipality-guidance locations the user assigns to it, following `content/translations/LOCAL-GUIDANCE-TRANSLATION.md` (`npm run local-guidance:ja`); it integrates them as `codex-drafted`, reports every flag, and Claude checks them before they count as reviewed. Codex does not edit other translation catalogs, `define.ts`, the indexes, or the prompts. All other translation work follows `content/translations/CLAUDE-TRANSLATION-REPORT.md`. Preserve existing translation artifacts, do not regenerate unchanged terms, and keep artifacts `machine-translated` until a qualified human reviews them.
 
 For municipality-specific local guidance (supplements in `src/data/local-guidance/`), follow `docs/LOCAL-GUIDANCE-WORKFLOW.md` and use `npm run local-guidance` for worksheets, page fetching, and checks.
