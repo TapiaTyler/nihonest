@@ -995,6 +995,21 @@ This is the first planned continuously hosted application environment and public
 
 Implementation sequence: follow [the hosting and native readiness refactor roadmap](refactor.md). **Batch 1 (H1–H5)** reduces browser catalog payloads, prebuilds public detail pages while preserving query behavior, adds configuration validation and CI/release gates, adds appropriate headers and health checks, and narrows session handling after testing refresh behavior. **Batch 2 (J1–J2)** adds the notification worker and scheduled source monitoring after choosing its execution location. These checkpoints are planned and require measured builds, regression checks, and review. Suggested ownership is Claude for Batch 1 and Codex for the notification worker, with reciprocal review. Deployment and delivery activation remain separate gates.
 
+**2026-09-28 checkpoint progress:** Claude's H3a configuration/preflight commits `9d3442b` and `86218cc`
+are reviewed by Codex. Codex's J1 preparation commit `6624e27` is reviewed by Claude for its injectable runner
+and fixture scope; the real database adapter, run-once command, configuration wiring, and SQL integration
+acceptance remain pending. Codex owns the separate `codex/hosting-native-integration` branch and consolidated
+documentation at this gate. Exact reviewed inputs, including Claude's separately reviewed LF checkout policy
+and CMS test-diagnostic fix `63dd167`, are integrated there, excluding ongoing H1 work. Combined source commit
+`669fa99622bf916ed5b1423cdb28fb4ee538f75d` passed verification in a fresh LF checkout: all 559 tests across
+149 files, lint, TypeScript, architecture, editorial audit, mechanical article/glossary localization checks,
+public/job preflights, a public-only production build (415 pages), and CMS exclusion passed. Both baseline CMS
+failures are resolved on this checkout. [The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28)
+records exact inputs, environment, commands, skipped checks, and operating limits. The completion-record commit
+changes only documentation; Claude's consolidated documentation review remains pending. The validated result
+must enter working branches before J1 wiring. H3b, full J1 implementation, wider batch gates, CRLF CMS byte
+preservation, staging approval, and hosted activation remain pending.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;
