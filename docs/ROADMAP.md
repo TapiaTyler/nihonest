@@ -999,12 +999,16 @@ Implementation sequence: follow [the hosting and native readiness refactor roadm
 are reviewed by Codex. Codex's J1 preparation commit `6624e27` is reviewed by Claude for its injectable runner
 and fixture scope; the real database adapter, run-once command, configuration wiring, and SQL integration
 acceptance remain pending. Codex owns the separate `codex/hosting-native-integration` branch and consolidated
-documentation at this gate. Exact reviewed inputs are integrated there, excluding ongoing H1 work. Combined
-validation is pending Claude's separately reviewed LF checkout policy and CMS test-diagnostic fix: two CMS
-fixture failures reproduce on the pre-H3a baseline and must be resolved before the full-suite gate passes.
-[The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28) records scope, branch-local
-checks, review findings, and operating limits. No validated integration commit, staging approval, or hosted
-activation is claimed; J1 wiring waits for the validated result in Codex's branch. H3b remains planned.
+documentation at this gate. Exact reviewed inputs, including Claude's separately reviewed LF checkout policy
+and CMS test-diagnostic fix `63dd167`, are integrated there, excluding ongoing H1 work. Combined source commit
+`669fa99622bf916ed5b1423cdb28fb4ee538f75d` passed verification in a fresh LF checkout: all 559 tests across
+149 files, lint, TypeScript, architecture, editorial audit, mechanical article/glossary localization checks,
+public/job preflights, a public-only production build (415 pages), and CMS exclusion passed. Both baseline CMS
+failures are resolved on this checkout. [The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28)
+records exact inputs, environment, commands, skipped checks, and operating limits. The completion-record commit
+changes only documentation; Claude's consolidated documentation review remains pending. The validated result
+must enter working branches before J1 wiring. H3b, full J1 implementation, wider batch gates, CRLF CMS byte
+preservation, staging approval, and hosted activation remain pending.
 
 Objectives:
 

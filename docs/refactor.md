@@ -1,7 +1,8 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-28. H3a and J1 preparation are reviewed; combined integration
-validation is pending. This replaces the completed structural-refactor working notes.
+Status: implementation in progress, 2026-09-28. H3a, J1 preparation, and the CMS LF fix are reviewed;
+their combined code integration is validated. Consolidated documentation review and later checkpoints remain
+pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -223,7 +224,8 @@ Acceptance:
 ### H3 — Configuration preflight and release automation
 
 Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b remains planned.
-H3a code is integrated into the integration branch; combined validation and working-branch handoff are pending.
+H3a code is integrated and validated with J1 preparation and the CMS LF fix at `669fa99`.
+The validated result is ready for working-branch handoff; H3b and hosted checks remain pending.
 
 Implementation:
 
@@ -478,23 +480,41 @@ editorial approval, and a documentation status change cannot authorize external 
   targeted lint, TypeScript, architecture (678 modules), job/public preflight fixtures, a public-only Turbopack
   build (415 pages), and CMS exclusion. A fixture credentialed-origin build failed as intended without echoing
   the value. J1 preparation passed 30 focused tests, TypeScript, targeted lint, and architecture.
-- H3a's full suite had 537 passes and two failures out of 539 tests. The same two failures reproduced at
+- Before the LF fix, H3a's full suite had 537 passes and two failures out of 539 tests. The same two failures reproduced at
   pre-H3a base `4bc3df9`: `tools/cms/record-creator.test.ts:77` and `tools/cms/recovery-http.test.ts:123`.
   Claude diagnosed CRLF working-copy fixtures: the first assertion requires LF; the second tries to replace
   an LF body within CRLF source, produces no edit, and then fails its Git commit. The hidden stderr obscured
   that cause. No CMS source changes are part of the H3a inputs.
-- Agreed fix owner: Claude, in a separate bounded commit. Add `.gitattributes` with `* text=auto eol=lf`
-  and expose fixture Git stderr. The repository's stored LF content must remain unchanged; no translation
-  regeneration or unrelated content renormalization is authorized by this fix. Existing worktrees need an
-  owner-controlled refresh to acquire LF, preserving all uncommitted edits. CRLF CMS byte preservation is
-  a separate follow-up, not proven by enforcing LF checkouts.
-- Combined checks are pending that fix's committed review and integration; branch-local results above do not
-  waive the full-suite gate. Run applicable combined gates and record the validated commit before bringing it
-  into worker branches or wiring J1. No validated integration commit exists yet.
+- Fix owner: Claude. Codex reviewed and approved the exact two-file commit
+  `63dd167ca74bbd8c55b3e7d09faf092284cab726`: `.gitattributes` with `* text=auto eol=lf` and recovery-test
+  fixture Git stderr/stdout reporting with preserved error cause. No stored content was renormalized, no
+  translation artifacts were regenerated, and no H1 work was included. It was integrated after `cbc38bb`.
+  A fresh detached checkout supplied LF for validation, with zero tracked CRLF/mixed files; existing dirty
+  worktrees were not refreshed. CRLF CMS byte preservation remains a separate follow-up, not proven by LF policy.
+- **Validated combined source commit:** `669fa99622bf916ed5b1423cdb28fb4ee538f75d` on
+  `codex/hosting-native-integration`. All three reviewed inputs are ancestors. The subsequent completion-record
+  commit changes only this document and ROADMAP.md; the tested source tree is unchanged. Claude's consolidated
+  documentation review remains pending and is distinct from the passed combined code checks.
+- Combined environment: fresh LF Windows checkout, Node 24.21.0, Next.js 16.3.4, copied existing dependencies
+  (not a clean installation). A local wrapper removed Supabase/email/AWS and other `NEXT_PUBLIC_*` settings,
+  supplied only a fixture HTTPS site origin, and disabled telemetry. Job preflight used dummy credentials;
+  no database, provider send, or hosted service was invoked.
+- Combined commands/results: full `vitest run` **559 tests across 149 files passed**, including both formerly
+  failing CMS tests and J1's 20 worker fixtures; `eslint .`, `tsc --noEmit`, and architecture passed (679 modules).
+  Editorial audit passed for 479 records and zero approval records. Article/glossary mechanical localization
+  checks each checked 97 current articles with zero findings; reports were written only under ignored
+  `.glossary-drafts/`. Public and job-only production preflight fixtures passed. Normal Turbopack `next build`
+  passed (415 generated pages), followed by CMS exclusion. Tracked-tree and whitespace checks passed.
+- Skipped checks: live/isolated SQL tests await J1's real adapter; hosted, manual authentication/email,
+  and browser flow gates await their relevant checkpoints. Municipality evidence verification was not rerun
+  because no supplement/source/research content changed. H3b CI/clean-install/release automation and the
+  wider H1–H5 acceptance gate remain pending; this integration does not establish deployment readiness.
 - J1 final-acceptance findings carried forward: database-authoritative lease time and clock-skew tests;
   inspection of exhausted failures and expired processing claims at attempt five; standalone command loading
   of `server-only`; relevant critical-send and withdrawn reminder-topic tests; real PostgreSQL concurrency,
   timestamp mapping, bounded I/O, and alerting/error-count behavior. SES/finalization ambiguity and critical
   release recipient fan-out remain documented operating limits.
-- Statuses: local H3a and J1 preparation implemented/reviewed; integration assembled, validation pending;
-  J1 final implementation pending; staging/manual hosted checks pending; production activation none.
+- Statuses: local H3a, J1 preparation, and CMS LF fix implemented/reviewed; combined code integration validated;
+  consolidated documentation review pending; J1 final implementation pending; staging/manual hosted checks
+  pending; production activation none. Bring the validated integration result into working branches before
+  depending on it. No merge into main is authorized by this gate.
