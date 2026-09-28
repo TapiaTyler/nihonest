@@ -99,12 +99,23 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
   };
   if (!input.jobsEnabled) return report;
 
+  // Once time is unavailable, stop the pass: a later successful read cannot make an uncertain lease safe.
+  let clockFailed = false;
+  const readClock = () => {
+    try {
+      return clock(input.now);
+    } catch {
+      clockFailed = true;
+      throw new Error("The worker clock is unavailable or invalid.");
+    }
+  };
+
   try {
     const limits = workerLimitsSchema.parse(input.limits ?? {});
     report.status = input.delivery ? "completed" : "delivery-disabled";
-    report.remindersFulfilled = count(await input.store.generateDueReminderEvents({ now: clock(input.now), limit: limits.reminderLimit }));
-    report.criticalEventsGenerated = count(await input.store.generateTargetedCriticalUpdateEvents({ now: clock(input.now), limit: limits.criticalReleaseLimit }));
-    report.deliveriesPrepared = count(await input.store.prepareEmailDeliveries({ now: clock(input.now), limit: limits.preparationLimit }));
+    report.remindersFulfilled = count(await input.store.generateDueReminderEvents({ now: readClock(), limit: limits.reminderLimit }));
+    report.criticalEventsGenerated = count(await input.store.generateTargetedCriticalUpdateEvents({ now: readClock(), limit: limits.criticalReleaseLimit }));
+    report.deliveriesPrepared = count(await input.store.prepareEmailDeliveries({ now: readClock(), limit: limits.preparationLimit }));
     const delivery = input.delivery;
     // Disabled delivery preserves pending work and consumes no attempts or leases.
     if (!delivery) return report;
@@ -112,7 +123,7 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
     for (let attempt = 0; attempt < limits.deliveryLimit; attempt++) {
       // Just-in-time claims prevent later messages in a batch from aging behind slow sends.
       const rows = await input.store.claimEmailDeliveries({
-        now: clock(input.now), limit: 1, maxAttempts: MAX_EMAIL_DELIVERY_ATTEMPTS, leaseSeconds: limits.leaseSeconds,
+        now: readClock(), limit: 1, maxAttempts: MAX_EMAIL_DELIVERY_ATTEMPTS, leaseSeconds: limits.leaseSeconds,
       });
       if (rows.length === 0) break;
       if (rows.length !== 1) throw new Error("The store exceeded the claim limit.");
@@ -124,7 +135,7 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
         let outcome: NotificationDelivery;
         try {
           const context = await input.store.loadEmailContext(claimed);
-          const attemptedAt = clock(input.now);
+          const attemptedAt = readClock();
           if (!leaseIsCurrent(claimed, attemptedAt)) {
             report.expiredClaims++;
             continue;
@@ -138,22 +149,25 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
             emailContext: { ...delivery.context, recipientAddress: z.email().parse(context.recipientAddress) },
             provider: {
               send(message) {
-                if (!leaseIsCurrent(claimed, clock(input.now))) throw new Error("The claim expired before sending.");
+                if (!leaseIsCurrent(claimed, readClock())) throw new Error("The claim expired before sending.");
                 return delivery.provider.send(message);
               },
             },
             attemptedAt,
           });
-        } catch {
+          // Dispatch sanitizes provider failures, including a clock exception raised by our send guard.
+          if (clockFailed) throw new Error("The worker clock failed before sending.");
+        } catch (error) {
+          if (clockFailed) throw error;
+          const failedAt = readClock();
           report.infrastructureErrors++;
-          const failedAt = clock(input.now);
           outcome = transitionNotificationDelivery(claimed, "failed", failedAt, {
             errorSummary: "The worker could not load or validate delivery context.",
             retryAt: nextEmailRetryAt(claimed.attemptCount, failedAt),
           });
         }
 
-        const finalizedAt = clock(input.now);
+        const finalizedAt = readClock();
         if (!leaseIsCurrent(claimed, finalizedAt)) {
           report.expiredClaims++;
           continue;
@@ -168,7 +182,9 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
           retryAt: outcome.state === "failed" ? nextEmailRetryAt(claimed.attemptCount, finalizedAt) : undefined,
         });
         report[outcome.state]++;
-      } catch {
+      } catch (error) {
+        // Propagate clock failures to the pass-level handler, which counts them once and stops claiming.
+        if (clockFailed) throw error;
         // A finalization failure leaves the lease for SQL recovery; never immediately send again.
         report.infrastructureErrors++;
       }

@@ -2,7 +2,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { prepareEmailDelivery, transitionNotificationDelivery, type NotificationDelivery } from "@/domain/notifications/notification-delivery";
 import { type NotificationEvent, type NotificationPreferences } from "@/domain/notifications/notifications";
-import { runNotificationWorker, type EmailDeliveryCompletion, type NotificationWorkerStore } from "./notification-worker";
+import type { CriticalUpdateAccountContext } from "@/domain/notifications/critical-updates";
+import { runNotificationWorker, type ClaimedEmailContext, type EmailDeliveryCompletion, type NotificationWorkerStore } from "./notification-worker";
 
 const startedAt = "2026-10-01T00:00:00.000Z";
 const event: NotificationEvent = {
@@ -20,6 +21,7 @@ const emailContext = { fromName: "Nihonest", fromAddress: "sender@example.test",
 function fixture(events: NotificationEvent[] = [event]) {
   let instant = startedAt;
   let currentPreferences = { ...preferences };
+  let criticalUpdateAccountContext: CriticalUpdateAccountContext | undefined;
   let token = 0;
   const rows: NotificationDelivery[] = [];
   const store = {
@@ -48,9 +50,10 @@ function fixture(events: NotificationEvent[] = [event]) {
       } : transitionNotificationDelivery(row, "processing", now, { claimToken, claimExpiresAt });
       return [rows[index]];
     }),
-    loadEmailContext: vi.fn(async (row: NotificationDelivery) => ({
+    loadEmailContext: vi.fn(async (row: NotificationDelivery): Promise<ClaimedEmailContext> => ({
       event: events.find((candidate) => candidate.id === row.eventId)!,
       preferences: { ...currentPreferences }, recipientAddress: "private-reader@example.test",
+      criticalUpdateAccountContext,
     })),
     finalizeEmailDelivery: vi.fn(async (completion: EmailDeliveryCompletion) => {
       const index = rows.findIndex((row) => row.id === completion.deliveryId);
@@ -66,6 +69,8 @@ function fixture(events: NotificationEvent[] = [event]) {
     store, rows, send,
     setTime(value: string) { instant = value; },
     setConsent(value: boolean) { currentPreferences = { ...currentPreferences, emailEnabled: value }; },
+    setReminderConsent(value: boolean) { currentPreferences = { ...currentPreferences, deadlineRemindersEnabled: value }; },
+    setCriticalContext(value: CriticalUpdateAccountContext) { criticalUpdateAccountContext = value; },
     input: { jobsEnabled: true, store, now: () => instant, delivery: { provider: { send }, context: emailContext } },
   };
 }
@@ -126,6 +131,71 @@ describe("notification worker preparation", () => {
     };
     const f = fixture([criticalEvent]);
     expect(await runNotificationWorker(f.input)).toMatchObject({ suppressed: 1 });
+    expect(f.send).not.toHaveBeenCalled();
+  });
+
+  it("sends a critical update for a currently saved target and finalizes it once", async () => {
+    const criticalEvent: NotificationEvent = {
+      ...event, type: "article-critical-update",
+      payload: { articleId: "sample-guide", releaseId: "60000000-0000-4000-8000-000000000006", title: "Update", revision: "1", summary: "Changed", journeyTargets: [] },
+    };
+    const f = fixture([criticalEvent]);
+    f.setCriticalContext({
+      userId: event.userId, criticalUpdatesEnabled: true,
+      savedContent: [{ kind: "article", contentId: "sample-guide", state: "saved" }],
+    });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ sent: 1, suppressed: 0, exitCode: 0 });
+    expect(f.send).toHaveBeenCalledTimes(1);
+    expect(f.rows[0]).toMatchObject({ state: "sent", providerMessageId: "fixture-message" });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0, sent: 0 });
+    expect(f.send).toHaveBeenCalledTimes(1);
+  });
+
+  it("suppresses prepared reminders when topic consent is withdrawn but email stays enabled", async () => {
+    const f = fixture();
+    await f.store.prepareEmailDeliveries({ now: startedAt, limit: 100 });
+    f.setReminderConsent(false);
+    expect(await runNotificationWorker(f.input)).toMatchObject({ suppressed: 1, sent: 0, exitCode: 0 });
+    expect(f.rows[0].state).toBe("suppressed");
+    expect(f.send).not.toHaveBeenCalled();
+  });
+
+  it.each(["context", "provider", "completion"] as const)("stops on a malformed %s clock with one infrastructure error and leaves the claim recoverable", async (stage) => {
+    const f = fixture([event, { ...event, id: "10000000-0000-4000-8000-000000000009", deduplicationKey: "second" }]);
+    // Generation, critical generation, preparation, claim, context, provider, completion.
+    const invalidRead = { context: 5, provider: 6, completion: 7 }[stage];
+    let reads = 0;
+    const result = await runNotificationWorker({
+      ...f.input,
+      now: () => ++reads === invalidRead ? "private invalid timestamp" : startedAt,
+    });
+    expect(result).toMatchObject({ claimed: 1, sent: 0, failed: 0, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+    expect(f.rows.map((row) => row.state)).toEqual(["processing", "pending"]);
+    expect(f.send).toHaveBeenCalledTimes(stage === "completion" ? 1 : 0);
+    expect(JSON.stringify(result)).not.toContain("private");
+  });
+
+  it("counts a persistently malformed clock once after context loading and claims no later work", async () => {
+    const f = fixture([event, { ...event, id: "10000000-0000-4000-8000-000000000009", deduplicationKey: "second" }]);
+    const load = f.store.loadEmailContext.getMockImplementation()!;
+    f.store.loadEmailContext.mockImplementation(async (row) => {
+      f.setTime("invalid private clock");
+      return load(row);
+    });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 1, failed: 0, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+    expect(f.store.claimEmailDeliveries).toHaveBeenCalledTimes(1);
+    expect(f.send).not.toHaveBeenCalled();
+  });
+
+  it.each(["invalid", "throws"])("rejects an initial clock that %s before store I/O", async (mode) => {
+    const f = fixture();
+    expect(await runNotificationWorker({ ...f.input, now: () => {
+      if (mode === "throws") throw new Error("Private clock failure");
+      return "invalid private clock";
+    } })).toMatchObject({ claimed: 0, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.store.generateDueReminderEvents).not.toHaveBeenCalled();
     expect(f.send).not.toHaveBeenCalled();
   });
 

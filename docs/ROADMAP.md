@@ -1006,9 +1006,9 @@ and CMS test-diagnostic fix `63dd167`, are integrated there, excluding ongoing H
 public/job preflights, a public-only production build (415 pages), and CMS exclusion passed. Both baseline CMS
 failures are resolved on this checkout. [The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28)
 records exact inputs, environment, commands, skipped checks, and operating limits. The completion-record commit
-changes only documentation; Claude approved that record at `6eb2fa6` and merged the exact handoff into his
+changes only documentation; Claude approved that record at `6eb2fa6` and merged the exact handoff into Claude's
 working branch as `8e8a9c7`. The handoff is now in both working branches, unblocking J1 configuration wiring.
-H1 is in progress by Claude and remains uncommitted/excluded. H3b, full J1 implementation, wider batch gates,
+H1's later committed checkpoint is under review and excluded (see the follow-up below). H3b, full J1 implementation, wider batch gates,
 CRLF CMS byte preservation, staging approval, and hosted activation remain pending.
 
 **2026-09-28 shared-file cleanup:** Codex reviewed and approved Claude's exact `07ab272` (parent `63dd167`),
@@ -1020,8 +1020,19 @@ TypeScript, architecture, editorial/localization checks, public/job fixture pref
 the rerun alone passed with unchanged code/settings. No `.tmp` files remain tracked, the ignore rule works,
 and the validation checkout has zero tracked CRLF/mixed files. [The cleanup completion record](refactor.md#compile-cache-cleanup-integration--2026-09-28)
 records the environment, commands, and limits. The following commit updates only these two documentation
-files and awaits Claude's review; the prior documentation approval remains recorded. No hosted activation
+files was approved by Claude at `85935ac`; Claude merged the exact handoff as `f9dee65`. No hosted activation
 or main merge occurred.
+
+**2026-09-28 J1 follow-up / H1 review:** Claude approved Codex's runner-hardening checkpoint `7c272d2`
+against `85935ac`; the integration branch fast-forwarded to that exact tested source commit. It stops on clock
+failure and adds relevant critical-send and withdrawn reminder-topic fixtures. Its full suite passed 567 tests
+across 149 files with four workers; focused tests, targeted lint, TypeScript, and architecture passed.
+[The hardening record](checkpoints/J1-runner-hardening.md) preserves the default-worker CMS timeout and rerun,
+and the remaining real adapter/command/config/SQL acceptance work. H1 `119b872` passed independent full tests
+(563 / 150 files), static/build/localization gates, and current JS catalog checks, but Codex requested a P2
+production-checker fix: async chunks bypass catalog detection. H1 remains unintegrated; Claude is working on H2.
+[The H1 review](checkpoints/H1-review.md) records evidence and interface changes for later N2/N3 handoff.
+The new consolidated documentation awaits Claude's review. Production activation none; no main merge.
 
 Objectives:
 
