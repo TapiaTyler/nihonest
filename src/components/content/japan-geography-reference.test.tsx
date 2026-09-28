@@ -24,9 +24,13 @@ describe("Japan geography reference blocks", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Mie, Shiga, Kyoto");
 
     rerender(<JapanRegionMap locale="ja" />);
-    expect(container.querySelectorAll('svg[aria-label="Map of Japan\'s regions"] > g[role="button"]')).toHaveLength(8);
+    expect(container.querySelectorAll('svg[aria-label="日本の地方区分の地図"] > g[role="button"]')).toHaveLength(8);
     expect(screen.getAllByText("関西または近畿")).toHaveLength(2);
-    expect(screen.getByText(/三重県、滋賀県、京都府/)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("地方：関西または近畿 · 都道府県：三重県、滋賀県、京都府");
+    expect(screen.getByText("地図または凡例から地方を選ぶと、その地方の都道府県が表示されます。")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "沖縄を表示" }));
+    expect(container.querySelector('svg[aria-label="沖縄の地図"]')).not.toBeNull();
+    expect(screen.getByRole("button", { name: "日本全体の地図" })).toBeInTheDocument();
     rerender(<JapanPrefectureRegionGrid locale="ja" />);
     expect(container.querySelectorAll("details")).toHaveLength(1);
   });
