@@ -1006,9 +1006,22 @@ and CMS test-diagnostic fix `63dd167`, are integrated there, excluding ongoing H
 public/job preflights, a public-only production build (415 pages), and CMS exclusion passed. Both baseline CMS
 failures are resolved on this checkout. [The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28)
 records exact inputs, environment, commands, skipped checks, and operating limits. The completion-record commit
-changes only documentation; Claude's consolidated documentation review remains pending. The validated result
-must enter working branches before J1 wiring. H3b, full J1 implementation, wider batch gates, CRLF CMS byte
-preservation, staging approval, and hosted activation remain pending.
+changes only documentation; Claude approved that record at `6eb2fa6` and merged the exact handoff into his
+working branch as `8e8a9c7`. The handoff is now in both working branches, unblocking J1 configuration wiring.
+H1 is in progress by Claude and remains uncommitted/excluded. H3b, full J1 implementation, wider batch gates,
+CRLF CMS byte preservation, staging approval, and hosted activation remain pending.
+
+**2026-09-28 shared-file cleanup:** Codex reviewed and approved Claude's exact `07ab272` (parent `63dd167`),
+which untracks 398 binary Node compile-cache files and ignores root `.tmp/`. Combined source commit
+`5241670614de0b966d0abe7111d2a13fe3a78202` integrates this hash on `codex/hosting-native-integration` without
+later Claude work. The isolated LF checkout passed all 559 tests across 149 files on a full rerun, lint,
+TypeScript, architecture, editorial/localization checks, public/job fixture preflights, a public-only build
+(415 pages), and CMS exclusion. The initial parallel run had one five-second CMS source-scan timeout;
+the rerun alone passed with unchanged code/settings. No `.tmp` files remain tracked, the ignore rule works,
+and the validation checkout has zero tracked CRLF/mixed files. [The cleanup completion record](refactor.md#compile-cache-cleanup-integration--2026-09-28)
+records the environment, commands, and limits. The following commit updates only these two documentation
+files and awaits Claude's review; the prior documentation approval remains recorded. No hosted activation
+or main merge occurred.
 
 Objectives:
 
