@@ -995,6 +995,17 @@ This is the first planned continuously hosted application environment and public
 
 Implementation sequence: follow [the hosting and native readiness refactor roadmap](refactor.md). **Batch 1 (H1–H5)** reduces browser catalog payloads, prebuilds public detail pages while preserving query behavior, adds configuration validation and CI/release gates, adds appropriate headers and health checks, and narrows session handling after testing refresh behavior. **Batch 2 (J1–J2)** adds the notification worker and scheduled source monitoring after choosing its execution location. These checkpoints are planned and require measured builds, regression checks, and review. Suggested ownership is Claude for Batch 1 and Codex for the notification worker, with reciprocal review. Deployment and delivery activation remain separate gates.
 
+**2026-09-28 checkpoint progress:** Claude's H3a configuration/preflight commits `9d3442b` and `86218cc`
+are reviewed by Codex. Codex's J1 preparation commit `6624e27` is reviewed by Claude for its injectable runner
+and fixture scope; the real database adapter, run-once command, configuration wiring, and SQL integration
+acceptance remain pending. Codex owns the separate `codex/hosting-native-integration` branch and consolidated
+documentation at this gate. Exact reviewed inputs are integrated there, excluding ongoing H1 work. Combined
+validation is pending Claude's separately reviewed LF checkout policy and CMS test-diagnostic fix: two CMS
+fixture failures reproduce on the pre-H3a baseline and must be resolved before the full-suite gate passes.
+[The refactor completion record](refactor.md#h3a--j1-preparation-gate--2026-09-28) records scope, branch-local
+checks, review findings, and operating limits. No validated integration commit, staging approval, or hosted
+activation is claimed; J1 wiring waits for the validated result in Codex's branch. H3b remains planned.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;

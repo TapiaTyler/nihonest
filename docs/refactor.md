@@ -1,6 +1,7 @@
 # Hosting and native readiness refactor roadmap
 
-Status: planned, 2026-09-28. This replaces the completed structural-refactor working notes.
+Status: implementation in progress, 2026-09-28. H3a and J1 preparation are reviewed; combined integration
+validation is pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -94,6 +95,10 @@ through the designated integration checkout and merge the integrated commit into
 J1 to the configuration module. Commit independent work first; do not discard it to update the branch.
 
 ### Integration and combined verification
+
+Current H3a/J1 preparation gate: Codex owns `codex/hosting-native-integration` and the consolidated updates
+to this document and ROADMAP.md. Claude owns the separate CMS line-ending/test-diagnostic fix, subject to
+Codex review before integration. Integrate exact reviewed commit hashes; Claude's ongoing H1 work is excluded.
 
 Separate worktrees isolate files and build output; they do not prove that the branches work together. At each
 integration gate:
@@ -217,7 +222,8 @@ Acceptance:
 
 ### H3 — Configuration preflight and release automation
 
-Status: planned.
+Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b remains planned.
+H3a code is integrated into the integration branch; combined validation and working-branch handoff are pending.
 
 Implementation:
 
@@ -288,9 +294,10 @@ services or declaring the hosted gate complete.
 
 ### J1 — Notification worker
 
-Status: planned. Suggested owner: Codex; reviewer: Claude. Depends on H3a's job configuration contract, which
-Claude lands first so J1 can run alongside the rest of Batch 1. Configuration wiring waits for the reviewed
-H3a commit in Codex's worktree (see the concurrency plan's handoff and integration rules).
+Status: preparation implemented by Codex and reviewed by Claude (`6624e27`); J1 remains incomplete.
+The injectable runner and fixtures are integrated into the integration branch. The database adapter, command,
+configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
+waits for the validated H3a integration result in Codex's worktree (see the handoff and integration rules).
 
 Implementation:
 
@@ -453,3 +460,41 @@ Update each checkpoint here and the relevant main-roadmap entry with:
 
 Compilation alone does not complete a batch. Stop at review gates; automated checks do not constitute human
 editorial approval, and a documentation status change cannot authorize external activation.
+
+### H3a / J1 preparation gate — 2026-09-28
+
+- Reviewed inputs: Claude's H3a `9d3442b99fd4193b244cfca21d465deda8365d4d` and follow-up
+  `86218cc127fd753b34738ef47e57682c706fc496`; Codex's J1 preparation
+  `6624e2714b6b378bae036e1f60956795a16930a4`. Codex approved H3a after rereview; Claude approved J1
+  for preparation scope only. Exact reviewed inputs were merged into `codex/hosting-native-integration`
+  without conflicts; no unreviewed H1 changes were included.
+- H3a scope: explicit-environment configuration readers, feature-aware preflight, job-only deployment scope,
+  exact flags, normalized credential-free origins, shared email/admin readers, and validated site URL metadata.
+  The three initial review findings are resolved. CI and the release command remain H3b.
+- J1 scope: injected store/provider/clock, bounded single-message claims, existing consent/relevance rules,
+  token-bound finalization, retry backoff, disabled-delivery preservation, and sanitized aggregate reports.
+  See [the preparation record](checkpoints/J1-preparation.md). No live database adapter or command exists yet.
+- Branch-local verification, not combined validation: H3a rereview passed 36 focused tests across four files,
+  targeted lint, TypeScript, architecture (678 modules), job/public preflight fixtures, a public-only Turbopack
+  build (415 pages), and CMS exclusion. A fixture credentialed-origin build failed as intended without echoing
+  the value. J1 preparation passed 30 focused tests, TypeScript, targeted lint, and architecture.
+- H3a's full suite had 537 passes and two failures out of 539 tests. The same two failures reproduced at
+  pre-H3a base `4bc3df9`: `tools/cms/record-creator.test.ts:77` and `tools/cms/recovery-http.test.ts:123`.
+  Claude diagnosed CRLF working-copy fixtures: the first assertion requires LF; the second tries to replace
+  an LF body within CRLF source, produces no edit, and then fails its Git commit. The hidden stderr obscured
+  that cause. No CMS source changes are part of the H3a inputs.
+- Agreed fix owner: Claude, in a separate bounded commit. Add `.gitattributes` with `* text=auto eol=lf`
+  and expose fixture Git stderr. The repository's stored LF content must remain unchanged; no translation
+  regeneration or unrelated content renormalization is authorized by this fix. Existing worktrees need an
+  owner-controlled refresh to acquire LF, preserving all uncommitted edits. CRLF CMS byte preservation is
+  a separate follow-up, not proven by enforcing LF checkouts.
+- Combined checks are pending that fix's committed review and integration; branch-local results above do not
+  waive the full-suite gate. Run applicable combined gates and record the validated commit before bringing it
+  into worker branches or wiring J1. No validated integration commit exists yet.
+- J1 final-acceptance findings carried forward: database-authoritative lease time and clock-skew tests;
+  inspection of exhausted failures and expired processing claims at attempt five; standalone command loading
+  of `server-only`; relevant critical-send and withdrawn reminder-topic tests; real PostgreSQL concurrency,
+  timestamp mapping, bounded I/O, and alerting/error-count behavior. SES/finalization ambiguity and critical
+  release recipient fan-out remain documented operating limits.
+- Statuses: local H3a and J1 preparation implemented/reviewed; integration assembled, validation pending;
+  J1 final implementation pending; staging/manual hosted checks pending; production activation none.
