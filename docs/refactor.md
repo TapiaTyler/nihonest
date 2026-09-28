@@ -1,8 +1,9 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-28. H3a, J1 preparation, and the CMS LF fix are reviewed;
-their combined code integration is validated. Consolidated documentation review and later checkpoints remain
-pending. This replaces the completed structural-refactor working notes.
+Status: implementation in progress, 2026-09-28. H3a, J1 preparation, the CMS LF fix, and compile-cache cleanup
+are reviewed and their combined code integration is validated. Claude approved the prior consolidated
+documentation at `6eb2fa6`; the new cleanup record awaits review. H1 is in progress and later checkpoints
+remain pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -97,9 +98,10 @@ J1 to the configuration module. Commit independent work first; do not discard it
 
 ### Integration and combined verification
 
-Current H3a/J1 preparation gate: Codex owns `codex/hosting-native-integration` and the consolidated updates
-to this document and ROADMAP.md. Claude owns the separate CMS line-ending/test-diagnostic fix, subject to
-Codex review before integration. Integrate exact reviewed commit hashes; Claude's ongoing H1 work is excluded.
+For the H3a/J1 preparation gate and shared-file fixes on 2026-09-28, Codex owns
+`codex/hosting-native-integration` and the consolidated updates to this document and ROADMAP.md. Claude owns
+the separate CMS line-ending/test-diagnostic and compile-cache fixes, reviewed by Codex before integration.
+Integrate exact reviewed commit hashes; Claude's ongoing H1 work is excluded.
 
 Separate worktrees isolate files and build output; they do not prove that the branches work together. At each
 integration gate:
@@ -177,7 +179,7 @@ result. Any Japanese catalog changes needed for that result must also be integra
 
 ### H1 — Keep full catalogs out of browser imports
 
-Status: planned.
+Status: in progress by Claude; implementation remains uncommitted and is excluded from this integration gate.
 
 Entry points: `src/components/content/prefecture-finder.tsx`, `src/lib/content/prefecture-finder.ts`, geography
 map components, and their importing layouts/renderers.
@@ -225,7 +227,7 @@ Acceptance:
 
 Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b remains planned.
 H3a code is integrated and validated with J1 preparation and the CMS LF fix at `669fa99`.
-The validated result is ready for working-branch handoff; H3b and hosted checks remain pending.
+The validated handoff `6eb2fa6` is in both working branches; H3b and hosted checks remain pending.
 
 Implementation:
 
@@ -299,7 +301,7 @@ services or declaring the hosted gate complete.
 Status: preparation implemented by Codex and reviewed by Claude (`6624e27`); J1 remains incomplete.
 The injectable runner and fixtures are integrated into the integration branch. The database adapter, command,
 configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
-waits for the validated H3a integration result in Codex's worktree (see the handoff and integration rules).
+is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
 
 Implementation:
 
@@ -494,7 +496,8 @@ editorial approval, and a documentation status change cannot authorize external 
 - **Validated combined source commit:** `669fa99622bf916ed5b1423cdb28fb4ee538f75d` on
   `codex/hosting-native-integration`. All three reviewed inputs are ancestors. The subsequent completion-record
   commit changes only this document and ROADMAP.md; the tested source tree is unchanged. Claude's consolidated
-  documentation review remains pending and is distinct from the passed combined code checks.
+  documentation at `6eb2fa6639db60682c1159c0e23db716bf28f345` was approved by Claude on 2026-09-28,
+  separately from the passed combined code checks.
 - Combined environment: fresh LF Windows checkout, Node 24.21.0, Next.js 16.3.4, copied existing dependencies
   (not a clean installation). A local wrapper removed Supabase/email/AWS and other `NEXT_PUBLIC_*` settings,
   supplied only a fixture HTTPS site origin, and disabled telemetry. Job preflight used dummy credentials;
@@ -515,6 +518,37 @@ editorial approval, and a documentation status change cannot authorize external 
   timestamp mapping, bounded I/O, and alerting/error-count behavior. SES/finalization ambiguity and critical
   release recipient fan-out remain documented operating limits.
 - Statuses: local H3a, J1 preparation, and CMS LF fix implemented/reviewed; combined code integration validated;
-  consolidated documentation review pending; J1 final implementation pending; staging/manual hosted checks
-  pending; production activation none. Bring the validated integration result into working branches before
-  depending on it. No merge into main is authorized by this gate.
+  consolidated documentation at `6eb2fa6` approved by Claude. That exact handoff is in Codex's working branch
+  and was merged by Claude as `8e8a9c7` without overlapping his uncommitted H1 changes. Claude reported an LF
+  checkout, 59 focused tests across seven files, and TypeScript passing after the merge. J1 final implementation
+  and staging/manual hosted checks remain pending; production activation none. No merge into main is authorized
+  by this gate.
+
+### Compile-cache cleanup integration — 2026-09-28
+
+- Claude implemented and Codex reviewed/approved exact commit
+  `07ab2720928671300aa414c3529cbdc313b5aaf1`, whose parent is the already approved LF fix `63dd167`.
+  The diff deletes 398 tracked binary files under `.tmp/node-compile-cache/` and adds `/.tmp/` with a comment
+  to `.gitignore`; there are no application, interface, dependency, or translation changes. Repository code
+  searches found no dependency on this root cache. Cache files are regenerable; integration can remove
+  previously tracked copies in the receiving checkout.
+- **Validated combined source commit:** `5241670614de0b966d0abe7111d2a13fe3a78202` on
+  `codex/hosting-native-integration`, merging only the reviewed hash after `6eb2fa6`, without conflicts.
+  No later Claude branch commits or uncommitted H1 changes are included. The subsequent record changes
+  only this document and ROADMAP.md; review of this new documentation update remains pending.
+- Environment: isolated LF Windows validation checkout, Node 24.21.0, Next.js 16.3.4, copied existing
+  dependencies rather than a clean installation. The existing fixture-only wrapper removed Supabase/email/AWS
+  settings and other public settings, supplied a dummy HTTPS site origin for the build, and disabled telemetry.
+  Job preflight used dummy credentials. No hosted service, database, or provider send was invoked.
+- Commands/results: `git show`, `git diff-tree`, dependency searches, and `git diff --check` passed review;
+  `git ls-files .tmp` returns no files and `git check-ignore .tmp/cache-probe` confirms the ignore rule.
+  There are zero tracked CRLF/mixed files in validation. Full `vitest run` passed **559 tests in 149 files**.
+  The first full run alongside static checks had 558 passes and a five-second timeout in the CMS source scan;
+  the full suite rerun alone passed with unchanged code and timeout settings. `eslint .`, `tsc --noEmit`,
+  architecture (679 modules), editorial audit (479 records, zero approval records), article/glossary checks
+  (97 current articles each, zero findings), and public/job production preflights passed. Normal Turbopack
+  `next build` generated 415 pages; the subsequent CMS exclusion scan passed. The tracked checkout is clean.
+- Skipped checks and operating limits from the prior gate still apply: no content changes require municipality
+  evidence regeneration; real SQL, clean-install CI, browser/hosted flows, and J1 final acceptance remain pending.
+  Both shared-file fixes are reviewed and combined code validation is complete; the new documentation record
+  awaits Claude's review. Production activation none; no main merge.
