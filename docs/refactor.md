@@ -74,14 +74,45 @@ with one owner at a time.
   test run or `next build` picks up the other agent's unfinished edits, and both builds write to the same `.next`.
 - If a shared checkout is unavoidable, do not run `next build`, the CMS exclusion scan, or the full suite while the
   other agent is editing. Run focused tests only, and run the full gate at the review gate.
-- Each agent reviews the other's finished checkpoint while starting its own next one, so review never idles either
-  agent.
+- Review a specific committed checkpoint while independent work continues. Dependent work waits for the reviewed
+  handoff; ongoing work must not change the commit being reviewed.
+
+### H3a handoff to J1
+
+J1's configuration wiring depends on the reviewed H3a commit being integrated and brought into Codex's worktree.
+A completion message or an interface description alone does not satisfy that dependency.
+
+Claude's handoff records:
+
+- The commit hash and changed configuration files.
+- The public module interface, feature flags, and build-time versus runtime settings.
+- How job-only settings are validated and which credentials J1 requires.
+- Tests confirming that public-only builds do not require worker credentials or enable email delivery.
+
+Codex can inspect SQL, design the runner, and prepare fixtures before that handoff. After review, integrate H3a
+through the designated integration checkout and merge the integrated commit into Codex's branch before wiring
+J1 to the configuration module. Commit independent work first; do not discard it to update the branch.
+
+### Integration and combined verification
+
+Separate worktrees isolate files and build output; they do not prove that the branches work together. At each
+integration gate:
+
+1. Record the exact checkpoint commit and obtain the other agent's review.
+2. Integrate only reviewed changes into the integration branch. Merging a worker branch requires every commit
+   included by that merge to be ready; otherwise use an agreed checkpoint-specific integration method.
+3. Run the applicable full checkpoint/batch gates against the combined result. Record its commit and results.
+4. Bring the validated integration result into both working branches before dependent work or file handoffs.
+
+Do not mark integration validated from branch-local checks alone. In particular, verify H5 session handling and
+N4 account orchestration together, including refresh, account switching, sign-out, and subsequent navigation.
+Resolve conflicts with the affected file owner and rerun affected checks after resolution.
 
 ### Stages
 
 | Stage | Claude | Codex | Why these can overlap |
 | --- | --- | --- | --- |
-| A | H3a (below), then H1 → H2 | J1, then N4 | J1 needs only the H3a contract. N4 touches account sync, which Batch 1 does not edit. |
+| A | H3a (below), then H1 → H2 | J1 preparation, then configuration wiring after the H3a handoff; N4 | J1 depends on reviewed/integrated H3a. N4 can overlap, subject to the account/session ownership rule below. |
 | B | H4, H5, H3b (CI and release checks); review J1 and N4 | N1 without component payloads; N2 parser and data contracts; review H1 and H2 | N1 is `content-bundle.ts` and new payload schemas. The N2 parser is a new domain module; renderers are wired in Stage C. |
 | C | N3; review N1 and N2; Japanese catalog edits for N2 | N2 renderer wiring and component data, then N1 component payloads, then N5 | Batch 1 is finished with `localized-article.tsx` and `japan-geography-reference.tsx`. |
 
@@ -108,8 +139,33 @@ the rest of H3: CI and the release command, done once the other Batch 1 changes 
 | `.github/workflows/*`, the release script | none | Claude | Claude |
 | `package.json` scripts | Both may add a line; announce it and don't reorder | same | same |
 
+Supporting files follow these rules:
+
+| File or area | Owner and coordination rule |
+| --- | --- |
+| Checkpoint-specific tests and fixtures | The checkpoint implementer; shared tests require an agreed handoff before editing. |
+| `scripts/check-architecture.ts` | Codex for N2/N4 portability checks; coordinate any release-related edits requested by Claude. |
+| `docs/refactor.md`, `docs/ROADMAP.md`, shared operational documentation | One designated integration owner per gate applies consolidated status updates; each implementer supplies its checkpoint record. Agree ownership before parallel edits. |
+| `package.json` dependency sections and `package-lock.json` | One agreed dependency owner at a time updates both together. The concurrent exception above covers script additions only. |
+
+H5 may require account/session component changes even though N4 owns account orchestration. Claude requests
+those changes from Codex or obtains an explicit file handoff; neither agent assumes these areas are independent.
+The same coordination applies when a shared test or configuration contract changes.
+
 A checkpoint that needs a file owned by the other agent in that stage waits, or asks for a small change through
 the review channel. Neither agent edits the other's files.
+
+### Partial N1/N2 delivery and final acceptance
+
+Stage B is an intermediate review point:
+
+- N1: catalog coverage implemented; component payloads pending.
+- N2: parser/data contracts implemented; renderer integration pending.
+
+Record those partial statuses and their reviewed commits. Do not mark either checkpoint complete or imply that
+the bundle is fully usable because the Stage B tests pass. Final N1/N2 acceptance follows Stage C's renderer
+wiring, component data, and bundle payload integration, with the complete checkpoint checks run on the combined
+result. Any Japanese catalog changes needed for that result must also be integrated and reviewed.
 
 ## Batch 1 — Hosting readiness
 
@@ -233,7 +289,8 @@ services or declaring the hosted gate complete.
 ### J1 — Notification worker
 
 Status: planned. Suggested owner: Codex; reviewer: Claude. Depends on H3a's job configuration contract, which
-Claude lands first so J1 can run alongside the rest of Batch 1 (see the concurrency plan).
+Claude lands first so J1 can run alongside the rest of Batch 1. Configuration wiring waits for the reviewed
+H3a commit in Codex's worktree (see the concurrency plan's handoff and integration rules).
 
 Implementation:
 
@@ -285,6 +342,9 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 Status: planned. Coordinate translation selectors with Claude.
 
+Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
+and complete final acceptance after integrating Stage C.
+
 Implementation:
 
 - Inventory native-required catalogs against the exporter. Cover English/Japanese municipality guidance/general
@@ -307,6 +367,9 @@ Acceptance:
 
 Status: planned. Suggested split: Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
 and owns translation catalog edits. Each shared file has one active owner.
+
+Stage B delivers parser/data contracts only; Stage C wires renderers and component content. Final acceptance
+requires the integrated rendering and export paths, not just the standalone parser tests.
 
 Implementation:
 
