@@ -4,6 +4,7 @@ import {
   ConfigurationError,
   readEmailDeliveryConfig,
   readJobConfig,
+  readPublicSiteOrigin,
   readSupabasePublicSettings,
   readSupabaseSecretKey,
   requireJobConfig,
@@ -177,5 +178,83 @@ describe("feature readers", () => {
     }
     expect(settingDefinitions.filter((setting) => setting.name.startsWith("NEXT_PUBLIC_")).every((setting) => setting.exposure === "public-build")).toBe(true);
     expect(settingDefinitions.filter((setting) => setting.exposure === "public-build").every((setting) => setting.name.startsWith("NEXT_PUBLIC_"))).toBe(true);
+  });
+});
+
+describe("H3a review fixes", () => {
+  const jobEnvironment: ConfigEnvironment = { NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co", SUPABASE_SECRET_KEY: secret };
+  const httpsSite: ConfigEnvironment = { NEXT_PUBLIC_SITE_URL: "https://nihonest.example" };
+
+  it("keeps padded or differently cased flags disabled, like the browser's literal comparison", () => {
+    for (const value of [" true ", "true ", " true", "TRUE", "True"]) {
+      const result = readEmailDeliveryConfig({ ...emailSettings, ...httpsSite, EMAIL_DELIVERY_ENABLED: value });
+      expect(result.value).toEqual({ enabled: false });
+      expect(settings(result)).toEqual(["EMAIL_DELIVERY_ENABLED"]);
+    }
+    expect(settings(checkConfiguration({ ...accountsProduction, NEXT_PUBLIC_SUPABASE_GOOGLE_AUTH_ENABLED: " true " }, { target: "production" })))
+      .toEqual(["NEXT_PUBLIC_SUPABASE_GOOGLE_AUTH_ENABLED"]);
+    expect(readEmailDeliveryConfig({ EMAIL_DELIVERY_ENABLED: "" })).toEqual({ value: { enabled: false }, issues: [] });
+  });
+
+  it("checks a job-only deployment without web-account settings, with delivery disabled and enabled", () => {
+    expect(checkConfiguration(jobEnvironment, { target: "production", deployment: "job" })).toEqual({
+      target: "production",
+      deployment: "job",
+      features: { publicSite: false, accounts: false, jobs: true, emailDelivery: false },
+      issues: [],
+    });
+    expect(checkConfiguration({ ...jobEnvironment, ...httpsSite, ...emailSettings }, { target: "production", deployment: "job" }))
+      .toMatchObject({ issues: [], features: { jobs: true, emailDelivery: true } });
+    expect(settings(checkConfiguration({ ...jobEnvironment, ...emailSettings }, { target: "production", deployment: "job" })))
+      .toEqual(["NEXT_PUBLIC_SITE_URL"]);
+    expect(settings(checkConfiguration({ NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co" }, { target: "production", deployment: "job" })))
+      .toEqual(["SUPABASE_SECRET_KEY"]);
+    expect(settings(checkConfiguration(jobEnvironment, { target: "production", deployment: "job", require: ["emailDelivery"] })))
+      .toEqual(["EMAIL_DELIVERY_ENABLED"]);
+    expect(settings(checkConfiguration(jobEnvironment, { target: "production", deployment: "job", require: ["accounts"] })))
+      .toEqual(["--require"]);
+  });
+
+  it("agrees with the job reader for job deployments", () => {
+    for (const env of [jobEnvironment, { ...jobEnvironment, ...emailSettings }, {}, { ...jobEnvironment, ...httpsSite, ...emailSettings }]) {
+      expect(checkConfiguration(env, { target: "local", deployment: "job" }).issues).toEqual(readJobConfig(env, "local").issues);
+    }
+  });
+
+  it("still reports incomplete web-account configuration for the web deployment", () => {
+    expect(settings(checkConfiguration({ ...publicOnlyProduction, ...jobEnvironment }, { target: "production" })))
+      .toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]);
+    expect(settings(checkConfiguration({ ...publicOnlyProduction, ...jobEnvironment }, { target: "production", require: ["jobs"] })))
+      .toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]);
+  });
+
+  it("rejects credentials, paths, queries, and fragments in origin settings without printing them", () => {
+    const invalid = [
+      "https://user:hunter2@nihonest.example",
+      "https://user@nihonest.example",
+      "https://nihonest.example/base",
+      "https://nihonest.example/?token=hunter2",
+      "https://nihonest.example/#hunter2",
+      "https://nihonest.example?",
+    ];
+    for (const value of invalid) {
+      for (const name of ["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_SUPABASE_URL"]) {
+        const report = checkConfiguration({ ...accountsProduction, [name]: value }, { target: "production" });
+        expect(settings(report)).toEqual([name]);
+        expect(JSON.stringify(report.issues)).not.toMatch(/hunter2|nihonest\.example|\/base/);
+      }
+      expect(() => readPublicSiteOrigin({ NEXT_PUBLIC_SITE_URL: value })).toThrow(ConfigurationError);
+      expect(settings(readEmailDeliveryConfig({ ...emailSettings, NEXT_PUBLIC_SITE_URL: value }))).toEqual(["NEXT_PUBLIC_SITE_URL"]);
+      expect(settings(readJobConfig({ ...jobEnvironment, NEXT_PUBLIC_SUPABASE_URL: value }))).toEqual(["NEXT_PUBLIC_SUPABASE_URL"]);
+    }
+  });
+
+  it("normalizes accepted origins, including a trailing slash", () => {
+    expect(readPublicSiteOrigin({ NEXT_PUBLIC_SITE_URL: "https://Nihonest.example/" })).toBe("https://nihonest.example");
+    expect(readPublicSiteOrigin({})).toBeUndefined();
+    expect(readEmailDeliveryConfig({ ...emailSettings, NEXT_PUBLIC_SITE_URL: "https://nihonest.example/" }).value)
+      .toMatchObject({ enabled: true, siteOrigin: "https://nihonest.example" });
+    expect(readJobConfig({ ...jobEnvironment, NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co/" }).value?.supabaseUrl)
+      .toBe("https://project.supabase.co");
   });
 });

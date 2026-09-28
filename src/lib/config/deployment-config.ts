@@ -61,6 +61,10 @@ function present(env: ConfigEnvironment, name: string): string | undefined {
 
 const loopbackHosts = new Set(["localhost", "127.0.0.1", "[::1]", "0.0.0.0"]);
 
+/**
+ * Origin settings must be a bare http(s) origin: no credentials, path, query, or fragment (a trailing slash is
+ * allowed). Consumers use the normalized origin, so nothing else in the value can reach published URLs.
+ */
 function parseOrigin(env: ConfigEnvironment, name: string, target: DeploymentTarget): Parsed<string> {
   const raw = present(env, name);
   if (!raw) return { issues: [] };
@@ -73,16 +77,28 @@ function parseOrigin(env: ConfigEnvironment, name: string, target: DeploymentTar
   }
   const issues: ConfigurationIssue[] = [];
   if (url.protocol !== "https:" && url.protocol !== "http:") issues.push({ setting: name, message: "must use http or https" });
+  if (url.username || url.password) issues.push({ setting: name, message: "must not contain a username or password" });
+  if (url.pathname !== "/" || url.search || url.hash || raw.includes("?") || raw.includes("#")) {
+    issues.push({ setting: name, message: "must be an origin without a path, query, or fragment" });
+  }
   if (target === "production") {
     if (url.protocol !== "https:") issues.push({ setting: name, message: "must use https in production" });
     if (loopbackHosts.has(url.hostname) || url.hostname.endsWith(".localhost")) issues.push({ setting: name, message: "must not be a local address in production" });
   }
-  return { value: url.origin, issues };
+  return issues.length ? { issues } : { value: url.origin, issues };
 }
 
+/** The normalized public origin, or undefined when unset. Throws a ConfigurationError for an invalid value. */
+export function readPublicSiteOrigin(env: ConfigEnvironment, target: DeploymentTarget = "local"): string | undefined {
+  const { value, issues } = parseOrigin(env, "NEXT_PUBLIC_SITE_URL", target);
+  if (issues.length) throw new ConfigurationError("The public site origin is invalid", issues);
+  return value;
+}
+
+/** Flags compare the raw value, matching the browser's literal `=== "true"` checks: " true " stays disabled. */
 function parseBoolean(env: ConfigEnvironment, name: string): Parsed<boolean> {
-  const raw = env[name]?.trim();
-  if (!raw) return { value: false, issues: [] };
+  const raw = env[name];
+  if (raw === undefined || raw === "") return { value: false, issues: [] };
   if (raw === "true") return { value: true, issues: [] };
   if (raw === "false") return { value: false, issues: [] };
   return { value: false, issues: [{ setting: name, message: "must be \"true\" or \"false\"; other values are treated as disabled" }] };
@@ -100,8 +116,8 @@ export function readSupabasePublicSettings(env: ConfigEnvironment, target: Deplo
   if (!publishableKey) issues.push({ setting: "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", message: "is required when NEXT_PUBLIC_SUPABASE_URL is set" });
   const origin = parseOrigin(env, "NEXT_PUBLIC_SUPABASE_URL", target);
   issues.push(...origin.issues);
-  if (issues.length || !url || !publishableKey) return { issues };
-  return { value: { url, publishableKey }, issues };
+  if (issues.length || !origin.value || !publishableKey) return { issues };
+  return { value: { url: origin.value, publishableKey }, issues };
 }
 
 /** Prefers the current secret key and falls back to the legacy service-role key, matching the local CLI output. */
@@ -114,7 +130,6 @@ const emailDeliverySchema = z.object({
   awsRegion: z.string().trim().min(1),
   fromName: z.string().trim().min(1).max(80),
   fromAddress: z.email(),
-  siteOrigin: z.url().refine((value) => value.startsWith("https://")),
 });
 
 const emailSettingNames: Record<keyof z.infer<typeof emailDeliverySchema>, string> = {
@@ -122,7 +137,6 @@ const emailSettingNames: Record<keyof z.infer<typeof emailDeliverySchema>, strin
   awsRegion: "AWS_REGION",
   fromName: "EMAIL_FROM_NAME",
   fromAddress: "EMAIL_FROM_ADDRESS",
-  siteOrigin: "NEXT_PUBLIC_SITE_URL",
 };
 
 const emailSettingMessages: Record<keyof typeof emailSettingNames, string> = {
@@ -130,12 +144,11 @@ const emailSettingMessages: Record<keyof typeof emailSettingNames, string> = {
   awsRegion: "is required when email delivery is enabled",
   fromName: "is required when email delivery is enabled and must be at most 80 characters",
   fromAddress: "must be a valid email address when email delivery is enabled",
-  siteOrigin: "must be an https URL when email delivery is enabled",
 };
 
 export type EmailDeliveryConfig =
   | Readonly<{ enabled: false }>
-  | Readonly<{ enabled: true } & z.infer<typeof emailDeliverySchema>>;
+  | Readonly<{ enabled: true; siteOrigin: string } & z.infer<typeof emailDeliverySchema>>;
 
 /** Email is fail-closed: only an exact "true" enables it, and then every provider setting must be valid. */
 export function readEmailDeliveryConfig(env: ConfigEnvironment): Parsed<EmailDeliveryConfig> {
@@ -146,11 +159,17 @@ export function readEmailDeliveryConfig(env: ConfigEnvironment): Parsed<EmailDel
     awsRegion: env.AWS_REGION,
     fromName: env.EMAIL_FROM_NAME,
     fromAddress: env.EMAIL_FROM_ADDRESS,
-    siteOrigin: env.NEXT_PUBLIC_SITE_URL,
   });
-  if (result.success) return { value: { enabled: true, ...result.data }, issues: [] };
-  const fields = new Set(result.error.issues.map((issue) => issue.path[0] as keyof typeof emailSettingNames));
-  return { issues: [...fields].map((field) => ({ setting: emailSettingNames[field], message: emailSettingMessages[field] })) };
+  const issues: ConfigurationIssue[] = result.success ? [] : [...new Set(result.error.issues.map((issue) => issue.path[0] as keyof typeof emailSettingNames))]
+    .map((field) => ({ setting: emailSettingNames[field], message: emailSettingMessages[field] }));
+  // Email links use the normalized origin; it must be HTTPS even outside production.
+  const site = parseOrigin(env, "NEXT_PUBLIC_SITE_URL", "local");
+  issues.push(...site.issues);
+  if (!site.issues.length && !site.value?.startsWith("https://")) {
+    issues.push({ setting: "NEXT_PUBLIC_SITE_URL", message: "must be an https origin when email delivery is enabled" });
+  }
+  if (!result.success || issues.length || !site.value) return { issues };
+  return { value: { enabled: true, ...result.data, siteOrigin: site.value }, issues: [] };
 }
 
 export type JobConfig = Readonly<{
@@ -165,9 +184,10 @@ export type JobConfig = Readonly<{
  */
 export function readJobConfig(env: ConfigEnvironment, target: DeploymentTarget = "local"): Parsed<JobConfig> {
   const issues: ConfigurationIssue[] = [];
-  const url = present(env, "NEXT_PUBLIC_SUPABASE_URL");
-  if (!url) issues.push({ setting: "NEXT_PUBLIC_SUPABASE_URL", message: "is required for administrative jobs" });
-  else issues.push(...parseOrigin(env, "NEXT_PUBLIC_SUPABASE_URL", target).issues);
+  const supabase = parseOrigin(env, "NEXT_PUBLIC_SUPABASE_URL", target);
+  const url = supabase.value;
+  if (!present(env, "NEXT_PUBLIC_SUPABASE_URL")) issues.push({ setting: "NEXT_PUBLIC_SUPABASE_URL", message: "is required for administrative jobs" });
+  issues.push(...supabase.issues);
   const secretKey = readSupabaseSecretKey(env);
   if (!secretKey) issues.push({ setting: "SUPABASE_SECRET_KEY", message: "is required for administrative jobs (or the legacy SUPABASE_SERVICE_ROLE_KEY)" });
   const email = readEmailDeliveryConfig(env);
@@ -184,14 +204,23 @@ export function requireJobConfig(env: ConfigEnvironment, target: DeploymentTarge
   return value;
 }
 
+/**
+ * `web` checks the Next.js site (and anything required alongside it on the same host). `job` checks only a
+ * command environment against readJobConfig: it needs no publishable key, public site setting, or social flags.
+ */
+export type DeploymentKind = "web" | "job";
+
 export type ConfigurationReport = Readonly<{
   target: DeploymentTarget;
+  deployment: DeploymentKind;
   features: Readonly<Record<ConfigFeature, boolean>>;
   issues: readonly ConfigurationIssue[];
 }>;
 
 export type ConfigurationCheckOptions = Readonly<{
   target: DeploymentTarget;
+  /** Defaults to `web`. */
+  deployment?: DeploymentKind;
   /** Features this deployment must provide; `jobs` is only ever enabled by requiring it or by enabling email. */
   require?: readonly ConfigFeature[];
 }>;
@@ -202,7 +231,25 @@ export type ConfigurationCheckOptions = Readonly<{
  */
 export function checkConfiguration(env: ConfigEnvironment, options: ConfigurationCheckOptions): ConfigurationReport {
   const { target } = options;
+  const deployment = options.deployment ?? "web";
   const required = new Set(options.require ?? []);
+  if (deployment === "job") {
+    const job = readJobConfig(env, target);
+    const issues = [...job.issues];
+    const email = readEmailDeliveryConfig(env);
+    if (required.has("emailDelivery") && !email.value?.enabled && !email.issues.length) {
+      issues.push({ setting: "EMAIL_DELIVERY_ENABLED", message: "must be \"true\" because this deployment requires email delivery" });
+    }
+    for (const feature of ["publicSite", "accounts"] as const) {
+      if (required.has(feature)) issues.push({ setting: "--require", message: `cannot require ${feature} of a job deployment; check the web deployment separately` });
+    }
+    return {
+      target,
+      deployment,
+      features: { publicSite: false, accounts: false, jobs: true, emailDelivery: Boolean(email.value?.enabled) },
+      issues: dedupe(issues),
+    };
+  }
   const issues: ConfigurationIssue[] = [];
 
   const siteUrl = parseOrigin(env, "NEXT_PUBLIC_SITE_URL", target);
@@ -239,6 +286,7 @@ export function checkConfiguration(env: ConfigEnvironment, options: Configuratio
 
   return {
     target,
+    deployment,
     features: { publicSite: true, accounts, jobs, emailDelivery },
     issues: dedupe(issues),
   };
