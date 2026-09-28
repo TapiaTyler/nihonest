@@ -2,8 +2,9 @@
 
 Status: implementation in progress, 2026-09-28. H3a, J1 preparation, the CMS LF fix, and compile-cache cleanup
 are reviewed and their combined code integration is validated. Claude approved the prior consolidated
-documentation at `6eb2fa6`; the new cleanup record awaits review. H1 is in progress and later checkpoints
-remain pending. This replaces the completed structural-refactor working notes.
+documentation at `6eb2fa6` and `85935ac`. J1 runner hardening is reviewed and integrated; the latest record
+awaits review. H1 `119b872` requires a bundle-checker fix before integration. Later checkpoints remain
+pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -179,7 +180,8 @@ result. Any Japanese catalog changes needed for that result must also be integra
 
 ### H1 — Keep full catalogs out of browser imports
 
-Status: in progress by Claude; implementation remains uncommitted and is excluded from this integration gate.
+Status: implemented by Claude at `119b872`; Codex requested a bundle-checker fix before approval/integration.
+See [the exact-commit review](checkpoints/H1-review.md). H2 is now in progress by Claude and excluded.
 
 Entry points: `src/components/content/prefecture-finder.tsx`, `src/lib/content/prefecture-finder.ts`, geography
 map components, and their importing layouts/renderers.
@@ -203,7 +205,8 @@ Acceptance:
 
 ### H2 — Prebuild public detail pages
 
-Status: planned. Coordinate with H1 and inventory existing query behavior first.
+Status: in progress by Claude; no H2 checkpoint is reviewed or integrated yet.
+Coordinate with H1 and inventory existing query behavior first.
 
 Entry points: article, residence-status, and guided-journey detail pages.
 
@@ -298,7 +301,8 @@ services or declaring the hosted gate complete.
 
 ### J1 — Notification worker
 
-Status: preparation implemented by Codex and reviewed by Claude (`6624e27`); J1 remains incomplete.
+Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
+J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
 The injectable runner and fixtures are integrated into the integration branch. The database adapter, command,
 configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
 is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
@@ -519,7 +523,7 @@ editorial approval, and a documentation status change cannot authorize external 
   release recipient fan-out remain documented operating limits.
 - Statuses: local H3a, J1 preparation, and CMS LF fix implemented/reviewed; combined code integration validated;
   consolidated documentation at `6eb2fa6` approved by Claude. That exact handoff is in Codex's working branch
-  and was merged by Claude as `8e8a9c7` without overlapping his uncommitted H1 changes. Claude reported an LF
+  and was merged by Claude as `8e8a9c7` without overlapping Claude's uncommitted H1 changes. Claude reported an LF
   checkout, 59 focused tests across seven files, and TypeScript passing after the merge. J1 final implementation
   and staging/manual hosted checks remain pending; production activation none. No merge into main is authorized
   by this gate.
@@ -535,7 +539,8 @@ editorial approval, and a documentation status change cannot authorize external 
 - **Validated combined source commit:** `5241670614de0b966d0abe7111d2a13fe3a78202` on
   `codex/hosting-native-integration`, merging only the reviewed hash after `6eb2fa6`, without conflicts.
   No later Claude branch commits or uncommitted H1 changes are included. The subsequent record changes
-  only this document and ROADMAP.md; review of this new documentation update remains pending.
+  only this document and ROADMAP.md. Claude approved that documentation delta at `85935ac` and merged the
+  exact handoff into Claude's working branch as `f9dee65`, without conflicts.
 - Environment: isolated LF Windows validation checkout, Node 24.21.0, Next.js 16.3.4, copied existing
   dependencies rather than a clean installation. The existing fixture-only wrapper removed Supabase/email/AWS
   settings and other public settings, supplied a dummy HTTPS site origin for the build, and disabled telemetry.
@@ -550,5 +555,29 @@ editorial approval, and a documentation status change cannot authorize external 
   `next build` generated 415 pages; the subsequent CMS exclusion scan passed. The tracked checkout is clean.
 - Skipped checks and operating limits from the prior gate still apply: no content changes require municipality
   evidence regeneration; real SQL, clean-install CI, browser/hosted flows, and J1 final acceptance remain pending.
-  Both shared-file fixes are reviewed and combined code validation is complete; the new documentation record
-  awaits Claude's review. Production activation none; no main merge.
+  Both shared-file fixes are reviewed and combined code validation is complete; Claude approved the
+  documentation at `85935ac`. Production activation none; no main merge.
+
+### J1 hardening integration and H1 review — 2026-09-28
+
+- Claude approved Codex's exact J1 follow-up `7c272d2c8efa8b57893e47fce70b6c7a7014c849` against `85935ac`,
+  including [its checkpoint record](checkpoints/J1-runner-hardening.md). The integration branch fast-forwarded
+  to that exact tested source commit, with no conflict or source changes. The subsequent consolidated record
+  changes only documentation and awaits Claude's review.
+- J1 checks at that exact source: 38 focused tests, full suite with four workers (567 tests / 149 files),
+  targeted lint, TypeScript, architecture (679 modules), and whitespace checks passed. The earlier default-worker
+  CMS HTTP timeout and unchanged-timeout rerun are recorded. The runner still has no application consumer;
+  production build/CMS exclusion are inherited from the base gate, not rerun for the runner-only follow-up.
+  Database clock authority, exhausted/expired fifth claims, adapter/command/config wiring, real SQL acceptance,
+  and operator documentation remain pending. Clock failure at attempt five is included in the inspection work.
+- Claude reviewed the fixtures independently: 61 notification tests across nine files, TypeScript, and targeted
+  lint passed. Review approval does not establish real SQL concurrency or authorize delivery.
+- H1 exact commit `119b872c9004114784cd98516301ca6d2a60f306` was reviewed in an isolated LF checkout.
+  Its full 563-test/150-file suite, lint, TypeScript, architecture (682 modules), public-only 415-page build,
+  CMS exclusion, and article localization checks passed. Current emitted JS is free of guidance/source catalogs.
+  Codex requests one P2 checker fix: the gate scans only entry chunks and accepts catalog markers injected into
+  an async browser chunk. [The review record](checkpoints/H1-review.md) contains the proof, requested regression
+  fixture, reproduced route sizes, interface handoff, and checks not independently repeated. H1 is not integrated;
+  Claude's ongoing H2 work is excluded.
+- Statuses: J1 hardening reviewed/integrated; this documentation record pending review. H1 changes requested;
+  full J1, H2 and later batch gates pending. Hosted activation none; no main merge.
