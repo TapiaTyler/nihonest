@@ -27,8 +27,12 @@ export type GitSessionIdentity = Readonly<{
 type Session = { identity: GitSessionIdentity; cmsWrites: Set<string> };
 const sessions = new Map<string, Promise<Session>>();
 
+/**
+ * Every CMS Git call only reads. `--no-optional-locks` keeps `git status` from taking index.lock to refresh the
+ * index, so the once-a-minute checkout check never makes an editor's own `git add` or `git commit` fail.
+ */
 async function git(root: string, args: readonly string[]): Promise<string> {
-  const { stdout } = await execFileAsync("git", [...args], { cwd: root, timeout: 10_000, maxBuffer: 16 * 1024 * 1024 });
+  const { stdout } = await execFileAsync("git", ["--no-optional-locks", ...args], { cwd: root, timeout: 10_000, maxBuffer: 16 * 1024 * 1024 });
   return stdout;
 }
 

@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { execFileSync } from "node:child_process";
-import { mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, realpath, rm, utimes, writeFile } from "node:fs/promises";
 import { basename, join, resolve, sep } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it } from "vitest";
@@ -10,7 +10,8 @@ function git(root: string, ...args: string[]) {
   execFileSync("git", args, { cwd: root, stdio: "ignore" });
 }
 
-describe("CMS Git session", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS Git session", { timeout: 30_000 }, () => {
   it("parses porcelain entries, including both paths of a rename", () => {
     expect(parsePorcelain(" M src/a.ts\0?? new file.md\0R  moved.ts\0old.ts\0")).toEqual([
       { path: "src/a.ts", code: " M" },
@@ -18,6 +19,32 @@ describe("CMS Git session", () => {
       { path: "moved.ts", code: "R " },
       { path: "old.ts", code: "R " },
     ]);
+  });
+
+  it("reads status without refreshing the index, so it never holds index.lock during an editor's git add", async () => {
+    const root = await realpath(await mkdtemp(join(tmpdir(), "nihonest-cms-git-")));
+    try {
+      git(root, "init", "-q");
+      git(root, "config", "user.email", "cms-test@example.invalid");
+      git(root, "config", "user.name", "CMS test");
+      git(root, "config", "core.autocrlf", "false");
+      await writeFile(join(root, "tracked.ts"), "export const tracked = 1;\n");
+      git(root, "add", ".");
+      git(root, "commit", "-q", "-m", "fixture");
+      // Same content, new timestamps: a locking `git status` would refresh and rewrite the index.
+      const staleStat = async () => utimes(join(root, "tracked.ts"), new Date(Date.now() + 60_000), new Date(Date.now() + 60_000));
+      await staleStat();
+      const before = await readFile(join(root, ".git", "index"));
+      expect((await gitSessionReport(root)).status).toContain("##");
+      expect(await readFile(join(root, ".git", "index"))).toEqual(before);
+
+      // Control: plain `git status` does take the lock and rewrite the index in the same situation.
+      await staleStat();
+      git(root, "status", "--short");
+      expect(await readFile(join(root, ".git", "index"))).not.toEqual(before);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   it("refuses files that were dirty at start and separates CMS writes from other changes", async () => {
