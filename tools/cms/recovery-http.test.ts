@@ -40,7 +40,8 @@ function options(base: string, token: string, method: string, body: unknown) {
   return { method, headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token }, body: JSON.stringify(body) };
 }
 
-describe("CMS HTTP recovery", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS HTTP recovery", { timeout: 30_000 }, () => {
   it("captures only editable structured fields in a temporary Git checkout", async () => {
     const root = await mkdtemp(join(tmpdir(), "nihonest-cms-recovery-"));
     try {
