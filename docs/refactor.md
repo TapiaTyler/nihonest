@@ -3,8 +3,10 @@
 Status: implementation in progress, 2026-09-28. H3a, J1 preparation, the CMS LF fix, and compile-cache cleanup
 are reviewed and their combined code integration is validated. Claude approved the prior consolidated
 documentation at `6eb2fa6`, `85935ac`, and `861ee5f`. J1 runner hardening is reviewed and integrated;
-the latest rereview record awaits review. H1's async-checker fix `efc2837` needs a marker-regex correction
-before integration. J1 adapter mapping `9dee0a0` is implemented but unreviewed/unintegrated. Later checkpoints remain
+the latest consolidated records await review. H1's async-checker fix `efc2837` needs a marker-regex correction
+before integration. H2 `581ed1e` is approved for its scope but awaits that H1 dependency. CMS stability
+`68aa4e8` is independently reviewed/integrated with combined validation at `2a35d9a`.
+J1 adapter mapping `9dee0a0` is implemented but unreviewed/unintegrated. Later checkpoints remain
 pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
@@ -103,7 +105,8 @@ J1 to the configuration module. Commit independent work first; do not discard it
 For the H3a/J1 preparation gate and shared-file fixes on 2026-09-28, Codex owns
 `codex/hosting-native-integration` and the consolidated updates to this document and ROADMAP.md. Claude owns
 the separate CMS line-ending/test-diagnostic and compile-cache fixes, reviewed by Codex before integration.
-Integrate exact reviewed commit hashes; Claude's ongoing H1 work is excluded.
+Integrate exact reviewed commit hashes. Pending H1/H2 changes and the unreviewed J1 adapter are excluded;
+the CMS stability patch is integrated independently as recorded below.
 
 Separate worktrees isolate files and build output; they do not prove that the branches work together. At each
 integration gate:
@@ -183,7 +186,7 @@ result. Any Japanese catalog changes needed for that result must also be integra
 
 Status: implemented by Claude at `119b872`; the initial async-checker gap is fixed by `efc2837`, but Codex
 requested correction of an extracted marker-regex regression before approval/integration.
-See [the exact-commit review](checkpoints/H1-review.md). H2 is now in progress by Claude and excluded.
+See [the exact-commit review](checkpoints/H1-review.md). H2 is reviewed for its scope and excluded pending H1.
 
 Entry points: `src/components/content/prefecture-finder.tsx`, `src/lib/content/prefecture-finder.ts`, geography
 map components, and their importing layouts/renderers.
@@ -207,7 +210,8 @@ Acceptance:
 
 ### H2 — Prebuild public detail pages
 
-Status: in progress by Claude; no H2 checkpoint is reviewed or integrated yet.
+Status: implemented by Claude at `581ed1e`, reviewed and approved by Codex for H2 scope. Integration waits
+for H1's marker-regex fix and combined validation. See [the review record](checkpoints/H2-CMS-review.md).
 Coordinate with H1 and inventory existing query behavior first.
 
 Entry points: article, residence-status, and guided-journey detail pages.
@@ -612,3 +616,32 @@ editorial approval, and a documentation status change cannot authorize external 
   separate CMS test-stability follow-up after H2. Production activation none; no main merge.
 - Integration source remains the reviewed `7c272d2`; this new consolidation changes only documentation
   and awaits Claude's review. Pending adapter code and all H1/H2 code are excluded from integration.
+
+### H2 review and independent CMS stability integration — 2026-09-28
+
+- Codex reviewed Claude's exact H2 `581ed1e31d9777992e8d4969a9e01ac73980c918` and CMS stability
+  `68aa4e8e259c22824ddb405792d3b67a5df59c09` in an isolated LF checkout of the latter. H4 and later
+  uncommitted work were excluded. [The review record](checkpoints/H2-CMS-review.md) gives interfaces,
+  commands, negative controls, environment and limits.
+- H2 scope is approved: all three detail families prebuild with validated client query context and
+  queryless Suspense fallbacks. Independent review checks passed 585 tests / 152 files with four workers,
+  lint, TypeScript, architecture (689 modules), editorial and article checks, public-only 415-page build,
+  CMS exclusion, and all seven new production browser tests. A separate browser probe confirmed saved
+  Nagoya survives a Shinjuku deep link. The first default-worker run alongside the build ended in a
+  worker-pool error; it was not a pass. The reported baseline HTML deltas and 14 stale browser failures
+  were not independently repeated. Claude owns their separate bounded test repair, preserving assertions.
+- H1 remains changes-requested: the marker probe still misses the real Sapporo summary (640 old versus
+  113 new markers). H2 approval does not approve that ancestor. H1/H2 integration and the combined hosting
+  gate await the correction; hosted CDN behavior and the full existing browser suite remain unvalidated.
+- CMS stability is approved: read-only Git calls suppress optional index locks; seven fixture-heavy suites
+  use the existing 30-second timeout pattern. The new index-refresh assertion fails without the fix,
+  independently reproduced with byte-for-byte restoration of the isolated checkout.
+- **Validated combined source commit:** `2a35d9aa7352834f9219243837324d9d9ab7f856` on
+  `codex/hosting-native-integration`, cherry-picking only `68aa4e8` after `b494ed0`. H1/H2 and pending
+  adapter `9dee0a0` are excluded. Combined gates in the isolated LF Windows checkout passed full Vitest
+  alone at default concurrency (**568 tests / 149 files**), lint, TypeScript, architecture (**679 modules**),
+  public-only production build (**415 pages**), CMS exclusion and whitespace checks. Dependencies were
+  copied, not clean-installed; no database or provider was invoked.
+- The subsequent completion record changes documentation only and awaits Claude's review. Earlier
+  documentation at `b494ed0` and the adapter review remain pending. Artificial CPU-saturation stalls
+  reported by Claude are an unresolved follow-up, not fixed by this gate. No hosted activation or main merge.

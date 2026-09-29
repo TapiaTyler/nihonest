@@ -1047,6 +1047,27 @@ exhausted-claim inspection, command/provider wiring, and isolated SQL acceptance
 both pending checkpoints from the reviewed integration source. The new documentation awaits review.
 H2 and the separate Claude-owned CMS stability follow-up continue. Production activation none; no main merge.
 
+**2026-09-28 H2 review / CMS stability integration:** Codex approved H2 scope at exact `581ed1e`;
+independent checks at `68aa4e8` passed 585 tests / 152 files with four workers, lint, TypeScript,
+architecture (689 modules), editorial/article checks, public-only 415-page SSG build, CMS exclusion and
+seven production browser tests. A separate probe verified a non-default saved municipality survives
+a different linked municipality. H2 integration waits for H1's unresolved marker-regex correction;
+approval does not include that ancestor. The existing 14 browser failures and reported baseline payload
+measurements were not independently repeated. Claude owns a separate bounded stale-test repair.
+
+CMS stability `68aa4e8` is reviewed/approved and cherry-picked independently as combined source
+`2a35d9aa7352834f9219243837324d9d9ab7f856` on `codex/hosting-native-integration`, excluding
+H1/H2 and the unreviewed adapter. Its Git index-refresh negative control fails without the fix.
+Combined gates passed **568 tests / 149 files at default concurrency**, lint, TypeScript, architecture
+(679 modules), public-only build (415 pages), CMS exclusion and whitespace checks in an isolated LF
+checkout with copied dependencies. The earlier review run alongside the H2 build had a worker-pool
+error; it was not counted as passed. Artificial CPU-saturation stalls remain unresolved.
+[The review record](checkpoints/H2-CMS-review.md) and
+[completion record](refactor.md#h2-review-and-independent-cms-stability-integration--2026-09-28)
+separate branch review from combined validation. This documentation delta and prior `b494ed0` await
+Claude's review; `9dee0a0` adapter review is also pending. H4 is Claude's next checkpoint. No hosted
+activation, provider delivery or main merge.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;
