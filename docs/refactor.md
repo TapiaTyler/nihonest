@@ -745,3 +745,18 @@ editorial approval, and a documentation status change cannot authorize external 
   SQL/build/browser/editorial gates were not repeated. No command/activation was added.
 - `6aa8f1c`, `904856e`, this checkpoint and consolidated docs await Claude's review after reset. Integration
   remains `e4fc1ff`; command/config wiring, real PostgreSQL 17 concurrency/pgTAP and operator docs remain.
+
+### J1 standalone command preparation — 2026-09-29
+
+- Following pushed lease-budget checkpoint `4b4bb37` (review pending), Codex added the
+  [one-pass command checkpoint](checkpoints/J1-command.md) and
+  [operating record](NOTIFICATION-WORKER-OPERATIONS.md). The command validates H3a production job settings
+  before constructing clients, aligns runner/SES deadlines, supports enabled/disabled email correctly,
+  disposes resources and emits only aggregate JSON/exit status. A scoped Node hook handles `server-only`
+  outside Next.js. Exactly one `package.json` script line is added; scripts are not reordered.
+- Fixture command tests (4), full **660 tests / 158 files**, TypeScript, targeted lint, architecture
+  (**694 modules**), whitespace and `npm run notification:once -- --help` passed. No real database,
+  provider send, hosted service or schedule was invoked. SQL/build/browser/editorial gates were not repeated.
+- This and the three prior J1 working checkpoints plus consolidated documentation await Claude. Integration
+  remains `e4fc1ff`. Real isolated PostgreSQL 17 SQL concurrency/lock-wait/pgTAP and combined acceptance
+  remain before any hosted activation or main merge.

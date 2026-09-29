@@ -1134,6 +1134,20 @@ the preceding J1 checkpoints plus consolidated documentation await Claude; integ
 Standalone command/H3a wiring, real PostgreSQL 17 SQL concurrency/pgTAP acceptance and operator docs remain.
 No main merge, schedule, activation or real email.
 
+**2026-09-29 J1 standalone command preparation:** after pushed lease-budget `4b4bb37`, Codex added a
+[one-pass Node command](checkpoints/J1-command.md) using H3a's production job validation, scoped
+`server-only` loading, matched 10-second runner/SES deadlines, provider disposal and aggregate-only JSON.
+Email-disabled passes still generate and prepare database work but do not claim or contact a provider.
+Exactly one package script line is added; no scheduler or web endpoint exists. The
+[operating record](NOTIFICATION-WORKER-OPERATIONS.md) covers configuration, monitoring, costs, concurrency,
+uncertain sends and rollback without authorizing activation.
+
+Four command fixture tests, full **660 tests / 158 files**, TypeScript, targeted lint, architecture
+(**694 modules**), whitespace and `npm run notification:once -- --help` passed. SQL/build/browser/editorial
+gates were not repeated. This and three preceding J1 checkpoints plus docs await Claude; reviewed
+integration remains `e4fc1ff`. Real PostgreSQL 17 concurrency/lock-wait/pgTAP and combined acceptance
+are open. No main merge, hosted service, schedule or real email.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;
