@@ -2,8 +2,9 @@
 
 Status: implementation in progress, 2026-09-28. H3a, J1 preparation, the CMS LF fix, and compile-cache cleanup
 are reviewed and their combined code integration is validated. Claude approved the prior consolidated
-documentation at `6eb2fa6` and `85935ac`. J1 runner hardening is reviewed and integrated; the latest record
-awaits review. H1 `119b872` requires a bundle-checker fix before integration. Later checkpoints remain
+documentation at `6eb2fa6`, `85935ac`, and `861ee5f`. J1 runner hardening is reviewed and integrated;
+the latest rereview record awaits review. H1's async-checker fix `efc2837` needs a marker-regex correction
+before integration. J1 adapter mapping `9dee0a0` is implemented but unreviewed/unintegrated. Later checkpoints remain
 pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
@@ -180,7 +181,8 @@ result. Any Japanese catalog changes needed for that result must also be integra
 
 ### H1 — Keep full catalogs out of browser imports
 
-Status: implemented by Claude at `119b872`; Codex requested a bundle-checker fix before approval/integration.
+Status: implemented by Claude at `119b872`; the initial async-checker gap is fixed by `efc2837`, but Codex
+requested correction of an extracted marker-regex regression before approval/integration.
 See [the exact-commit review](checkpoints/H1-review.md). H2 is now in progress by Claude and excluded.
 
 Entry points: `src/components/content/prefecture-finder.tsx`, `src/lib/content/prefecture-finder.ts`, geography
@@ -306,6 +308,8 @@ J1 remains incomplete. The hardening is integrated by exact hash; see [its recor
 The injectable runner and fixtures are integrated into the integration branch. The database adapter, command,
 configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
 is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
+Adapter mapping/transport is implemented separately at `9dee0a0` on Codex's working branch, with review and
+integration pending; it has no live command consumer and does not resolve finalization clock authority.
 
 Implementation:
 
@@ -563,7 +567,8 @@ editorial approval, and a documentation status change cannot authorize external 
 - Claude approved Codex's exact J1 follow-up `7c272d2c8efa8b57893e47fce70b6c7a7014c849` against `85935ac`,
   including [its checkpoint record](checkpoints/J1-runner-hardening.md). The integration branch fast-forwarded
   to that exact tested source commit, with no conflict or source changes. The subsequent consolidated record
-  changes only documentation and awaits Claude's review.
+  changes only documentation. Claude approved that record at `861ee5f` and merged the exact handoff as
+  `397eb87` without overlapping uncommitted H2 files.
 - J1 checks at that exact source: 38 focused tests, full suite with four workers (567 tests / 149 files),
   targeted lint, TypeScript, architecture (679 modules), and whitespace checks passed. The earlier default-worker
   CMS HTTP timeout and unchanged-timeout rerun are recorded. The runner still has no application consumer;
@@ -579,5 +584,31 @@ editorial approval, and a documentation status change cannot authorize external 
   an async browser chunk. [The review record](checkpoints/H1-review.md) contains the proof, requested regression
   fixture, reproduced route sizes, interface handoff, and checks not independently repeated. H1 is not integrated;
   Claude's ongoing H2 work is excluded.
-- Statuses: J1 hardening reviewed/integrated; this documentation record pending review. H1 changes requested;
+- Statuses: J1 hardening reviewed/integrated; documentation at `861ee5f` approved by Claude. H1 changes requested;
   full J1, H2 and later batch gates pending. Hosted activation none; no main merge.
+
+### H1 checker rereview and J1 adapter preparation — 2026-09-28
+
+- Codex rereviewed Claude's exact `efc2837fc202c015e973572e26bacb7dbb81c228` (parent `397eb87`, H1 ancestor
+  `119b872`) in the isolated LF checkout; H2 is excluded. The all-emitted-JS inventory resolves the original
+  async gap and its seven fixtures pass. A new P2 extraction error at `client-bundle-boundary.ts:32` excludes
+  ordinary `n` rather than newline, reducing canonical guidance markers from 640 to 113. A formerly detectable
+  Sapporo summary now produces no violation. [The rereview record](checkpoints/H1-review.md#rereview-of-efc2837--2026-09-28)
+  records the proof and requested character/coverage tests. H1 remains unapproved/unintegrated; broader gates
+  are deferred until the marker regression is corrected.
+- Codex's bounded J1 store mapping/transport checkpoint is
+  `9dee0a04c3cfca71328c38e91e730e44502e482d` on `codex/hosting-native-refactor`, based on `861ee5f`.
+  It accepts H3a job settings; maps existing RPCs/UTC timestamps; reads current owner-filtered consent,
+  Auth recipient and targeted saved/journey relevance; maps token finalization; and bounds native fetch through
+  response-body consumption with no automatic SDK retries. Review/integration are pending. Its record
+  `docs/checkpoints/J1-store-mapping.md` belongs to that pending checkpoint, not this integration tree.
+- Adapter branch checks: 48 focused tests, full suite with four workers (587 tests / 151 files), targeted
+  lint, TypeScript, architecture (681 modules), and whitespace checks passed. No live database or provider
+  was invoked; one fixture uses a temporary loopback HTTP server to prove body-timeout cancellation.
+  The Docker client is installed but its daemon was unavailable; no stack was started or reset.
+- Next J1 work: database-authoritative clock/finalization and exhausted/expired fifth-claim inspection,
+  standalone command loading, provider/whole-lease I/O budgets, isolated SQL acceptance, and operating docs.
+  A fixture-tested transport does not prove SQL concurrency or complete J1. Claude owns the acknowledged
+  separate CMS test-stability follow-up after H2. Production activation none; no main merge.
+- Integration source remains the reviewed `7c272d2`; this new consolidation changes only documentation
+  and awaits Claude's review. Pending adapter code and all H1/H2 code are excluded from integration.
