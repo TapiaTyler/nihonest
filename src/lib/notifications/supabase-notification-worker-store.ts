@@ -45,19 +45,39 @@ const completionSchema = z.discriminatedUnion("state", [
 /**
  * The mapping/transport layer for the existing RPCs. Accepts H3a's validated explicit JobConfig;
  * constructs no provider and reads no process environment. This is not yet a live command:
- * database-authoritative finalization time and exhausted-claim inspection remain separate J1 work.
+ * database-authoritative time/finalization and read-only exhausted-claim inspection are service-only RPCs.
+ * Complete provider/lease I/O budgets and real SQL concurrency acceptance remain separate J1 work.
  */
 export function createSupabaseNotificationWorkerStore(
   config: Pick<JobConfig, "supabaseUrl" | "supabaseSecretKey">,
-  options: Readonly<{ fetch?: typeof fetch; timeoutMs?: number }> = {},
+  options: Readonly<{ fetch?: typeof fetch; timeoutMs?: number; monotonicNow?: () => number }> = {},
 ): NotificationWorkerStore {
   const client = createClient<Database>(config.supabaseUrl, config.supabaseSecretKey, {
     auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     db: { retry: false },
     global: { fetch: createWorkerDatabaseFetch(options.fetch ?? globalThis.fetch, options.timeoutMs) },
   });
+  const monotonicNow = options.monotonicNow ?? (() => performance.now());
 
   return {
+    async readWorkerTime() {
+      const started = z.number().finite().parse(monotonicNow());
+      const serverTime = timestamp(requireResult(await client.rpc("read_notification_worker_time", {})));
+      const elapsed = z.number().finite().nonnegative().parse(monotonicNow() - started);
+      // The server timestamp can age while its response arrives. Add the WHOLE round trip (a conservative
+      // upper bound), plus 1 ms for discarded PostgreSQL microseconds. No Date.now/system-clock comparison.
+      return new Date(Date.parse(serverTime) + Math.ceil(elapsed) + 1).toISOString();
+    },
+    async inspectEmailDeliveryBacklog({ maxAttempts }) {
+      const result = requireResult(await client.rpc("inspect_email_notification_delivery_backlog", {
+        p_max_attempts: z.number().int().min(1).max(20).parse(maxAttempts),
+      }));
+      const backlog = z.object({
+        exhausted_failed: z.number().int().nonnegative(),
+        exhausted_expired_processing: z.number().int().nonnegative(),
+      }).strict().parse(result);
+      return { exhaustedFailures: backlog.exhausted_failed, exhaustedExpiredClaims: backlog.exhausted_expired_processing };
+    },
     async generateDueReminderEvents({ limit }) {
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("generate_due_reminder_events", { p_limit: limit })));
     },
@@ -124,11 +144,12 @@ export function createSupabaseNotificationWorkerStore(
     },
     async finalizeEmailDelivery(input: EmailDeliveryCompletion) {
       const completion = completionSchema.parse(input);
-      // Existing RPC requires caller time. Live CLI wiring waits for the database-authoritative wrapper.
-      const row = requireResult(await client.rpc("finalize_email_notification_delivery", {
+      // The wrapper locks/rechecks the token, reads database time after the lock and computes backoff.
+      // completion.now/retryAt describe the domain outcome; neither can override database authority.
+      const row = requireResult(await client.rpc("finalize_email_notification_delivery_now", {
         p_delivery_id: completion.deliveryId, p_claim_token: completion.claimToken,
-        p_state: completion.state, p_now: completion.now, p_provider_message_id: completion.providerMessageId ?? null,
-        p_error: completion.errorSummary ?? null, p_retry_at: completion.retryAt ?? null,
+        p_state: completion.state, p_provider_message_id: completion.providerMessageId ?? null,
+        p_error: completion.errorSummary ?? null,
       }));
       const finalized = deliveryFromRow(row);
       if (finalized.id !== completion.deliveryId || finalized.state !== completion.state) {

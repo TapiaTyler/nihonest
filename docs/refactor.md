@@ -314,6 +314,9 @@ is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (se
 Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
 it has no live command consumer and does not resolve finalization clock authority. See
 [the mapping review and acceptance notes](checkpoints/J1-store-mapping.md#claude-review-and-acceptance-notes--2026-09-28).
+Codex's subsequent [database-authority checkpoint](checkpoints/J1-database-authority.md), dated 2026-09-29,
+implements store-provided database time, a service-only finalizer and aggregate exhausted-claim inspection
+on the working branch. Its review/integration and real PostgreSQL 17 acceptance remain pending; no command exists.
 
 Implementation:
 
@@ -686,3 +689,26 @@ editorial approval, and a documentation status change cannot authorize external 
   continue J1 and Stage-A N4, holding new implementation checkpoints for Claude's review. J2 still needs an
   execution-location decision. Stale browser tests, artificial CMS stress stalls, clean-install/hosted checks
   and wider hosting gates remain open. Production activation none; no main merge.
+
+### J1 database-authority preparation — 2026-09-29
+
+- Claude reports merging exact `e4fc1ff` into `claude/hosting-readiness` as `93e44b4`, conflict-free and
+  pushed. Both working branches now carry the validated handoff. Claude confirmed the five-file documentation-only
+  delta after `4f41ec5`; line-by-line documentation review since `b494ed0` remains deferred until reset.
+- Codex's next bounded working-branch checkpoint adds a new service-only clock/finalizer/inspection migration,
+  its RPC type entries and pgTAP fixtures, and updates only owned notification runner/adapter files and tests.
+  The runner requires asynchronous store time, adds conservative monotonic transport age, preserves clock
+  latching, and reports aggregate exhausted failures/expired fifth claims with exit 1. The database finalizer
+  reads current time after locking/rechecking the token and computes failure backoff from the locked attempt.
+  [The checkpoint record](checkpoints/J1-database-authority.md) supplies the exact contract, commands and limits.
+- Working-branch checks: 61 focused tests / three files, full **621 tests / 154 files** with four workers,
+  TypeScript, targeted lint, architecture (691 modules), and whitespace passed. Temporary in-memory PGlite
+  0.5.8 / PostgreSQL 18.3 applied the real migrations and passed 26 SQL assertions with fixture Auth roles;
+  repository dependencies are unchanged. This is a single-connection smoke, not Supabase/PostgreSQL 17
+  concurrency acceptance. The new 24-assertion pgTAP fixture was not run; Docker's Linux engine remains
+  unavailable. No daemon/stack was started or reset. Build/browser/editorial gates were not repeated for
+  the still-unconsumed adapter; the reviewed integration's results remain separate.
+- Review and integration wait for Claude; integration branch remains at `e4fc1ff`. Real concurrency/lock-wait
+  and SQL/RLS acceptance, recipient suppression/confirmation policy, exhaustive event mapping, standalone
+  command/config wiring, provider/whole-lease budgets and operating docs remain pending. No main merge,
+  translation edit, hosted service, recurring schedule or real email.

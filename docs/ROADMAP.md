@@ -1091,6 +1091,22 @@ Claude-owned files require an explicit temporary user-approved handoff. J2 still
 decision. Documentation at `e374bbe` and this consolidation await Claude's review after reset. No main merge,
 hosted activation, schedule or real email.
 
+**2026-09-29 J1 database-authority preparation:** Claude reports merging exact handoff `e4fc1ff` as
+`93e44b4`; consolidated documentation review remains deferred until reset. Codex's new working-branch
+[checkpoint](checkpoints/J1-database-authority.md) implements service-only database time/finalization and
+aggregate exhausted-failure/expired fifth-claim inspection. Finalization reads advancing database time
+after the token-bound row lock, computes backoff there and accepts no caller timestamp. The runner removes
+its worker wall-clock input, conservatively accounts for response age and preserves the clock-failure latch.
+No new command or provider consumer exists.
+
+61 focused tests, full **621 tests / 154 files**, types, targeted lint, architecture (691 modules) and
+whitespace passed. The actual migrations passed 26 temporary embedded PostgreSQL 18.3/PGlite SQL assertions
+with fixture Auth roles. PostgreSQL 17/Supabase, multi-connection/lock-wait acceptance and the new 24-assertion
+pgTAP fixture remain unrun because Docker is unavailable. No repository dependency/configuration changes;
+no service was started/reset. Review/integration are pending Claude; reviewed integration stays at `e4fc1ff`.
+Recipient policy, exhaustive event mapping, command/provider budgets, real SQL acceptance and operator docs
+remain J1 work. No main merge, hosted activation, schedule, real email or translation edit.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;

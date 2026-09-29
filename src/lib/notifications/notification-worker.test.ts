@@ -25,6 +25,11 @@ function fixture(events: NotificationEvent[] = [event]) {
   let token = 0;
   const rows: NotificationDelivery[] = [];
   const store = {
+    readWorkerTime: vi.fn(async () => instant),
+    inspectEmailDeliveryBacklog: vi.fn(async ({ maxAttempts }: { maxAttempts: number }) => ({
+      exhaustedFailures: rows.filter((row) => row.state === "failed" && row.attemptCount >= maxAttempts).length,
+      exhaustedExpiredClaims: rows.filter((row) => row.state === "processing" && row.attemptCount >= maxAttempts && row.claimExpiresAt! <= instant).length,
+    })),
     generateDueReminderEvents: vi.fn(async () => 0),
     generateTargetedCriticalUpdateEvents: vi.fn(async () => 0),
     prepareEmailDeliveries: vi.fn(async ({ limit }: { now: string; limit: number }) => {
@@ -71,7 +76,7 @@ function fixture(events: NotificationEvent[] = [event]) {
     setConsent(value: boolean) { currentPreferences = { ...currentPreferences, emailEnabled: value }; },
     setReminderConsent(value: boolean) { currentPreferences = { ...currentPreferences, deadlineRemindersEnabled: value }; },
     setCriticalContext(value: CriticalUpdateAccountContext) { criticalUpdateAccountContext = value; },
-    input: { jobsEnabled: true, store, now: () => instant, delivery: { provider: { send }, context: emailContext } },
+    input: { jobsEnabled: true, store, delivery: { provider: { send }, context: emailContext } },
   };
 }
 
@@ -80,6 +85,8 @@ describe("notification worker preparation", () => {
     const f = fixture();
     expect(await runNotificationWorker({ ...f.input, jobsEnabled: false })).toMatchObject({ status: "jobs-disabled", exitCode: 0 });
     expect(f.store.generateDueReminderEvents).not.toHaveBeenCalled();
+    expect(f.store.readWorkerTime).not.toHaveBeenCalled();
+    expect(f.store.inspectEmailDeliveryBacklog).not.toHaveBeenCalled();
     expect(f.store.claimEmailDeliveries).not.toHaveBeenCalled();
     expect(f.send).not.toHaveBeenCalled();
   });
@@ -165,10 +172,8 @@ describe("notification worker preparation", () => {
     // Generation, critical generation, preparation, claim, context, provider, completion.
     const invalidRead = { context: 5, provider: 6, completion: 7 }[stage];
     let reads = 0;
-    const result = await runNotificationWorker({
-      ...f.input,
-      now: () => ++reads === invalidRead ? "private invalid timestamp" : startedAt,
-    });
+    f.store.readWorkerTime.mockImplementation(async () => ++reads === invalidRead ? "private invalid timestamp" : startedAt);
+    const result = await runNotificationWorker(f.input);
     expect(result).toMatchObject({ claimed: 1, sent: 0, failed: 0, infrastructureErrors: 1, exitCode: 1 });
     expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
     expect(f.rows.map((row) => row.state)).toEqual(["processing", "pending"]);
@@ -189,12 +194,13 @@ describe("notification worker preparation", () => {
     expect(f.send).not.toHaveBeenCalled();
   });
 
-  it.each(["invalid", "throws"])("rejects an initial clock that %s before store I/O", async (mode) => {
+  it.each(["invalid", "throws"])("rejects an initial database clock that %s before generation", async (mode) => {
     const f = fixture();
-    expect(await runNotificationWorker({ ...f.input, now: () => {
+    f.store.readWorkerTime.mockImplementation(async () => {
       if (mode === "throws") throw new Error("Private clock failure");
       return "invalid private clock";
-    } })).toMatchObject({ claimed: 0, infrastructureErrors: 1, exitCode: 1 });
+    });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0, infrastructureErrors: 1, exitCode: 1 });
     expect(f.store.generateDueReminderEvents).not.toHaveBeenCalled();
     expect(f.send).not.toHaveBeenCalled();
   });
@@ -278,7 +284,7 @@ describe("notification worker preparation", () => {
       expect(f.rows[0].attemptCount).toBe(attempt);
       f.setTime(f.rows[0].availableAt);
     }
-    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0 });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0, exhaustedFailures: 1, exitCode: 1 });
     expect(f.rows[0].state).toBe("failed");
     expect(f.send).toHaveBeenCalledTimes(5);
   });
@@ -330,5 +336,72 @@ describe("notification worker preparation", () => {
     const f = fixture();
     expect(await runNotificationWorker({ ...f.input, limits: { criticalReleaseLimit: 101 } })).toMatchObject({ exitCode: 1 });
     expect(f.store.generateDueReminderEvents).not.toHaveBeenCalled();
+  });
+
+  it.each(["2000-01-01T00:00:00Z", "2099-01-01T00:00:00Z"])("ignores a valid but skewed worker wall clock (%s)", async (workerTime) => {
+    const f = fixture();
+    const wallClock = vi.spyOn(Date, "now").mockReturnValue(Date.parse(workerTime));
+    try {
+      expect(await runNotificationWorker(f.input)).toMatchObject({ sent: 1, expiredClaims: 0, exitCode: 0 });
+      expect(f.rows[0].sentAt).toBe(startedAt);
+    } finally { wallClock.mockRestore(); }
+  });
+
+  it("uses database expiry even when the worker wall clock runs behind", async () => {
+    const f = fixture();
+    const load = f.store.loadEmailContext.getMockImplementation()!;
+    f.store.loadEmailContext.mockImplementation(async (row) => {
+      f.setTime(row.claimExpiresAt!);
+      return load(row);
+    });
+    const wallClock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2000-01-01T00:00:00Z"));
+    try {
+      expect(await runNotificationWorker({ ...f.input, limits: { deliveryLimit: 1 } })).toMatchObject({ sent: 0, expiredClaims: 1, exitCode: 1 });
+      expect(f.send).not.toHaveBeenCalled();
+      expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+    } finally { wallClock.mockRestore(); }
+  });
+
+  it.each(["context", "completion"] as const)("reports expired fifth claims after a %s clock failure without reclaiming or resetting them", async (stage) => {
+    const f = fixture();
+    await f.store.prepareEmailDeliveries({ now: startedAt, limit: 100 });
+    await f.store.claimEmailDeliveries({ now: startedAt, limit: 1, maxAttempts: 5, leaseSeconds: 30 });
+    f.rows[0] = { ...f.rows[0], attemptCount: 4, claimExpiresAt: startedAt };
+    const read = f.store.readWorkerTime.getMockImplementation()!;
+    const invalidRead = stage === "context" ? 5 : 7;
+    let reads = 0;
+    f.store.readWorkerTime.mockImplementation(async () => ++reads === invalidRead ? "invalid clock" : read());
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 1, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.rows[0]).toMatchObject({ state: "processing", attemptCount: 5 });
+    f.store.readWorkerTime.mockImplementation(read);
+    f.setTime(f.rows[0].claimExpiresAt!);
+    const before = { ...f.rows[0] };
+    expect(await runNotificationWorker({ ...f.input, delivery: undefined })).toMatchObject({
+      claimed: 0, exhaustedFailures: 0, exhaustedExpiredClaims: 1, exitCode: 1,
+    });
+    expect(f.rows[0]).toEqual(before);
+    expect(f.send).toHaveBeenCalledTimes(stage === "completion" ? 1 : 0);
+    expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+  });
+
+  it("does not alert on an unexpired fifth claim until database time reaches expiry", async () => {
+    const f = fixture();
+    await f.store.prepareEmailDeliveries({ now: startedAt, limit: 100 });
+    await f.store.claimEmailDeliveries({ now: startedAt, limit: 1, maxAttempts: 5, leaseSeconds: 30 });
+    f.rows[0] = { ...f.rows[0], attemptCount: 5 };
+    expect(await runNotificationWorker({ ...f.input, delivery: undefined })).toMatchObject({ exhaustedExpiredClaims: 0, exitCode: 0 });
+    f.setTime(f.rows[0].claimExpiresAt!);
+    expect(await runNotificationWorker({ ...f.input, delivery: undefined })).toMatchObject({ exhaustedExpiredClaims: 1, exitCode: 1 });
+    expect(f.rows[0].attemptCount).toBe(5);
+  });
+
+  it("stops before claims on an inspection failure and sanitizes diagnostics", async () => {
+    const f = fixture();
+    f.store.inspectEmailDeliveryBacklog.mockRejectedValueOnce(new Error("Private token and SQL"));
+    const report = await runNotificationWorker(f.input);
+    expect(report).toMatchObject({ deliveriesPrepared: 1, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.store.claimEmailDeliveries).not.toHaveBeenCalled();
+    expect(f.send).not.toHaveBeenCalled();
+    expect(JSON.stringify(report)).not.toContain("Private");
   });
 });

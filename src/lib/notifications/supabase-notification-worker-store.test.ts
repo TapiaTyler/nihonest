@@ -24,11 +24,13 @@ function fixture() {
   const preferences = { user_id: userId, email_enabled: true, deadline_reminders_enabled: true,
     critical_updates_enabled: true, time_zone: "UTC", created_at: pgTime, updated_at: pgTime };
   const responses: Record<string, unknown> = {
+    "/rest/v1/rpc/read_notification_worker_time": pgTime,
+    "/rest/v1/rpc/inspect_email_notification_delivery_backlog": { exhausted_failed: 0, exhausted_expired_processing: 0 },
     "/rest/v1/rpc/generate_due_reminder_events": 2,
     "/rest/v1/rpc/generate_targeted_critical_update_events": 3,
     "/rest/v1/rpc/prepare_email_notification_deliveries": 4,
     "/rest/v1/rpc/claim_email_notification_deliveries": [delivery],
-    "/rest/v1/rpc/finalize_email_notification_delivery": { ...delivery, state: "sent", claim_token: null,
+    "/rest/v1/rpc/finalize_email_notification_delivery_now": { ...delivery, state: "sent", claim_token: null,
       claim_expires_at: null, sent_at: pgTime, provider_message_id: "fixture-message" },
     "/rest/v1/notification_events": [event], "/rest/v1/notification_preferences": [preferences],
     [`/auth/v1/admin/users/${userId}`]: { user: { id: userId, email: "auth-reader@example.test" } },
@@ -41,7 +43,7 @@ function fixture() {
     return new Response(JSON.stringify(responses[url.pathname]), { headers: { "Content-Type": "application/json" } });
   });
   const config = requireJobConfig({ NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co", SUPABASE_SECRET_KEY: "fixture-secret" }, "production");
-  const store = createSupabaseNotificationWorkerStore(config, { fetch: fetcher });
+  const store = createSupabaseNotificationWorkerStore(config, { fetch: fetcher, monotonicNow: () => 0 });
   const claim = async () => (await store.claimEmailDeliveries({ now, limit: 1, maxAttempts: 5, leaseSeconds: 300 }))[0] as NotificationDelivery;
   return { store, fetcher, responses, delivery, event, preferences, config, claim };
 }
@@ -109,7 +111,7 @@ describe("notification worker Supabase mapping", () => {
 
   it.each(["sent", "failed", "suppressed"] as const)("passes the original token and only applicable metadata for %s", async (state) => {
     const f = fixture();
-    f.responses["/rest/v1/rpc/finalize_email_notification_delivery"] = { ...f.delivery, state,
+    f.responses["/rest/v1/rpc/finalize_email_notification_delivery_now"] = { ...f.delivery, state,
       claim_token: null, claim_expires_at: null, sent_at: state === "sent" ? pgTime : null,
       provider_message_id: state === "sent" ? "fixture-message" : null, last_error: state === "failed" ? "Generic failure" : null };
     await f.store.finalizeEmailDelivery({ deliveryId, claimToken, state, now,
@@ -117,10 +119,9 @@ describe("notification worker Supabase mapping", () => {
       errorSummary: state === "failed" ? "Generic failure" : undefined,
       retryAt: state === "failed" ? "2026-10-01T00:01:00.000Z" : undefined });
     expect(JSON.parse(String(f.fetcher.mock.calls[0][1]?.body))).toEqual({
-      p_delivery_id: deliveryId, p_claim_token: claimToken, p_state: state, p_now: now,
+      p_delivery_id: deliveryId, p_claim_token: claimToken, p_state: state,
       p_provider_message_id: state === "sent" ? "fixture-message" : null,
       p_error: state === "failed" ? "Generic failure" : null,
-      p_retry_at: state === "failed" ? "2026-10-01T00:01:00.000Z" : null,
     });
   });
 
@@ -148,12 +149,61 @@ describe("notification worker Supabase mapping", () => {
 
   it("generates/prepares with delivery disabled without claiming or accessing recipients", async () => {
     const f = fixture();
-    expect(await runNotificationWorker({ jobsEnabled: true, store: f.store, now: () => now })).toMatchObject({
+    expect(await runNotificationWorker({ jobsEnabled: true, store: f.store })).toMatchObject({
       status: "delivery-disabled", remindersFulfilled: 2, criticalEventsGenerated: 3, deliveriesPrepared: 4, claimed: 0,
     });
     expect(f.fetcher.mock.calls.map(([input]) => new URL(String(input)).pathname)).toEqual([
-      "/rest/v1/rpc/generate_due_reminder_events", "/rest/v1/rpc/generate_targeted_critical_update_events",
-      "/rest/v1/rpc/prepare_email_notification_deliveries",
+      "/rest/v1/rpc/read_notification_worker_time", "/rest/v1/rpc/generate_due_reminder_events",
+      "/rest/v1/rpc/read_notification_worker_time", "/rest/v1/rpc/generate_targeted_critical_update_events",
+      "/rest/v1/rpc/read_notification_worker_time", "/rest/v1/rpc/prepare_email_notification_deliveries",
+      "/rest/v1/rpc/inspect_email_notification_delivery_backlog",
     ]);
+  });
+
+  it("reads database time with a conservative allowance for the entire response round trip", async () => {
+    const f = fixture();
+    const ticks = [100, 2100.25];
+    const store = createSupabaseNotificationWorkerStore(f.config, { fetch: f.fetcher, monotonicNow: () => ticks.shift()! });
+    expect(await store.readWorkerTime()).toBe("2026-10-01T00:00:02.125Z");
+    expect(JSON.parse(String(f.fetcher.mock.calls[0][1]?.body))).toEqual({});
+  });
+
+  it.each(["invalid-db", "backwards-monotonic"])("rejects %s clock data", async (mode) => {
+    const f = fixture();
+    if (mode === "invalid-db") f.responses["/rest/v1/rpc/read_notification_worker_time"] = "private invalid time";
+    const ticks = mode === "backwards-monotonic" ? [2, 1] : [0, 0];
+    const store = createSupabaseNotificationWorkerStore(f.config, { fetch: f.fetcher, monotonicNow: () => ticks.shift()! });
+    await expect(store.readWorkerTime()).rejects.toThrow();
+  });
+
+  it("does not send when an aged database-clock response consumes the claimed lease", async () => {
+    const f = fixture();
+    let tick = 0;
+    const store = createSupabaseNotificationWorkerStore(f.config, {
+      fetch: f.fetcher, monotonicNow: () => (++tick % 2 === 1 ? 0 : 301_000),
+    });
+    const send = vi.fn(async () => ({ providerMessageId: "must-not-send" }));
+    expect(await runNotificationWorker({ jobsEnabled: true, store, limits: { deliveryLimit: 1 },
+      delivery: { provider: { send }, context: { fromName: "Nihonest", fromAddress: "sender@example.test", siteOrigin: "https://example.test" } },
+    })).toMatchObject({ claimed: 1, sent: 0, expiredClaims: 1, exitCode: 1 });
+    expect(send).not.toHaveBeenCalled();
+    expect(f.fetcher.mock.calls.some(([request]) => String(request).includes("finalize_email"))).toBe(false);
+  });
+
+  it("does not transmit worker time or caller retry availability to the database finalizer", async () => {
+    const f = fixture();
+    await f.store.finalizeEmailDelivery({ deliveryId, claimToken, state: "sent", now: "2000-01-01T00:00:00Z", providerMessageId: "fixture-message" });
+    expect(new URL(String(f.fetcher.mock.calls[0][0])).pathname).toBe("/rest/v1/rpc/finalize_email_notification_delivery_now");
+    expect(JSON.parse(String(f.fetcher.mock.calls[0][1]?.body))).not.toHaveProperty("p_now");
+    expect(JSON.parse(String(f.fetcher.mock.calls[0][1]?.body))).not.toHaveProperty("p_retry_at");
+  });
+
+  it("maps only aggregate exhausted-failure and expired-processing counts", async () => {
+    const f = fixture();
+    f.responses["/rest/v1/rpc/inspect_email_notification_delivery_backlog"] = { exhausted_failed: 2, exhausted_expired_processing: 3 };
+    expect(await f.store.inspectEmailDeliveryBacklog({ maxAttempts: 5 })).toEqual({ exhaustedFailures: 2, exhaustedExpiredClaims: 3 });
+    expect(JSON.parse(String(f.fetcher.mock.calls[0][1]?.body))).toEqual({ p_max_attempts: 5 });
+    f.responses["/rest/v1/rpc/inspect_email_notification_delivery_backlog"] = { exhausted_failed: -1, exhausted_expired_processing: 0 };
+    await expect(f.store.inspectEmailDeliveryBacklog({ maxAttempts: 5 })).rejects.toThrow();
   });
 });
