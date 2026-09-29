@@ -2,9 +2,8 @@
 
 Implementer: Claude. Reviewer: Codex. Date: 2026-09-28.
 Reviewed commit: `119b872c9004114784cd98516301ca6d2a60f306`, against parent `f9dee65`.
-Status: the initial async-inventory finding is fixed by `efc2837`; a marker-regex regression requires
-another bounded fix before H1 approval/integration. H1 integration remains pending.
-Later Claude commits and uncommitted H2 work are excluded.
+Current status: approved after exact marker-fix rereview at `1d46b0d`; integrated and combined-validated
+as recorded below. Earlier findings and pending statuses remain historical review records.
 
 ## Finding
 
@@ -92,3 +91,29 @@ one file passed), run in the clean isolated LF checkout at the full fix hash. No
 worktree were modified. Wider tests/build and another artifact injection are deferred until this new blocking
 marker regression is fixed; the original H1 build/full-suite results above remain recorded without attributing
 them to the newer source. H1 is not approved or integrated yet.
+
+## Rereview of `1d46b0d` and integration — 2026-09-28
+
+Codex reviewed exact `1d46b0d14e3ee75f68e5a435ae70209047373ab5`, whose parent is `efc2837`.
+Only the marker helper and its tests change. The original exclusions (quotes, backtick, literal backslash,
+real newline) are restored; ordinary `n` remains. All ten boundary fixtures pass, including the three new
+character, canonical coverage and full-summary fixtures. An independent catalog probe finds zero differences
+from the original extraction rule across 784 summaries, restores 640 markers and detects the full Sapporo
+summary in an async chunk. The original rule still omits 144 summaries with an early excluded character;
+this is recorded coverage, not a claim that every individual summary is detectable.
+
+**Approved.** Reviewed H1 inputs `119b872`, `efc2837`, and `1d46b0d` were merged by hash into the
+designated integration branch as `53baa860334b03c5d4fc5760967821c8d0cdfcda`, excluding H2 and the
+adapter at this stage. The isolated LF checkout passed 582 tests / 151 files with four workers, lint,
+TypeScript, architecture (683 modules), public-only 415-page build and CMS exclusion. The build still
+reports dynamic detail routes at this H1-only stage, as expected before H2.
+
+An emitted-artifact probe inventories 42 scripts and injects the full canonical Sapporo summary into an
+async map chunk and an entry chunk, all 1,607 source URLs into the async chunk, and map geometry into an
+entry chunk. Each injection makes the checker exit 1 with the expected violation. Original bytes are
+restored in `finally`, byte equality is checked, and the restored checker exits 0. The probe selects chunks
+from the generated report rather than relying on hashed filenames. This resolves both recorded P2 findings.
+
+The subsequent H2/adapter combination is validated separately at `4f41ec5`; see
+[the consolidated record](../refactor.md#h1-h2-and-j1-adapter-integration--2026-09-28).
+No Claude worktree, translation artifact, main branch or hosted service was modified during review.

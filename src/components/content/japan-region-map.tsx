@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { prefectureMapPaths } from "@/data/geography/prefecture-map-paths";
-import { japanPrefectureRegions } from "@/data/geography/regions";
+import type { JapanPrefectureRegion } from "@/data/geography/regions";
 
 const regionColors = [
   "#5b8fb9", "#8a70b5", "#d17b89", "#c18c4c",
@@ -35,11 +35,12 @@ const labels = {
   },
 } as const;
 
-export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>) {
+/** Client view of the region map. The server passes the region payload so the geography registry stays out of browser code. */
+export function JapanRegionMapView({ regions, locale = "en" }: Readonly<{ regions: readonly JapanPrefectureRegion[]; locale?: Locale }>) {
   const text = labels[locale];
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showOkinawa, setShowOkinawa] = useState(false);
-  const selectedRegion = selectedIndex === null ? null : japanPrefectureRegions[selectedIndex];
+  const selectedRegion = selectedIndex === null ? null : regions[selectedIndex];
 
   return (
     <div className="not-prose mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
@@ -47,7 +48,7 @@ export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>)
       <div className="mt-4 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_10rem]">
         <div className="relative mx-auto w-full">
           <svg viewBox={showOkinawa ? okinawaMapView : mainMapView} role="group" aria-label={showOkinawa ? text.okinawaMap : text.map} className="block h-auto w-full">
-            {japanPrefectureRegions.map((region, index) => showOkinawa && index !== 7 ? null : (
+            {regions.map((region, index) => showOkinawa && index !== 7 ? null : (
               <g
                 key={region.name.en}
                 role="button"
@@ -82,7 +83,7 @@ export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>)
           </button>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1" aria-label={text.map}>
-          {japanPrefectureRegions.map((region, index) => (
+          {regions.map((region, index) => (
             <button
               key={region.name.en}
               type="button"

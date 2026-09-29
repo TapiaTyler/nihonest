@@ -8,6 +8,8 @@ import type { JapaneseTerm } from "@/domain/glossary/glossary";
 import { residenceStatusCategoryLabels, type ResidenceStatus } from "@/domain/residence-status/residence-status";
 import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
 import { useInterfaceMessages } from "./interface-text";
+import { useSearchParams } from "next/navigation";
+import { singleQueryValue, statusReturnDestination } from "@/lib/navigation/query-values";
 
 /**
  * Page chrome for residence-status detail pages. The server page passes only the Japanese titles it needs
@@ -18,6 +20,12 @@ export type LocalizedTitles = Readonly<Record<string, string>>;
 export function LocalizedStatusBackLink({ href, className }: Readonly<{ href: string; className: string }>) {
   const { message } = useInterfaceMessages();
   return <Link href={href} className={className}>← {message(href === "/saved" ? "status.backToSaved" : "status.backToStatuses")}</Link>;
+}
+
+/** Reads `returnTo` on the prebuilt status page; render inside Suspense with the default link as the fallback. */
+export function QueryStatusBackLink({ className }: Readonly<{ className: string }>) {
+  const query = useSearchParams();
+  return <LocalizedStatusBackLink href={statusReturnDestination(singleQueryValue(query, "returnTo"))} className={className} />;
 }
 
 const statusMessages: Record<ResidenceStatus["status"], InterfaceMessageId> = {
