@@ -9,7 +9,7 @@ import {
 export const MAX_EMAIL_DELIVERY_ATTEMPTS = 5;
 
 export type NotificationEmailSender = Readonly<{
-  send(message: ReturnType<typeof renderNotificationEmail>): Promise<Readonly<{ providerMessageId: string }>>;
+  send(message: ReturnType<typeof renderNotificationEmail>, options?: Readonly<{ signal?: AbortSignal }>): Promise<Readonly<{ providerMessageId: string }>>;
 }>;
 
 export type DispatchNotificationEmailInput = Readonly<{

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { prepareEmailDelivery, transitionNotificationDelivery, type NotificationDelivery } from "@/domain/notifications/notification-delivery";
 import { type NotificationEvent, type NotificationPreferences } from "@/domain/notifications/notifications";
 import type { CriticalUpdateAccountContext } from "@/domain/notifications/critical-updates";
+import type { NotificationEmailSender } from "@/domain/notifications/notification-dispatch";
 import { runNotificationWorker, type ClaimedEmailContext, type EmailDeliveryCompletion, type NotificationWorkerStore } from "./notification-worker";
 
 const startedAt = "2026-10-01T00:00:00.000Z";
@@ -69,7 +70,7 @@ function fixture(events: NotificationEvent[] = [event]) {
       rows[index] = transitionNotificationDelivery(row, completion.state, completion.now, completion);
     }),
   } satisfies NotificationWorkerStore;
-  const send = vi.fn(async () => ({ providerMessageId: "fixture-message" }));
+  const send = vi.fn<NotificationEmailSender["send"]>(async () => ({ providerMessageId: "fixture-message" }));
   return {
     store, rows, send,
     setTime(value: string) { instant = value; },
@@ -81,13 +82,62 @@ function fixture(events: NotificationEvent[] = [event]) {
 }
 
 describe("notification worker preparation", () => {
+  it("rejects an I/O plan longer than the lease before any database work", async () => {
+    const f = fixture();
+    expect(await runNotificationWorker({ ...f.input, limits: { leaseSeconds: 30 } })).toMatchObject({
+      claimed: 0, infrastructureErrors: 1, exitCode: 1,
+    });
+    expect(f.store.readWorkerTime).not.toHaveBeenCalled();
+  });
+
+  it("bounds a non-cooperative claim read and stops without a provider call", async () => {
+    const f = fixture();
+    f.store.claimEmailDeliveries.mockImplementationOnce(async () => new Promise<never>(() => undefined));
+    expect(await runNotificationWorker({ ...f.input, limits: { databaseTimeoutMs: 10, providerTimeoutMs: 10 } })).toMatchObject({
+      claimed: 0, infrastructureErrors: 1, exitCode: 1,
+    });
+    expect(f.send).not.toHaveBeenCalled();
+  });
+
+  it("aborts a stalled provider call, finalizes a retry, and exposes no recipient data", async () => {
+    const f = fixture();
+    let providerSignal: AbortSignal | undefined;
+    f.send.mockImplementationOnce(async (_message, options) => {
+      providerSignal = options?.signal;
+      return new Promise<never>(() => undefined);
+    });
+    const report = await runNotificationWorker({ ...f.input, limits: { databaseTimeoutMs: 10, providerTimeoutMs: 10 } });
+    expect(report).toMatchObject({ claimed: 1, sent: 0, failed: 1, infrastructureErrors: 0, exitCode: 1 });
+    expect(providerSignal?.aborted).toBe(true);
+    expect(f.rows[0]).toMatchObject({ state: "failed", attemptCount: 1 });
+    expect(JSON.stringify(report)).not.toContain("private-reader@example.test");
+  });
+
+  it("leaves a nearly expired claim before sending when the finalization reserve is gone", async () => {
+    const f = fixture();
+    let reads = 0;
+    f.store.readWorkerTime.mockImplementation(async () => ++reads === 6 ? "2026-10-01T00:04:30.000Z" : startedAt);
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 1, sent: 0, expiredClaims: 1, exitCode: 1 });
+    expect(f.send).not.toHaveBeenCalled();
+    expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+  });
+
+  it("does not start finalization after an accepted send consumes its reserved time", async () => {
+    const f = fixture();
+    let reads = 0;
+    f.store.readWorkerTime.mockImplementation(async () => ++reads === 7 ? "2026-10-01T00:04:50.000Z" : startedAt);
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 1, sent: 0, expiredClaims: 1, exitCode: 1 });
+    expect(f.send).toHaveBeenCalledOnce();
+    expect(f.store.finalizeEmailDelivery).not.toHaveBeenCalled();
+  });
+
   it("terminally suppresses an ineligible recipient without sending or later retries", async () => {
     const f = fixture();
     f.store.loadEmailContext.mockResolvedValueOnce({ event, preferences, recipient: { status: "suppressed" } });
     expect(await runNotificationWorker(f.input)).toMatchObject({ suppressed: 1, sent: 0, failed: 0, infrastructureErrors: 0, exitCode: 0 });
     expect(f.send).not.toHaveBeenCalled();
     expect(f.rows[0]).toMatchObject({ state: "suppressed", attemptCount: 1 });
-    expect(f.store.finalizeEmailDelivery).toHaveBeenCalledWith(expect.objectContaining({ state: "suppressed", claimToken: expect.any(String) }));
+    expect(f.store.finalizeEmailDelivery).toHaveBeenCalledWith(expect.objectContaining({ state: "suppressed", claimToken: expect.any(String) }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
     f.setTime("2026-10-02T00:00:00.000Z");
     expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0, sent: 0, failed: 0 });
     expect(f.rows[0].attemptCount).toBe(1);
@@ -127,7 +177,7 @@ describe("notification worker preparation", () => {
     expect(f.send).toHaveBeenCalledTimes(1);
     expect(f.store.finalizeEmailDelivery).toHaveBeenCalledWith(expect.objectContaining({
       claimToken: "50000000-0000-4000-8000-000000000001", state: "sent", providerMessageId: "fixture-message",
-    }));
+    }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
     expect(JSON.stringify(result)).not.toMatch(/private|example|10000000|20000000|50000000/);
   });
 
@@ -228,7 +278,8 @@ describe("notification worker preparation", () => {
     const f = fixture([event, { ...event, id: "10000000-0000-4000-8000-000000000009", deduplicationKey: "second" }]);
     const result = await runNotificationWorker({ ...f.input, limits: { deliveryLimit: 1 } });
     expect(result).toMatchObject({ claimed: 1, sent: 1, deliveriesPrepared: 2 });
-    expect(f.store.claimEmailDeliveries).toHaveBeenCalledWith({ now: startedAt, limit: 1, maxAttempts: 5, leaseSeconds: 300 });
+    expect(f.store.claimEmailDeliveries).toHaveBeenCalledWith({ now: startedAt, limit: 1, maxAttempts: 5, leaseSeconds: 300 },
+      expect.objectContaining({ signal: expect.any(AbortSignal) }));
     expect(f.rows[1].state).toBe("pending");
   });
 

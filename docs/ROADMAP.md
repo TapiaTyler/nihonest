@@ -1121,6 +1121,19 @@ were not repeated for this source-only checkpoint. Claude's review of both J1 ch
 docs remains pending after reset; integration stays at `e4fc1ff`. Command/config wiring, provider/whole-lease
 budgets, real SQL concurrency/pgTAP acceptance and operator docs remain open. No main merge or activation.
 
+**2026-09-29 J1 provider and claim-lease budget preparation:** following pending recipient-policy `904856e`,
+Codex's [bounded checkpoint](checkpoints/J1-lease-io-budget.md) adds cancellable store/provider deadlines,
+a monotonic budget beginning before each claim, database-expiry shortening and reserved time before sends
+and finalization. Insufficient time leaves the claim for recovery. Explicit SES configuration uses one SDK
+attempt, a bounded request, abort propagation and resource disposal for the future command. Provider
+timeouts can still mean uncertain acceptance and later duplicate sends; SQL owns final expiry.
+
+86 focused tests, full **656 tests / 157 files**, TypeScript, targeted lint, architecture (**693 modules**)
+and whitespace passed with fixture services. No SQL/build/browser/editorial check was repeated. This and
+the preceding J1 checkpoints plus consolidated documentation await Claude; integration remains `e4fc1ff`.
+Standalone command/H3a wiring, real PostgreSQL 17 SQL concurrency/pgTAP acceptance and operator docs remain.
+No main merge, schedule, activation or real email.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;

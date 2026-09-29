@@ -6,7 +6,7 @@ import { createDefaultNotificationPreferences, notificationEventSchema, notifica
 import { criticalUpdateAccountContextSchema } from "@/domain/notifications/critical-updates";
 import type { JobConfig } from "@/lib/config/deployment-config";
 import type { Database } from "@/types/database";
-import type { NotificationWorkerStore, EmailDeliveryCompletion } from "./notification-worker";
+import type { NotificationWorkerStore, EmailDeliveryCompletion, WorkerOperationOptions } from "./notification-worker";
 import { createWorkerDatabaseFetch } from "./worker-database-fetch";
 import { resolveWorkerRecipient } from "./worker-recipient";
 
@@ -65,15 +65,16 @@ export function createSupabaseNotificationWorkerStore(
   config: Pick<JobConfig, "supabaseUrl" | "supabaseSecretKey">,
   options: Readonly<{ fetch?: typeof fetch; timeoutMs?: number; monotonicNow?: () => number }> = {},
 ): NotificationWorkerStore {
-  const client = createClient<Database>(config.supabaseUrl, config.supabaseSecretKey, {
+  const operationClient = (operation?: WorkerOperationOptions) => createClient<Database>(config.supabaseUrl, config.supabaseSecretKey, {
     auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     db: { retry: false },
-    global: { fetch: createWorkerDatabaseFetch(options.fetch ?? globalThis.fetch, options.timeoutMs) },
+    global: { fetch: createWorkerDatabaseFetch(options.fetch ?? globalThis.fetch, options.timeoutMs, operation?.signal) },
   });
   const monotonicNow = options.monotonicNow ?? (() => performance.now());
 
   return {
-    async readWorkerTime() {
+    async readWorkerTime(operation) {
+      const client = operationClient(operation);
       const started = z.number().finite().parse(monotonicNow());
       const serverTime = timestamp(requireResult(await client.rpc("read_notification_worker_time", {})));
       const elapsed = z.number().finite().nonnegative().parse(monotonicNow() - started);
@@ -81,7 +82,8 @@ export function createSupabaseNotificationWorkerStore(
       // upper bound), plus 1 ms for discarded PostgreSQL microseconds. No Date.now/system-clock comparison.
       return new Date(Date.parse(serverTime) + Math.ceil(elapsed) + 1).toISOString();
     },
-    async inspectEmailDeliveryBacklog({ maxAttempts }) {
+    async inspectEmailDeliveryBacklog({ maxAttempts }, operation) {
+      const client = operationClient(operation);
       const result = requireResult(await client.rpc("inspect_email_notification_delivery_backlog", {
         p_max_attempts: z.number().int().min(1).max(20).parse(maxAttempts),
       }));
@@ -91,16 +93,20 @@ export function createSupabaseNotificationWorkerStore(
       }).strict().parse(result);
       return { exhaustedFailures: backlog.exhausted_failed, exhaustedExpiredClaims: backlog.exhausted_expired_processing };
     },
-    async generateDueReminderEvents({ limit }) {
+    async generateDueReminderEvents({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("generate_due_reminder_events", { p_limit: limit })));
     },
-    async generateTargetedCriticalUpdateEvents({ limit }) {
+    async generateTargetedCriticalUpdateEvents({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("generate_targeted_critical_update_events", { p_limit: limit })));
     },
-    async prepareEmailDeliveries({ limit }) {
+    async prepareEmailDeliveries({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("prepare_email_notification_deliveries", { p_limit: limit })));
     },
-    async claimEmailDeliveries({ limit, maxAttempts, leaseSeconds }) {
+    async claimEmailDeliveries({ limit, maxAttempts, leaseSeconds }, operation) {
+      const client = operationClient(operation);
       // Omit p_now: generation, preparation, and claims use the RPC's database-time default.
       const rows = requireResult(await client.rpc("claim_email_notification_deliveries", {
         p_limit: limit, p_max_attempts: maxAttempts, p_lease_seconds: leaseSeconds,
@@ -112,7 +118,8 @@ export function createSupabaseNotificationWorkerStore(
         return delivery;
       });
     },
-    async loadEmailContext(input) {
+    async loadEmailContext(input, operation) {
+      const client = operationClient(operation);
       const delivery = notificationDeliverySchema.parse(input);
       if (delivery.state !== "processing") throw new Error("Only a processing delivery can load context.");
       const [eventResult, preferencesResult, authResult] = await Promise.all([
@@ -155,7 +162,8 @@ export function createSupabaseNotificationWorkerStore(
         journeyId: journeyResult.data?.journey_id ?? undefined, routeId: journeyResult.data?.route_id ?? undefined,
       }) };
     },
-    async finalizeEmailDelivery(input: EmailDeliveryCompletion) {
+    async finalizeEmailDelivery(input: EmailDeliveryCompletion, operation) {
+      const client = operationClient(operation);
       const completion = completionSchema.parse(input);
       // The wrapper locks/rechecks the token, reads database time after the lock and computes backoff.
       // completion.now/retryAt describe the domain outcome; neither can override database authority.

@@ -729,3 +729,19 @@ editorial approval, and a documentation status change cannot authorize external 
 - Both new J1 checkpoints and consolidated documentation await Claude after reset. Integration remains
   `e4fc1ff`; provider/whole-lease budgets, standalone command/config wiring, real SQL concurrency/lock-wait
   and pgTAP acceptance, and operator docs remain open. No main merge, hosted activation or real email.
+
+### J1 provider and claim-lease budget preparation — 2026-09-29
+
+- After recipient-policy `904856e` (pushed, review pending), Codex added a separate
+  [I/O budget checkpoint](checkpoints/J1-lease-io-budget.md). Store and provider operations gain bounded
+  cancellable deadlines. A monotonic claim budget starts before claiming, shortens to database expiry,
+  and reserves time for send and finalization. A lease too short for configured worst-case I/O fails
+  before database work; near-expiry claims remain for recovery without a new send/finalizer call.
+- The configured SES adapter takes explicit email config, makes one SDK attempt with a bounded request,
+  propagates abort, and exposes resource disposal to the future command. A provider timeout can mean
+  uncertain acceptance and a duplicate on recovery; the database remains final expiry authority.
+- Checks: **86 focused tests / six files**, full **656 tests / 157 files** with four workers, TypeScript,
+  targeted lint, architecture (**693 modules**) and whitespace passed. All remote operations were fixtures.
+  SQL/build/browser/editorial gates were not repeated. No command/activation was added.
+- `6aa8f1c`, `904856e`, this checkpoint and consolidated docs await Claude's review after reset. Integration
+  remains `e4fc1ff`; command/config wiring, real PostgreSQL 17 concurrency/pgTAP and operator docs remain.

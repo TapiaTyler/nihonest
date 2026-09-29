@@ -15,7 +15,7 @@ export type SesV2SendEmailInput = Readonly<{
   }>;
 }>;
 
-export type SesV2Send = (input: SesV2SendEmailInput) => Promise<Readonly<{ MessageId?: string }>>;
+export type SesV2Send = (input: SesV2SendEmailInput, options?: Readonly<{ signal?: AbortSignal }>) => Promise<Readonly<{ MessageId?: string }>>;
 
 function senderHeader(message: TransactionalEmail): string {
   const safeName = message.from.name.replace(/[\r\n"]/g, "").trim();
@@ -26,8 +26,8 @@ function senderHeader(message: TransactionalEmail): string {
 export function createAmazonSesEmailProvider(send: SesV2Send): EmailProvider {
   return {
     providerName: "amazon-ses",
-    async send(message): Promise<EmailSendResult> {
-      const result = await send({
+    async send(message, options): Promise<EmailSendResult> {
+      const request: SesV2SendEmailInput = {
         FromEmailAddress: senderHeader(message),
         Destination: { ToAddresses: [message.to] },
         Content: {
@@ -39,7 +39,8 @@ export function createAmazonSesEmailProvider(send: SesV2Send): EmailProvider {
             },
           },
         },
-      });
+      };
+      const result = options ? await send(request, options) : await send(request);
       if (!result.MessageId) throw new Error("Amazon SES did not return a message ID.");
       return { providerMessageId: result.MessageId };
     },
