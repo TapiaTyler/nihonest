@@ -57,6 +57,30 @@ describe("client bundle boundary", () => {
     expect(check({ path: "static/chunks/shared.js", text: `${guidanceLeak};${registryLeak};${mapGeometry}`, entry: true })).toHaveLength(3);
   });
 
+  it("stops markers only at quotes, backticks, backslashes, and newlines", () => {
+    const words = "Residents notify the municipal office within fourteen days";
+    expect(catalogMarker(words)).toBe(words);
+    for (const stop of ['"', "'", "`", "\\", "\n"]) expect(catalogMarker(`${words}${stop}rest`)).toBe(words);
+    expect(catalogMarker(`${words.slice(0, 20)}\nsecond line`)).toBeUndefined();
+    expect(catalogMarker(`${words} and more text that runs well past eighty characters in total`)).toHaveLength(80);
+  });
+
+  it("derives a marker for every canonical summary whose leading run is long enough", () => {
+    for (const { id, summary } of localGuidanceSupplements) {
+      const leading = /^[^"'`\\\n]+/.exec(summary)?.[0].trim() ?? "";
+      expect(catalogMarker(summary), id).toBe(leading.length >= 30 ? leading.slice(0, 80) : undefined);
+    }
+    // 640 of 784 summaries yield a marker today; the rest quote a term early. Stopping at an ordinary letter cut it to 113.
+    expect(markers.guidance.length).toBeGreaterThan(localGuidanceSupplements.length * 0.75);
+  });
+
+  it("detects a chunk carrying one full canonical summary", () => {
+    const sapporo = localGuidanceSupplements.find(({ summary }) => summary.startsWith("Sapporo takes moving-in notifications within 14 days"));
+    expect(sapporo).toBeDefined();
+    expect(check({ path: "static/chunks/lazy.js", text: `var s=${JSON.stringify(sapporo!.summary)}`, entry: false }))
+      .toEqual([expect.stringContaining("contains prose from 1 municipality guidance supplement")]);
+  });
+
   it("refuses to pass with empty markers", () => {
     expect(findBundleBoundaryViolations([], { guidance: [], sourceUrls: ["x"], mapGeometry: ["y"] }).violations)
       .toEqual(["The catalog markers are empty; the check would pass vacuously."]);
