@@ -1107,6 +1107,20 @@ no service was started/reset. Review/integration are pending Claude; reviewed in
 Recipient policy, exhaustive event mapping, command/provider budgets, real SQL acceptance and operator docs
 remain J1 work. No main merge, hosted activation, schedule, real email or translation edit.
 
+**2026-09-29 J1 recipient-policy preparation:** the preceding database-authority checkpoint is pushed as
+`6aa8f1c`, awaiting review. The next [checkpoint](checkpoints/J1-recipient-policy.md) requires a valid current
+Auth email with email-specific confirmation. Missing, malformed or unconfirmed addresses are terminally
+suppressed, without provider use or further attempts; later confirmation does not revive old suppressed
+deliveries. Auth lookup/ownership failures remain retryable. The runner checks event identity and lease even
+for suppression; critical target mapping is exhaustive. General/phone confirmation, pending email and payload
+addresses do not authorize delivery. No command/app consumer is added.
+
+84 focused tests, full **644 tests / 155 files**, TypeScript, targeted lint, architecture (**692 modules**)
+and whitespace passed with fixture services and existing dependencies. SQL/build/browser/editorial gates
+were not repeated for this source-only checkpoint. Claude's review of both J1 checkpoints and consolidated
+docs remains pending after reset; integration stays at `e4fc1ff`. Command/config wiring, provider/whole-lease
+budgets, real SQL concurrency/pgTAP acceptance and operator docs remain open. No main merge or activation.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;

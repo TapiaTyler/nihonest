@@ -14,11 +14,12 @@ import {
 import { notificationEventSchema, notificationPreferencesSchema } from "@/domain/notifications/notifications";
 import { criticalUpdateAccountContextSchema, type CriticalUpdateAccountContext } from "@/domain/notifications/critical-updates";
 import type { NotificationEmailContext } from "@/domain/notifications/notification-email";
+import { workerRecipientSchema, type WorkerRecipient } from "./worker-recipient";
 
 export type ClaimedEmailContext = Readonly<{
   event: unknown;
   preferences: unknown;
-  recipientAddress: string;
+  recipient: WorkerRecipient;
   criticalUpdateAccountContext?: CriticalUpdateAccountContext;
 }>;
 
@@ -147,21 +148,33 @@ export async function runNotificationWorker(input: NotificationWorkerInput): Pro
             report.expiredClaims++;
             continue;
           }
-          outcome = await dispatchNotificationEmail({
-            delivery: claimed,
-            event: notificationEventSchema.parse(context.event),
-            preferences: notificationPreferencesSchema.parse(context.preferences),
-            criticalUpdateAccountContext: context.criticalUpdateAccountContext
-              ? criticalUpdateAccountContextSchema.parse(context.criticalUpdateAccountContext) : undefined,
-            emailContext: { ...delivery.context, recipientAddress: z.email().parse(context.recipientAddress) },
-            provider: {
-              async send(message) {
-                if (!leaseIsCurrent(claimed, await readClock())) throw new Error("The claim expired before sending.");
-                return delivery.provider.send(message);
+          const event = notificationEventSchema.parse(context.event);
+          const preferences = notificationPreferencesSchema.parse(context.preferences);
+          const recipient = workerRecipientSchema.parse(context.recipient);
+          if (event.id !== claimed.eventId || event.userId !== claimed.userId) {
+            throw new Error("Delivery event ownership does not match.");
+          }
+          // Known ineligible Auth recipients are terminal, rather than five retryable context errors.
+          // Ownership and the lease are checked even when no provider call will occur.
+          if (recipient.status === "suppressed") {
+            outcome = transitionNotificationDelivery(claimed, "suppressed", attemptedAt);
+          } else {
+            outcome = await dispatchNotificationEmail({
+              delivery: claimed,
+              event,
+              preferences,
+              criticalUpdateAccountContext: context.criticalUpdateAccountContext
+                ? criticalUpdateAccountContextSchema.parse(context.criticalUpdateAccountContext) : undefined,
+              emailContext: { ...delivery.context, recipientAddress: recipient.address },
+              provider: {
+                async send(message) {
+                  if (!leaseIsCurrent(claimed, await readClock())) throw new Error("The claim expired before sending.");
+                  return delivery.provider.send(message);
+                },
               },
-            },
-            attemptedAt,
-          });
+              attemptedAt,
+            });
+          }
           // Dispatch sanitizes provider failures, including a clock exception raised by our send guard.
           if (clockFailed) throw new Error("The worker clock failed before sending.");
         } catch (error) {

@@ -2,14 +2,27 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { notificationDeliverySchema, type NotificationDelivery } from "@/domain/notifications/notification-delivery";
-import { createDefaultNotificationPreferences, notificationEventSchema, notificationPreferencesSchema } from "@/domain/notifications/notifications";
+import { createDefaultNotificationPreferences, notificationEventSchema, notificationPreferencesSchema, type NotificationEvent } from "@/domain/notifications/notifications";
 import { criticalUpdateAccountContextSchema } from "@/domain/notifications/critical-updates";
 import type { JobConfig } from "@/lib/config/deployment-config";
 import type { Database } from "@/types/database";
 import type { NotificationWorkerStore, EmailDeliveryCompletion } from "./notification-worker";
 import { createWorkerDatabaseFetch } from "./worker-database-fetch";
+import { resolveWorkerRecipient } from "./worker-recipient";
 
 type DeliveryRow = Database["public"]["Tables"]["notification_deliveries"]["Row"];
+
+function criticalTarget(event: NotificationEvent): { kind: "article" | "residence-status"; target: string } | undefined {
+  switch (event.type) {
+    case "reminder-due": return undefined;
+    case "article-critical-update": return { kind: "article", target: event.payload.articleId };
+    case "residence-status-guidance-updated": return { kind: "residence-status", target: event.payload.residenceStatusId };
+    default: {
+      const unsupported: never = event;
+      throw new Error(`Unsupported notification event: ${typeof unsupported}`);
+    }
+  }
+}
 
 function timestamp(value: string): string {
   // PostgREST returns PostgreSQL offsets and microseconds; domain schemas require ISO UTC.
@@ -123,11 +136,11 @@ export function createSupabaseNotificationWorkerStore(
       if (authResult.error || !authResult.data.user || authResult.data.user.id !== delivery.userId) {
         throw new Error("The notification recipient could not be loaded.");
       }
-      const recipientAddress = z.email().parse(authResult.data.user.email);
-      if (event.type === "reminder-due") return { event, preferences, recipientAddress };
+      const recipient = resolveWorkerRecipient(authResult.data.user);
+      const critical = criticalTarget(event);
+      if (recipient.status === "suppressed" || !critical) return { event, preferences, recipient };
 
-      const kind = event.type === "article-critical-update" ? "article" : "residence-status";
-      const target = event.type === "article-critical-update" ? event.payload.articleId : event.payload.residenceStatusId;
+      const { kind, target } = critical;
       const [savedResult, journeyResult] = await Promise.all([
         client.from("saved_content").select("user_id,content_kind,content_id,state").eq("user_id", delivery.userId)
           .eq("content_kind", kind).eq("content_id", target).limit(1),
@@ -136,7 +149,7 @@ export function createSupabaseNotificationWorkerStore(
       const saved = requireResult(savedResult);
       if (journeyResult.error || saved.some((item) => item.user_id !== delivery.userId || item.content_kind !== kind || item.content_id !== target)
         || (journeyResult.data && journeyResult.data.user_id !== delivery.userId)) throw new Error("Critical relevance could not be loaded.");
-      return { event, preferences, recipientAddress, criticalUpdateAccountContext: criticalUpdateAccountContextSchema.parse({
+      return { event, preferences, recipient, criticalUpdateAccountContext: criticalUpdateAccountContextSchema.parse({
         userId: delivery.userId, criticalUpdatesEnabled: preferences.criticalUpdatesEnabled,
         savedContent: saved.map((item) => ({ kind: item.content_kind, contentId: item.content_id, state: item.state })),
         journeyId: journeyResult.data?.journey_id ?? undefined, routeId: journeyResult.data?.route_id ?? undefined,

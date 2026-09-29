@@ -2,6 +2,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { requireJobConfig } from "@/lib/config/deployment-config";
 import type { NotificationDelivery } from "@/domain/notifications/notification-delivery";
+import type { NotificationEmailSender } from "@/domain/notifications/notification-dispatch";
 import { runNotificationWorker } from "./notification-worker";
 import { createSupabaseNotificationWorkerStore } from "./supabase-notification-worker-store";
 
@@ -33,7 +34,7 @@ function fixture() {
     "/rest/v1/rpc/finalize_email_notification_delivery_now": { ...delivery, state: "sent", claim_token: null,
       claim_expires_at: null, sent_at: pgTime, provider_message_id: "fixture-message" },
     "/rest/v1/notification_events": [event], "/rest/v1/notification_preferences": [preferences],
-    [`/auth/v1/admin/users/${userId}`]: { user: { id: userId, email: "auth-reader@example.test" } },
+    [`/auth/v1/admin/users/${userId}`]: { user: { id: userId, email: "auth-reader@example.test", email_confirmed_at: pgTime } },
     "/rest/v1/saved_content": [{ user_id: userId, content_kind: "article", content_id: "sample-guide", state: "saved" }],
     "/rest/v1/user_preferences": [{ user_id: userId, journey_id: "planning", route_id: null }],
   };
@@ -49,6 +50,74 @@ function fixture() {
 }
 
 describe("notification worker Supabase mapping", () => {
+  it("sends only to the confirmed current Auth email and keeps it out of the report", async () => {
+    const f = fixture();
+    Object.assign(f.event.payload, { recipientAddress: "payload-attacker@example.test" });
+    f.responses[`/auth/v1/admin/users/${userId}`] = { user: { id: userId, email: "auth-reader@example.test",
+      email_confirmed_at: pgTime, new_email: "pending@example.test" } };
+    const send = vi.fn<NotificationEmailSender["send"]>(async () => ({ providerMessageId: "fixture-message" }));
+    const report = await runNotificationWorker({ jobsEnabled: true, store: f.store, limits: { deliveryLimit: 1 },
+      delivery: { provider: { send }, context: { fromName: "Nihonest", fromAddress: "sender@example.test", siteOrigin: "https://example.test" } },
+    });
+    expect(report).toMatchObject({ sent: 1, suppressed: 0, failed: 0, exitCode: 0 });
+    expect(send).toHaveBeenCalledOnce();
+    expect(send.mock.calls[0][0]).toMatchObject({ to: "auth-reader@example.test" });
+    expect(JSON.stringify(report)).not.toMatch(/@|Private title|fixture-message|20000000/);
+  });
+
+  it.each([
+    { email: null, email_confirmed_at: pgTime },
+    { email: "invalid private address", email_confirmed_at: pgTime },
+    { email: "reader@example.test" },
+    { email: "reader@example.test", confirmed_at: pgTime, phone_confirmed_at: pgTime },
+    { email: "reader@example.test", email_confirmed_at: "invalid private confirmation" },
+  ])("suppresses ineligible Auth recipients without provider calls or retry failures: %j", async (user) => {
+    const f = fixture();
+    f.responses[`/auth/v1/admin/users/${userId}`] = { user: { id: userId, ...user } };
+    f.responses["/rest/v1/rpc/finalize_email_notification_delivery_now"] = { ...f.delivery,
+      state: "suppressed", claim_token: null, claim_expires_at: null };
+    const send = vi.fn(async () => ({ providerMessageId: "must-not-send" }));
+    expect(await runNotificationWorker({ jobsEnabled: true, store: f.store, limits: { deliveryLimit: 1 },
+      delivery: { provider: { send }, context: { fromName: "Nihonest", fromAddress: "sender@example.test", siteOrigin: "https://example.test" } },
+    })).toMatchObject({ claimed: 1, suppressed: 1, failed: 0, infrastructureErrors: 0, exitCode: 0 });
+    expect(send).not.toHaveBeenCalled();
+    const [, init] = f.fetcher.mock.calls.find(([request]) => String(request).includes("finalize_email"))!;
+    expect(JSON.parse(String(init?.body))).toEqual({ p_delivery_id: deliveryId, p_claim_token: claimToken,
+      p_state: "suppressed", p_provider_message_id: null, p_error: null });
+  });
+
+  it("keeps Auth transport failures retryable rather than treating them as ineligible", async () => {
+    const f = fixture();
+    const original = f.fetcher.getMockImplementation()!;
+    f.fetcher.mockImplementation(async (input, init) => String(input).includes("/auth/")
+      ? new Response(JSON.stringify({ message: "private Auth failure" }), { status: 503 }) : original(input, init));
+    await expect(f.store.loadEmailContext(await f.claim())).rejects.toThrow("The notification recipient could not be loaded.");
+  });
+
+  it("skips critical relevance lookups for an ineligible recipient", async () => {
+    const f = fixture();
+    f.responses[`/auth/v1/admin/users/${userId}`] = { user: { id: userId } };
+    f.responses["/rest/v1/notification_events"] = [{ ...f.event, event_type: "article-critical-update",
+      payload: { articleId: "sample-guide", releaseId: "60000000-0000-4000-8000-000000000006", title: "Update", revision: "1", summary: "Changed", journeyTargets: [] } }];
+    expect((await f.store.loadEmailContext(await f.claim())).recipient).toEqual({ status: "suppressed" });
+    expect(f.fetcher.mock.calls.some(([request]) => /saved_content|user_preferences/.test(String(request)))).toBe(false);
+  });
+
+  it("maps residence-status targets explicitly and rejects unknown event variants", async () => {
+    const f = fixture();
+    f.responses["/rest/v1/notification_events"] = [{ ...f.event, event_type: "residence-status-guidance-updated",
+      payload: { residenceStatusId: "student", releaseId: "60000000-0000-4000-8000-000000000006", title: "Update", revision: "1", summary: "Changed", journeyTargets: [] } }];
+    f.responses["/rest/v1/saved_content"] = [{ user_id: userId, content_kind: "residence-status", content_id: "student", state: "saved" }];
+    const context = await f.store.loadEmailContext(await f.claim());
+    expect(context.criticalUpdateAccountContext?.savedContent).toEqual([{ kind: "residence-status", contentId: "student", state: "saved" }]);
+    const [request] = f.fetcher.mock.calls.find(([input]) => String(input).includes("/saved_content?"))!;
+    expect(Object.fromEntries(new URL(String(request)).searchParams)).toMatchObject({ content_kind: "eq.residence-status", content_id: "eq.student", limit: "1" });
+    f.responses["/rest/v1/notification_events"] = [{ ...f.event, event_type: "future-event" }];
+    f.fetcher.mockClear();
+    await expect(f.store.loadEmailContext(await f.claim())).rejects.toThrow();
+    expect(f.fetcher.mock.calls.some(([input]) => String(input).includes("/saved_content?"))).toBe(false);
+  });
+
   it("uses H3a job-only credentials and maps generation/preparation/claim RPCs without overriding database time", async () => {
     const f = fixture();
     expect(f.config.email.enabled).toBe(false);
@@ -67,7 +136,7 @@ describe("notification worker Supabase mapping", () => {
     const f = fixture();
     Object.assign(f.event.payload, { recipientAddress: "payload-attacker@example.test" });
     const context = await f.store.loadEmailContext(await f.claim());
-    expect(context.recipientAddress).toBe("auth-reader@example.test");
+    expect(context.recipient).toEqual({ status: "eligible", address: "auth-reader@example.test" });
     expect(context.event).toMatchObject({ createdAt: "2026-10-01T00:00:00.123Z", userId });
     expect(context.preferences).toMatchObject({ emailEnabled: true });
     for (const [request] of f.fetcher.mock.calls) {
@@ -86,13 +155,12 @@ describe("notification worker Supabase mapping", () => {
     expect(context.preferences).toMatchObject({ emailEnabled: false, deadlineRemindersEnabled: false, criticalUpdatesEnabled: false });
   });
 
-  it.each(["event-owner", "preferences-owner", "auth-owner", "auth-deleted", "auth-email", "malformed-event"])("fails closed for %s", async (failure) => {
+  it.each(["event-owner", "preferences-owner", "auth-owner", "auth-deleted", "malformed-event"])("fails closed for %s", async (failure) => {
     const f = fixture();
     if (failure === "event-owner") f.event.user_id = "20000000-0000-4000-8000-000000000009";
     if (failure === "preferences-owner") f.preferences.user_id = "20000000-0000-4000-8000-000000000009";
     if (failure === "auth-owner") f.responses[`/auth/v1/admin/users/${userId}`] = { user: { id: eventId, email: "wrong-owner@example.test" } };
     if (failure === "auth-deleted") f.responses[`/auth/v1/admin/users/${userId}`] = { user: null };
-    if (failure === "auth-email") f.responses[`/auth/v1/admin/users/${userId}`] = { user: { id: userId, email: null } };
     if (failure === "malformed-event") f.responses["/rest/v1/notification_events"] = [{ ...f.event, payload: {} }];
     await expect(f.store.loadEmailContext(await f.claim())).rejects.toThrow();
   });

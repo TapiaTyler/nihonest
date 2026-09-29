@@ -57,7 +57,7 @@ function fixture(events: NotificationEvent[] = [event]) {
     }),
     loadEmailContext: vi.fn(async (row: NotificationDelivery): Promise<ClaimedEmailContext> => ({
       event: events.find((candidate) => candidate.id === row.eventId)!,
-      preferences: { ...currentPreferences }, recipientAddress: "private-reader@example.test",
+      preferences: { ...currentPreferences }, recipient: { status: "eligible", address: "private-reader@example.test" },
       criticalUpdateAccountContext,
     })),
     finalizeEmailDelivery: vi.fn(async (completion: EmailDeliveryCompletion) => {
@@ -81,6 +81,25 @@ function fixture(events: NotificationEvent[] = [event]) {
 }
 
 describe("notification worker preparation", () => {
+  it("terminally suppresses an ineligible recipient without sending or later retries", async () => {
+    const f = fixture();
+    f.store.loadEmailContext.mockResolvedValueOnce({ event, preferences, recipient: { status: "suppressed" } });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ suppressed: 1, sent: 0, failed: 0, infrastructureErrors: 0, exitCode: 0 });
+    expect(f.send).not.toHaveBeenCalled();
+    expect(f.rows[0]).toMatchObject({ state: "suppressed", attemptCount: 1 });
+    expect(f.store.finalizeEmailDelivery).toHaveBeenCalledWith(expect.objectContaining({ state: "suppressed", claimToken: expect.any(String) }));
+    f.setTime("2026-10-02T00:00:00.000Z");
+    expect(await runNotificationWorker(f.input)).toMatchObject({ claimed: 0, sent: 0, failed: 0 });
+    expect(f.rows[0].attemptCount).toBe(1);
+  });
+
+  it.each(["id", "userId"] as const)("rejects mismatched event %s even for an ineligible recipient", async (field) => {
+    const f = fixture();
+    f.store.loadEmailContext.mockResolvedValueOnce({ event: { ...event, [field]: "20000000-0000-4000-8000-000000000009" }, preferences, recipient: { status: "suppressed" } });
+    expect(await runNotificationWorker(f.input)).toMatchObject({ suppressed: 0, failed: 1, infrastructureErrors: 1, exitCode: 1 });
+    expect(f.send).not.toHaveBeenCalled();
+  });
+
   it("does no I/O when jobs are disabled", async () => {
     const f = fixture();
     expect(await runNotificationWorker({ ...f.input, jobsEnabled: false })).toMatchObject({ status: "jobs-disabled", exitCode: 0 });
@@ -298,14 +317,14 @@ describe("notification worker preparation", () => {
 
   it("rejects mismatched events before any provider call", async () => {
     const f = fixture();
-    f.store.loadEmailContext.mockResolvedValueOnce({ event: { ...event, userId: "20000000-0000-4000-8000-000000000009" }, preferences, recipientAddress: "reader@example.test" });
+    f.store.loadEmailContext.mockResolvedValueOnce({ event: { ...event, userId: "20000000-0000-4000-8000-000000000009" }, preferences, recipient: { status: "eligible", address: "reader@example.test" } });
     expect(await runNotificationWorker(f.input)).toMatchObject({ failed: 1, infrastructureErrors: 1 });
     expect(f.send).not.toHaveBeenCalled();
   });
 
   it("rejects invalid transient recipient data without exposing it", async () => {
     const f = fixture();
-    f.store.loadEmailContext.mockResolvedValueOnce({ event, preferences, recipientAddress: "private invalid address" });
+    f.store.loadEmailContext.mockResolvedValueOnce({ event, preferences, recipient: { status: "eligible", address: "private invalid address" } });
     const result = await runNotificationWorker(f.input);
     expect(result).toMatchObject({ failed: 1, infrastructureErrors: 1, exitCode: 1 });
     expect(f.send).not.toHaveBeenCalled();

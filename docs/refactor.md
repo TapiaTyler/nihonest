@@ -712,3 +712,20 @@ editorial approval, and a documentation status change cannot authorize external 
   and SQL/RLS acceptance, recipient suppression/confirmation policy, exhaustive event mapping, standalone
   command/config wiring, provider/whole-lease budgets and operating docs remain pending. No main merge,
   translation edit, hosted service, recurring schedule or real email.
+
+### J1 recipient-policy preparation — 2026-09-29
+
+- The database-authority working checkpoint is pushed as `6aa8f1c`, awaiting Claude's review. The next
+  [bounded checkpoint](checkpoints/J1-recipient-policy.md) replaces the context's address string with a strict
+  eligible/suppressed union. Delivery requires a valid current Auth email and `email_confirmed_at`; general
+  or phone confirmation, pending addresses and event payload addresses cannot substitute. Missing, invalid
+  or unconfirmed email is terminally suppressed with the original claim token; later confirmation does not
+  revive old suppressed deliveries. Auth lookup/ownership failures remain retryable context failures.
+- Suppression still validates event identity, preferences and lease time. Ineligible critical recipients skip
+  relevance reads; eligible event targets use an exhaustive switch. No command or app consumer is added.
+- Checks passed: **84 focused tests / four files**, full **644 tests / 155 files** with four workers,
+  TypeScript, targeted lint, architecture (**692 modules**) and whitespace. Existing dependencies and fixture
+  Auth/provider/database responses were used; no new SQL/build/browser/editorial checks are claimed.
+- Both new J1 checkpoints and consolidated documentation await Claude after reset. Integration remains
+  `e4fc1ff`; provider/whole-lease budgets, standalone command/config wiring, real SQL concurrency/lock-wait
+  and pgTAP acceptance, and operator docs remain open. No main merge, hosted activation or real email.
