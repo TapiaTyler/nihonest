@@ -6,7 +6,8 @@ import { findCmsMarkers } from "./production-boundary";
 
 const root = resolve(import.meta.dirname, "../..");
 
-describe("CMS production boundary", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS production boundary", { timeout: 30_000 }, () => {
   it("keeps CMS code out of the application source", async () => {
     // Application code must not import the CMS or share its endpoints. The build-output check is `npm run cms:check-build`.
     expect(await findCmsMarkers(root, "src", { extensions: [".ts", ".tsx", ".js", ".mjs", ".json"] })).toEqual([]);

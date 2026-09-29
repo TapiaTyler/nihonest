@@ -19,7 +19,8 @@ import { residenceStatuses } from "@/data/residence-statuses";
 
 const root = resolve(import.meta.dirname, "../..");
 
-describe("local CMS foundation", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("local CMS foundation", { timeout: 30_000 }, () => {
   it("reads canonical articles and reports translation currency without writing files", async () => {
     const catalog = await readArticleCatalog(root);
     expect(catalog.failures).toEqual([]);
