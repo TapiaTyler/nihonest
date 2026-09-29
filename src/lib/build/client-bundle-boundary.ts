@@ -27,9 +27,12 @@ export type BundleChunkFindings = Readonly<{
 /** A source-registry fraction above this in any one chunk means the registry, not a few links, reached the browser. */
 export const maximumSourceUrlShare = 0.05;
 
-/** The longest leading run without characters minifiers escape, so the marker survives quoting. */
+/**
+ * The longest leading run without quotes, backticks, backslashes, or newlines (characters minifiers escape), so the
+ * marker survives quoting. Ordinary letters, including "n", stay in the marker.
+ */
 export function catalogMarker(text: string): string | undefined {
-  const run = /^[^"'`\\n]+/.exec(text)?.[0].trim() ?? "";
+  const run = /^[^"'`\\\n]+/.exec(text)?.[0].trim() ?? "";
   return run.length >= 30 ? run.slice(0, 80) : undefined;
 }
 
