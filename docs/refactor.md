@@ -1,13 +1,11 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-28. H3a, J1 preparation, the CMS LF fix, and compile-cache cleanup
-are reviewed and their combined code integration is validated. Claude approved the prior consolidated
-documentation at `6eb2fa6`, `85935ac`, and `861ee5f`. J1 runner hardening is reviewed and integrated;
-the latest consolidated records await review. H1's async-checker fix `efc2837` needs a marker-regex correction
-before integration. H2 `581ed1e` is approved for its scope but awaits that H1 dependency. CMS stability
-`68aa4e8` is independently reviewed/integrated with combined validation at `2a35d9a`.
-J1 adapter mapping `9dee0a0` is implemented but unreviewed/unintegrated. Later checkpoints remain
-pending. This replaces the completed structural-refactor working notes.
+Status: implementation in progress, 2026-09-28. H3a, J1 preparation/hardening, CMS LF/stability fixes,
+compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and scope-limited J1 adapter
+`9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
+consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
+review. J1 remains incomplete with no runnable command; H4, H5 and H3b have not started. Wider hosting
+acceptance and activation remain pending. This replaces the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -105,8 +103,8 @@ J1 to the configuration module. Commit independent work first; do not discard it
 For the H3a/J1 preparation gate and shared-file fixes on 2026-09-28, Codex owns
 `codex/hosting-native-integration` and the consolidated updates to this document and ROADMAP.md. Claude owns
 the separate CMS line-ending/test-diagnostic and compile-cache fixes, reviewed by Codex before integration.
-Integrate exact reviewed commit hashes. Pending H1/H2 changes and the unreviewed J1 adapter are excluded;
-the CMS stability patch is integrated independently as recorded below.
+Integrate exact reviewed commit hashes. The CMS stability patch was cherry-picked independently;
+reviewed H1/H2 and the scope-limited J1 adapter were subsequently integrated by exact hash as recorded below.
 
 Separate worktrees isolate files and build output; they do not prove that the branches work together. At each
 integration gate:
@@ -184,9 +182,9 @@ result. Any Japanese catalog changes needed for that result must also be integra
 
 ### H1 — Keep full catalogs out of browser imports
 
-Status: implemented by Claude at `119b872`; the initial async-checker gap is fixed by `efc2837`, but Codex
-requested correction of an extracted marker-regex regression before approval/integration.
-See [the exact-commit review](checkpoints/H1-review.md). H2 is reviewed for its scope and excluded pending H1.
+Status: implemented by Claude at `119b872`, fixed by `efc2837` (async inventory) and `1d46b0d`
+(marker extraction), reviewed/approved by Codex and combined-validated. See
+[the exact-commit review](checkpoints/H1-review.md). The original marker-rule coverage limit is documented.
 
 Entry points: `src/components/content/prefecture-finder.tsx`, `src/lib/content/prefecture-finder.ts`, geography
 map components, and their importing layouts/renderers.
@@ -210,8 +208,9 @@ Acceptance:
 
 ### H2 — Prebuild public detail pages
 
-Status: implemented by Claude at `581ed1e`, reviewed and approved by Codex for H2 scope. Integration waits
-for H1's marker-regex fix and combined validation. See [the review record](checkpoints/H2-CMS-review.md).
+Status: implemented by Claude at `581ed1e`, reviewed/approved by Codex and integrated after H1's correction.
+Combined validation at `4f41ec5` passed; see [the review record](checkpoints/H2-CMS-review.md).
+Hosted CDN behavior and the full existing browser suite remain acceptance limits.
 Coordinate with H1 and inventory existing query behavior first.
 
 Entry points: article, residence-status, and guided-journey detail pages.
@@ -309,11 +308,12 @@ services or declaring the hosted gate complete.
 
 Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
 J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
-The injectable runner and fixtures are integrated into the integration branch. The database adapter, command,
-configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
+The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. The command,
+final configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
 is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
-Adapter mapping/transport is implemented separately at `9dee0a0` on Codex's working branch, with review and
-integration pending; it has no live command consumer and does not resolve finalization clock authority.
+Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
+it has no live command consumer and does not resolve finalization clock authority. See
+[the mapping review and acceptance notes](checkpoints/J1-store-mapping.md#claude-review-and-acceptance-notes--2026-09-28).
 
 Implementation:
 
@@ -645,3 +645,44 @@ editorial approval, and a documentation status change cannot authorize external 
 - The subsequent completion record changes documentation only and awaits Claude's review. Earlier
   documentation at `b494ed0` and the adapter review remain pending. Artificial CPU-saturation stalls
   reported by Claude are an unresolved follow-up, not fixed by this gate. No hosted activation or main merge.
+
+### H1, H2 and J1 adapter integration — 2026-09-28
+
+- Codex approved exact H1 marker correction `1d46b0d14e3ee75f68e5a435ae70209047373ab5` against
+  `efc2837`. All ten fixtures pass; an independent probe matches the original rule across all 784 summaries,
+  restores 640 markers and rejects the canonical Sapporo summary. The original 144-summary coverage limit
+  remains explicit. [The H1 rereview](checkpoints/H1-review.md#rereview-of-1d46b0d-and-integration--2026-09-28)
+  closes both P2 findings without changing Claude's worktree.
+- H1 merged by exact hash as `53baa860334b03c5d4fc5760967821c8d0cdfcda`. Its combined gate passed
+  582 tests / 151 files with four workers, lint, TypeScript, architecture (683 modules), public-only build
+  (415 pages), CMS exclusion and repaired bundle checks. Emitted-artifact injections of async/entry guidance,
+  async source catalogs and entry map geometry all fail as intended; restored bytes pass again.
+- Previously approved H2 `581ed1e31d9777992e8d4969a9e01ac73980c918` then merged as `d0f9028`.
+  CMS stability `68aa4e8` was already independently integrated as `2a35d9a`; it is not awaiting review.
+  Claude approved J1 adapter `9dee0a04c3cfca71328c38e91e730e44502e482d` against `861ee5f` for
+  mapping/transport scope, independently checking 56 notification tests / six files, types and targeted lint.
+- **Validated combined source commit:** `4f41ec57e092ba78deb6b153e418ec0efe760295` on
+  `codex/hosting-native-integration`, adding the exact reviewed adapter after H2, conflict-free. No later
+  Claude branch head was merged. The subsequent completion record changes documentation only.
+- Final gates: full `vitest run --maxWorkers=4` **608 tests / 154 files passed**; `eslint .`, `tsc --noEmit`,
+  architecture (**691 modules**), editorial audit (**479 records, zero approval records**), article/glossary
+  checks (**97 current articles each, zero findings**), public/job fixture preflights, public-only `next build`
+  (**415 pages**, all three detail families SSG), CMS exclusion and whitespace checks passed. All seven H2
+  Playwright tests passed against an isolated production server. Bundle checking on 42 emitted scripts and
+  all four artifact-injection negative controls passed; original artifact bytes were restored.
+- Environment: isolated detached LF Windows checkout, Node 24.21.0, Next.js 16.3.4, copied dependencies
+  rather than a clean install. The build wrapper removes hosted/email/AWS settings, uses only a fixture
+  HTTPS site URL, and disables telemetry. Job preflight uses dummy settings and performs no service call.
+  No SQL stack, provider send, schedule or hosted service was activated.
+- J1 acceptance remains open: database-authoritative clock/lease checks and finalization must replace the
+  mixed-clock intermediate state before a runnable command ships; exhausted failures and expired fifth claims
+  need inspection; missing/invalid recipient suppression and `email_confirmed_at` policy need a contract;
+  critical-event target mapping should be exhaustive. Standalone loading, bounded complete-lease/provider I/O,
+  real isolated SQL concurrency/RLS acceptance and operator documentation remain pending.
+- Claude approved `b494ed0` and merged its exact documentation handoff as `88b4d3e` (no adapter ancestor).
+  `e374bbe` and the new consolidated documentation await review after Claude's availability reset. Claude's
+  five-day absence plan leaves H4/H5/H3b, translations, configuration/Supabase modules, rendering/finder/map
+  files and stale shared Playwright tests with Claude; no temporary ownership handoff is assumed. Codex can
+  continue J1 and Stage-A N4, holding new implementation checkpoints for Claude's review. J2 still needs an
+  execution-location decision. Stale browser tests, artificial CMS stress stalls, clean-install/hosted checks
+  and wider hosting gates remain open. Production activation none; no main merge.
