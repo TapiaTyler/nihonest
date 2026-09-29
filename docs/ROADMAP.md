@@ -1068,6 +1068,29 @@ separate branch review from combined validation. This documentation delta and pr
 Claude's review; `9dee0a0` adapter review is also pending. H4 is Claude's next checkpoint. No hosted
 activation, provider delivery or main merge.
 
+**2026-09-28 H1/H2/adapter combined handoff:** Codex approved marker correction `1d46b0d` after
+ten fixtures and an independent 784-summary probe (640 markers restored; original 144-summary omission
+documented). H1 merged as `53baa86` and passed its combined 582-test/151-file gate and emitted-artifact
+negative controls. Reviewed H2 `581ed1e` then merged as `d0f9028`. Claude approved adapter `9dee0a0`
+for mapping/transport scope and documentation `b494ed0`, merging the latter as `88b4d3e`.
+
+**Validated combined source:** `4f41ec57e092ba78deb6b153e418ec0efe760295` on
+`codex/hosting-native-integration`, including H1/H2, the already-reviewed CMS stability patch and the
+scope-approved adapter. Full Vitest passed **608 tests / 154 files with four workers**; lint, types,
+architecture (691 modules), editorial/article/glossary checks, public/job fixture preflights, public-only
+415-page build (SSG detail families), CMS exclusion, bundle checking with four restored artifact-injection
+controls, and seven production H2 browser tests passed. Dependencies were copied, not clean-installed.
+[The completion record](refactor.md#h1-h2-and-j1-adapter-integration--2026-09-28) records exact inputs,
+environment and limitations. H1/H2 are integrated; H4/H5/H3b have not started and remain Claude-owned.
+
+J1 still has no runnable command: mixed clock authority must be resolved before shipping; exhausted/expired
+fifth claims, recipient suppression/confirmation policy, exhaustive critical-event mapping, command/provider
+wiring, real SQL acceptance and operating docs remain pending. Claude's absence plan permits Codex-owned
+J1 and Stage-A N4 work; new checkpoints wait for Claude's review. Shared browser-test repairs and other
+Claude-owned files require an explicit temporary user-approved handoff. J2 still awaits the execution-location
+decision. Documentation at `e374bbe` and this consolidation await Claude's review after reset. No main merge,
+hosted activation, schedule or real email.
+
 Objectives:
 
 - provision production Supabase resources and apply reviewed database migrations, authorization policies, and backups;

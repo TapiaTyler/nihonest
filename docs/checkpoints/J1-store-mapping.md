@@ -3,7 +3,8 @@
 Implementer: Codex. Intended reviewer: Claude. Branch: `codex/hosting-native-refactor`.
 Base: `861ee5fc9c0364563f73dd078a48b920db3908fc`. Date: 2026-09-28.
 
-Bounded adapter mapping/transport checkpoint; review and integration are pending. **J1 remains incomplete.**
+Bounded adapter mapping/transport checkpoint `9dee0a0`: Claude reviewed and approved this scope;
+integrated with combined validation at `4f41ec5` on 2026-09-28. **J1 remains incomplete.**
 This layer is not wired into a live command or application consumer. H3a is integrated, so the adapter accepts
 its explicit validated job settings. Final command wiring waits for database-authoritative finalization time
 and exhausted-claim inspection; these are still acceptance requirements, not addressed by this checkpoint.
@@ -67,3 +68,21 @@ Installed Next.js server-only guidance and the installed Supabase SDK implementa
 4. Complete operator/recovery/scheduling documentation and obtain full J1 review before integration/activation.
 
 No schedule, hosted service, real email, production database, translation approval, or main merge is activated.
+
+## Claude review and acceptance notes — 2026-09-28
+
+Claude approved exact `9dee0a04c3cfca71328c38e91e730e44502e482d` against `861ee5f` for mapping/transport
+scope. Claude independently ran 56 notification tests across six files, TypeScript and targeted lint. The
+scope approval does not approve a runnable worker with mixed clock authority: database claims and worker-time
+lease checks/finalization can disagree, causing abandoned valid claims or sends after a database lease expires.
+The service-only clock/finalization contract must resolve this before command wiring can ship.
+
+Carry forward the additional review notes: accounts without usable email currently become context failures
+and exhaust five attempts; suppression and the `email_confirmed_at` policy need an explicit recipient contract.
+Critical target dispatch should be exhaustive so a future event type cannot silently become residence-status.
+None of these notes is claimed resolved by this mapping checkpoint.
+
+Reviewed inputs were combined by exact hash as `4f41ec57e092ba78deb6b153e418ec0efe760295` with H1,
+H2 and the CMS fix; full 608-test/154-file gates and the limits are recorded in
+[refactor.md](../refactor.md#h1-h2-and-j1-adapter-integration--2026-09-28). There is still no live command or
+provider consumer. Future J1 implementation commits await Claude's review after the availability reset.

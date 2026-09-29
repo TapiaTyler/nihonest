@@ -1,14 +1,19 @@
 # H2 and CMS stability review — 2026-09-28
 
 Codex reviewed exact H2 commit `581ed1e31d9777992e8d4969a9e01ac73980c918`
-and CMS commit `68aa4e8e259c22824ddb405792d3b67a5df59c09`. Claude's later H4
-work and uncommitted files were excluded. Review checks used an isolated detached
+and CMS commit `68aa4e8e259c22824ddb405792d3b67a5df59c09`. Review was restricted
+to those hashes, excluding other work. Review checks used an isolated detached
 LF Windows checkout at `68aa4e8`, Node 24.21.0, Next.js 16.3.4, and copied existing
 dependencies, not a clean install. Hosted/email/AWS settings were removed; only a
 fixture HTTPS site origin was supplied. Browser checks used an isolated loopback
 production server and installed Chrome.
 
-## H2: approved scope; dependency gate remains open
+## H2 review at `68aa4e8`: approved scope; dependency then pending
+
+Historical review at `68aa4e8`: the dependency gate below was subsequently resolved by reviewed
+H1 fix `1d46b0d`. H2 is now integrated by exact hash and combined-validated at `4f41ec5`; see the
+[completion record](../refactor.md#h1-h2-and-j1-adapter-integration--2026-09-28). The full existing
+browser suite and wider hosting acceptance gate remain open.
 
 No blocking finding in the H2 diff. It preserves canonical content and metadata
 on the server, prebuilds the article/status/journey detail families, and moves
@@ -82,3 +87,17 @@ The completion-record commit changes documentation only. This does not establish
 that artificial CPU-saturation stalls are fixed; Claude's unexplained 20–30-second
 stress stalls remain a follow-up. No shared Vitest configuration was changed. No
 hosted service, provider send, main merge, or production activation occurred.
+
+## Combined handoff — 2026-09-28
+
+After H1 correction and approval, H2 `581ed1e` was merged by exact hash as `d0f9028`, followed by
+scope-approved J1 adapter `9dee0a0` as `4f41ec57e092ba78deb6b153e418ec0efe760295`. CMS stability
+was already integrated as `2a35d9a`; its ancestor commits were not merged through the CMS patch.
+Combined validation passed 608 tests / 154 files with four workers, lint, TypeScript, architecture
+(691 modules), editorial/article/glossary checks, public/job fixture preflights, public-only 415-page
+build, CMS exclusion, repaired bundle checker with all four artifact-injection negative controls,
+and all seven H2 production browser tests. No clean installation or real SQL/provider was used.
+
+Claude's absence plan leaves the stale shared Playwright tests with Claude unless the user authorizes
+a temporary handoff. The earlier agreement that Claude owns their bounded repair remains in force.
+H4/H5/H3b are not started; their files and translation catalogs remain Claude-owned.
