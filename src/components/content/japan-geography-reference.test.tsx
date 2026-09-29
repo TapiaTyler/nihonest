@@ -1,15 +1,17 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { JapanPrefectureRegionGrid, JapanPracticalBasics, JapanRegionMap, japanPrefectureRegions } from "./japan-geography-reference";
 
 describe("Japan geography reference blocks", () => {
-  it("maps eight bilingual regions covering all 47 prefectures", () => {
+  it("maps eight bilingual regions covering all 47 prefectures", async () => {
     const prefectures = japanPrefectureRegions.flatMap(({ prefectures }) => prefectures.en.split(", "));
     expect(japanPrefectureRegions).toHaveLength(8);
     expect(prefectures).toHaveLength(47);
     expect(new Set(prefectures).size).toBe(47);
 
     const { container, rerender } = render(<JapanRegionMap />);
+    // The region map loads its code lazily.
+    await screen.findByRole("button", { name: "View Okinawa" });
     expect(container.querySelectorAll('svg[aria-label="Map of Japan\'s regions"] > g[role="button"]')).toHaveLength(8);
     expect(container.querySelectorAll('svg[aria-label="Map of Japan\'s regions"] > g > path')).toHaveLength(46);
     fireEvent.click(screen.getByRole("button", { name: "View Okinawa" }));
@@ -32,7 +34,7 @@ describe("Japan geography reference blocks", () => {
     expect(container.querySelector('svg[aria-label="沖縄の地図"]')).not.toBeNull();
     expect(screen.getByRole("button", { name: "日本全体の地図" })).toBeInTheDocument();
     rerender(<JapanPrefectureRegionGrid locale="ja" />);
-    expect(container.querySelectorAll("details")).toHaveLength(1);
+    await waitFor(() => expect(container.querySelectorAll("details")).toHaveLength(1));
   });
 
   it("keeps emergency guide destinations in both language presentations", () => {

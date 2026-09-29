@@ -28,9 +28,8 @@ import { InterfaceFormat, InterfaceText, LocalizedText } from "@/components/loca
 import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
-import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields, getJapaneseSupplementTitles } from "@/lib/content/local-guidance-translations";
-import { localGuidanceSupplements } from "@/data/local-guidance";
-import { JapaneseSupplementTitlesProvider } from "@/components/content/prefecture-finder";
+import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields } from "@/lib/content/local-guidance-translations";
+import { renderJapaneseArticleComponents } from "@/components/content/japanese-article-components";
 import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
@@ -151,11 +150,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
         </header>
 
         <div className="mt-8">
-          <JapaneseSupplementTitlesProvider titles={japaneseTranslation?.fields.body?.includes("japan-prefecture-finder") ? getJapaneseSupplementTitles(localGuidanceSupplements) : {}}>
-            <LocalizedArticleBody translation={japaneseTranslation}>
-              <Content />
-            </LocalizedArticleBody>
-          </JapaneseSupplementTitlesProvider>
+          <LocalizedArticleBody translation={japaneseTranslation} components={typeof japaneseTranslation?.fields.body === "string" ? renderJapaneseArticleComponents(japaneseTranslation.fields.body) : undefined}>
+            <Content />
+          </LocalizedArticleBody>
         </div>
 
         <AnnotatedDocumentViewer key={`documents-${linkedLocalGuidanceId ?? "saved"}`} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
