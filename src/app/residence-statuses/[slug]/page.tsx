@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { getArticleById, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
 import { journeyHref } from "@/lib/navigation/journey-context";
@@ -14,6 +15,7 @@ import {
   LocalizedLastReviewed,
   LocalizedRelatedGuidance,
   LocalizedStatusBackLink,
+  QueryStatusBackLink,
   LocalizedStatusBadges,
   LocalizedStatusContext,
   LocalizedStatusHeading,
@@ -50,20 +52,12 @@ export async function generateMetadata({
   };
 }
 
+const backLinkClass = "rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700";
+
 export default async function ResidenceStatusPage({
   params,
-  searchParams,
 }: PageProps<"/residence-statuses/[slug]">) {
   const { slug } = await params;
-  const query = await searchParams;
-  const requestedReturnTo = typeof query.returnTo === "string" ? query.returnTo : undefined;
-  const returnTo = requestedReturnTo && (
-    requestedReturnTo === "/saved"
-    || requestedReturnTo === "/residence-statuses"
-    || requestedReturnTo.startsWith("/residence-statuses?")
-  )
-    ? requestedReturnTo
-    : "/residence-statuses";
   const residenceStatus = getResidenceStatusBySlug(slug);
 
   if (!residenceStatus) {
@@ -99,10 +93,10 @@ export default async function ResidenceStatusPage({
     <article className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={formatInterfaceMessage("ja", "pageTitle.withSite", { title: residenceStatus.japaneseName })} />
       <div className="mx-auto max-w-3xl">
-        <LocalizedStatusBackLink
-          href={returnTo}
-          className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
-        />
+        {/* The prebuilt page shows the default destination; a validated returnTo replaces it after hydration. */}
+        <Suspense fallback={<LocalizedStatusBackLink href="/residence-statuses" className={backLinkClass} />}>
+          <QueryStatusBackLink className={backLinkClass} />
+        </Suspense>
 
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="residence-status" contentId={residenceStatus.id} /></div>
