@@ -63,4 +63,12 @@ describe("portable catalog relationships", () => {
     const verify = verifyChanged("faqs.en.json", (records) => { records[0]!.slug = records[1]!.slug; });
     expect(verify).toThrow("FAQ slugs must be unique");
   });
+  it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json"])(
+    "rejects undeclared reader fields in %s with valid checksums", (path) => {
+      const verify = verifyChanged(path, (records) => {
+        const fields = records[0]!.fields as Record<string, string>;
+        fields["editorial-state"] = "approved";
+      });
+      expect(verify).toThrow("catalog contract");
+    });
 });

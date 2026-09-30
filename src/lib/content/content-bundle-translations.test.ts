@@ -65,4 +65,14 @@ describe("catalog translation export", () => {
         fields: { ...original.fields, examples: value } })).toThrow();
     }
   });
+  it.each([
+    ["faq", japaneseFaqTranslations[0]!],
+    ["glossary-term", japaneseGlossaryTranslations[0]!],
+    ["residence-status", japaneseResidenceStatusTranslations[0]!],
+  ] as const)("rejects undeclared %s translation fields without rewriting artifacts", (kind, artifact) => {
+    const candidate = { ...artifact, fields: { ...artifact.fields, "editorial-state": "approved" } };
+    const before = structuredClone(candidate);
+    expect(() => bundledCatalogTranslationSchema(kind).parse(candidate)).toThrow("catalog contract");
+    expect(candidate).toEqual(before);
+  });
 });

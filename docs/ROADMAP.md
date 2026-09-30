@@ -1416,6 +1416,23 @@ Until those needs are demonstrated, repository files, explicit human approval, r
 - Stage-B coverage inventory/review and Stage-C payloads remain pending. Exact checkpoints and consolidated
   docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
 
+
+**2026-09-30 N1 Stage-B inventory checkpoint:**
+
+- Following pushed relationship checkpoint `a0bd248`, Codex recorded [the Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md).
+  All explicit N1 catalog families are represented; exact review/integration and final acceptance remain open.
+- Audit found FAQ/glossary/status-summary translation field contracts allowed undeclared fields. Strict
+  per-kind validation now rejects them, with six direct/whole-bundle cases using a valid extra field name.
+- Format remains 9 / 28 files, with unchanged catalog version/payload checksums and no canonical or translation
+  catalog edits. Component payloads/renderer alignment remain Stage C; messages remain Claude/N3-owned.
+- Personalized roadmap rules are not exported; native offline rule ownership/payload parity remains an
+  explicit open contract item. The inventory does not claim a complete native offline application.
+- Focused 117 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **849 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Next independent work is N2 standalone inline parser/data contracts. Reviewed integration remains
+  `e4fc1ff`; exact checkpoints/docs await Claude. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:

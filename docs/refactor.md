@@ -374,7 +374,7 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 ### N1 — Complete the portable content bundle
 
 Status: integrity validation and the catalog exports linked below are implemented, review/integration
-pending. Final Stage-B coverage inventory and review remain pending.
+pending. [Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; review and final acceptance remain pending.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
@@ -948,3 +948,19 @@ editorial approval, and a documentation status change cannot authorize external 
   no clean install, production build/browser, SQL or translation audit repeated.
 - Stage-B coverage inventory/review and Stage-C payloads remain pending. Exact checkpoints and consolidated
   docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
+### N1 Stage-B inventory and translation field contracts — 2026-09-30
+
+- Following pushed relationship checkpoint `a0bd248`, Codex recorded [the Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md).
+  All explicit N1 catalog families are represented; exact review/integration and final acceptance remain open.
+- Audit found FAQ/glossary/status-summary translation field contracts allowed undeclared fields. Strict
+  per-kind validation now rejects them, with six direct/whole-bundle cases using a valid extra field name.
+- Format remains 9 / 28 files, with unchanged catalog version/payload checksums and no canonical or translation
+  catalog edits. Component payloads/renderer alignment remain Stage C; messages remain Claude/N3-owned.
+- Personalized roadmap rules are not exported; native offline rule ownership/payload parity remains an
+  explicit open contract item. The inventory does not claim a complete native offline application.
+- Focused 117 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **849 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Next independent work is N2 standalone inline parser/data contracts. Reviewed integration remains
+  `e4fc1ff`; exact checkpoints/docs await Claude. Main/activation unchanged.

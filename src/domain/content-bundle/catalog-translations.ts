@@ -10,9 +10,9 @@ const stringArray = z.string().superRefine((value, context) => {
   }
 });
 const fieldSchemas = {
-  faq: z.object({ question: requiredText, summary: requiredText }),
-  "glossary-term": z.object({ "short-definition": requiredText, "detailed-explanation": requiredText, "common-context": requiredText }),
-  "residence-status": z.object({ summary: requiredText, purpose: requiredText, "typical-activities": stringArray, examples: stringArray, considerations: stringArray }),
+  faq: z.object({ question: requiredText, summary: requiredText }).strict(),
+  "glossary-term": z.object({ "short-definition": requiredText, "detailed-explanation": requiredText, "common-context": requiredText }).strict(),
+  "residence-status": z.object({ summary: requiredText, purpose: requiredText, "typical-activities": stringArray, examples: stringArray, considerations: stringArray }).strict(),
 };
 
 /** Preserve the complete artifact, including generator/input revisions and human review provenance. */
