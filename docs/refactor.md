@@ -374,7 +374,7 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 ### N1 — Complete the portable content bundle
 
 Status: integrity validation and the catalog exports linked below are implemented, review/integration
-pending. Remaining catalog coverage is planned.
+pending. Final Stage-B coverage inventory and review remain pending.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
@@ -385,6 +385,7 @@ preserves canonical research/approval metadata.
 [Activity cross-reference export](checkpoints/N1-activities-bundle.md) preserves rule selection and research/approval metadata.
 [Administrative geography export](checkpoints/N1-geography-bundle.md) preserves names, hierarchy, provenance and legacy IDs.
 [Article provenance](checkpoints/N1-article-provenance.md) preserves complete artifacts and binds them to portable translations.
+[Catalog relationship acceptance](checkpoints/N1-catalog-relationships.md) reuses article/FAQ/glossary domain rules.
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -934,3 +935,16 @@ editorial approval, and a documentation status change cannot authorize external 
   no clean install, production build/browser, SQL or translation audit repeated.
 - Remaining relationships and Stage-C payloads remain pending. Exact checkpoints and consolidated docs
   await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
+### N1 Stage-B article/FAQ/glossary relationships — 2026-09-30
+
+- Following pushed provenance checkpoint `13344ab`, Codex added [catalog relationship acceptance](checkpoints/N1-catalog-relationships.md).
+- Reader reuses existing article, glossary and FAQ collection validators against candidate bundle records.
+  Checks cover known source/content targets, article/glossary self-links, unique slugs and all six FAQ
+  target families. No canonical or translation edits and no added platform dependency.
+- Format remains 9 / 28 files; the prior catalog version and all payload checksums are unchanged.
+- Focused 119 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **843 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Stage-B coverage inventory/review and Stage-C payloads remain pending. Exact checkpoints and consolidated
+  docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.

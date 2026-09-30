@@ -5,8 +5,9 @@ import { z } from "zod";
 import { articleGroupSchema, guidedJourneySchema, validateDiscoveryModel } from "@/domain/discovery/discovery";
 import { bundledGroupSourceFields, bundledJourneySourceFields, bundledGroupTranslationSchema,
   bundledJourneyTranslationSchema, validateBundledJourneyTranslation } from "./discovery-payloads";
-import { faqSchema } from "@/domain/faq/faq";
-import { japaneseTermSchema } from "@/domain/glossary/glossary";
+import { validateArticleCollection } from "@/domain/article/article";
+import { faqSchema, validateFaqCollection } from "@/domain/faq/faq";
+import { japaneseTermSchema, validateGlossaryCollection } from "@/domain/glossary/glossary";
 import { residenceStatusSchema, validateResidenceStatusCollection } from "@/domain/residence-status/residence-status";
 import { extractGuidanceText } from "@/domain/residence-status/guidance-text";
 import { officialSourceSchema } from "@/domain/source/source";
@@ -160,6 +161,14 @@ export function verifyContentBundle(
   const journeys = guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!));
   const documents = bundledAnnotatedDocumentSchema.array().parse(JSON.parse(files.get("annotated-documents.en.json")!));
   const activities = bundledActivitySchema.array().parse(JSON.parse(files.get("activity-cross-references.en.json")!));
+  const faqs = faqSchema.array().parse(JSON.parse(files.get("faqs.en.json")!));
+  const articleIds = articles.map(({ metadata }) => metadata.id);
+  const statusIds = statuses.map(({ id }) => id);
+  const termIds = glossary.map(({ id }) => id);
+  validateArticleCollection(articles.map(({ metadata }) => metadata), sources, statusIds, termIds);
+  validateGlossaryCollection(glossary, sources, articleIds);
+  validateFaqCollection(faqs, { articleIds, groupIds: groups.map(({ id }) => id), journeyIds: journeys.map(({ id }) => id),
+    glossaryTermIds: termIds, residenceStatusIds: statusIds, activityIds: activities.map(({ id }) => id) });
   validateActivityCrossReferences(activities, articles.map(({ metadata }) => metadata.id), statuses.map(({ id }) => id),
     journeys.map(({ id }) => id), sources.map(({ id }) => id));
   validateAnnotatedDocumentCollection(documents, articles.map(({ metadata }) => metadata.id), glossary.map(({ id }) => id),

@@ -1402,6 +1402,20 @@ Until those needs are demonstrated, repository files, explicit human approval, r
 - Remaining relationships and Stage-C payloads remain pending. Exact checkpoints and consolidated docs
   await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
 
+
+**2026-09-30 N1 catalog relationship checkpoint:**
+
+- Following pushed provenance checkpoint `13344ab`, Codex added [catalog relationship acceptance](checkpoints/N1-catalog-relationships.md).
+- Reader reuses existing article, glossary and FAQ collection validators against candidate bundle records.
+  Checks cover known source/content targets, article/glossary self-links, unique slugs and all six FAQ
+  target families. No canonical or translation edits and no added platform dependency.
+- Format remains 9 / 28 files; the prior catalog version and all payload checksums are unchanged.
+- Focused 119 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **843 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Stage-B coverage inventory/review and Stage-C payloads remain pending. Exact checkpoints and consolidated
+  docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:
