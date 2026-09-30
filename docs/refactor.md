@@ -415,6 +415,7 @@ Status: [standalone inline parser](checkpoints/N2-inline-parser.md) implemented;
 See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
 [tax/training table contracts](checkpoints/N2-table-contracts.md) and
 [practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
+The [combined review and Stage-C handoff](checkpoints/N2-stage-c-handoff.md) records prerequisites and proposed sequencing.
 Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
 and owns translation catalog edits. Each shared file has one active owner.
 
@@ -1028,3 +1029,17 @@ editorial approval, and a documentation status change cannot authorize external 
 - Parser and three component contracts are prepared; actual extraction, Stage-C wiring/payloads and Japanese
   final checks remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact
   checkpoints/docs await Claude. Main/activation unchanged.
+
+### N2 combined contract review and Stage-C handoff — 2026-09-30
+
+- Following pushed practical-basics contract `8c56ed3`, Codex recorded [the exact review queue and Stage-C sequence](checkpoints/N2-stage-c-handoff.md).
+  Self-review fixed combining marks being omitted from inline word boundaries; decomposed accents and
+  combining-script words now preserve internal underscores. Five cases also verify the 32/33 depth boundary.
+- No additional blocker found in the three component schemas; Claude review and rendered/native parity
+  remain pending. The handoff proposes explicit checklist handling, paragraph IDs, canonical copy extraction,
+  renderer/export alignment and all-directive payload gates; it does not transfer Stage-B ownership.
+- Focused 72 tests / four files, types, full lint, architecture (709 modules) and whitespace passed. Full
+  four-worker suite: **921 tests / 173 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- No consumers/content/translations or format/payload change. Existing dependencies; no generation/build/
+  browser, clean install, SQL or translation audit repeated. Reviewed integration stays `e4fc1ff`; exact
+  checkpoints/docs await Claude. Stage-C handoff and N1/N2 final acceptance remain open. Main/activation unchanged.

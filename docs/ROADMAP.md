@@ -1497,6 +1497,21 @@ Until those needs are demonstrated, repository files, explicit human approval, r
   final checks remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact
   checkpoints/docs await Claude. Main/activation unchanged.
 
+
+**2026-09-30 N2 combined review/handoff checkpoint:**
+
+- Following pushed practical-basics contract `8c56ed3`, Codex recorded [the exact review queue and Stage-C sequence](checkpoints/N2-stage-c-handoff.md).
+  Self-review fixed combining marks being omitted from inline word boundaries; decomposed accents and
+  combining-script words now preserve internal underscores. Five cases also verify the 32/33 depth boundary.
+- No additional blocker found in the three component schemas; Claude review and rendered/native parity
+  remain pending. The handoff proposes explicit checklist handling, paragraph IDs, canonical copy extraction,
+  renderer/export alignment and all-directive payload gates; it does not transfer Stage-B ownership.
+- Focused 72 tests / four files, types, full lint, architecture (709 modules) and whitespace passed. Full
+  four-worker suite: **921 tests / 173 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- No consumers/content/translations or format/payload change. Existing dependencies; no generation/build/
+  browser, clean install, SQL or translation audit repeated. Reviewed integration stays `e4fc1ff`; exact
+  checkpoints/docs await Claude. Stage-C handoff and N1/N2 final acceptance remain open. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:

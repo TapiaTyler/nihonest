@@ -86,4 +86,24 @@ describe("portable article inline grammar", () => {
     expect(parseArticleInline(source)).toEqual([{ kind: "protected", raw: source, start: 0, end: source.length,
       reason: "Unsupported HTML, autolink or MDX expression" }]);
   });
+  it("keeps decomposed accents inside a literal identifier", () => {
+    const source = "e\u0301_word_";
+    expect(parseArticleInline(source)).toEqual([{ kind: "text", raw: source, start: 0, end: source.length, text: source }]);
+  });
+  it.each(["_e\u0301_word_", "_नमस्ते_शब्द_"])("keeps combining marks within outer formatting in %s", (source) => {
+    const nodes = parseArticleInline(source);
+    expect(nodes).toHaveLength(1);
+    expect(nodes[0]!.kind).toBe("emphasis");
+    expect(text(nodes)).toBe(source.slice(1, -1));
+    expect(nodes.map(({ raw }) => raw).join("")).toBe(source);
+  });
+  it("protects malformed nesting at the supported depth boundary", () => {
+    const source = "**a ".repeat(32);
+    const nodes = parseArticleInline(source);
+    expect(nodes[0]!.kind).toBe("protected");
+    expect(nodes.map(({ raw }) => raw).join("")).toBe(source);
+  });
+  it("fails loudly when malformed nested input exceeds the depth boundary", () => {
+    expect(() => parseArticleInline("**a ".repeat(33))).toThrow("nesting exceeds 32 levels");
+  });
 });

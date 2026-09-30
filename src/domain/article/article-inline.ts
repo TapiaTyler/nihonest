@@ -8,8 +8,8 @@ export type ArticleInline = Span & (
 );
 
 const punctuation = /[!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~]/;
-const previousWord = /[\p{L}\p{N}]$/u;
-const nextWord = /^[\p{L}\p{N}]/u;
+const previousWord = /[\p{L}\p{N}\p{M}]$/u;
+const nextWord = /^[\p{L}\p{N}\p{M}]/u;
 
 /**
  * Supports *, _, **, __, nested emphasis/bold, code runs, escaped punctuation and inline links.
