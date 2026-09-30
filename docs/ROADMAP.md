@@ -1481,6 +1481,22 @@ Until those needs are demonstrated, repository files, explicit human approval, r
   remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact checkpoints/docs
   await Claude. Main/activation unchanged.
 
+
+**2026-09-30 N2 practical-basics checkpoint:**
+
+- Following pushed table contracts `04814ca`, Codex added [practical-basics rich-text validation](checkpoints/N2-practical-basics-contract.md).
+  Strict ordered bilingual paragraphs preserve literal text, leading strong labels and article links.
+  Target order agrees across locales; hrefs resolve by slug. Proposed paragraph IDs require Stage-C review.
+- Test-only TypeScript literal inspection reads existing JSX without executing it or writing content files.
+  Current bilingual paragraph/label/link wording and order survive unchanged. No canonical/translation,
+  renderer or bundle edit; format remains 9 / 28 files and no production consumer is wired.
+- Focused 66 tests / three files, types, full lint, architecture (709 modules) and whitespace passed. Full
+  four-worker suite: **916 tests / 173 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL or translation audit repeated.
+- Parser and three component contracts are prepared; actual extraction, Stage-C wiring/payloads and Japanese
+  final checks remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact
+  checkpoints/docs await Claude. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:
