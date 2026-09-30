@@ -1,3 +1,4 @@
+import { bundledArticleProvenanceSchema, bundledArticleArtifactSchema, validateBundledArticleProvenance } from "./article-provenance";
 import { administrativeGeographySchema } from "@/domain/geography/administrative-geography";
 import { bundledGeographySourceSchema, bundledGeographyAliasSchema, validateBundledGeographies } from "./geography-payload";
 import { z } from "zod";
@@ -28,7 +29,7 @@ import { bundledActivitySchema, bundledActivityTranslationSchema } from "./activ
 import { validateActivityCrossReferences } from "@/domain/activity-cross-reference/activity-cross-reference";
 import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
 
-/** Format 8's supported files. New catalog families need an explicit contract here before export. */
+/** Format 9's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -56,6 +57,8 @@ export const contentBundlePayloadContracts = {
   "administrative-geographies.en.json": { kind: "catalog", locale: "en", schema: administrativeGeographySchema.array() },
   "geography-sources.en.json": { kind: "catalog", locale: "en", schema: bundledGeographySourceSchema.array() },
   "geography-aliases.en.json": { kind: "catalog", locale: "en", schema: bundledGeographyAliasSchema.array() },
+  "article-provenance.en.json": { kind: "catalog", locale: "en", schema: bundledArticleProvenanceSchema.array() },
+  "article-translation-artifacts.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledArticleArtifactSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -146,6 +149,10 @@ export function verifyContentBundle(
   const supplements = localGuidanceSupplementSchema.array().parse(JSON.parse(files.get("local-guidance.en.json")!));
   const geographies = supportedGeographySchema.array().parse(JSON.parse(files.get("supported-geographies.en.json")!));
   const articles = bundledArticleSchema.array().parse(JSON.parse(files.get("articles.en.json")!));
+  validateBundledArticleProvenance(articles,
+    bundledArticleProvenanceSchema.array().parse(JSON.parse(files.get("article-provenance.en.json")!)),
+    bundledArticleArtifactSchema.array().parse(JSON.parse(files.get("article-translation-artifacts.ja.json")!)),
+    bundledArticleTranslationSchema.array().parse(JSON.parse(files.get("article-translations.ja.json")!)));
   const sources = officialSourceSchema.array().parse(JSON.parse(files.get("sources.en.json")!));
   const statuses = residenceStatusSchema.array().parse(JSON.parse(files.get("residence-statuses.en.json")!));
   const glossary = japaneseTermSchema.array().parse(JSON.parse(files.get("glossary.en.json")!));

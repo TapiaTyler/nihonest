@@ -34,6 +34,9 @@ describe("content bundle acceptance", () => {
   it("rejects the previous geography-free format", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 7 }, bundle.files, sha256)).toThrow();
   });
+  it("rejects the previous provenance-free format", () => {
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 8 }, bundle.files, sha256)).toThrow();
+  });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
     if (mode === "missing") copy.files.delete("faqs.en.json");

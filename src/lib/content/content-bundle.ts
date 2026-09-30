@@ -78,11 +78,16 @@ export async function readCanonicalArticleSources(directory: string): Promise<Ca
   return articles.sort((left, right) => left.article.metadata.id.localeCompare(right.article.metadata.id, "en"));
 }
 
+/** Current active artifacts retain registration order and complete generation/review provenance. */
+export function currentArticleTranslationArtifacts(articles: readonly CanonicalArticleSource[],
+  artifacts: readonly import("@/domain/translation/translation").TranslationArtifact[] = currentJapaneseArticleTranslations) {
+  const revisions = new Map(articles.map(({ article, sourceRevision }) => [article.metadata.id, sourceRevision]));
+  return selectCurrentBundleTranslations(artifacts, revisions);
+}
+
 /** Japanese translations whose source revision still matches the English article; stale ones are left out. */
 export function currentArticleTranslations(articles: readonly CanonicalArticleSource[]): BundledArticleTranslation[] {
-  const revisions = new Map(articles.map(({ article, sourceRevision }) => [article.metadata.id, sourceRevision]));
-  return currentJapaneseArticleTranslations
-    .filter((artifact) => revisions.get(artifact.contentId) === artifact.sourceRevision)
+  return currentArticleTranslationArtifacts(articles)
     .map((artifact) => bundledArticleTranslationSchema.parse({
       articleId: artifact.contentId,
       sourceRevision: artifact.sourceRevision,
@@ -136,6 +141,8 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "administrative-geographies.en.json", kind: "catalog", locale: "en" }, administrativeGeographies],
     [{ path: "geography-sources.en.json", kind: "catalog", locale: "en" }, administrativeGeographySources],
     [{ path: "geography-aliases.en.json", kind: "catalog", locale: "en" }, Object.entries(legacyGeographyIds).map(([id, geographyId]) => ({ id, geographyId }))],
+    [{ path: "article-provenance.en.json", kind: "catalog", locale: "en" }, articles.map(({ article, sourceRevision }) => ({ id: article.metadata.id, sourceRevision }))],
+    [{ path: "article-translation-artifacts.ja.json", kind: "catalog-translations", locale: "ja" }, currentArticleTranslationArtifacts(articles)],
   ];
 
   const files = new Map<string, string>();

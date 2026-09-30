@@ -1386,6 +1386,22 @@ Until those needs are demonstrated, repository files, explicit human approval, r
 - Article provenance, remaining relationships and Stage-C payloads remain pending. Exact checkpoints and
   consolidated docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
 
+
+**2026-09-30 N1 article provenance checkpoint:**
+
+- Following pushed geography checkpoint `b276cf4`, Codex added [article provenance](checkpoints/N1-article-provenance.md).
+- Exports canonical whole-MDX revisions and complete current active Japanese artifacts; compact translations
+  use the same selection. Reader checks exact article coverage and artifact/portable target, revision, review,
+  title/description/body agreement. Canonical sources and translation artifacts are unchanged.
+- Source revisions are producer declarations; portable blocks cannot reconstruct original MDX. Checksums
+  establish integrity, not publisher authenticity. Existing parser/component gates remain open.
+- Format 8 → 9 adds two mandatory files (28 total); prior twenty-six payload checksums are unchanged.
+- Focused 115 tests / five files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **824 tests / 168 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Remaining relationships and Stage-C payloads remain pending. Exact checkpoints and consolidated docs
+  await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:
