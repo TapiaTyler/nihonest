@@ -1433,6 +1433,23 @@ Until those needs are demonstrated, repository files, explicit human approval, r
 - Next independent work is N2 standalone inline parser/data contracts. Reviewed integration remains
   `e4fc1ff`; exact checkpoints/docs await Claude. Main/activation unchanged.
 
+
+**2026-09-30 N2 inline parser checkpoint:**
+
+- Following pushed N1 inventory `2c6a95d`, Codex added [a portable inline display parser](checkpoints/N2-inline-parser.md).
+- Supports text, emphasis/bold nesting, escaped punctuation, code runs and formatted-label links with
+  balanced destinations. Unsupported/malformed markup remains protected raw spans with offsets/reasons;
+  bounded inputs fail loudly. No renderer/export/CMS/translation changes or production consumer.
+- Real current corpus: 6,187 text units with exact source reconstruction and serializable trees. The only
+  protected spans observed are 30 `[ ]` checklist blanks (15 per locale); literal/protected renderer handling
+  remains an explicit integration decision. Counts are observations, not pinned acceptance requirements.
+- Focused 36 tests / three files, types, full lint, architecture (707 modules) and whitespace passed.
+  Full four-worker suite: **880 tests / 171 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL, translation audit or hosted execution repeated. Format remains 9 / 28 files.
+- N2 renderer/export alignment, component contracts/payloads, Stage-C ownership handoff and N1/N2 final
+  acceptance remain pending. Reviewed integration remains `e4fc1ff`; exact checkpoints/docs await Claude.
+  Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:
