@@ -41,6 +41,17 @@ export function createAccountContentCoordinator(dependencies: AccountContentCoor
           dependencies.publish({ status: "error", errorMessage: result.message });
           return;
         }
+        // A foreign cache must transfer as a whole. Retaining a newer family while relabeling
+        // its owner would upload the previous account's edits on the next queued pass.
+        if (owner && owner !== requestedAccount) {
+          const current = dependencies.readSnapshot();
+          if (current.savedContent !== snapshot.savedContent ||
+              current.glossaryProgress !== snapshot.glossaryProgress ||
+              current.checklistProgress !== snapshot.checklistProgress) {
+            queued = true;
+            continue;
+          }
+        }
         applying = true;
         try {
           queued = dependencies.applyCanonical(result.state, snapshot) || queued;

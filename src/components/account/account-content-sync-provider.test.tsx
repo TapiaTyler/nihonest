@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type AccountContentState, emptyAccountContentState } from "@/domain/sync/account-content-state";
 import { accountContentOwnerStorageKey } from "@/lib/storage/account-content-owner";
 import { glossaryStudyStorageKey } from "@/lib/storage/glossary-study";
-import { savedContentStorageKey } from "@/lib/storage/saved-content";
+import { savedContentStorageKey, writeSavedContent } from "@/lib/storage/saved-content";
 import type { Database } from "@/types/database";
 import { AccountContentSyncProvider, useAccountContentSync } from "./account-content-sync-provider";
 
@@ -136,6 +136,29 @@ describe("AccountContentSyncProvider", () => {
 
     await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), emptyAccountContentState));
     expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([accountRecord]);
+  });
+
+  it("keeps a changing foreign cache out of the new account's upload", async () => {
+    const record = (contentId: string) => ({ kind: "article", contentId, state: "saved", updatedAt: "2026-09-30T00:00:00.000Z" } as const);
+    window.localStorage.setItem(accountContentOwnerStorageKey, "account-B");
+    writeSavedContent([record("B-original")]);
+    let finishFirst!: (value: unknown) => void;
+    let finishSecond!: (value: unknown) => void;
+    mocks.synchronize
+      .mockImplementationOnce(() => new Promise((resolve) => { finishFirst = resolve; }))
+      .mockImplementationOnce(() => new Promise((resolve) => { finishSecond = resolve; }));
+    render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(1));
+    act(() => writeSavedContent([record("B-new-edit")]));
+    await act(async () => { finishFirst({ ok: true, state: { ...emptyAccountContentState, savedContent: [record("A-canonical")] } }); });
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(2));
+    expect(mocks.synchronize.mock.calls[1][1]).toEqual(emptyAccountContentState);
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe("account-B");
+    expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([record("B-new-edit")]);
+    await act(async () => { finishSecond({ ok: true, state: { ...emptyAccountContentState, savedContent: [record("A-canonical")] } }); });
+    await screen.findByText("synchronized");
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe("30000000-0000-4000-8000-000000000003");
+    expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([record("A-canonical")]);
   });
   it("discards a response for the previous account and synchronizes the account signed in during the request", async () => {
     const firstUser = "30000000-0000-4000-8000-000000000003";

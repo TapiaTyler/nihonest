@@ -1541,3 +1541,21 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   Existing dependencies; no full-suite/types/lint/build/browser, clean install or translation audit repeated.
 - Exact checkpoint and four J1 implementation checkpoints still await Claude. Reviewed integration remains
   `e4fc1ff`; no working-head integration, main merge, hosted execution or activation.
+
+
+### N4 foreign-cache handoff follow-up — 2026-09-30
+
+- Following pushed J1 acceptance preparation `b427fd4`, Codex confirmed and fixed a foreign-cache
+  ownership race. A newer family retained during B-to-A canonical application could be relabeled A and
+  uploaded on the next pass. The new saved-family regression failed against the prior implementation.
+- [The follow-up record](checkpoints/N4-foreign-cache-handoff.md) documents the stable-snapshot handoff:
+  changes to any foreign-owned family queue a fresh empty import without applying canonical data or
+  transferring ownership. The existing foreign-cache replacement policy remains; no per-account cache
+  preservation is added. Same-account newer-edit handling is unchanged.
+- Three portable family cases plus a browser storage-event fixture pass. Focused **24 tests / three files**,
+  types, targeted lint, architecture (**709 modules**) and whitespace passed. Full four-worker suite:
+  **925 tests / 173 files**, all passed; existing jsdom navigation diagnostic remained non-failing.
+- Existing dependencies; no clean install, production build/browser UI, hosted cross-device, SQL or
+  translation audit repeated. No RPC, auth/session, storage-key or provider implementation change.
+- Exact follow-up and original N4 extraction `9061031` await Claude. H5 request/session binding and combined
+  acceptance remain open; reviewed integration stays `e4fc1ff`. No main merge, hosted execution or activation.

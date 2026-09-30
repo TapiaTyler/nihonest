@@ -80,6 +80,33 @@ describe("portable account coordinator", () => {
     expect(f.device()).toEqual(saved("new-edit"));
   });
 
+  it.each(["savedContent", "glossaryProgress", "checklistProgress"] as const)("does not relabel or upload foreign %s edits during an account handoff", async (family) => {
+    const f = fixture();
+    const first = deferred();
+    const second = deferred();
+    f.setOwner("B");
+    f.synchronize.mockImplementationOnce(() => first.promise).mockImplementationOnce(() => second.promise);
+    f.coordinator.setAccount("A");
+    const running = f.coordinator.synchronize();
+    await Promise.resolve();
+    const edited: AccountContentState = {
+      savedContent: saved("B-edited-during-handoff").savedContent,
+      glossaryProgress: [{ termId: "B-term", state: "learning", reviewCount: 1, updatedAt: "2026-09-30T00:00:00.000Z" }],
+      checklistProgress: [{ checklistId: "B-task", state: "not-started", updatedAt: "2026-09-30T00:00:00.000Z" }],
+    };
+    f.setDevice({ ...f.device(), [family]: edited[family] });
+    f.coordinator.deviceChanged();
+    first.resolve({ ok: true, state: saved("A-canonical") });
+    await vi.waitFor(() => expect(f.synchronize).toHaveBeenCalledTimes(2));
+    expect(f.synchronize.mock.calls[1]).toEqual(["A", emptyAccountContentState]);
+    expect(f.owner()).toBe("B");
+    expect(f.applyCanonical).not.toHaveBeenCalled();
+    second.resolve({ ok: true, state: saved("A-canonical") });
+    await running;
+    expect(f.owner()).toBe("A");
+    expect(f.device()).toEqual(saved("A-canonical"));
+  });
+
   it.each([true, false])("discards a previous account's result (success=%s) and drains the new account", async (ok) => {
     const f = fixture();
     const first = deferred();
