@@ -6,6 +6,8 @@ import { residenceStatusSchema } from "@/domain/residence-status/residence-statu
 import { officialSourceSchema } from "@/domain/source/source";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { translationArtifactSchema } from "@/domain/translation/translation";
+import { localGuidanceSupplementSchema, supportedGeographySchema, validateLocalGuidanceCollection } from "@/domain/geography/local-guidance";
+import { bundledGeneralLocalAdviceSchema, bundledLocalGuidanceTranslationSchema } from "./local-guidance-payloads";
 import {
   bundledArticleSchema,
   bundledArticleTranslationSchema,
@@ -15,7 +17,7 @@ import {
 } from "./content-bundle";
 import { bundledCatalogTranslationSchema } from "./catalog-translations";
 
-/** Format 2's supported files. New catalog families need an explicit contract here before export. */
+/** Format 3's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -28,6 +30,11 @@ export const contentBundlePayloadContracts = {
   "faq-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("faq").array() },
   "glossary-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("glossary-term").array() },
   "residence-status-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("residence-status").array() },
+  "local-guidance.en.json": { kind: "catalog", locale: "en", schema: localGuidanceSupplementSchema.array() },
+  "supported-geographies.en.json": { kind: "catalog", locale: "en", schema: supportedGeographySchema.array() },
+  "general-local-advice.en.json": { kind: "catalog", locale: "en", schema: bundledGeneralLocalAdviceSchema.array() },
+  "local-guidance-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledLocalGuidanceTranslationSchema("local-guidance-supplement").array() },
+  "general-local-advice-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledLocalGuidanceTranslationSchema("local-guidance-general-advice").array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -93,11 +100,42 @@ export function verifyContentBundle(
       .map((record) => [record.id, revision(translationSourceFields["glossary-term"](record))])),
     "residence-status-translations.ja.json": new Map(residenceStatusSchema.array().parse(JSON.parse(files.get("residence-statuses.en.json")!))
       .map((record) => [record.id, revision(translationSourceFields["residence-status"](record))])),
+    "local-guidance-translations.ja.json": new Map(localGuidanceSupplementSchema.array().parse(JSON.parse(files.get("local-guidance.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields["local-guidance-supplement"](record))])),
+    "general-local-advice-translations.ja.json": new Map(bundledGeneralLocalAdviceSchema.array().parse(JSON.parse(files.get("general-local-advice.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields["local-guidance-general-advice"](record))])),
   };
   for (const [path, revisions] of Object.entries(revisionsByPath)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
       if (revisions.get(artifact.contentId) !== artifact.sourceRevision) {
         throw new Error(`Content bundle translation target or revision mismatch: ${path}`);
+      }
+    }
+  }
+  const supplements = localGuidanceSupplementSchema.array().parse(JSON.parse(files.get("local-guidance.en.json")!));
+  const geographies = supportedGeographySchema.array().parse(JSON.parse(files.get("supported-geographies.en.json")!));
+  const articles = bundledArticleSchema.array().parse(JSON.parse(files.get("articles.en.json")!));
+  const sources = officialSourceSchema.array().parse(JSON.parse(files.get("sources.en.json")!));
+  validateLocalGuidanceCollection(geographies, supplements, articles.map(({ metadata }) => metadata.id), sources.map(({ id }) => id));
+  const advice = bundledGeneralLocalAdviceSchema.array().parse(JSON.parse(files.get("general-local-advice.en.json")!));
+  const knownArticles = new Set(articles.map(({ metadata }) => metadata.id));
+  for (const record of advice) {
+    if (!knownArticles.has(record.id)) throw new Error("General local advice references an unknown article.");
+  }
+  // Supplement overlays fall back per field; general advice requires the complete title/step overlay.
+  const fieldsByTarget = {
+    "local-guidance-translations.ja.json": new Map(supplements.map((record) => [record.id, translationSourceFields["local-guidance-supplement"](record)])),
+    "general-local-advice-translations.ja.json": new Map(advice.map((record) => [record.id, translationSourceFields["local-guidance-general-advice"](record)])),
+  };
+  for (const [path, targets] of Object.entries(fieldsByTarget)) {
+    for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
+      const canonicalFields = targets.get(artifact.contentId)!;
+      if (Object.keys(artifact.fields).some((key) => !Object.prototype.hasOwnProperty.call(canonicalFields, key))) {
+        throw new Error(`Unknown local-guidance translation field: ${path}`);
+      }
+      if (path === "general-local-advice-translations.ja.json"
+        && Object.keys(canonicalFields).some((key) => !artifact.fields[key])) {
+        throw new Error("General local advice translation must contain every title and step.");
       }
     }
   }

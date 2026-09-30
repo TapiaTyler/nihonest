@@ -6,7 +6,7 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
 are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented, with FAQ/glossary/status translation export added; remaining catalog coverage is pending.
+implemented, with FAQ/glossary/status translation and local guidance exports added; remaining catalog coverage is pending.
 J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
 the completed structural-refactor working notes.
@@ -372,9 +372,10 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: integrity preparation and FAQ/glossary/status translation export implemented, review/integration
+Status: integrity preparation, FAQ/glossary/status translation and local guidance exports implemented, review/integration
 pending; remaining catalog coverage planned. See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
+See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -817,3 +818,19 @@ editorial approval, and a documentation status change cannot authorize external 
   build/browser/SQL/translation audit repeated. No Japanese catalog/module, renderer or configuration edit.
 - Remaining catalog families, broader relationships/article provenance and Stage-C component payloads keep
   N1 incomplete. Exact checkpoints await Claude; integration remains `e4fc1ff`. Main and activation unchanged.
+
+### N1 Stage-B local guidance expansion — 2026-09-29
+
+- Following pushed first expansion `5d3263b`, Codex added [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
+  Canonical supplements, supported geography and lookup prompts join current Japanese artifacts with full
+  provenance. The existing source revision rules and per-field supplement/whole-entry advice fallback remain.
+- Consumer acceptance checks local article/source/geography relationships, selectable municipalities,
+  geography parents, overlay target/revisions, known field keys and complete general advice. Missing
+  supplement fields remain eligible for English fallback. No canonical content or translation module changed.
+- Five mandatory files bump format **2 to 3**, sixteen files total. Observed counts: **784 supplements**,
+  **159 supported geographies**, **7 general advice**, and **784/7 Japanese overlays**. Previous eleven file
+  checksums remain unchanged. Export and independent disk acceptance passed.
+- Focused **53 tests / four files**, full **725 tests / 162 files** with four workers, types, full lint,
+  architecture (**700 modules**) and whitespace passed using existing dependencies. No production
+  build/browser/SQL/translation audit or research fetch repeated. Other N1 families and Stage-C payloads
+  remain pending; exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.

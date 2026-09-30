@@ -1214,6 +1214,18 @@ Focused **38 tests / three files**, full **710 tests / 161 files**, types, full 
 and whitespace passed. Other catalog families, broader references/article provenance and Stage-C component
 payloads remain pending; N1 is incomplete. Claude review/integration pending; integration remains `e4fc1ff`.
 
+**2026-09-29 N1 local guidance expansion:** [the municipality/general-advice checkpoint](checkpoints/N1-local-guidance-bundle.md)
+adds canonical supplements, supported geography, general lookup prompts and complete current Japanese
+artifacts. Supplement overlays preserve per-field English fallback; general advice requires a complete
+title/step overlay or falls back as a whole. Consumer acceptance checks article/source/geography references,
+hierarchy, translation target/revisions and known field keys. Five mandatory files bump format **2 to 3**;
+previous formats are rejected. All previous eleven payload checksums remain unchanged.
+Observed output: **784 supplements, 159 supported geographies, 7 general-advice entries**, plus **784/7**
+Japanese overlays; sixteen files total. Focused **53 tests / four files**, full **725 tests / 162 files**,
+types, full lint, architecture (**700 modules**), whitespace, export and independent disk acceptance passed.
+Other N1 families and Stage-C component payloads remain pending. No canonical/translation edits or
+production build/browser/SQL/translation audit repeated. Claude review pending; integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;

@@ -13,7 +13,11 @@ import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-tr
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
-import { selectCurrentBundleTranslations } from "./content-bundle-translations";
+import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations } from "./content-bundle-translations";
+import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
+import { japaneseLocalGuidanceTranslations } from "@/data/translations/ja/local-guidance";
+import { japaneseGeneralLocalAdviceTranslations } from "@/data/translations/ja/local-guidance-general-advice";
 import { parseArticleMarkdown } from "@/domain/article/article-blocks";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
@@ -83,6 +87,8 @@ export type ContentBundle = Readonly<{ manifest: ContentBundleManifest; files: R
 
 export async function buildContentBundle(options: Readonly<{ articleDirectory: string; generatedAt: string }>): Promise<ContentBundle> {
   const articles = await readCanonicalArticleSources(options.articleDirectory);
+  const advice = Object.entries(generalLocalAdvice).map(([id, value]) => ({ id, kind: "general-lookup-prompts" as const, ...value }));
+  const currentAdviceTranslations = selectCurrentGeneralAdviceTranslations(japaneseGeneralLocalAdviceTranslations, advice);
   const entries: readonly [Omit<ContentBundleFile, "checksum" | "records">, readonly unknown[]][] = [
     [{ path: "articles.en.json", kind: "articles", locale: "en" }, articles.map(({ article }) => article)],
     [{ path: "article-translations.ja.json", kind: "article-translations", locale: "ja" }, currentArticleTranslations(articles)],
@@ -98,6 +104,12 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
       new Map(glossaryTerms.map((term) => [term.id, createTranslationSourceRevision(translationSourceFields["glossary-term"](term))])))],
     [{ path: "residence-status-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseResidenceStatusTranslations,
       new Map(residenceStatuses.map((status) => [status.id, createTranslationSourceRevision(translationSourceFields["residence-status"](status))])))],
+    [{ path: "local-guidance.en.json", kind: "catalog", locale: "en" }, localGuidanceSupplements],
+    [{ path: "supported-geographies.en.json", kind: "catalog", locale: "en" }, supportedGeographies],
+    [{ path: "general-local-advice.en.json", kind: "catalog", locale: "en" }, advice],
+    [{ path: "local-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseLocalGuidanceTranslations,
+      new Map(localGuidanceSupplements.map((record) => [record.id, createTranslationSourceRevision(translationSourceFields["local-guidance-supplement"](record))])))],
+    [{ path: "general-local-advice-translations.ja.json", kind: "catalog-translations", locale: "ja" }, currentAdviceTranslations],
   ];
 
   const files = new Map<string, string>();

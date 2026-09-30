@@ -25,6 +25,7 @@ describe("content bundle acceptance", () => {
   });
   it("rejects an unsupported format version", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 1 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 2 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -107,7 +108,8 @@ describe("content bundle acceptance", () => {
     replacePayload(copy, path, records);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow();
   });
-  it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+  it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json",
+    "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
     for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
       const copy = candidate();
       const records = JSON.parse(copy.files.get(path)!);
@@ -115,5 +117,51 @@ describe("content bundle acceptance", () => {
       replacePayload(copy, path, records);
       expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("translation target or revision mismatch");
     }
+  });
+  it.each(["articleId", "geographyId", "sourceIds"])("rejects broken supplement %s references", (field) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("local-guidance.en.json")!);
+    records[0][field] = field === "sourceIds" ? ["missing-target"] : "missing-target";
+    replacePayload(copy, "local-guidance.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
+  });
+  it("rejects broken geography hierarchy", () => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("supported-geographies.en.json")!);
+    records.find((record: { parentId?: string }) => record.parentId)!.parentId = "missing-parent";
+    replacePayload(copy, "supported-geographies.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("invalid parent");
+  });
+  it("rejects general advice for an unknown article", () => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("general-local-advice.en.json")!);
+    records[0].id = "missing-target";
+    replacePayload(copy, "general-local-advice.en.json", records);
+    // Remove its overlay so the independent English relationship check must reject it.
+    const overlays = JSON.parse(copy.files.get("general-local-advice-translations.ja.json")!)
+      .filter((record: { contentId: string }) => record.contentId !== JSON.parse(bundle.files.get("general-local-advice.en.json")!)[0].id);
+    replacePayload(copy, "general-local-advice-translations.ja.json", overlays);
+    copy.manifest.files.find((file) => file.path === "general-local-advice-translations.ja.json")!.records = overlays.length;
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("unknown article");
+  });
+  it.each(["local-guidance-translations.ja.json", "general-local-advice-translations.ja.json"])("rejects unknown overlay keys in %s", (path) => {
+    for (const key of ["unregistered-field", "constructor"]) {
+      const copy = candidate();
+      const records = JSON.parse(copy.files.get(path)!);
+      records[0].fields[key] = "unexpected";
+      replacePayload(copy, path, records);
+      expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown local-guidance translation field");
+    }
+  });
+  it("accepts partial supplement overlays but rejects incomplete general advice", () => {
+    const copy = candidate();
+    const supplements = JSON.parse(copy.files.get("local-guidance-translations.ja.json")!);
+    supplements[0].fields = { title: supplements[0].fields.title };
+    replacePayload(copy, "local-guidance-translations.ja.json", supplements);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).not.toThrow();
+    const advice = JSON.parse(copy.files.get("general-local-advice-translations.ja.json")!);
+    delete advice[0].fields["steps.0"];
+    replacePayload(copy, "general-local-advice-translations.ja.json", advice);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("every title and step");
   });
 });
