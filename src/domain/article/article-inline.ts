@@ -8,7 +8,8 @@ export type ArticleInline = Span & (
 );
 
 const punctuation = /[!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~]/;
-const word = /[\p{L}\p{N}]/u;
+const previousWord = /[\p{L}\p{N}]$/u;
+const nextWord = /^[\p{L}\p{N}]/u;
 
 /**
  * Supports *, _, **, __, nested emphasis/bold, code runs, escaped punctuation and inline links.
@@ -29,6 +30,8 @@ export function parseArticleInline(source: string): readonly ArticleInline[] {
     while (source[end] === character) end++;
     return end - at;
   };
+  const intraword = (at: number, count: number) => previousWord.test(source.slice(Math.max(0, at - 2), at))
+    && nextWord.test(source.slice(at + count, at + count + 2));
   const balanced = (start: number, limit: number, open: string, close: string) => {
     let depth = 1;
     for (let at = start + 1; at < limit; at++) {
@@ -67,8 +70,10 @@ export function parseArticleInline(source: string): readonly ArticleInline[] {
       at = end;
     };
     while (at < limit) {
-      if (stop && source.startsWith(stop, at) && !/\s/.test(source[at - 1] ?? "")
-        && (stop.length === 2 || run(at, stop[0]!) !== 2)) {
+      const closingRun = stop && source.startsWith(stop, at) ? run(at, stop[0]!) : 0;
+      if (closingRun && closingRun <= 3 && !/\s/.test(source[at - 1] ?? "")
+        && (stop.length === 2 || closingRun !== 2)
+        && (stop[0] !== "_" || !intraword(at, closingRun))) {
         return { nodes, end: at + stop.length, closed: true };
       }
       const character = source[at]!;
@@ -108,7 +113,7 @@ export function parseArticleInline(source: string): readonly ArticleInline[] {
         const count = run(at, character);
         if (count > 3) { protectedSpan(at + count, "Unsupported emphasis delimiter run"); continue; }
         if (/\s/.test(source[at + count] ?? " ")
-          || (character === "_" && word.test(source[at - 1] ?? "") && word.test(source[at + count] ?? ""))) {
+          || (character === "_" && intraword(at, count))) {
           text(at + count); continue;
         }
         const delimiter = character.repeat(count >= 2 ? 2 : 1);
@@ -119,7 +124,7 @@ export function parseArticleInline(source: string): readonly ArticleInline[] {
       }
       if (character === "<" || character === "{") {
         const closing = source.indexOf(character === "<" ? ">" : "}", at + 1);
-        protectedSpan(closing >= 0 && closing < limit ? closing + 1 : at + 1, "Unsupported HTML, autolink or MDX expression");
+        protectedSpan(closing >= 0 && closing < limit ? closing + 1 : limit, "Unsupported HTML, autolink or MDX expression");
         continue;
       }
       text(at + 1);

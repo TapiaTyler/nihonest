@@ -412,6 +412,7 @@ Acceptance:
 ### N2 — Shared component content and inline formatting
 
 Status: [standalone inline parser](checkpoints/N2-inline-parser.md) implemented; review/integration and component data pending.
+See [the edge-case follow-up](checkpoints/N2-inline-hardening.md) and read-only component inventory.
 Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
 and owns translation catalog edits. Each shared file has one active owner.
 
@@ -981,3 +982,17 @@ editorial approval, and a documentation status change cannot authorize external 
 - N2 renderer/export alignment, component contracts/payloads, Stage-C ownership handoff and N1/N2 final
   acceptance remain pending. Reviewed integration remains `e4fc1ff`; exact checkpoints/docs await Claude.
   Main/activation unchanged.
+
+### N2 inline edge-case follow-up — 2026-09-30
+
+- Following pushed standalone parser `ca87cf6`, Codex fixed [confirmed delimiter and repeated-scan gaps](checkpoints/N2-inline-hardening.md).
+  Intraword underscores no longer close outer formatting early, including supplementary Unicode letters;
+  excessive closing runs remain protected. Unclosed angle/brace syntax protects the remaining raw input
+  once rather than repeatedly scanning. Supported nesting/API and production consumers are unchanged.
+- Focused 47 tests / three files, types, full lint, architecture (707 modules) and whitespace passed. Full
+  four-worker suite: **891 tests / 171 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- Read-only component inventory records tax row pairs, training row suffixes/links and practical-basics
+  labels/links for Stage-B contract preparation. No component copy extraction, renderer or translation edits.
+- Existing dependencies; no generation/build/browser, clean install, SQL or translation audit repeated.
+  N1/N2 acceptance and Stage-C payload/renderer handoff remain open. Reviewed integration stays `e4fc1ff`;
+  exact checkpoints/docs await Claude. Main/activation unchanged.

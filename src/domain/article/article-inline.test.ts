@@ -24,6 +24,7 @@ describe("portable article inline grammar", () => {
     for (const node of flatten(parseArticleInline(source))) expect(node.raw).toBe(source.slice(node.start, node.end));
     const escaped = String.raw`\*literal\*`;
     expect(parseArticleInline(escaped).map(({ raw }) => raw).join("")).toBe(escaped);
+    expect(text(parseArticleInline(escaped))).toBe("*literal*");
     expect(text(parseArticleInline(String.raw`\[literal\]`))).toContain("literal");
   });
   it("keeps intraword underscores, quotes and ordinary comparison text literal", () => {
@@ -64,5 +65,25 @@ describe("portable article inline grammar", () => {
     const nodes = parseArticleInline('**[日本](/articles/japan)** and `code`');
     expect(JSON.parse(JSON.stringify(nodes))).toEqual(nodes);
     expect(() => parseArticleInline("x".repeat(200_001))).toThrow("exceeds");
+  });
+  it.each(["_one_word_", "_one_word_two_", "__one__word__", "_日本_語_", "_𠮷_野_", "_𠮷野_𠮷野_"])(
+    "keeps intraword underscores inside outer formatting for %s", (source) => {
+      const nodes = parseArticleInline(source);
+      expect(nodes).toHaveLength(1);
+      expect(nodes[0]!.raw).toBe(source);
+      expect(nodes[0]!.kind).toBe(source.startsWith("__") ? "strong" : "emphasis");
+      const count = source.startsWith("__") ? 2 : 1;
+      expect(text(nodes)).toBe(source.slice(count, -count));
+      expect(flatten(nodes).some(({ kind }) => kind === "protected")).toBe(false);
+    });
+  it.each(["**value****", "_value____", "***value*****"])("protects excessive closing runs in %s", (source) => {
+    const nodes = parseArticleInline(source);
+    expect(nodes.map(({ raw }) => raw).join("")).toBe(source);
+    expect(nodes[0]!.kind).toBe("protected");
+  });
+  it.each(["<", "{"])("protects repeated unclosed %s syntax in one span", (character) => {
+    const source = character.repeat(10_000);
+    expect(parseArticleInline(source)).toEqual([{ kind: "protected", raw: source, start: 0, end: source.length,
+      reason: "Unsupported HTML, autolink or MDX expression" }]);
   });
 });

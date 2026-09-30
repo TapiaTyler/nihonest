@@ -1450,6 +1450,21 @@ Until those needs are demonstrated, repository files, explicit human approval, r
   acceptance remain pending. Reviewed integration remains `e4fc1ff`; exact checkpoints/docs await Claude.
   Main/activation unchanged.
 
+
+**2026-09-30 N2 inline hardening checkpoint:**
+
+- Following pushed standalone parser `ca87cf6`, Codex fixed [confirmed delimiter and repeated-scan gaps](checkpoints/N2-inline-hardening.md).
+  Intraword underscores no longer close outer formatting early, including supplementary Unicode letters;
+  excessive closing runs remain protected. Unclosed angle/brace syntax protects the remaining raw input
+  once rather than repeatedly scanning. Supported nesting/API and production consumers are unchanged.
+- Focused 47 tests / three files, types, full lint, architecture (707 modules) and whitespace passed. Full
+  four-worker suite: **891 tests / 171 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- Read-only component inventory records tax row pairs, training row suffixes/links and practical-basics
+  labels/links for Stage-B contract preparation. No component copy extraction, renderer or translation edits.
+- Existing dependencies; no generation/build/browser, clean install, SQL or translation audit repeated.
+  N1/N2 acceptance and Stage-C payload/renderer handoff remain open. Reviewed integration stays `e4fc1ff`;
+  exact checkpoints/docs await Claude. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:
