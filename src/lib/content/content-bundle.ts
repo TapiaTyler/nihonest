@@ -1,3 +1,4 @@
+import { administrativeGeographies, administrativeGeographySources, legacyGeographyIds } from "@/data/geography";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -132,6 +133,9 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "activity-cross-references.en.json", kind: "catalog", locale: "en" }, activityCrossReferences],
     [{ path: "activity-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseActivityTranslations,
       new Map(activityCrossReferences.map((record) => [record.id, createTranslationSourceRevision(extractActivityText(record))])))],
+    [{ path: "administrative-geographies.en.json", kind: "catalog", locale: "en" }, administrativeGeographies],
+    [{ path: "geography-sources.en.json", kind: "catalog", locale: "en" }, administrativeGeographySources],
+    [{ path: "geography-aliases.en.json", kind: "catalog", locale: "en" }, Object.entries(legacyGeographyIds).map(([id, geographyId]) => ({ id, geographyId }))],
   ];
 
   const files = new Map<string, string>();

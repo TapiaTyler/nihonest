@@ -23,7 +23,7 @@ describe("catalog translation export", () => {
       { path: "residence-status-translations.ja.json", kind: "residence-status" as const, artifacts: japaneseResidenceStatusTranslations,
         revisions: new Map(residenceStatuses.map((record) => [record.id, createTranslationSourceRevision(translationSourceFields["residence-status"](record))])) },
     ];
-    expect(bundle.manifest.formatVersion).toBe(7);
+    expect(bundle.manifest.formatVersion).toBe(8);
     for (const family of families) {
       const emitted = JSON.parse(bundle.files.get(family.path)!);
       const expected = family.artifacts.filter((artifact) => artifact.availability === "active" && artifact.targetLocale === "ja"

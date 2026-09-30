@@ -1372,6 +1372,20 @@ Until those needs are demonstrated, repository files, explicit human approval, r
 
 ---
 
+
+**2026-09-30 N1 administrative geography checkpoint:**
+
+- Following pushed activity checkpoint `d443e9d`, Codex added [administrative geography export](checkpoints/N1-geography-bundle.md).
+- Preserves 194 registered places, 48 dated source records and four saved-ID aliases unchanged. Acceptance
+  checks hierarchy/check digits, source references/snapshot counts, alias targets/collisions and supported
+  guidance identity/type/parent parity. Counts are observations, not pinned acceptance requirements.
+- Format 7 → 8 adds three mandatory files (26 total); prior twenty-three payload checksums are unchanged.
+- Focused 105 tests / four files, types, full lint, architecture (705 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **808 tests / 167 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL, research fetch or translation audit repeated.
+- Article provenance, remaining relationships and Stage-C payloads remain pending. Exact checkpoints and
+  consolidated docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
 # Roadmap Maintenance
 
 When priorities change:

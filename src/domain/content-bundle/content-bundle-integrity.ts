@@ -1,3 +1,5 @@
+import { administrativeGeographySchema } from "@/domain/geography/administrative-geography";
+import { bundledGeographySourceSchema, bundledGeographyAliasSchema, validateBundledGeographies } from "./geography-payload";
 import { z } from "zod";
 import { articleGroupSchema, guidedJourneySchema, validateDiscoveryModel } from "@/domain/discovery/discovery";
 import { bundledGroupSourceFields, bundledJourneySourceFields, bundledGroupTranslationSchema,
@@ -26,7 +28,7 @@ import { bundledActivitySchema, bundledActivityTranslationSchema } from "./activ
 import { validateActivityCrossReferences } from "@/domain/activity-cross-reference/activity-cross-reference";
 import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
 
-/** Format 7's supported files. New catalog families need an explicit contract here before export. */
+/** Format 8's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -51,6 +53,9 @@ export const contentBundlePayloadContracts = {
   "annotated-document-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledAnnotatedDocumentTranslationSchema.array() },
   "activity-cross-references.en.json": { kind: "catalog", locale: "en", schema: bundledActivitySchema.array() },
   "activity-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledActivityTranslationSchema.array() },
+  "administrative-geographies.en.json": { kind: "catalog", locale: "en", schema: administrativeGeographySchema.array() },
+  "geography-sources.en.json": { kind: "catalog", locale: "en", schema: bundledGeographySourceSchema.array() },
+  "geography-aliases.en.json": { kind: "catalog", locale: "en", schema: bundledGeographyAliasSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -158,6 +163,9 @@ export function verifyContentBundle(
   }
   validateResidenceStatusCollection(statuses, sources, articles.map(({ metadata }) => metadata.id), glossary.map(({ id }) => id));
   validateLocalGuidanceCollection(geographies, supplements, articles.map(({ metadata }) => metadata.id), sources.map(({ id }) => id));
+  validateBundledGeographies(JSON.parse(files.get("administrative-geographies.en.json")!),
+    bundledGeographySourceSchema.array().parse(JSON.parse(files.get("geography-sources.en.json")!)),
+    bundledGeographyAliasSchema.array().parse(JSON.parse(files.get("geography-aliases.en.json")!)), geographies);
   const advice = bundledGeneralLocalAdviceSchema.array().parse(JSON.parse(files.get("general-local-advice.en.json")!));
   const knownArticles = new Set(articles.map(({ metadata }) => metadata.id));
   for (const record of advice) {
