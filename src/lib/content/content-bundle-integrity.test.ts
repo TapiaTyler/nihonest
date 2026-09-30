@@ -80,4 +80,20 @@ describe("content bundle acceptance", () => {
     replacePayload(copy, "faqs.en.json", records);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("record IDs must be unique");
   });
+  it.each(["articles.en.json", "article-translations.ja.json"])("rejects duplicate canonical identities in %s despite extra IDs", (path) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get(path)!);
+    expect(records.length).toBeGreaterThan(1);
+    records[0].id = "extra-one";
+    records[1] = { ...records[0], id: "extra-two" };
+    replacePayload(copy, path, records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("record IDs must be unique");
+  });
+  it.each(["articles.en.json", "article-translations.ja.json"])("ignores unrelated IDs when checking valid %s identities", (path) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get(path)!);
+    for (const record of records) record.id = "same-unrelated-id";
+    replacePayload(copy, path, records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).not.toThrow();
+  });
 });

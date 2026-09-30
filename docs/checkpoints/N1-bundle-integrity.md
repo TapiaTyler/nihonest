@@ -38,6 +38,12 @@ preparation checkpoint, not completion of Stage-B catalog coverage or N1 accepta
 
 ## Remaining work and review
 
+2026-09-29 follow-up: Codex's six-checkpoint review found that extra top-level `id` properties could
+override canonical article/translation identities during duplicate checking. Identity now follows the
+validated file kind (`metadata.id`, `articleId`, or catalog `id`). Four regression cases cover hidden
+duplicates and valid records with unrelated duplicate fields. Focused suites: **25 tests / two files**;
+TypeScript and targeted lint passed. This follow-up awaits Claude with the original checkpoint.
+
 N1 still needs the expanded canonical/translated catalog inventory, current/missing/stale selection and
 provenance/fallback fixtures, cross-catalog reference validation and Stage-C component payloads. Per-record
 schemas validate reference shapes here; they do not establish that referenced targets exist. N2 shared

@@ -64,7 +64,10 @@ export function verifyContentBundle(
     if (records.length !== file.records) throw new Error(`Content bundle record count mismatch: ${file.path}`);
     const ids = records.map((record) => {
       const value = record as { id?: string; articleId?: string; metadata?: { id: string } };
-      return value.id ?? value.articleId ?? value.metadata?.id;
+      // The validated file contract determines identity; extra fields cannot override it.
+      if (file.kind === "articles") return value.metadata!.id;
+      if (file.kind === "article-translations") return value.articleId!;
+      return value.id!;
     });
     if (new Set(ids).size !== ids.length) throw new Error(`Content bundle record IDs must be unique: ${file.path}`);
   }

@@ -1201,6 +1201,8 @@ reference validation and Stage-C component payloads remain pending; Stage B and 
 Focused **21 tests / two files**, full **693 tests / 160 files**, types, full lint, architecture (**697 modules**)
 and whitespace passed using existing dependencies. Build/browser/SQL/localization gates were not repeated.
 This checkpoint and its pending ancestors await Claude; reviewed integration remains `e4fc1ff`.
+Follow-up self-review fixed extra top-level IDs overriding canonical article/translation identities;
+four regression cases, focused **25 tests / two files**, types and targeted lint passed. Review pending.
 
 Objectives:
 

@@ -796,3 +796,7 @@ editorial approval, and a documentation status change cannot authorize external 
 - This is preparation only: expanded catalog/translation coverage, cross-catalog references and Stage-C
   component payloads remain pending. Review/integration awaits Claude; integration remains `e4fc1ff`.
   No translation artifacts, renderers, configuration, main or hosted activation changed.
+
+- Follow-up self-review found an identity-field precedence gap: an extra top-level `id` could hide duplicate
+  article/translation IDs. Duplicate checking now uses each validated file kind's canonical identity.
+  Four regression cases pass; focused **25 tests / two files**, types and targeted lint passed. Review pending.
