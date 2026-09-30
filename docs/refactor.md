@@ -412,7 +412,8 @@ Acceptance:
 ### N2 — Shared component content and inline formatting
 
 Status: [standalone inline parser](checkpoints/N2-inline-parser.md) implemented; review/integration and component data pending.
-See [the edge-case follow-up](checkpoints/N2-inline-hardening.md) and read-only component inventory.
+See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
+[tax/training table contracts](checkpoints/N2-table-contracts.md).
 Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
 and owns translation catalog edits. Each shared file has one active owner.
 
@@ -996,3 +997,18 @@ editorial approval, and a documentation status change cannot authorize external 
 - Existing dependencies; no generation/build/browser, clean install, SQL or translation audit repeated.
   N1/N2 acceptance and Stage-C payload/renderer handoff remain open. Reviewed integration stays `e4fc1ff`;
   exact checkpoints/docs await Claude. Main/activation unchanged.
+
+### N2 Stage-B tax/training table contracts — 2026-09-30
+
+- Following pushed inline hardening `802c618`, Codex added [two portable table contracts](checkpoints/N2-table-contracts.md).
+  Strict bilingual caption/header/row shapes preserve tax pairs and training activity/route/suffix tuples;
+  suffixes remain required even when empty. Training hrefs validate against canonical article slugs.
+- Test-only TypeScript literal inspection reads existing component data without executing JSX or writing
+  content files. Actual bilingual wording/order/captions/headers/suffixes/links survive validation unchanged.
+  No renderer, canonical data, translation catalog or bundle edit; format remains 9 / 28 files.
+- Focused 56 tests / three files, types, full lint, architecture (708 modules) and whitespace passed. Full
+  four-worker suite: **905 tests / 172 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL or translation audit repeated.
+- Practical-basics contract, content extraction, Stage-C renderer/payload wiring and Japanese final checks
+  remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact checkpoints/docs
+  await Claude. Main/activation unchanged.
