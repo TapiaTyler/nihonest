@@ -6,7 +6,7 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
 are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented, with FAQ/glossary/status translation, local guidance, structured-status/discovery overlays and documents added;
+implemented, along with the N1 catalog exports recorded below;
 remaining catalog coverage is pending.
 J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
@@ -382,6 +382,7 @@ Structured English guidance remains in status records; [its overlay export](chec
 preserves canonical research/approval metadata.
 [Localized discovery export](checkpoints/N1-discovery-bundle.md) preserves journey relationships and route choices.
 [Annotated-document export](checkpoints/N1-annotated-documents-bundle.md) preserves versions, attribution and complete-overlay fallback.
+[Activity cross-reference export](checkpoints/N1-activities-bundle.md) preserves rule selection and research/approval metadata.
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -887,3 +888,19 @@ editorial approval, and a documentation status change cannot authorize external 
   verification passed using existing dependencies. No production build/browser/SQL/translation audit repeated.
   Other N1 families and Stage-C payloads remain pending; exact checkpoints await Claude. Integration remains
   `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B activity cross-references — 2026-09-29
+
+- Following pushed document checkpoint `2f2eb0a`, Codex added [activity catalog/overlay export](checkpoints/N1-activities-bundle.md).
+  Canonical guided/handoff activities preserve questions, rule layers/conditions, target links and source/
+  approval metadata. Current Japanese artifacts retain provenance and per-path English fallback. Existing
+  text extraction/application contracts remain read-only; no canonical/Japanese/shared translation edit.
+- Acceptance checks article/status/journey/source references, question/choice conditions, unambiguous IDs
+  and known translation paths. Tests exercise every registered answer combination before/after localization
+  and preserve rule selection, approval state and target URLs. No renderer/configuration edit or new eligibility engine.
+- Two mandatory files bump format **6 to 7**, twenty-three files total, with **8 activities/8 overlays**
+  observed. Prior twenty-one payload checksums remain unchanged. Focused **126 tests / eight files**, full
+  **798 tests / 166 files** with four workers, types, full lint, architecture (**704 modules**), whitespace,
+  export and disk verification passed using existing dependencies. No production build/browser/SQL/translation
+  audit repeated. Remaining N1 coverage and Stage-C payloads stay pending; exact checkpoints await Claude.
+  Integration remains `e4fc1ff`; main/activation unchanged.

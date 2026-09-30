@@ -9,7 +9,7 @@ import { articleMetadataSchema } from "@/domain/article/article";
  * Clients verify checksums before switching versions atomically.
  */
 
-export const contentBundleFormatVersion = 6;
+export const contentBundleFormatVersion = 7;
 
 const checksumSchema = z.string().regex(/^[0-9a-f]{64}$/);
 

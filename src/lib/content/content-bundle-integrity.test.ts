@@ -29,6 +29,7 @@ describe("content bundle acceptance", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 3 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 4 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 5 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 6 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -114,7 +115,8 @@ describe("content bundle acceptance", () => {
   it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json",
     "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json",
     "residence-status-guidance-translations.ja.json", "article-group-translations.ja.json",
-    "journey-translations.ja.json", "annotated-document-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+    "journey-translations.ja.json", "annotated-document-translations.ja.json",
+    "activity-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
     for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
       const copy = candidate();
       const records = JSON.parse(copy.files.get(path)!);
@@ -280,5 +282,41 @@ describe("content bundle acceptance", () => {
     version.officialVisuals[0].rightsSourceId = sources.find((source: { id: string }) => !version.sourceIds.includes(source.id))!.id;
     replacePayload(copy, "annotated-documents.en.json", records);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("sources must be included");
+  });
+  it.each(["article", "residence-status", "journey", "source"])("rejects broken activity %s references", (kind) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("activity-cross-references.en.json")!);
+    if (kind === "source") {
+      const activity = records.find((record: { rules: { assertion?: unknown }[] }) => record.rules.some((rule) => rule.assertion))!;
+      activity.rules.find((rule: { assertion?: unknown }) => rule.assertion)!.assertion.sourceIds = ["missing-target"];
+    } else {
+      records[0].rules[0].links[0] = { ...records[0].rules[0].links[0], kind, id: "missing-target" };
+    }
+    replacePayload(copy, "activity-cross-references.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
+  });
+  it.each(["question", "choice"])("rejects broken activity %s conditions", (kind) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("activity-cross-references.en.json")!);
+    const activity = records.find((record: { rules: { when: unknown[] }[] }) => record.rules.some((rule) => rule.when.length))!;
+    const condition = activity.rules.find((rule: { when: unknown[] }) => rule.when.length)!.when[0];
+    if (kind === "question") condition.questionId = "missing-target";
+    else condition.choiceIds = ["missing-target"];
+    replacePayload(copy, "activity-cross-references.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
+  });
+  it.each(["constructor", "rules.0.when.0.question-id", "rules.0.assertion.editorial-state", "rules.0.links.0.href"])("rejects unsupported activity overlay path %s", (key) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("activity-translations.ja.json")!);
+    records[0].fields[key] = "unexpected";
+    replacePayload(copy, "activity-translations.ja.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown path-keyed translation field");
+  });
+  it("accepts a current partial activity overlay", () => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("activity-translations.ja.json")!);
+    records[0].fields = { label: records[0].fields.label };
+    replacePayload(copy, "activity-translations.ja.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).not.toThrow();
   });
 });

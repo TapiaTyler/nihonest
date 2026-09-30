@@ -22,8 +22,11 @@ import { bundledCatalogTranslationSchema } from "./catalog-translations";
 import { bundledStatusGuidanceTranslationSchema } from "./status-guidance-payload";
 import { bundledAnnotatedDocumentSchema, bundledAnnotatedDocumentTranslationSchema } from "./annotated-document-payload";
 import { validateAnnotatedDocumentCollection } from "@/domain/document/annotated-document";
+import { bundledActivitySchema, bundledActivityTranslationSchema } from "./activity-payload";
+import { validateActivityCrossReferences } from "@/domain/activity-cross-reference/activity-cross-reference";
+import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
 
-/** Format 6's supported files. New catalog families need an explicit contract here before export. */
+/** Format 7's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -46,6 +49,8 @@ export const contentBundlePayloadContracts = {
   "journey-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledJourneyTranslationSchema.array() },
   "annotated-documents.en.json": { kind: "catalog", locale: "en", schema: bundledAnnotatedDocumentSchema.array() },
   "annotated-document-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledAnnotatedDocumentTranslationSchema.array() },
+  "activity-cross-references.en.json": { kind: "catalog", locale: "en", schema: bundledActivitySchema.array() },
+  "activity-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledActivityTranslationSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -123,6 +128,8 @@ export function verifyContentBundle(
       .map((record) => [record.id, revision(bundledJourneySourceFields(record))])),
     "annotated-document-translations.ja.json": new Map(bundledAnnotatedDocumentSchema.array().parse(JSON.parse(files.get("annotated-documents.en.json")!))
       .map((record) => [record.id, revision(translationSourceFields["annotated-document"](record))])),
+    "activity-translations.ja.json": new Map(bundledActivitySchema.array().parse(JSON.parse(files.get("activity-cross-references.en.json")!))
+      .map((record) => [record.id, revision(extractActivityText(record))])),
   };
   for (const [path, revisions] of Object.entries(revisionsByPath)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
@@ -140,6 +147,9 @@ export function verifyContentBundle(
   const groups = articleGroupSchema.array().parse(JSON.parse(files.get("article-groups.en.json")!));
   const journeys = guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!));
   const documents = bundledAnnotatedDocumentSchema.array().parse(JSON.parse(files.get("annotated-documents.en.json")!));
+  const activities = bundledActivitySchema.array().parse(JSON.parse(files.get("activity-cross-references.en.json")!));
+  validateActivityCrossReferences(activities, articles.map(({ metadata }) => metadata.id), statuses.map(({ id }) => id),
+    journeys.map(({ id }) => id), sources.map(({ id }) => id));
   validateAnnotatedDocumentCollection(documents, articles.map(({ metadata }) => metadata.id), glossary.map(({ id }) => id),
     sources.map(({ id }) => id), geographies.filter(({ selectable }) => selectable).map(({ id }) => id));
   validateDiscoveryModel(groups, journeys, articles.map(({ metadata }) => metadata.id));
@@ -160,6 +170,7 @@ export function verifyContentBundle(
     "residence-status-guidance-translations.ja.json": new Map(statuses.flatMap((record) => record.structuredGuidance
       ? [[record.id, extractGuidanceText(record.structuredGuidance)] as const] : [])),
     "annotated-document-translations.ja.json": new Map(documents.map((record) => [record.id, translationSourceFields["annotated-document"](record)])),
+    "activity-translations.ja.json": new Map(activities.map((record) => [record.id, extractActivityText(record)])),
   };
   for (const [path, targets] of Object.entries(fieldsByTarget)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {

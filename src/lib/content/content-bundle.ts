@@ -17,6 +17,9 @@ import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations
   selectCurrentAnnotatedDocumentTranslations } from "./content-bundle-translations";
 import { annotatedDocumentFamilies } from "@/data/annotated-documents";
 import { japaneseAnnotatedDocumentTranslations } from "@/data/translations/ja/annotated-documents";
+import { activityCrossReferences } from "@/data/activity-cross-references";
+import { japaneseActivityTranslations } from "@/data/translations/ja/activity-translations";
+import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
 import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
 import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article-group-translations";
 import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
@@ -126,6 +129,9 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "annotated-documents.en.json", kind: "catalog", locale: "en" }, annotatedDocumentFamilies],
     [{ path: "annotated-document-translations.ja.json", kind: "catalog-translations", locale: "ja" },
       selectCurrentAnnotatedDocumentTranslations(japaneseAnnotatedDocumentTranslations, annotatedDocumentFamilies)],
+    [{ path: "activity-cross-references.en.json", kind: "catalog", locale: "en" }, activityCrossReferences],
+    [{ path: "activity-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseActivityTranslations,
+      new Map(activityCrossReferences.map((record) => [record.id, createTranslationSourceRevision(extractActivityText(record))])))],
   ];
 
   const files = new Map<string, string>();

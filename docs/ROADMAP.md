@@ -1261,6 +1261,17 @@ full lint, architecture (**703 modules**), whitespace, export and disk verificat
 dependencies. No canonical/Japanese/renderer/configuration edits or production build/browser/SQL/translation
 audit repeated. Remaining N1 coverage and Stage-C payloads stay pending; reviewed integration remains `e4fc1ff`.
 
+**2026-09-29 N1 activity cross-references:** [the activity checkpoint](checkpoints/N1-activities-bundle.md)
+adds complete canonical activities and current Japanese artifacts with per-path English fallback and
+preserved provenance. Acceptance checks target/source identities, question/choice conditions and unambiguous
+IDs/overlay paths. Tests exercise all registered answer combinations and preserve canonical rule selection,
+links, source assertions and approval decisions after localization. Two mandatory files bump format **6 to 7**,
+twenty-three files total, with **8 activities/8 overlays** observed; prior twenty-one checksums unchanged.
+Focused **126 tests / eight files**, full **798 tests / 166 files**, types, full lint, architecture (**704 modules**),
+whitespace, export and disk verification passed using existing dependencies. No canonical/Japanese/renderer/
+configuration edits or production build/browser/SQL/translation audit repeated. Geography/article provenance,
+remaining relationships and Stage-C payloads stay pending; reviewed integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;
