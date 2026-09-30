@@ -1078,3 +1078,19 @@ editorial approval, and a documentation status change cannot authorize external 
   translation audit repeated. No RPC, auth/session, storage-key or provider implementation change.
 - Exact follow-up and original N4 extraction `9061031` await Claude. H5 request/session binding and combined
   acceptance remain open; reviewed integration stays `e4fc1ff`. No main merge, hosted execution or activation.
+
+
+### N1 reader rejection-path review — 2026-09-30
+
+- Following pushed N4 ownership fix `f14bf04`, Codex reviewed the manifest/registered payload contracts,
+  candidate reader and provenance/translation/geography/relationship rejection paths. No new defect found;
+  [the review record](checkpoints/N1-reader-rejection-review.md) is self-review evidence, not Claude approval.
+- All bundle suites: **177 tests / 11 files passed**. Independent local disk inventory/hash/count/catalog
+  verification and reader acceptance passed for format 9 / 28 files, with unchanged catalog version
+  `160b2acf9368dd4fce2855016fbfc496a8d69883b637c969b4895398585f86d2`.
+- Additional read-only probes rejected duplicate canonical identities in all **28 rehashed payloads**,
+  including unrelated extra IDs, and rejected **eight malformed manifests**. No runtime, test, canonical,
+  translation, generated-file, consumer or dependency changes; no regeneration.
+- Existing dependencies; no clean install, full-suite/types/lint/build/browser, editorial/translation,
+  SQL or hosted checks repeated. Exact checkpoints/docs still await Claude. N1/N2 acceptance and Stage-C
+  payload/renderer handoff remain open; reviewed integration stays `e4fc1ff`. Main/activation unchanged.
