@@ -9,7 +9,7 @@ import { articleMetadataSchema } from "@/domain/article/article";
  * Clients verify checksums before switching versions atomically.
  */
 
-export const contentBundleFormatVersion = 1;
+export const contentBundleFormatVersion = 2;
 
 const checksumSchema = z.string().regex(/^[0-9a-f]{64}$/);
 
@@ -30,7 +30,7 @@ export const bundledArticleTranslationSchema = z.object({
 
 export const contentBundleFileSchema = z.object({
   path: z.string().regex(/^[a-z0-9-]+(?:\.[a-z]{2})?\.json$/),
-  kind: z.enum(["articles", "article-translations", "catalog"]),
+  kind: z.enum(["articles", "article-translations", "catalog", "catalog-translations"]),
   locale: z.enum(["en", "ja"]),
   records: z.number().int().nonnegative(),
   checksum: checksumSchema,

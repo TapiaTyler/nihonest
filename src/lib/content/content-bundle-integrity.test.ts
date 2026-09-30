@@ -24,7 +24,7 @@ describe("content bundle acceptance", () => {
     expect(copy.files).toEqual(bundle.files);
   });
   it("rejects an unsupported format version", () => {
-    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 2 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 1 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -95,5 +95,25 @@ describe("content bundle acceptance", () => {
     for (const record of records) record.id = "same-unrelated-id";
     replacePayload(copy, path, records);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).not.toThrow();
+  });
+  it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json"])("uses canonical contentId and validates fields in %s", (path) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get(path)!);
+    records[0].id = "extra-one";
+    records[1] = { ...records[0], id: "extra-two" };
+    replacePayload(copy, path, records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("record IDs must be unique");
+    records[1] = { ...records[0], contentId: "different-target", fields: {} };
+    replacePayload(copy, path, records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow();
+  });
+  it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+    for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
+      const copy = candidate();
+      const records = JSON.parse(copy.files.get(path)!);
+      records[0] = { ...records[0], ...mutation };
+      replacePayload(copy, path, records);
+      expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("translation target or revision mismatch");
+    }
   });
 });

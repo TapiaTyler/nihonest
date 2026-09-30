@@ -1204,6 +1204,16 @@ This checkpoint and its pending ancestors await Claude; reviewed integration rem
 Follow-up self-review fixed extra top-level IDs overriding canonical article/translation identities;
 four regression cases, focused **25 tests / two files**, types and targeted lint passed. Review pending.
 
+**2026-09-29 N1 first catalog expansion:** [the translation export checkpoint](checkpoints/N1-catalog-translations.md)
+adds complete current Japanese FAQ, glossary and residence-status artifacts, preserving provenance/review
+state and omitting missing/stale overlays using existing availability/source-revision rules. English catalogs
+remain available. The expanded mandatory file set explicitly bumps format **1 to 2**; format-1 readers must
+reject it. Portable acceptance checks target/source revisions for these three families. Observed output:
+**116 FAQ, 236 glossary and 30 status artifacts**, eleven files total; generated files passed disk acceptance.
+Focused **38 tests / three files**, full **710 tests / 161 files**, types, full lint, architecture (**699 modules**)
+and whitespace passed. Other catalog families, broader references/article provenance and Stage-C component
+payloads remain pending; N1 is incomplete. Claude review/integration pending; integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;

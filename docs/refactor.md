@@ -6,7 +6,8 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
 are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented; expanded catalog coverage remains pending. J1/N1/N4 acceptance remains open;
+implemented, with FAQ/glossary/status translation export added; remaining catalog coverage is pending.
+J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
 the completed structural-refactor working notes.
 
@@ -371,8 +372,9 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: existing-file integrity preparation implemented, review/integration pending; expanded catalog
-coverage planned. See [the bounded checkpoint](checkpoints/N1-bundle-integrity.md).
+Status: integrity preparation and FAQ/glossary/status translation export implemented, review/integration
+pending; remaining catalog coverage planned. See [integrity preparation](checkpoints/N1-bundle-integrity.md)
+and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -800,3 +802,18 @@ editorial approval, and a documentation status change cannot authorize external 
 - Follow-up self-review found an identity-field precedence gap: an extra top-level `id` could hide duplicate
   article/translation IDs. Duplicate checking now uses each validated file kind's canonical identity.
   Four regression cases pass; focused **25 tests / two files**, types and targeted lint passed. Review pending.
+
+### N1 Stage-B first catalog expansion — 2026-09-29
+
+- Following pushed identity fix `fb5f999`, Codex added [Japanese FAQ/glossary/status artifact export](checkpoints/N1-catalog-translations.md).
+  Existing read-only availability/source-field rules select current registered artifacts; full provenance and
+  review state survive serialization. Missing/stale overlays leave English fallback. New per-kind schemas
+  and portable target/source-revision validation protect the three new payloads.
+- The mandatory file set changes format **1 to 2**, with eleven files. This is an explicit incompatible
+  reader contract; older consumers must reject it. Existing eight file representations remain unchanged.
+  Observed translations: **116 FAQ, 236 glossary, 30 statuses**. Export and independent disk acceptance passed.
+- Focused **38 tests / three files**, full **710 tests / 161 files** with four workers, types, full lint,
+  architecture (**699 modules**) and whitespace passed. Existing dependencies used; no production
+  build/browser/SQL/translation audit repeated. No Japanese catalog/module, renderer or configuration edit.
+- Remaining catalog families, broader relationships/article provenance and Stage-C component payloads keep
+  N1 incomplete. Exact checkpoints await Claude; integration remains `e4fc1ff`. Main and activation unchanged.

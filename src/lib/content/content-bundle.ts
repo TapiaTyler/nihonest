@@ -8,6 +8,12 @@ import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { sources } from "@/data/sources";
 import { currentJapaneseArticleTranslations } from "@/data/translations/ja/article-translations";
+import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
+import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
+import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
+import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
+import { selectCurrentBundleTranslations } from "./content-bundle-translations";
 import { parseArticleMarkdown } from "@/domain/article/article-blocks";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
@@ -86,6 +92,12 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "residence-statuses.en.json", kind: "catalog", locale: "en" }, residenceStatuses],
     [{ path: "article-groups.en.json", kind: "catalog", locale: "en" }, articleGroups],
     [{ path: "journeys.en.json", kind: "catalog", locale: "en" }, guidedJourneys],
+    [{ path: "faq-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseFaqTranslations,
+      new Map(faqs.map((faq) => [faq.id, createTranslationSourceRevision(translationSourceFields.faq(faq))])))],
+    [{ path: "glossary-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseGlossaryTranslations,
+      new Map(glossaryTerms.map((term) => [term.id, createTranslationSourceRevision(translationSourceFields["glossary-term"](term))])))],
+    [{ path: "residence-status-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseResidenceStatusTranslations,
+      new Map(residenceStatuses.map((status) => [status.id, createTranslationSourceRevision(translationSourceFields["residence-status"](status))])))],
   ];
 
   const files = new Map<string, string>();

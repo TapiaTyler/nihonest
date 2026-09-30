@@ -4,6 +4,8 @@ import { faqSchema } from "@/domain/faq/faq";
 import { japaneseTermSchema } from "@/domain/glossary/glossary";
 import { residenceStatusSchema } from "@/domain/residence-status/residence-status";
 import { officialSourceSchema } from "@/domain/source/source";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
+import { translationArtifactSchema } from "@/domain/translation/translation";
 import {
   bundledArticleSchema,
   bundledArticleTranslationSchema,
@@ -11,8 +13,9 @@ import {
   type ContentBundleFile,
   type ContentBundleManifest,
 } from "./content-bundle";
+import { bundledCatalogTranslationSchema } from "./catalog-translations";
 
-/** Format 1's supported files. New catalog families need an explicit contract here before export. */
+/** Format 2's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -22,6 +25,9 @@ export const contentBundlePayloadContracts = {
   "residence-statuses.en.json": { kind: "catalog", locale: "en", schema: residenceStatusSchema.array() },
   "article-groups.en.json": { kind: "catalog", locale: "en", schema: articleGroupSchema.array() },
   "journeys.en.json": { kind: "catalog", locale: "en", schema: guidedJourneySchema.array() },
+  "faq-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("faq").array() },
+  "glossary-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("glossary-term").array() },
+  "residence-status-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledCatalogTranslationSchema("residence-status").array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -36,7 +42,7 @@ export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path
   return payload as readonly unknown[];
 }
 
-/** Preserve the format-1 ordering rule; generatedAt is deliberately excluded. */
+/** Preserve the original ordering rule; generatedAt is deliberately excluded. */
 export function contentBundleVersionInput(files: readonly Pick<ContentBundleFile, "path" | "checksum">[]): string {
   return files.map(({ path, checksum }) => `${path}:${checksum}`).join("\n");
 }
@@ -63,16 +69,37 @@ export function verifyContentBundle(
     const records = validateContentBundlePayload(file, JSON.parse(json));
     if (records.length !== file.records) throw new Error(`Content bundle record count mismatch: ${file.path}`);
     const ids = records.map((record) => {
-      const value = record as { id?: string; articleId?: string; metadata?: { id: string } };
+      const value = record as { id?: string; articleId?: string; contentId?: string; metadata?: { id: string } };
       // The validated file contract determines identity; extra fields cannot override it.
       if (file.kind === "articles") return value.metadata!.id;
       if (file.kind === "article-translations") return value.articleId!;
+      if (file.kind === "catalog-translations") return value.contentId!;
       return value.id!;
     });
     if (new Set(ids).size !== ids.length) throw new Error(`Content bundle record IDs must be unique: ${file.path}`);
   }
   if (sha256(contentBundleVersionInput(manifest.files)) !== manifest.catalogVersion) {
     throw new Error("Content bundle catalog version mismatch.");
+  }
+  // Match the repository's revision rule with the caller's portable digest implementation.
+  const revision = (fields: Readonly<Record<string, string>>) => sha256(JSON.stringify(Object.fromEntries(
+    Object.entries(fields).sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => [key, value.replace(/\r\n?/g, "\n")]),
+  )));
+  const revisionsByPath = {
+    "faq-translations.ja.json": new Map(faqSchema.array().parse(JSON.parse(files.get("faqs.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields.faq(record))])),
+    "glossary-translations.ja.json": new Map(japaneseTermSchema.array().parse(JSON.parse(files.get("glossary.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields["glossary-term"](record))])),
+    "residence-status-translations.ja.json": new Map(residenceStatusSchema.array().parse(JSON.parse(files.get("residence-statuses.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields["residence-status"](record))])),
+  };
+  for (const [path, revisions] of Object.entries(revisionsByPath)) {
+    for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
+      if (revisions.get(artifact.contentId) !== artifact.sourceRevision) {
+        throw new Error(`Content bundle translation target or revision mismatch: ${path}`);
+      }
+    }
   }
   return manifest;
 }
