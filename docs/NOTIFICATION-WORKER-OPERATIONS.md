@@ -5,6 +5,9 @@ database-authority, recipient, lease-budget and command checkpoints still need r
 integration, and the real isolated Supabase/PostgreSQL concurrency and pgTAP gates remain open. No schedule,
 hosted service or real email has been activated by these commits.
 
+[The acceptance preparation record](checkpoints/J1-acceptance-preparation.md) lists the outstanding
+database, lock-wait, Auth/PostgREST and fake-sender scenarios. Local fixture results do not replace those gates.
+
 ## Command and configuration
 
 `npm run notification:once` runs one bounded pass and exits. It is not a web route or a resident worker.

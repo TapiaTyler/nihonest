@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(29);
 
 select has_function('public', 'read_notification_worker_time', array[]::text[], 'database clock exists');
 select has_function('public', 'finalize_email_notification_delivery_now', array['uuid','uuid','text','text','text'], 'worker finalizer has no caller time');
@@ -50,6 +50,7 @@ select is((select jsonb_agg(to_jsonb(delivery) order by id) from public.notifica
   (select rows from authority_snapshot), 'inspection does not release or reset claims');
 select throws_ok($$select public.inspect_email_notification_delivery_backlog(0)$$,'22023','The attempt limit is outside the allowed range.','rejects zero attempts');
 select throws_ok($$select public.inspect_email_notification_delivery_backlog(null)$$,'22023','The attempt limit is outside the allowed range.','rejects null attempts');
+select throws_ok($$select public.inspect_email_notification_delivery_backlog(21)$$,'22023','The attempt limit is outside the allowed range.','rejects attempt limits above twenty');
 select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000006','93100000-0000-4000-8000-000000000001','suppressed')$$,
  'P0002','The email delivery is not currently claimed.','rejects stale token');
 select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000003','93100000-0000-4000-8000-000000000003','suppressed')$$,
@@ -58,6 +59,12 @@ select throws_ok($$select public.finalize_email_notification_delivery_now('92100
  '22023','Sent delivery metadata is invalid.','preserves metadata validation');
 select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000006','93100000-0000-4000-8000-000000000006',null)$$,
  '22023','A claimed delivery may only be sent, failed, or suppressed.','rejects null state');
+select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000006','93100000-0000-4000-8000-000000000006','failed')$$,
+ '22023','Failed delivery metadata is invalid.','rejects failure without an error summary');
+select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000006','93100000-0000-4000-8000-000000000006','suppressed','unexpected-message')$$,
+ '22023','Suppressed delivery metadata is invalid.','rejects provider metadata on suppression');
+select is((select to_jsonb(delivery) from public.notification_deliveries as delivery where id='92100000-0000-4000-8000-000000000006'),
+ (select rows->5 from authority_snapshot), 'rejected finalization leaves the claimed row unchanged');
 select lives_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000006','93100000-0000-4000-8000-000000000006','suppressed')$$,'can suppress a valid claim');
 select is((select state from public.notification_deliveries where id='92100000-0000-4000-8000-000000000006'),'suppressed','suppression is persisted');
 create temporary table authority_before as select clock_timestamp() as instant;
@@ -66,6 +73,8 @@ select ok((select available_at between (select instant from authority_before)+in
   from public.notification_deliveries where id='92100000-0000-4000-8000-000000000004'),'backoff is computed from database completion time and locked attempt count');
 select results_eq($$select count(*) from public.claim_email_notification_deliveries(p_limit=>25,p_max_attempts=>5)$$,array[2::bigint], 'only retryable failures/expired claims are reclaimed');
 create temporary table authority_tokens as select id,claim_token from public.notification_deliveries where state='processing';
+select throws_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000005','93100000-0000-4000-8000-000000000005','sent','old-worker-message')$$,
+ 'P0002','The email delivery is not currently claimed.','reclaim invalidates the original worker token');
 select lives_ok($$select public.finalize_email_notification_delivery_now('92100000-0000-4000-8000-000000000002',(select claim_token from authority_tokens where id='92100000-0000-4000-8000-000000000002'),'sent','fixture-message')$$,'can finalize a sent claim');
 select ok((select sent_at>= (select instant from authority_before) and sent_at<=clock_timestamp() and claim_token is null
   from public.notification_deliveries where id='92100000-0000-4000-8000-000000000002'),'sent time is database-authoritative and claim is cleared');

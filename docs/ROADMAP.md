@@ -1524,3 +1524,20 @@ When priorities change:
 Codex should not silently redefine roadmap scope.
 
 When a coherent phase/checkpoint is completed and tested, Codex should explicitly recommend a Git commit and provide an appropriate commit message.
+
+
+### J1 acceptance preparation and operator review — 2026-09-30
+
+- Following pushed N2 handoff `810e262`, Codex reviewed the J1 worker, adapter, command, authority SQL,
+  acceptance fixture and operator contract together; no new runtime defect was found.
+- [The preparation record](checkpoints/J1-acceptance-preparation.md) defines the outstanding PostgreSQL 17
+  multi-connection claim/lock-wait, real Auth/PostgREST and fake-sender acceptance. It records transaction-start
+  claim defaults separately from completion clock authority. No runtime/migration/configuration change.
+- Authority pgTAP fixture grows from 24 to 29 assertions: upper attempt bound, invalid failed/suppressed
+  metadata, unchanged rows after rejection and rejection of the original token after reclaim.
+- Local embedded SQL: **30 assertions passed**, PostgreSQL 18.3 / PGlite 0.5.8, stub Auth, one connection.
+  Static pgTAP plan count passed; pgTAP itself and PostgreSQL 17/concurrency acceptance remain unrun.
+- Focused notification suite: **133 tests / 15 files passed**; no-service command help and whitespace passed.
+  Existing dependencies; no full-suite/types/lint/build/browser, clean install or translation audit repeated.
+- Exact checkpoint and four J1 implementation checkpoints still await Claude. Reviewed integration remains
+  `e4fc1ff`; no working-head integration, main merge, hosted execution or activation.
