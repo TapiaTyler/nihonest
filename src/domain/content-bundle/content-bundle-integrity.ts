@@ -20,8 +20,10 @@ import {
 } from "./content-bundle";
 import { bundledCatalogTranslationSchema } from "./catalog-translations";
 import { bundledStatusGuidanceTranslationSchema } from "./status-guidance-payload";
+import { bundledAnnotatedDocumentSchema, bundledAnnotatedDocumentTranslationSchema } from "./annotated-document-payload";
+import { validateAnnotatedDocumentCollection } from "@/domain/document/annotated-document";
 
-/** Format 5's supported files. New catalog families need an explicit contract here before export. */
+/** Format 6's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -42,6 +44,8 @@ export const contentBundlePayloadContracts = {
   "residence-status-guidance-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledStatusGuidanceTranslationSchema.array() },
   "article-group-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledGroupTranslationSchema.array() },
   "journey-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledJourneyTranslationSchema.array() },
+  "annotated-documents.en.json": { kind: "catalog", locale: "en", schema: bundledAnnotatedDocumentSchema.array() },
+  "annotated-document-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledAnnotatedDocumentTranslationSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -117,6 +121,8 @@ export function verifyContentBundle(
       .map((record) => [record.id, revision(bundledGroupSourceFields(record))])),
     "journey-translations.ja.json": new Map(guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!))
       .map((record) => [record.id, revision(bundledJourneySourceFields(record))])),
+    "annotated-document-translations.ja.json": new Map(bundledAnnotatedDocumentSchema.array().parse(JSON.parse(files.get("annotated-documents.en.json")!))
+      .map((record) => [record.id, revision(translationSourceFields["annotated-document"](record))])),
   };
   for (const [path, revisions] of Object.entries(revisionsByPath)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
@@ -133,6 +139,9 @@ export function verifyContentBundle(
   const glossary = japaneseTermSchema.array().parse(JSON.parse(files.get("glossary.en.json")!));
   const groups = articleGroupSchema.array().parse(JSON.parse(files.get("article-groups.en.json")!));
   const journeys = guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!));
+  const documents = bundledAnnotatedDocumentSchema.array().parse(JSON.parse(files.get("annotated-documents.en.json")!));
+  validateAnnotatedDocumentCollection(documents, articles.map(({ metadata }) => metadata.id), glossary.map(({ id }) => id),
+    sources.map(({ id }) => id), geographies.filter(({ selectable }) => selectable).map(({ id }) => id));
   validateDiscoveryModel(groups, journeys, articles.map(({ metadata }) => metadata.id));
   for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get("journey-translations.ja.json")!))) {
     validateBundledJourneyTranslation(journeys.find(({ id }) => id === artifact.contentId)!, artifact);
@@ -150,6 +159,7 @@ export function verifyContentBundle(
     "general-local-advice-translations.ja.json": new Map(advice.map((record) => [record.id, translationSourceFields["local-guidance-general-advice"](record)])),
     "residence-status-guidance-translations.ja.json": new Map(statuses.flatMap((record) => record.structuredGuidance
       ? [[record.id, extractGuidanceText(record.structuredGuidance)] as const] : [])),
+    "annotated-document-translations.ja.json": new Map(documents.map((record) => [record.id, translationSourceFields["annotated-document"](record)])),
   };
   for (const [path, targets] of Object.entries(fieldsByTarget)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
@@ -160,6 +170,10 @@ export function verifyContentBundle(
       if (path === "general-local-advice-translations.ja.json"
         && Object.keys(canonicalFields).some((key) => !artifact.fields[key])) {
         throw new Error("General local advice translation must contain every title and step.");
+      }
+      if (path === "annotated-document-translations.ja.json"
+        && Object.keys(canonicalFields).some((key) => !artifact.fields[key])) {
+        throw new Error("Annotated document translation must contain every canonical text field.");
       }
     }
   }

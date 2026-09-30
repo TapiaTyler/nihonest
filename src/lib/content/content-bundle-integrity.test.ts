@@ -28,6 +28,7 @@ describe("content bundle acceptance", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 2 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 3 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 4 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 5 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -113,7 +114,7 @@ describe("content bundle acceptance", () => {
   it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json",
     "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json",
     "residence-status-guidance-translations.ja.json", "article-group-translations.ja.json",
-    "journey-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+    "journey-translations.ja.json", "annotated-document-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
     for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
       const copy = candidate();
       const records = JSON.parse(copy.files.get(path)!);
@@ -241,5 +242,43 @@ describe("content bundle acceptance", () => {
     artifact.fields.routes = JSON.stringify(routes);
     replacePayload(copy, "journey-translations.ja.json", artifacts);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("unknown route, phase or condition");
+  });
+  it("rejects incomplete document translations even with matching checksums", () => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("annotated-document-translations.ja.json")!);
+    delete records[0].fields.title;
+    replacePayload(copy, "annotated-document-translations.ja.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("every canonical text field");
+  });
+  it.each(["constructor", "versions.fake.label", "versions.fake.lifecycle"])("rejects unknown document overlay path %s", (key) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("annotated-document-translations.ja.json")!);
+    records[0].fields[key] = "unexpected";
+    replacePayload(copy, "annotated-document-translations.ja.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown path-keyed translation field");
+  });
+  it.each(["article", "glossary", "geography", "source", "rights", "current-version"])("rejects broken document %s relationships", (kind) => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("annotated-documents.en.json")!);
+    const family = records.find((record: { versions: { officialVisuals: unknown[] }[] }) => record.versions.some((version) => version.officialVisuals.length))!;
+    const version = family.versions.find((record: { officialVisuals: unknown[] }) => record.officialVisuals.length)!;
+    if (kind === "article") family.articleId = "missing-target";
+    if (kind === "glossary") family.glossaryTermIds = ["missing-target"];
+    if (kind === "geography") records.find((record: { jurisdictionVariants: unknown[] }) => record.jurisdictionVariants.length)!.jurisdictionVariants[0].geographyId = "missing-target";
+    if (kind === "source") version.sourceIds = ["missing-target"];
+    if (kind === "rights") version.officialVisuals[0].rightsSourceId = "missing-target";
+    if (kind === "current-version") family.versions.forEach((record: { lifecycle: string }) => { record.lifecycle = "future"; });
+    replacePayload(copy, "annotated-documents.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown|current version/);
+  });
+  it("requires visual rights attribution to be listed in its document version", () => {
+    const copy = candidate();
+    const records = JSON.parse(copy.files.get("annotated-documents.en.json")!);
+    const family = records.find((record: { versions: { officialVisuals: unknown[] }[] }) => record.versions.some((version) => version.officialVisuals.length))!;
+    const version = family.versions.find((record: { officialVisuals: unknown[] }) => record.officialVisuals.length)!;
+    const sources = JSON.parse(copy.files.get("sources.en.json")!);
+    version.officialVisuals[0].rightsSourceId = sources.find((source: { id: string }) => !version.sourceIds.includes(source.id))!.id;
+    replacePayload(copy, "annotated-documents.en.json", records);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("sources must be included");
   });
 });

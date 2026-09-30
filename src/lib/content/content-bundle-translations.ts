@@ -4,6 +4,7 @@ import { translationSourceFields } from "@/domain/translation/translation-source
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
 import { extractGuidanceText } from "@/domain/residence-status/guidance-text";
 import type { ResidenceStatus } from "@/domain/residence-status/residence-status";
+import type { AnnotatedDocumentFamily } from "@/domain/document/annotated-document";
 
 /** The existing availability selector plus canonical source revision; absence means English fallback. */
 export function selectCurrentBundleTranslations(
@@ -31,4 +32,14 @@ export function selectCurrentStatusGuidanceTranslations(
   const revisions = new Map(statuses.flatMap((status) => status.structuredGuidance
     ? [[status.id, createTranslationSourceRevision(extractGuidanceText(status.structuredGuidance))] as const] : []));
   return selectCurrentBundleTranslations(artifacts, revisions);
+}
+
+/** Match the web document viewer: incomplete family text falls back to the complete English family. */
+export function selectCurrentAnnotatedDocumentTranslations(
+  artifacts: readonly TranslationArtifact[], families: readonly AnnotatedDocumentFamily[],
+): readonly TranslationArtifact[] {
+  const fieldsById = new Map(families.map((family) => [family.id, translationSourceFields["annotated-document"](family)]));
+  const revisions = new Map([...fieldsById].map(([id, fields]) => [id, createTranslationSourceRevision(fields)]));
+  return selectCurrentBundleTranslations(artifacts, revisions).filter((artifact) =>
+    Object.keys(fieldsById.get(artifact.contentId)!).every((key) => Boolean(artifact.fields[key])));
 }

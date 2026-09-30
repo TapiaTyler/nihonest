@@ -13,7 +13,10 @@ import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-tr
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
-import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations, selectCurrentStatusGuidanceTranslations } from "./content-bundle-translations";
+import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations, selectCurrentStatusGuidanceTranslations,
+  selectCurrentAnnotatedDocumentTranslations } from "./content-bundle-translations";
+import { annotatedDocumentFamilies } from "@/data/annotated-documents";
+import { japaneseAnnotatedDocumentTranslations } from "@/data/translations/ja/annotated-documents";
 import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
 import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article-group-translations";
 import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
@@ -120,6 +123,9 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
       new Map(articleGroups.map((record) => [record.id, createTranslationSourceRevision(bundledGroupSourceFields(record))])))],
     [{ path: "journey-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseJourneyTranslations,
       new Map(guidedJourneys.map((record) => [record.id, createTranslationSourceRevision(bundledJourneySourceFields(record))])))],
+    [{ path: "annotated-documents.en.json", kind: "catalog", locale: "en" }, annotatedDocumentFamilies],
+    [{ path: "annotated-document-translations.ja.json", kind: "catalog-translations", locale: "ja" },
+      selectCurrentAnnotatedDocumentTranslations(japaneseAnnotatedDocumentTranslations, annotatedDocumentFamilies)],
   ];
 
   const files = new Map<string, string>();

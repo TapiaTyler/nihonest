@@ -1250,6 +1250,17 @@ verification passed using existing dependencies. No canonical/Japanese/renderer/
 production build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain
 pending; Claude review/integration pending. Reviewed integration remains `e4fc1ff`.
 
+**2026-09-29 N1 annotated documents:** [the document checkpoint](checkpoints/N1-annotated-documents-bundle.md)
+adds complete canonical families and current complete Japanese artifacts, preserving version/variant
+structure, dates, review status, fictional notices, source/rights attribution and whole-family English
+fallback. Acceptance validates bundled references, lifecycle shape, source/rights membership and stable
+overlay paths. Visuals remain external URL metadata; no asset download or new rights review. Two mandatory
+files bump format **5 to 6**, twenty-one files total, with **6 families/6 overlays** observed; prior nineteen
+payload checksums remain unchanged. Focused **107 tests / seven files**, full **779 tests / 165 files**, types,
+full lint, architecture (**703 modules**), whitespace, export and disk verification passed using existing
+dependencies. No canonical/Japanese/renderer/configuration edits or production build/browser/SQL/translation
+audit repeated. Remaining N1 coverage and Stage-C payloads stay pending; reviewed integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;
