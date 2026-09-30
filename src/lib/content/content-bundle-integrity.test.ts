@@ -26,6 +26,7 @@ describe("content bundle acceptance", () => {
   it("rejects an unsupported format version", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 1 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 2 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 3 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -109,7 +110,8 @@ describe("content bundle acceptance", () => {
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow();
   });
   it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json",
-    "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+    "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json",
+    "residence-status-guidance-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
     for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
       const copy = candidate();
       const records = JSON.parse(copy.files.get(path)!);
@@ -150,7 +152,7 @@ describe("content bundle acceptance", () => {
       const records = JSON.parse(copy.files.get(path)!);
       records[0].fields[key] = "unexpected";
       replacePayload(copy, path, records);
-      expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown local-guidance translation field");
+      expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown path-keyed translation field");
     }
   });
   it("accepts partial supplement overlays but rejects incomplete general advice", () => {
@@ -163,5 +165,50 @@ describe("content bundle acceptance", () => {
     delete advice[0].fields["steps.0"];
     replacePayload(copy, "general-local-advice-translations.ja.json", advice);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("every title and step");
+  });
+  it("rejects guidance overlays on a status without structured guidance", () => {
+    const copy = candidate();
+    const overlays = JSON.parse(copy.files.get("residence-status-guidance-translations.ja.json")!);
+    const statuses = JSON.parse(copy.files.get("residence-statuses.en.json")!);
+    delete statuses.find((record: { id: string }) => record.id === overlays[0].contentId)!.structuredGuidance;
+    replacePayload(copy, "residence-statuses.en.json", statuses);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("translation target or revision mismatch");
+  });
+  it("rejects summary artifacts masquerading as structured-guidance overlays", () => {
+    const copy = candidate();
+    const overlays = JSON.parse(copy.files.get("residence-status-guidance-translations.ja.json")!);
+    const summaries = JSON.parse(copy.files.get("residence-status-translations.ja.json")!);
+    const summary = summaries.find((record: { contentId: string }) => record.contentId === overlays[0].contentId)!;
+    overlays[0].fields = summary.fields;
+    replacePayload(copy, "residence-status-guidance-translations.ja.json", overlays);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown path-keyed translation field");
+  });
+  it.each(["unregistered-path", "constructor", "source-assertions.0.editorial-state"])("rejects unsupported guidance overlay path %s", (key) => {
+    const copy = candidate();
+    const overlays = JSON.parse(copy.files.get("residence-status-guidance-translations.ja.json")!);
+    overlays[0].fields[key] = "unexpected";
+    replacePayload(copy, "residence-status-guidance-translations.ja.json", overlays);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("Unknown path-keyed translation field");
+  });
+  it("accepts a current partial structured-guidance overlay", () => {
+    const copy = candidate();
+    const overlays = JSON.parse(copy.files.get("residence-status-guidance-translations.ja.json")!);
+    overlays[0].fields = { "route-kind-label": overlays[0].fields["route-kind-label"] };
+    replacePayload(copy, "residence-status-guidance-translations.ja.json", overlays);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).not.toThrow();
+  });
+  it.each(["glossary", "article", "source", "period-source", "pathway-source", "assertion-source", "transition"])("rejects broken residence-status %s references", (kind) => {
+    const copy = candidate();
+    const statuses = JSON.parse(copy.files.get("residence-statuses.en.json")!);
+    const status = statuses[0];
+    if (kind === "glossary") status.glossaryTermId = "missing-target";
+    if (kind === "article") status.relatedArticleIds = ["missing-target"];
+    if (kind === "source") status.sourceIds = ["missing-target"];
+    if (kind === "period-source") status.structuredGuidance.periodsOfStay[0].sourceIds = ["missing-target"];
+    if (kind === "pathway-source") status.structuredGuidance.qualificationPathways[0].sourceIds = ["missing-target"];
+    if (kind === "assertion-source") status.structuredGuidance.sourceAssertions[0].sourceId = "missing-target";
+    if (kind === "transition") status.structuredGuidance.transitions[0].targetStatusId = "missing-target";
+    replacePayload(copy, "residence-statuses.en.json", statuses);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
   });
 });

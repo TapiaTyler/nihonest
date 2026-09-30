@@ -13,7 +13,8 @@ import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-tr
 import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
-import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations } from "./content-bundle-translations";
+import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations, selectCurrentStatusGuidanceTranslations } from "./content-bundle-translations";
+import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
 import { japaneseLocalGuidanceTranslations } from "@/data/translations/ja/local-guidance";
@@ -110,6 +111,8 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "local-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseLocalGuidanceTranslations,
       new Map(localGuidanceSupplements.map((record) => [record.id, createTranslationSourceRevision(translationSourceFields["local-guidance-supplement"](record))])))],
     [{ path: "general-local-advice-translations.ja.json", kind: "catalog-translations", locale: "ja" }, currentAdviceTranslations],
+    [{ path: "residence-status-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" },
+      selectCurrentStatusGuidanceTranslations(japaneseResidenceStatusGuidanceTranslations, residenceStatuses)],
   ];
 
   const files = new Map<string, string>();

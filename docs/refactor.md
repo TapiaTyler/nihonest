@@ -6,7 +6,8 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
 are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented, with FAQ/glossary/status translation and local guidance exports added; remaining catalog coverage is pending.
+implemented, with FAQ/glossary/status translation, local guidance and structured-status overlays added;
+remaining catalog coverage is pending.
 J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
 the completed structural-refactor working notes.
@@ -372,10 +373,13 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: integrity preparation, FAQ/glossary/status translation and local guidance exports implemented, review/integration
+Status: integrity preparation, FAQ/glossary/status translation, local guidance and structured-status overlay
+exports implemented, review/integration
 pending; remaining catalog coverage planned. See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
+Structured English guidance remains in status records; [its overlay export](checkpoints/N1-status-guidance-bundle.md)
+preserves canonical research/approval metadata.
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -834,3 +838,19 @@ editorial approval, and a documentation status change cannot authorize external 
   architecture (**700 modules**) and whitespace passed using existing dependencies. No production
   build/browser/SQL/translation audit or research fetch repeated. Other N1 families and Stage-C payloads
   remain pending; exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B structured status guidance — 2026-09-29
+
+- Following pushed local guidance expansion `9638a9e`, Codex added [structured status overlay export](checkpoints/N1-status-guidance-bundle.md).
+  English guidance remains inside complete status records. Current Japanese artifacts use existing reader-path
+  extraction/revision rules, retain full provenance and per-path English fallback, and remain distinct from
+  summary artifacts despite the shared historical kind. No canonical/Japanese/shared translation module edit.
+- Portable acceptance rejects unstructured/stale targets and unsupported paths, including assertion metadata.
+  It also checks direct and structured status source/article/glossary/transition references with the existing
+  collection validator. Tests show reader-text localization preserves research/approval/authorization metadata.
+- One mandatory file bumps format **3 to 4**, seventeen files total and **30** observed guidance artifacts.
+  Previous sixteen payload checksums remain unchanged. Export and independent disk verification passed.
+  Focused **72 tests / five files**, full **744 tests / 163 files** with four workers, types, full lint,
+  architecture (**701 modules**) and whitespace passed using existing dependencies. No production
+  build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain pending;
+  exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.

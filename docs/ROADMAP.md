@@ -1226,6 +1226,18 @@ types, full lint, architecture (**700 modules**), whitespace, export and indepen
 Other N1 families and Stage-C component payloads remain pending. No canonical/translation edits or
 production build/browser/SQL/translation audit repeated. Claude review pending; integration remains `e4fc1ff`.
 
+**2026-09-29 N1 structured status guidance:** [the guidance overlay checkpoint](checkpoints/N1-status-guidance-bundle.md)
+adds complete current Japanese path-keyed guidance artifacts. English structured guidance already remains
+inside canonical status records. Dedicated file/revision validation distinguishes guidance from summary
+artifacts despite their shared historical kind, preserves per-path English fallback, and rejects unsupported
+paths. Bundle acceptance now checks direct and structured status source/article/glossary/transition references.
+Tests confirm localization leaves source assertions, approval metadata and authorization mode canonical.
+One mandatory file bumps format **3 to 4**, seventeen files total with **30** observed guidance overlays;
+previous sixteen payload checksums are unchanged. Focused **72 tests / five files**, full **744 tests / 163 files**,
+types, full lint, architecture (**701 modules**), whitespace, export and disk verification passed using existing
+dependencies. No canonical/Japanese/renderer edits or production build/browser/SQL/translation audit repeated.
+Remaining N1 families and Stage-C payloads stay pending; reviewed integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;
