@@ -11,6 +11,7 @@ import { currentJapaneseArticleTranslations } from "@/data/translations/ja/artic
 import { parseArticleMarkdown } from "@/domain/article/article-blocks";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
+import { contentBundleVersionInput, validateContentBundlePayload, verifyContentBundle } from "@/domain/content-bundle/content-bundle-integrity";
 import {
   bundledArticleSchema,
   bundledArticleTranslationSchema,
@@ -89,15 +90,17 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
 
   const files = new Map<string, string>();
   const manifestFiles: ContentBundleFile[] = entries.map(([file, records]) => {
+    validateContentBundlePayload(file, records);
     const json = `${JSON.stringify(records)}\n`;
     files.set(file.path, json);
     return { ...file, records: records.length, checksum: sha256(json) };
   });
   const manifest = contentBundleManifestSchema.parse({
     formatVersion: contentBundleFormatVersion,
-    catalogVersion: sha256(manifestFiles.map(({ path, checksum }) => `${path}:${checksum}`).join("\n")),
+    catalogVersion: sha256(contentBundleVersionInput(manifestFiles)),
     generatedAt: options.generatedAt,
     files: manifestFiles,
   });
+  verifyContentBundle(manifest, files, sha256);
   return { manifest, files };
 }

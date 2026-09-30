@@ -5,7 +5,8 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 `9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
-are implemented on the working branch and await review/integration. J1/N4 acceptance remains open;
+are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
+implemented; expanded catalog coverage remains pending. J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
 the completed structural-refactor working notes.
 
@@ -370,7 +371,9 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: planned. Coordinate translation selectors with Claude.
+Status: existing-file integrity preparation implemented, review/integration pending; expanded catalog
+coverage planned. See [the bounded checkpoint](checkpoints/N1-bundle-integrity.md).
+Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
 and complete final acceptance after integrating Stage C.
@@ -780,3 +783,16 @@ editorial approval, and a documentation status change cannot authorize external 
 - This working checkpoint awaits Claude, with no branch-head integration across the pending J1 ancestors.
   Integration remains `e4fc1ff`. Hosted cross-device and combined H5 session/refresh/transport binding remain
   unvalidated. No Claude-owned configuration/session/rendering/translation file or hosted service was changed.
+
+### N1 Stage-B bundle integrity preparation — 2026-09-29
+
+- After pending N4 checkpoint `9061031`, Codex added [existing-file integrity validation](checkpoints/N1-bundle-integrity.md).
+  Eight explicit format-1 contracts reuse domain schemas. The exporter validates payloads and the complete
+  bundle; a portable verifier accepts only complete supported files with valid records, unique IDs/paths,
+  correct UTF-8 checksums, record counts and catalog version. Canonical JSON and version inputs remain.
+- Focused **21 tests / two files**, full **693 tests / 160 files** with four workers, TypeScript, full lint,
+  architecture (**697 modules**) and whitespace passed. Existing dependencies were used; build/browser,
+  SQL, translation audit and native installation were not repeated.
+- This is preparation only: expanded catalog/translation coverage, cross-catalog references and Stage-C
+  component payloads remain pending. Review/integration awaits Claude; integration remains `e4fc1ff`.
+  No translation artifacts, renderers, configuration, main or hosted activation changed.

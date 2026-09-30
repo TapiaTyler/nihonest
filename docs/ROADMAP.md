@@ -1192,6 +1192,16 @@ check is claimed. This and the four new J1 checkpoints plus consolidated docs aw
 integration remains `e4fc1ff`. N4 is not fully accepted until review/integration and combined H5/hosted
 checks pass. No native app, main merge, hosted service or activation.
 
+**2026-09-29 N1 Stage-B integrity preparation:** the [bounded bundle checkpoint](checkpoints/N1-bundle-integrity.md)
+validates the existing eight format-1 payloads and adds a portable whole-bundle acceptance contract with an
+injected UTF-8 SHA-256 function. It rejects incomplete or unsupported bundles, invalid records, duplicate
+IDs/paths and checksum/count/version mismatches before returning a manifest. Existing canonical JSON and
+version inputs remain unchanged. Catalog expansion, translation provenance/fallback coverage, cross-catalog
+reference validation and Stage-C component payloads remain pending; Stage B and N1 are not complete.
+Focused **21 tests / two files**, full **693 tests / 160 files**, types, full lint, architecture (**697 modules**)
+and whitespace passed using existing dependencies. Build/browser/SQL/localization gates were not repeated.
+This checkpoint and its pending ancestors await Claude; reviewed integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;
