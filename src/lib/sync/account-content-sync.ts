@@ -1,10 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { accountContentStateSchema, type AccountContentState } from "@/domain/sync/account-content-state";
 import type { Database, Json } from "@/types/database";
+import type { AccountContentSyncResult } from "./account-content-sync-contract";
 
-export type AccountContentSyncResult =
-  | Readonly<{ ok: true; state: AccountContentState }>
-  | Readonly<{ ok: false; message: string }>;
+export type { AccountContentSyncResult } from "./account-content-sync-contract";
 
 /** Sends a complete device snapshot and accepts only a validated canonical account response. */
 export async function synchronizeAccountContent(

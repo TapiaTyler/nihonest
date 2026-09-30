@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type AccountContentState, emptyAccountContentState } from "@/domain/sync/account-content-state";
 import { accountContentOwnerStorageKey } from "@/lib/storage/account-content-owner";
@@ -30,11 +30,77 @@ function authenticatedClient(userId = "30000000-0000-4000-8000-000000000003") {
   } as unknown as SupabaseClient<Database>;
 }
 
+function controlledClient(initialUser: Promise<unknown>) {
+  let callback: (event: string, session: { user: { id: string } } | null) => void = () => undefined;
+  const unsubscribe = vi.fn();
+  const client = { auth: {
+    getUser: vi.fn(() => initialUser),
+    onAuthStateChange: vi.fn((listener: typeof callback) => {
+      callback = listener;
+      return { data: { subscription: { unsubscribe } } };
+    }),
+  } } as unknown as SupabaseClient<Database>;
+  return { client, unsubscribe, emit(userId?: string) { callback(userId ? "TOKEN_REFRESHED" : "SIGNED_OUT", userId ? { user: { id: userId } } : null); } };
+}
+
 describe("AccountContentSyncProvider", () => {
   beforeEach(() => {
     window.localStorage.clear();
     mocks.getClient.mockReset().mockReturnValue(authenticatedClient());
     mocks.synchronize.mockReset();
+  });
+
+  it("does not let a stale initial identity overwrite a newer auth event", async () => {
+    let finishIdentity!: (value: unknown) => void;
+    const f = controlledClient(new Promise((resolve) => { finishIdentity = resolve; }));
+    mocks.getClient.mockReturnValue(f.client);
+    mocks.synchronize.mockResolvedValue({ ok: true, state: emptyAccountContentState });
+    render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    act(() => f.emit("new-account"));
+    await screen.findByText("synchronized");
+    await act(async () => { finishIdentity({ data: { user: { id: "old-account" } } }); });
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe("new-account");
+    expect(mocks.synchronize).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps sign-out inactive when an old request subsequently fails", async () => {
+    let finishRequest!: (value: unknown) => void;
+    const f = controlledClient(Promise.resolve({ data: { user: { id: "account-A" } } }));
+    mocks.getClient.mockReturnValue(f.client);
+    mocks.synchronize.mockImplementationOnce(() => new Promise((resolve) => { finishRequest = resolve; }));
+    render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(1));
+    act(() => f.emit());
+    await screen.findByText("inactive");
+    await act(async () => { finishRequest({ ok: false, message: "Old-account failure" }); });
+    expect(screen.getByText("inactive")).toBeInTheDocument();
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBeNull();
+  });
+
+  it("does not apply a request result after cleanup", async () => {
+    let finishRequest!: (value: unknown) => void;
+    const f = controlledClient(Promise.resolve({ data: { user: { id: "account-A" } } }));
+    mocks.getClient.mockReturnValue(f.client);
+    mocks.synchronize.mockImplementationOnce(() => new Promise((resolve) => { finishRequest = resolve; }));
+    const view = render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(1));
+    view.unmount();
+    await act(async () => { finishRequest({ ok: true, state: { ...emptyAccountContentState, savedContent: [
+      { kind: "article", contentId: "old-account-only", state: "saved", updatedAt: "2026-09-29T00:00:00.000Z" },
+    ] } }); });
+    expect(window.localStorage.getItem(savedContentStorageKey)).toBeNull();
+    expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBeNull();
+    expect(f.unsubscribe).toHaveBeenCalledOnce();
+  });
+
+  it("does not resynchronize for a token refresh of the same account", async () => {
+    const f = controlledClient(Promise.resolve({ data: { user: { id: "account-A" } } }));
+    mocks.getClient.mockReturnValue(f.client);
+    mocks.synchronize.mockResolvedValue({ ok: true, state: emptyAccountContentState });
+    render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
+    await screen.findByText("synchronized");
+    await act(async () => { f.emit("account-A"); });
+    expect(mocks.synchronize).toHaveBeenCalledTimes(1);
   });
 
   it("merges the device snapshot and applies the canonical account response", async () => {

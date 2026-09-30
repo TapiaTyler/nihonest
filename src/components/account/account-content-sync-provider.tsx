@@ -1,28 +1,20 @@
 "use client";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { emptyAccountContentState, type AccountContentState } from "@/domain/sync/account-content-state";
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { AccountContentState } from "@/domain/sync/account-content-state";
 import { getChecklistProgressSnapshot, readChecklistProgress, subscribeToChecklistProgress, writeChecklistProgress } from "@/lib/storage/checklist-progress";
 import { getGlossaryStudySnapshot, readGlossaryStudyProgress, subscribeToGlossaryStudy, writeGlossaryStudyProgress } from "@/lib/storage/glossary-study";
 import { readAccountContentOwner, writeAccountContentOwner } from "@/lib/storage/account-content-owner";
 import { getSavedContentSnapshot, readSavedContent, subscribeToSavedContent, writeSavedContent } from "@/lib/storage/saved-content";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { synchronizeAccountContent } from "@/lib/sync/account-content-sync";
-import type { Database } from "@/types/database";
-
-type AccountContentSyncStatus = "inactive" | "synchronizing" | "synchronized" | "error";
+import { createAccountContentCoordinator } from "@/lib/sync/account-content-coordinator";
+import type { AccountContentSnapshot, AccountContentSyncStatus } from "@/lib/sync/account-content-sync-contract";
 
 type AccountContentSyncContextValue = Readonly<{
-  status: AccountContentSyncStatus;
+  status: AccountContentSyncStatus["status"];
   errorMessage?: string;
   retry: () => void;
-}>;
-
-type DeviceSnapshot = Readonly<{
-  savedContent: string;
-  glossaryProgress: string;
-  checklistProgress: string;
 }>;
 
 const AccountContentSyncContext = createContext<AccountContentSyncContextValue | undefined>(undefined);
@@ -35,7 +27,7 @@ function readDeviceState(): AccountContentState {
   };
 }
 
-function getDeviceSnapshot(): DeviceSnapshot {
+function getAccountContentSnapshot(): AccountContentSnapshot {
   return {
     savedContent: getSavedContentSnapshot(),
     glossaryProgress: getGlossaryStudySnapshot(),
@@ -44,7 +36,7 @@ function getDeviceSnapshot(): DeviceSnapshot {
 }
 
 /** Applies only record families that did not change while their account request was running. */
-function applyCanonicalState(state: AccountContentState, requestSnapshot: DeviceSnapshot): boolean {
+function applyCanonicalState(state: AccountContentState, requestSnapshot: AccountContentSnapshot): boolean {
   let newerDeviceChangeExists = false;
 
   if (getSavedContentSnapshot() === requestSnapshot.savedContent) writeSavedContent(state.savedContent);
@@ -60,110 +52,60 @@ function applyCanonicalState(state: AccountContentState, requestSnapshot: Device
 }
 
 export function AccountContentSyncProvider({ children }: Readonly<{ children: ReactNode }>) {
-  const [status, setStatus] = useState<AccountContentSyncStatus>("inactive");
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const clientRef = useRef<SupabaseClient<Database> | undefined>(undefined);
-  const userIdRef = useRef<string | undefined>(undefined);
-  const inFlightRef = useRef(false);
-  const queuedRef = useRef(false);
-  const applyingAccountStateRef = useRef(false);
-  const mountedRef = useRef(true);
-
-  const runSynchronization = useCallback(async () => {
-    const client = clientRef.current;
-    if (!client || !userIdRef.current) return;
-    if (inFlightRef.current) {
-      queuedRef.current = true;
-      return;
-    }
-
-    inFlightRef.current = true;
-    // One pass per account. If a different account signs in during a pass, its response is discarded and the
-    // next pass synchronizes the new account, all within this single in-flight run.
-    let userId: string | undefined = userIdRef.current;
-    while (userId) {
-      let synchronizationFailed = false;
-      do {
-        queuedRef.current = false;
-        if (mountedRef.current) {
-          setStatus("synchronizing");
-          setErrorMessage(undefined);
-        }
-
-        const requestSnapshot = getDeviceSnapshot();
-        // A cache belonging to another account must never be imported into the current account.
-        const contentOwner = readAccountContentOwner();
-        const deviceState = contentOwner && contentOwner !== userId
-          ? emptyAccountContentState
-          : readDeviceState();
-        const result = await synchronizeAccountContent(client, deviceState);
-
-        if (!result.ok) {
-          synchronizationFailed = true;
-          if (mountedRef.current) {
-            setStatus("error");
-            setErrorMessage(result.message);
-          }
-          break;
-        }
-        // An account change during the request invalidates its response for this browser cache.
-        if (userIdRef.current !== userId) break;
-
-        applyingAccountStateRef.current = true;
-        queuedRef.current = applyCanonicalState(result.state, requestSnapshot) || queuedRef.current;
-        writeAccountContentOwner(userId);
-        applyingAccountStateRef.current = false;
-      } while (queuedRef.current && userIdRef.current === userId);
-
-      if (mountedRef.current && userIdRef.current === userId && !synchronizationFailed) setStatus("synchronized");
-      const nextUserId: string | undefined = userIdRef.current;
-      userId = mountedRef.current && nextUserId && nextUserId !== userId ? nextUserId : undefined;
-    }
-    inFlightRef.current = false;
-  }, []);
+  const [state, setState] = useState<AccountContentSyncStatus>({ status: "inactive" });
+  const coordinatorRef = useRef<ReturnType<typeof createAccountContentCoordinator> | undefined>(undefined);
 
   useEffect(() => {
-    mountedRef.current = true;
     const client = getSupabaseBrowserClient();
-    if (!client) return () => { mountedRef.current = false; };
-    clientRef.current = client;
+    if (!client) return;
+    const coordinator = createAccountContentCoordinator({
+      readState: readDeviceState,
+      readSnapshot: getAccountContentSnapshot,
+      readOwner: readAccountContentOwner,
+      applyCanonical: applyCanonicalState,
+      writeOwner: writeAccountContentOwner,
+      synchronize: (_accountId, deviceState) => synchronizeAccountContent(client, deviceState),
+      publish: setState,
+    });
+    coordinatorRef.current = coordinator;
+    let disposed = false;
+    let authRevision = 0;
 
     function activateAccount(userId: string | undefined) {
-      if (userIdRef.current === userId) return;
-      userIdRef.current = userId;
-      if (!userId) {
-        setStatus("inactive");
-        setErrorMessage(undefined);
-        return;
-      }
-      queueMicrotask(() => { if (mountedRef.current) void runSynchronization(); });
+      if (disposed) return;
+      if (!coordinator.setAccount(userId)) return;
+      // Auth events only notify identity; leave SDK work outside the callback.
+      queueMicrotask(() => { if (!disposed) void coordinator.synchronize(); });
     }
 
-    const handleDeviceChange = () => {
-      if (!applyingAccountStateRef.current && userIdRef.current) void runSynchronization();
-    };
+    const handleDeviceChange = () => coordinator.deviceChanged();
     const unsubscribeSaved = subscribeToSavedContent(handleDeviceChange);
     const unsubscribeGlossary = subscribeToGlossaryStudy(handleDeviceChange);
     const unsubscribeChecklist = subscribeToChecklistProgress(handleDeviceChange);
     const { data: authListener } = client.auth.onAuthStateChange((_event, session) => {
+      authRevision++;
       activateAccount(session?.user.id);
     });
-    void client.auth.getUser().then(({ data }) => activateAccount(data.user?.id));
+    const initialRevision = authRevision;
+    void client.auth.getUser().then(({ data }) => {
+      if (!disposed && authRevision === initialRevision) activateAccount(data.user?.id);
+    }).catch(() => undefined);
 
     return () => {
-      mountedRef.current = false;
+      disposed = true;
+      coordinator.dispose();
+      if (coordinatorRef.current === coordinator) coordinatorRef.current = undefined;
       unsubscribeSaved();
       unsubscribeGlossary();
       unsubscribeChecklist();
       authListener.subscription.unsubscribe();
     };
-  }, [runSynchronization]);
+  }, []);
 
   const value = useMemo<AccountContentSyncContextValue>(() => ({
-    status,
-    errorMessage,
-    retry: () => { void runSynchronization(); },
-  }), [errorMessage, runSynchronization, status]);
+    ...state,
+    retry: () => { void coordinatorRef.current?.synchronize(); },
+  }), [state]);
 
   return <AccountContentSyncContext.Provider value={value}>{children}</AccountContentSyncContext.Provider>;
 }

@@ -1,11 +1,13 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-28. H3a, J1 preparation/hardening, CMS LF/stability fixes,
+Status: implementation in progress, 2026-09-29. H3a, J1 preparation/hardening, CMS LF/stability fixes,
 compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and scope-limited J1 adapter
 `9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
-review. J1 remains incomplete with no runnable command; H4, H5 and H3b have not started. Wider hosting
-acceptance and activation remain pending. This replaces the completed structural-refactor working notes.
+review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
+are implemented on the working branch and await review/integration. J1/N4 acceptance remains open;
+H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
+the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -308,15 +310,17 @@ services or declaring the hosted gate complete.
 
 Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
 J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
-The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. The command,
-final configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
-is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
+The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. New command
+and configuration wiring are implemented only on the working branch; review/integration, isolated SQL integration
+tests and final acceptance remain pending. Configuration wiring is unblocked by the validated H3a handoff
+`6eb2fa6` in both working branches (see the handoff and integration rules).
 Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
-it has no live command consumer and does not resolve finalization clock authority. See
+that reviewed adapter alone has no command consumer and does not resolve finalization clock authority. See
 [the mapping review and acceptance notes](checkpoints/J1-store-mapping.md#claude-review-and-acceptance-notes--2026-09-28).
 Codex's subsequent [database-authority checkpoint](checkpoints/J1-database-authority.md), dated 2026-09-29,
 implements store-provided database time, a service-only finalizer and aggregate exhausted-claim inspection
-on the working branch. Its review/integration and real PostgreSQL 17 acceptance remain pending; no command exists.
+on the working branch. The recipient (`904856e`), lease-budget (`4b4bb37`) and command (`7fdea85`)
+checkpoints follow it there. All four await review/integration and real PostgreSQL 17 acceptance.
 
 Implementation:
 
@@ -423,7 +427,9 @@ Status: planned. Depends on H1. Claude owns Japanese catalog edits.
 
 ### N4 — Platform-independent account coordinator
 
-Status: planned. Suggested owner: Codex; reviewer: Claude. Supports Phase 15; does not block hosting.
+Status: Stage-A portable coordinator extraction and web binding implemented by Codex, review/integration
+pending. See [the checkpoint and H5 session handoff](checkpoints/N4-account-coordinator.md).
+Hosted cross-device and combined H5 acceptance remain open. Supports Phase 15; does not block hosting.
 
 Implementation:
 
@@ -760,3 +766,17 @@ editorial approval, and a documentation status change cannot authorize external 
 - This and the three prior J1 working checkpoints plus consolidated documentation await Claude. Integration
   remains `e4fc1ff`. Real isolated PostgreSQL 17 SQL concurrency/lock-wait/pgTAP and combined acceptance
   remain before any hosted activation or main merge.
+
+### N4 Stage-A coordinator preparation — 2026-09-29
+
+- Codex extracted a portable serial coordinator with injected snapshots/storage ownership, sync transport
+  and status publication, then wired the web provider to it. Queued edits, retry, account revision checks,
+  sign-out and disposal move outside React. Existing storage keys, merge rules and RPC payloads remain.
+  [The record](checkpoints/N4-account-coordinator.md) specifies contracts and the H5 session handoff.
+- Added coverage for stale initial identity, stale errors after sign-out, cleanup, unchanged token refresh
+  and A -> B -> A transitions. Focused **20 tests / three files**, full **675 tests / 159 files**, types,
+  targeted lint, architecture (**696 modules**) and whitespace passed. Public-only build generated **415
+  pages**; CMS exclusion and browser bundle checks (**42 scripts**) passed. Existing dependencies were used.
+- This working checkpoint awaits Claude, with no branch-head integration across the pending J1 ancestors.
+  Integration remains `e4fc1ff`. Hosted cross-device and combined H5 session/refresh/transport binding remain
+  unvalidated. No Claude-owned configuration/session/rendering/translation file or hosted service was changed.

@@ -1178,6 +1178,20 @@ chore: deploy public web application
 
 Preparation: complete or explicitly schedule **Batch 3 (N1–N5)** in [the refactor roadmap](refactor.md): localized content-bundle coverage, portable component content and shared inline parsing, finder messages, a platform-independent account coordinator, and the lower-priority metadata/MDX boundary. These extend existing domain, storage, and sync contracts. Introduce workspaces only when the second application exists; select the offline engine against Phase 16 requirements. Claude owns Japanese catalog changes; the account coordinator is a suggested Codex assignment for Claude to review.
 
+**2026-09-29 N4 Stage-A preparation:** Codex's [coordinator checkpoint](checkpoints/N4-account-coordinator.md)
+extracts account-sync queueing, retries, cache ownership, account revisions, stale results and disposal into
+a module with injected storage/transport/status contracts and no React/browser/SDK dependency. The web
+provider retains browser/auth lifecycle bindings. Existing keys, merge rules and RPC payloads remain;
+new fixtures cover stale initial identity, sign-out failure, cleanup, token refresh and A -> B -> A races.
+The record documents the H5 account/session coordination contract and remaining request/auth binding gate.
+
+20 focused tests, full **675 tests / 159 files**, types, targeted lint, architecture (**696 modules**),
+whitespace, public-only **415-page** build, CMS exclusion and bundle checking (**42 scripts**) passed.
+Existing dependencies were used; no hosted account/cross-device, browser UI, SQL or editorial/localization
+check is claimed. This and the four new J1 checkpoints plus consolidated docs await Claude; reviewed
+integration remains `e4fc1ff`. N4 is not fully accepted until review/integration and combined H5/hosted
+checks pass. No native app, main merge, hosted service or activation.
+
 Objectives:
 
 - React Native;
