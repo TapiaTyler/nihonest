@@ -15,6 +15,9 @@ import { translationSourceFields } from "@/domain/translation/translation-source
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
 import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations, selectCurrentStatusGuidanceTranslations } from "./content-bundle-translations";
 import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
+import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article-group-translations";
+import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
+import { bundledGroupSourceFields, bundledJourneySourceFields } from "@/domain/content-bundle/discovery-payloads";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
 import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
 import { japaneseLocalGuidanceTranslations } from "@/data/translations/ja/local-guidance";
@@ -113,6 +116,10 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "general-local-advice-translations.ja.json", kind: "catalog-translations", locale: "ja" }, currentAdviceTranslations],
     [{ path: "residence-status-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" },
       selectCurrentStatusGuidanceTranslations(japaneseResidenceStatusGuidanceTranslations, residenceStatuses)],
+    [{ path: "article-group-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseArticleGroupTranslations,
+      new Map(articleGroups.map((record) => [record.id, createTranslationSourceRevision(bundledGroupSourceFields(record))])))],
+    [{ path: "journey-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseJourneyTranslations,
+      new Map(guidedJourneys.map((record) => [record.id, createTranslationSourceRevision(bundledJourneySourceFields(record))])))],
   ];
 
   const files = new Map<string, string>();

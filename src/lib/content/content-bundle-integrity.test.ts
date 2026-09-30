@@ -27,6 +27,7 @@ describe("content bundle acceptance", () => {
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 1 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 2 }, bundle.files, sha256)).toThrow();
     expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 3 }, bundle.files, sha256)).toThrow();
+    expect(() => verifyContentBundle({ ...bundle.manifest, formatVersion: 4 }, bundle.files, sha256)).toThrow();
   });
   it.each(["missing", "unlisted", "omitted"])("rejects %s files", (mode) => {
     const copy = candidate();
@@ -111,7 +112,8 @@ describe("content bundle acceptance", () => {
   });
   it.each(["faq-translations.ja.json", "glossary-translations.ja.json", "residence-status-translations.ja.json",
     "local-guidance-translations.ja.json", "general-local-advice-translations.ja.json",
-    "residence-status-guidance-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
+    "residence-status-guidance-translations.ja.json", "article-group-translations.ja.json",
+    "journey-translations.ja.json"])("rejects unknown targets and stale source revisions in %s", (path) => {
     for (const mutation of [{ contentId: "missing-target" }, { sourceRevision: "0".repeat(64) }]) {
       const copy = candidate();
       const records = JSON.parse(copy.files.get(path)!);
@@ -210,5 +212,34 @@ describe("content bundle acceptance", () => {
     if (kind === "transition") status.structuredGuidance.transitions[0].targetStatusId = "missing-target";
     replacePayload(copy, "residence-statuses.en.json", statuses);
     expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
+  });
+  it.each(["group-article", "journey-group", "route-article", "step-route"])("rejects broken discovery %s references", (kind) => {
+    const copy = candidate();
+    if (kind === "group-article") {
+      const groups = JSON.parse(copy.files.get("article-groups.en.json")!);
+      groups[0].articleIds[0] = "missing-target";
+      replacePayload(copy, "article-groups.en.json", groups);
+    } else {
+      const journeys = JSON.parse(copy.files.get("journeys.en.json")!);
+      if (kind === "journey-group") journeys[0].groupId = "missing-target";
+      if (kind === "route-article") journeys.find((record: { routes: unknown[] }) => record.routes.length)!.routes[0].articleId = "missing-target";
+      if (kind === "step-route") {
+        const journey = journeys.find((record: { routes: unknown[] }) => record.routes.length)!;
+        const step = journey.phases.flatMap((phase: { steps: { type: string }[] }) => phase.steps).find((item: { type: string }) => item.type === "article");
+        step.routeIds = ["missing-target"];
+      }
+      replacePayload(copy, "journeys.en.json", journeys);
+    }
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow(/unknown/);
+  });
+  it("rejects journey overlay identity injection with matching checksums", () => {
+    const copy = candidate();
+    const artifacts = JSON.parse(copy.files.get("journey-translations.ja.json")!);
+    const artifact = artifacts.find((record: { fields: { routes: string } }) => JSON.parse(record.fields.routes).length)!;
+    const routes = JSON.parse(artifact.fields.routes);
+    routes[0].id = "missing-target";
+    artifact.fields.routes = JSON.stringify(routes);
+    replacePayload(copy, "journey-translations.ja.json", artifacts);
+    expect(() => verifyContentBundle(copy.manifest, copy.files, sha256)).toThrow("unknown route, phase or condition");
   });
 });

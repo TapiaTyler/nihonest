@@ -6,7 +6,7 @@ compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and sc
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
 review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
 are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented, with FAQ/glossary/status translation, local guidance and structured-status overlays added;
+implemented, with FAQ/glossary/status translation, local guidance, structured-status and discovery overlays added;
 remaining catalog coverage is pending.
 J1/N1/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
@@ -373,13 +373,14 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: integrity preparation, FAQ/glossary/status translation, local guidance and structured-status overlay
-exports implemented, review/integration
-pending; remaining catalog coverage planned. See [integrity preparation](checkpoints/N1-bundle-integrity.md)
+Status: integrity preparation and FAQ/glossary/status/local-guidance/structured-status/discovery exports
+implemented, review/integration pending; remaining catalog coverage planned.
+See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
 Structured English guidance remains in status records; [its overlay export](checkpoints/N1-status-guidance-bundle.md)
 preserves canonical research/approval metadata.
+[Localized discovery export](checkpoints/N1-discovery-bundle.md) preserves journey relationships and route choices.
 Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
@@ -854,3 +855,18 @@ editorial approval, and a documentation status change cannot authorize external 
   architecture (**701 modules**) and whitespace passed using existing dependencies. No production
   build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain pending;
   exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B localized discovery — 2026-09-29
+
+- Following pushed structured-status checkpoint `14cf823`, Codex added [article-group/journey artifact export](checkpoints/N1-discovery-bundle.md).
+  Complete current Japanese artifacts preserve provenance; source inputs match existing catalog revision
+  rules. Strict route/phase/condition array contracts reject malformed/duplicate IDs and relationship
+  properties. Partial nested translations retain English via the existing portable journey localizer.
+- Consumer acceptance validates discovery article/group/route relationships and nested translation targets.
+  Tests confirm route choices, canonical relationships and current web presentation parity. No canonical,
+  Japanese/shared translation, renderer or configuration edit. Two mandatory files bump format **4 to 5**,
+  nineteen files total, with **15 group/20 journey** artifacts observed. Prior seventeen checksums unchanged.
+- Focused **90 tests / six files**, full **762 tests / 164 files** with four workers, types, full lint,
+  architecture (**702 modules**), whitespace, export and disk verification passed using existing dependencies.
+  No production build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain
+  pending; exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.

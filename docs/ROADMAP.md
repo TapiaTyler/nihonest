@@ -1238,6 +1238,18 @@ types, full lint, architecture (**701 modules**), whitespace, export and disk ve
 dependencies. No canonical/Japanese/renderer edits or production build/browser/SQL/translation audit repeated.
 Remaining N1 families and Stage-C payloads stay pending; reviewed integration remains `e4fc1ff`.
 
+**2026-09-29 N1 localized discovery:** [the article-group/journey checkpoint](checkpoints/N1-discovery-bundle.md)
+adds complete current Japanese discovery artifacts with existing revision rules and full provenance.
+Strict schemas validate serialized route/phase/condition arrays; partial entries retain English fallback.
+Consumer acceptance checks canonical discovery relationships, nested translation IDs and unsupported
+relationship fields. Tests compare current web presentation and all journey route choices before/after
+localization. Two mandatory files bump format **4 to 5**, nineteen files total, with **15 group/20 journey**
+artifacts observed; previous seventeen payload checksums are unchanged. Focused **90 tests / six files**,
+full **762 tests / 164 files**, types, full lint, architecture (**702 modules**), whitespace, export and disk
+verification passed using existing dependencies. No canonical/Japanese/renderer/configuration edits or
+production build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain
+pending; Claude review/integration pending. Reviewed integration remains `e4fc1ff`.
+
 Objectives:
 
 - React Native;

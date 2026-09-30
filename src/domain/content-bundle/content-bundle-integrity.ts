@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { articleGroupSchema, guidedJourneySchema } from "@/domain/discovery/discovery";
+import { articleGroupSchema, guidedJourneySchema, validateDiscoveryModel } from "@/domain/discovery/discovery";
+import { bundledGroupSourceFields, bundledJourneySourceFields, bundledGroupTranslationSchema,
+  bundledJourneyTranslationSchema, validateBundledJourneyTranslation } from "./discovery-payloads";
 import { faqSchema } from "@/domain/faq/faq";
 import { japaneseTermSchema } from "@/domain/glossary/glossary";
 import { residenceStatusSchema, validateResidenceStatusCollection } from "@/domain/residence-status/residence-status";
@@ -19,7 +21,7 @@ import {
 import { bundledCatalogTranslationSchema } from "./catalog-translations";
 import { bundledStatusGuidanceTranslationSchema } from "./status-guidance-payload";
 
-/** Format 4's supported files. New catalog families need an explicit contract here before export. */
+/** Format 5's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -38,6 +40,8 @@ export const contentBundlePayloadContracts = {
   "local-guidance-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledLocalGuidanceTranslationSchema("local-guidance-supplement").array() },
   "general-local-advice-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledLocalGuidanceTranslationSchema("local-guidance-general-advice").array() },
   "residence-status-guidance-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledStatusGuidanceTranslationSchema.array() },
+  "article-group-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledGroupTranslationSchema.array() },
+  "journey-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledJourneyTranslationSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -109,6 +113,10 @@ export function verifyContentBundle(
       .map((record) => [record.id, revision(translationSourceFields["local-guidance-general-advice"](record))])),
     "residence-status-guidance-translations.ja.json": new Map(residenceStatusSchema.array().parse(JSON.parse(files.get("residence-statuses.en.json")!))
       .flatMap((record) => record.structuredGuidance ? [[record.id, revision(extractGuidanceText(record.structuredGuidance))] as const] : [])),
+    "article-group-translations.ja.json": new Map(articleGroupSchema.array().parse(JSON.parse(files.get("article-groups.en.json")!))
+      .map((record) => [record.id, revision(bundledGroupSourceFields(record))])),
+    "journey-translations.ja.json": new Map(guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!))
+      .map((record) => [record.id, revision(bundledJourneySourceFields(record))])),
   };
   for (const [path, revisions] of Object.entries(revisionsByPath)) {
     for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get(path)!))) {
@@ -123,6 +131,12 @@ export function verifyContentBundle(
   const sources = officialSourceSchema.array().parse(JSON.parse(files.get("sources.en.json")!));
   const statuses = residenceStatusSchema.array().parse(JSON.parse(files.get("residence-statuses.en.json")!));
   const glossary = japaneseTermSchema.array().parse(JSON.parse(files.get("glossary.en.json")!));
+  const groups = articleGroupSchema.array().parse(JSON.parse(files.get("article-groups.en.json")!));
+  const journeys = guidedJourneySchema.array().parse(JSON.parse(files.get("journeys.en.json")!));
+  validateDiscoveryModel(groups, journeys, articles.map(({ metadata }) => metadata.id));
+  for (const artifact of translationArtifactSchema.array().parse(JSON.parse(files.get("journey-translations.ja.json")!))) {
+    validateBundledJourneyTranslation(journeys.find(({ id }) => id === artifact.contentId)!, artifact);
+  }
   validateResidenceStatusCollection(statuses, sources, articles.map(({ metadata }) => metadata.id), glossary.map(({ id }) => id));
   validateLocalGuidanceCollection(geographies, supplements, articles.map(({ metadata }) => metadata.id), sources.map(({ id }) => id));
   const advice = bundledGeneralLocalAdviceSchema.array().parse(JSON.parse(files.get("general-local-advice.en.json")!));
