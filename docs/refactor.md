@@ -1094,3 +1094,19 @@ editorial approval, and a documentation status change cannot authorize external 
 - Existing dependencies; no clean install, full-suite/types/lint/build/browser, editorial/translation,
   SQL or hosted checks repeated. Exact checkpoints/docs still await Claude. N1/N2 acceptance and Stage-C
   payload/renderer handoff remain open; reviewed integration stays `e4fc1ff`. Main/activation unchanged.
+
+
+### J1 command output and exit-path verification — 2026-09-30
+
+- Following pushed N1 reader review `2c36708`, Codex added [exact entry-script boundary coverage](checkpoints/J1-command-output.md).
+  Eight fixtures cover help/argument no-I/O paths, completed/disabled/failed aggregate reports, deduplicated
+  configuration setting names and generic startup failure without error/cause disclosure. No runtime change.
+- The committed script is transpiled with existing TypeScript and run with explicit process/import bindings;
+  global environment/process and real SDKs are untouched. Four real Node child probes also passed with a
+  system/path/temp-only environment: help, invalid argument, missing settings and invalid URL/dummy secret.
+- Notification suites: **141 tests / 16 files passed**. Types, targeted lint, architecture (**709 modules**)
+  and whitespace passed. Full four-worker suite: **933 tests / 174 files**, all passed; existing jsdom
+  navigation diagnostic remained non-failing.
+- Existing dependencies; no clean install, successful real job, hosted/Auth/database/SES call, production
+  build/browser UI or translation audit. J1 reciprocal review/integration and PostgreSQL 17/pgTAP/concurrency
+  acceptance remain open. Reviewed integration stays `e4fc1ff`; no main merge or activation.
