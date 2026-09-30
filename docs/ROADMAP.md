@@ -1591,3 +1591,18 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - Existing dependencies; no clean install, successful real job, hosted/Auth/database/SES call, production
   build/browser UI or translation audit. J1 reciprocal review/integration and PostgreSQL 17/pgTAP/concurrency
   acceptance remain open. Reviewed integration stays `e4fc1ff`; no main merge or activation.
+
+
+### Consolidated pending review queue — 2026-09-30
+
+- Codex prepared [the exact pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md), snapshot ending
+  at `185add75b5ed86e3d788bc08b434dfae75e7b6e6`: **26 commits** grouped as J1 (six), N4 (two),
+  N1 (thirteen, including documentation-only self-review), and N2 (five). All remain review/integration pending.
+- Queue generation verified every full hash/actual parent against Git, exact coverage since handoff
+  `ece6c4a`, all checkpoint links, and identical handoff/reviewed-integration trees. Deferred consolidated
+  documentation since `b494ed0` is listed separately. Current refactor overview now reflects Stage-B coverage.
+- Code dependencies and Git ancestry are distinguished: later group approval does not authorize merging
+  unrelated ancestors. Shared-doc overlaps require agreed integration and consolidated conflict handling.
+- Documentation only; no implementation/content/translation/test/generated changes or new test/build run.
+  Existing verification is attributed to exact checkpoints. Combined, real SQL, H5/hosted and Stage-C gates
+  remain open; reviewed integration stays `e4fc1ff`. No main merge or activation.

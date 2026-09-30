@@ -1,14 +1,15 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-29. H3a, J1 preparation/hardening, CMS LF/stability fixes,
+Status: implementation in progress, 2026-09-30. H3a, J1 preparation/hardening, CMS LF/stability fixes,
 compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and scope-limited J1 adapter
 `9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
-review. J1 database-authority, recipient, lease-budget and runnable-command checkpoints plus N4 extraction
-are implemented on the working branch and await review/integration. N1 bundle integrity preparation is
-implemented, along with the N1 catalog exports recorded below;
-remaining catalog coverage is pending.
-J1/N1/N4 acceptance remains open;
+review. J1 implementation and acceptance/output follow-ups, N4 extraction and foreign-cache fix,
+N1 Stage-B catalog/integrity contracts, and N2 standalone parser/component contracts are implemented on
+the working branch and await review/integration. The [pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md)
+lists exact hashes, dependencies and deferred documentation. Explicit N1 catalog families are represented;
+Stage-C component payloads/renderer wiring and remaining native contracts are pending.
+J1/N1/N2/N4 acceptance remains open;
 H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
 the completed structural-refactor working notes.
 
@@ -1110,3 +1111,18 @@ editorial approval, and a documentation status change cannot authorize external 
 - Existing dependencies; no clean install, successful real job, hosted/Auth/database/SES call, production
   build/browser UI or translation audit. J1 reciprocal review/integration and PostgreSQL 17/pgTAP/concurrency
   acceptance remain open. Reviewed integration stays `e4fc1ff`; no main merge or activation.
+
+
+### Consolidated pending review queue — 2026-09-30
+
+- Codex prepared [the exact pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md), snapshot ending
+  at `185add75b5ed86e3d788bc08b434dfae75e7b6e6`: **26 commits** grouped as J1 (six), N4 (two),
+  N1 (thirteen, including documentation-only self-review), and N2 (five). All remain review/integration pending.
+- Queue generation verified every full hash/actual parent against Git, exact coverage since handoff
+  `ece6c4a`, all checkpoint links, and identical handoff/reviewed-integration trees. Deferred consolidated
+  documentation since `b494ed0` is listed separately. Current refactor overview now reflects Stage-B coverage.
+- Code dependencies and Git ancestry are distinguished: later group approval does not authorize merging
+  unrelated ancestors. Shared-doc overlaps require agreed integration and consolidated conflict handling.
+- Documentation only; no implementation/content/translation/test/generated changes or new test/build run.
+  Existing verification is attributed to exact checkpoints. Combined, real SQL, H5/hosted and Stage-C gates
+  remain open; reviewed integration stays `e4fc1ff`. No main merge or activation.
