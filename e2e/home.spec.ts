@@ -64,7 +64,7 @@ test("carries an unsuccessful Explore query into FAQ search", async ({ page }) =
   await page.getByRole("combobox", { name: "Topic" }).selectOption("healthcare");
 
   await expect(page.getByRole("heading", { name: "No matching guidance found" })).toBeVisible();
-  await page.getByRole("link", { name: "Search FAQs for this question →" }).click();
+  await page.getByRole("link", { name: "Search FAQs for this question" }).click();
   await expect(page).toHaveURL(/\/faq\?q=software\+developer$/);
   await expect(page.getByRole("searchbox", { name: "What would you like to understand?" })).toHaveValue("software developer");
   await expect(page.getByRole("heading", { name: "Which Japanese work status is commonly relevant to software developers and software engineers?" })).toBeVisible();
@@ -74,7 +74,7 @@ test("carries an unsuccessful FAQ query into the complete Explore search", async
   await page.goto("/faq?q=juminhyo");
 
   await expect(page.getByRole("heading", { name: "No matching FAQ found" })).toBeVisible();
-  await page.getByRole("link", { name: "Search all guidance for this question →" }).click();
+  await page.getByRole("link", { name: "Search all guidance for this question" }).click();
   await expect(page).toHaveURL(/\/explore\?q=juminhyo$/);
   await expect(page.getByRole("searchbox", { name: "What do you need help with?" })).toHaveValue("juminhyo");
   await expect(page.getByRole("link", { name: "Certificate of Residence" })).toBeVisible();
@@ -96,7 +96,7 @@ test("resolves one professional route without treating alternatives as later ste
 
   await selectedRoute.click();
   const journeyContext = page.getByRole("region", { name: "Professional worker journey" });
-  const nextGuide = journeyContext.getByRole("link", { name: "Preparing for long-term entry to Japan →" });
+  const nextGuide = journeyContext.getByRole("link", { name: /Preparing for long-term entry to Japan/ });
   await expect(nextGuide).toHaveAttribute("href", /journey=professional-worker-moving-to-japan&route=legal-accounting-services/);
   await expect(journeyContext.getByText(/Medical Services/)).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Continue exploring" })).toBeVisible();
@@ -112,7 +112,7 @@ test("searches glossary terms from Explore", async ({ page }) => {
   await page.getByRole("searchbox", { name: "What do you need help with?" }).fill("juminhyo");
   const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
   await expect(glossaryCard).toBeVisible();
-  await glossaryCard.getByText("View term and context →").click();
+  await glossaryCard.getByText("View term and context").click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("住民票");
 });
 
@@ -227,11 +227,11 @@ test("opens the route-aware student journey", async ({ page }) => {
   await expect(page).toHaveURL(/route=temporary-visitor-study$/);
   await expect(page.getByRole("link", { name: "Registering your address after arrival" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Student visa and Certificate of Eligibility" })).toHaveCount(0);
-  await page.getByRole("link", { name: "Short-term study in Japan as a Temporary Visitor" }).click();
+  await page.getByRole("link", { name: "Short-term study in Japan and the correct entry route", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Short-term study in Japan as a Temporary Visitor",
+    "Short-term study in Japan and the correct entry route",
   );
-  await expect(page.getByText(/90 days is the maximum/)).toBeVisible();
+  await expect(page.getByText(/Ninety days is therefore neither a universal allowance/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Student journey" })).toBeVisible();
 });
 
@@ -241,7 +241,7 @@ test("searches the glossary and follows a term to its guide", async ({ page }) =
   await page.getByRole("searchbox", { name: "Search Japanese or English" }).fill("juminhyo");
   await expect(page.getByText(/Showing 1 of \d+ terms/)).toBeVisible();
   const glossaryCard = page.getByRole("article").filter({ hasText: "Certificate of Residence" });
-  const glossaryCta = glossaryCard.getByText("View term and context →");
+  const glossaryCta = glossaryCard.getByText("View term and context");
   await expect(glossaryCta).toHaveCSS("cursor", "pointer");
   await glossaryCta.click();
 
@@ -267,9 +267,14 @@ test("filters and opens a residence status", async ({ page }) => {
   await page.goto("/residence-statuses");
 
   await page.getByRole("button", { name: "Study, culture, and training" }).click();
-  await expect(page.getByText("Showing 3 of 30 draft statuses")).toBeVisible();
+  // The count follows the catalog; the shown number must match the filtered cards.
+  const showing = page.getByText(/^\d+ \/ \d+ statuses$/);
+  await expect(showing).toBeVisible();
+  const [, visible, total] = /^(\d+) \/ (\d+)/.exec((await showing.textContent()) ?? "")!;
+  expect(Number(visible)).toBeLessThan(Number(total));
+  await expect(page.getByRole("article")).toHaveCount(Number(visible));
   const statusCard = page.getByRole("article").filter({ hasText: "Student" });
-  const statusCta = statusCard.getByText("View status and related guidance →");
+  const statusCta = statusCard.getByText("View status and related guidance");
   await expect(statusCta).toHaveCSS("cursor", "pointer");
   await statusCta.click();
 
@@ -277,7 +282,7 @@ test("filters and opens a residence status", async ({ page }) => {
   await expect(page.getByRole("paragraph").filter({ hasText: /^りゅうがく · ryūgaku$/ })).toBeVisible();
   await expect(page.getByRole("link", { name: "留学" })).toHaveAttribute("href", "/glossary/ryugaku");
   await expect(page.getByRole("heading", { name: "What to verify" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Study in Japan →" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Student journey →" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Study in Japan" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Student journey" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Official sources" })).toBeVisible();
 });
