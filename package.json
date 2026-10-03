@@ -40,6 +40,7 @@
     "architecture:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/check-architecture.ts",
     "config:check": "tsx scripts/check-config.ts",
     "bundle:check": "tsx scripts/check-client-bundles.ts",
+    "release:check": "tsx scripts/release-check.ts",
     "arrows:audit": "node scripts/audit-right-arrows.mjs",
     "arrows:remove": "node scripts/remove-right-arrows.mjs",
     "supabase:start": "supabase start",
