@@ -1606,3 +1606,20 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - Documentation only; no implementation/content/translation/test/generated changes or new test/build run.
   Existing verification is attributed to exact checkpoints. Combined, real SQL, H5/hosted and Stage-C gates
   remain open; reviewed integration stays `e4fc1ff`. No main merge or activation.
+
+
+### Reviewed J1/N4/N1/N2 preparation integration — 2026-10-03
+
+- Claude approved all 26 queue checkpoints for code scope and queue `29b212c`; exact input integrated
+  conflict-free at `b09cd2833855018bcf81d08130c1a8a17e1b2959`. The source tree matches reviewed input.
+- [The receipt](checkpoints/J1-N4-N1-N2-integration-20261003.md) records limited documentation approval and remaining gates.
+  Combined isolated LF checks: **933 tests / 174 files**, full lint, post-build types, architecture (**709 modules**),
+  public/job fixture preflights, **415-page public-only build**, CMS exclusion and **42 browser scripts** passed.
+- Async guidance/source-registry injections failed as expected; bytes restored identically and clean check passed.
+  Format 9 / 28-file export and independent disk/reader verification reproduced the unchanged catalog digest.
+  Editorial **479 / 0 approvals**, article translation and glossary consistency checks passed without findings.
+- Command help and unset-job configuration failure passed without service construction. Existing dependencies,
+  no clean install, Playwright/manual UI, real SQL/hosted/Auth/fake-sender integration or email execution.
+- J1 backlog-resolution/local-target and N1 revision-ordering follow-ups are recorded. N4/H5 binding,
+  Stage-C handoff, Japanese component provenance/wording checks and final acceptance remain open.
+  New consolidated documentation awaits review. No main merge, ownership transfer or activation.

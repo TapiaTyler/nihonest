@@ -1,17 +1,13 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-30. H3a, J1 preparation/hardening, CMS LF/stability fixes,
-compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and scope-limited J1 adapter
-`9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
-consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
-review. J1 implementation and acceptance/output follow-ups, N4 extraction and foreign-cache fix,
-N1 Stage-B catalog/integrity contracts, and N2 standalone parser/component contracts are implemented on
-the working branch and await review/integration. The [pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md)
-lists exact hashes, dependencies and deferred documentation. Explicit N1 catalog families are represented;
-Stage-C component payloads/renderer wiring and remaining native contracts are pending.
-J1/N1/N2/N4 acceptance remains open;
-H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
-the completed structural-refactor working notes.
+Status: implementation in progress, 2026-10-03. H3a, H1/H2, CMS fixes and the prior J1 preparation/adapter
+remain reviewed/integrated. Claude approved all 26 queued J1/N4/N1/N2 code checkpoints for their scope
+and queue `29b212c`; integrated source `b09cd28` passed combined local tests and a public-only build.
+See [the integration receipt and evidence](checkpoints/J1-N4-N1-N2-integration-20261003.md) for exact hashes and review limits.
+J1 real-database/operator gates, N4/H5 authenticated binding/hosted checks and N1/N2 Stage-C/native
+acceptance remain open. The older consolidated delta through `e4fc1ff` is documentation-approved;
+remaining later records have limited review, and this update awaits reciprocal documentation review.
+Claude retains H4/H5/H3b and stale Playwright repair. No Stage-C ownership handoff, main merge or activation.
 
 ## Purpose
 
@@ -314,9 +310,8 @@ services or declaring the hosted gate complete.
 
 Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
 J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
-The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. New command
-and configuration wiring are implemented only on the working branch; review/integration, isolated SQL integration
-tests and final acceptance remain pending. Configuration wiring is unblocked by the validated H3a handoff
+The injectable runner, database-authority/recipient/budget changes and runnable command/configuration wiring
+are code-approved and integrated at `b09cd28`. Isolated real SQL/operator acceptance remains pending. Configuration wiring is unblocked by the validated H3a handoff
 `6eb2fa6` in both working branches (see the handoff and integration rules).
 Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
 that reviewed adapter alone has no command consumer and does not resolve finalization clock authority. See
@@ -324,7 +319,8 @@ that reviewed adapter alone has no command consumer and does not resolve finaliz
 Codex's subsequent [database-authority checkpoint](checkpoints/J1-database-authority.md), dated 2026-09-29,
 implements store-provided database time, a service-only finalizer and aggregate exhausted-claim inspection
 on the working branch. The recipient (`904856e`), lease-budget (`4b4bb37`) and command (`7fdea85`)
-checkpoints follow it there. All four await review/integration and real PostgreSQL 17 acceptance.
+checkpoints follow it. All four and the acceptance/output follow-ups are code-approved/integrated;
+real PostgreSQL 17 acceptance and pre-scheduling operator follow-ups remain open.
 
 Implementation:
 
@@ -374,8 +370,8 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: integrity validation and the catalog exports linked below are implemented, review/integration
-pending. [Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; review and final acceptance remain pending.
+Status: Stage-B integrity/catalog contracts are code-approved and integrated at `b09cd28`.
+[Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; Stage-C/native and final acceptance remain pending.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
@@ -412,7 +408,8 @@ Acceptance:
 
 ### N2 — Shared component content and inline formatting
 
-Status: [standalone inline parser](checkpoints/N2-inline-parser.md) implemented; review/integration and component data pending.
+Status: standalone inline parser and component contracts are code-approved and integrated at `b09cd28`;
+Stage-C component data/renderer handoff and final acceptance remain pending.
 See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
 [tax/training table contracts](checkpoints/N2-table-contracts.md) and
 [practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
@@ -449,8 +446,8 @@ Status: planned. Depends on H1. Claude owns Japanese catalog edits.
 
 ### N4 — Platform-independent account coordinator
 
-Status: Stage-A portable coordinator extraction and web binding implemented by Codex, review/integration
-pending. See [the checkpoint and H5 session handoff](checkpoints/N4-account-coordinator.md).
+Status: Stage-A portable coordinator/web binding and foreign-cache fix are code-approved and integrated
+at `b09cd28`. See [the checkpoint and H5 session handoff](checkpoints/N4-account-coordinator.md).
 Hosted cross-device and combined H5 acceptance remain open. Supports Phase 15; does not block hosting.
 
 Implementation:
@@ -1126,3 +1123,20 @@ editorial approval, and a documentation status change cannot authorize external 
 - Documentation only; no implementation/content/translation/test/generated changes or new test/build run.
   Existing verification is attributed to exact checkpoints. Combined, real SQL, H5/hosted and Stage-C gates
   remain open; reviewed integration stays `e4fc1ff`. No main merge or activation.
+
+
+### Reviewed J1/N4/N1/N2 preparation integration — 2026-10-03
+
+- Claude approved all 26 queue checkpoints for code scope and queue `29b212c`; exact input integrated
+  conflict-free at `b09cd2833855018bcf81d08130c1a8a17e1b2959`. The source tree matches reviewed input.
+- [The receipt](checkpoints/J1-N4-N1-N2-integration-20261003.md) records limited documentation approval and remaining gates.
+  Combined isolated LF checks: **933 tests / 174 files**, full lint, post-build types, architecture (**709 modules**),
+  public/job fixture preflights, **415-page public-only build**, CMS exclusion and **42 browser scripts** passed.
+- Async guidance/source-registry injections failed as expected; bytes restored identically and clean check passed.
+  Format 9 / 28-file export and independent disk/reader verification reproduced the unchanged catalog digest.
+  Editorial **479 / 0 approvals**, article translation and glossary consistency checks passed without findings.
+- Command help and unset-job configuration failure passed without service construction. Existing dependencies,
+  no clean install, Playwright/manual UI, real SQL/hosted/Auth/fake-sender integration or email execution.
+- J1 backlog-resolution/local-target and N1 revision-ordering follow-ups are recorded. N4/H5 binding,
+  Stage-C handoff, Japanese component provenance/wording checks and final acceptance remain open.
+  New consolidated documentation awaits review. No main merge, ownership transfer or activation.

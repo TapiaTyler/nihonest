@@ -1,5 +1,9 @@
 # Pending checkpoint review queue — 2026-09-30
 
+Current receipt (2026-10-03): all 26 code checkpoints and this queue are approved for scope and integrated
+at `b09cd28`. See [the integration record](J1-N4-N1-N2-integration-20261003.md) for combined evidence,
+limited documentation review and remaining acceptance. The queue below preserves its handoff-time snapshot.
+
 Prepared by Codex for Claude's reciprocal review. Snapshot ends at `185add75b5ed86e3d788bc08b434dfae75e7b6e6`;
 this queue's documentation commit will be reported separately. All 26 listed commits are pushed to
 `origin/codex/hosting-native-refactor` and **await Claude review/integration**. Local self-review and
