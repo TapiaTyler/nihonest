@@ -94,3 +94,32 @@ jobs can reach Supabase) is a separate concern and is not part of this endpoint.
 
 `NIHONEST_DEV_ALLOWED_ORIGINS` (comma-separated hosts, for example a phone on the LAN) extends `next dev`'s allowed
 origins beyond `127.0.0.1`. It has no effect on production builds and is never a deployment setting.
+
+## Release checks and CI
+
+`npm run release:check` runs every release gate in order and stops at the first failure: the web configuration
+preflight (`--target production` by default; `--target local` for a rehearsal without production settings), lint,
+the unit/integration suite, architecture boundaries, the editorial and coverage audits, the localization audit,
+the article translation and glossary consistency checks, the production build, type checking (after the build,
+which generates route types), the CMS exclusion scan, and the browser bundle boundary. Stop any `next dev` server
+for the checkout first. No step sends email, calls a hosted service, or changes canonical content.
+
+`.github/workflows/ci.yml` runs on pushes and pull requests to `main`:
+
+- **Release checks:** `npm ci` on Node 24, then `npm run release:check` with a fixture `https://nihonest.invalid`
+  public origin, then a job-environment preflight with placeholder credentials and delivery disabled.
+- **Production browser tests:** a public-only build served by `next start` on loopback (no HTTPS origin, so
+  `upgrade-insecure-requests` does not break local asset loading), then the full Playwright suite. The account
+  lifecycle test stays skipped unless `RUN_SUPABASE_E2E=1` with a local Supabase stack.
+
+CI holds no hosted credentials: Supabase, email, and AWS settings are absent or placeholders, so accounts, jobs, and
+delivery stay disabled, and no database is created or changed.
+
+What automation does not prove (hosted gate):
+
+- the host deploys only after CI passes (enable the host's "wait for CI" setting for `main`);
+- production settings are set in the host, including `NEXT_PUBLIC_*` values at build time;
+- headers, HSTS, and caching through the production host and CDN; `/api/health` as the host's health check;
+- sign-in, callbacks, and account sync against the real Supabase project under the Content-Security-Policy;
+- reviewed migrations applied and backups configured; notification jobs remain unscheduled until J1's own gates;
+- real email stays disabled until an explicitly authorized opt-in test.

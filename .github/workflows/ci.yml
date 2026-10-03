@@ -1,0 +1,72 @@
+# Release gates for the production branch. CI never receives hosted credentials: Supabase, email, and AWS
+# settings are absent, so accounts, jobs, and email delivery stay disabled and nothing contacts a hosted
+# service or production data. Configure the host to deploy only after these checks pass.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  release-check:
+    name: Release checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Fixture public origin so the production preflight and build run as they would for a deployment.
+      # A reserved .invalid domain: build output from CI is never deployed.
+      NEXT_PUBLIC_SITE_URL: https://nihonest.invalid
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run release:check
+      - name: Job-environment preflight (dummy credentials, delivery disabled)
+        run: npm run config:check -- --deployment job --target production
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://project.invalid
+          SUPABASE_SECRET_KEY: ci-placeholder-not-a-secret
+
+  browser:
+    name: Production browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chrome
+      # Public-only build without an HTTPS origin: the test server is plain http on loopback, where
+      # upgrade-insecure-requests would break asset loading.
+      - run: npx next build
+      - name: Run Playwright against next start
+        run: |
+          npx next start -p 3000 -H 127.0.0.1 &
+          for attempt in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/api/health && break; sleep 1; done
+          PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
