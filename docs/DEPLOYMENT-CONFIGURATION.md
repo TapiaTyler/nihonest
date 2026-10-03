@@ -59,3 +59,38 @@ the sitemap, or email links.
 
 Public-only local development needs no settings. Hosted checks that this preflight cannot prove — callback URLs,
 SES identity verification, AWS credentials, and scheduler setup — belong to the hosted integration gate.
+
+## Security headers
+
+`next.config.ts` sends the headers built in [`src/lib/config/security-headers.ts`](../src/lib/config/security-headers.ts)
+on every response:
+
+- **Content-Security-Policy.** Same-origin by default; `object-src`, `frame-src`, and `frame-ancestors` are `'none'`;
+  `base-uri` and `form-action` are `'self'`. `img-src` adds the origins in `images.remotePatterns` (official document
+  images load directly). `connect-src` adds the Supabase origin only when accounts are configured. Pages are prebuilt,
+  so per-request nonces are not available (the installed Next.js CSP guide: nonces require dynamic rendering); scripts
+  and styles therefore allow `'unsafe-inline'` for Next's hydration payload. There is no `'unsafe-eval'` in production,
+  and the browser runs Zod in `jitless` mode so its eval probe does not report a violation. The site renders no raw
+  HTML (`dangerouslySetInnerHTML` is unused).
+- `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`,
+  `Cross-Origin-Opener-Policy: same-origin` (sign-in uses redirects, not popups), and a `Permissions-Policy` that
+  disables camera, microphone, geolocation, payment, USB, and topics (pronunciation uses on-device speech synthesis).
+- **Transport.** Only when `NEXT_PUBLIC_SITE_URL` is HTTPS: `Strict-Transport-Security: max-age=31536000` (no
+  `includeSubDomains` or `preload` until the production host is settled) and `upgrade-insecure-requests`. Headers are
+  fixed at build time, like the other `NEXT_PUBLIC_*` values.
+- `X-Powered-By` is not sent.
+
+Hosted check still required: confirm the headers through the production host and CDN, and sign-in against the real
+Supabase origin under the policy.
+
+## Health check
+
+`GET /api/health` (and `HEAD`) returns `{"status":"ok"}` with `Cache-Control: no-store`. It is **process liveness**
+only: it reads no settings, calls no database or provider, and is excluded from the session proxy, so a Supabase or
+email outage never marks the public knowledgebase unhealthy. **Dependency readiness** (for example whether accounts or
+jobs can reach Supabase) is a separate concern and is not part of this endpoint.
+
+## Local development only
+
+`NIHONEST_DEV_ALLOWED_ORIGINS` (comma-separated hosts, for example a phone on the LAN) extends `next dev`'s allowed
+origins beyond `127.0.0.1`. It has no effect on production builds and is never a deployment setting.
