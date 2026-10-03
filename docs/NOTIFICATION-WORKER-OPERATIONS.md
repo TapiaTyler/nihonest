@@ -1,8 +1,9 @@
 # Notification worker operations
 
 This is the operating contract for J1's one-pass command. It is **not an activation instruction**: the
-database-authority, recipient, lease-budget and command checkpoints still need reciprocal review and
-integration, and the real isolated Supabase/PostgreSQL concurrency and pgTAP gates remain open. No schedule,
+database-authority, recipient, lease-budget and command checkpoints are code-reviewed and integrated
+([receipt](checkpoints/J1-N4-N1-N2-integration-20261003.md)), while real isolated Supabase/PostgreSQL,
+concurrency, pgTAP and pre-scheduling operator gates remain open. No schedule,
 hosted service or real email has been activated by these commits.
 
 [The acceptance preparation record](checkpoints/J1-acceptance-preparation.md) lists the outstanding
@@ -57,3 +58,8 @@ uncertain send with provider records before manually requeuing; automatic resets
 For a future rollback, stop the scheduler first and set `EMAIL_DELIVERY_ENABLED=false` for later deliberate
 job runs. Disabling delivery leaves pending rows untouched. It does not undo previously accepted sends or
 change existing delivery state. Database rollback/requeue requires a separate, reviewed recovery procedure.
+
+Before scheduling, define a reviewed acknowledge/resolve procedure or distinct exit behavior for exhausted
+backlog: its nonzero aggregate counts currently make every later pass exit 1 until the rows are resolved.
+This contract authorizes no automatic reset/requeue/delete. The command remains production-targeted; local
+acceptance needs an explicit local service target or separately reviewed harness, preserving production checks.
