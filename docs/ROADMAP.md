@@ -1623,3 +1623,20 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - J1 backlog-resolution/local-target and N1 revision-ordering follow-ups are recorded. N4/H5 binding,
   Stage-C handoff, Japanese component provenance/wording checks and final acceptance remain open.
   New consolidated documentation awaits review. No main merge, ownership transfer or activation.
+
+
+### Stale Playwright repair review/integration — 2026-10-03
+
+- Codex approved exact Claude test-only `888c7a0` against parent `93e44b4`, no blockers, and cherry-picked
+  it as `ffdeef634e4cf14c91b1ef75052b104de217bb21` after `29fe06f`. Only two e2e specs changed.
+  [The review record](checkpoints/Playwright-stale-spec-review-20261003.md) preserves the reachable-scenario change and baseline attribution.
+- Exact-commit production build **415 pages**; full Chromium Playwright **32 passed / 1 skipped**. Combined
+  production run also **32 passed / 1 skipped**, default eight workers. Account/Supabase lifecycle remained
+  opt-in/skipped. Types, targeted lint and whitespace passed; both isolated checkouts remained clean.
+- Combined run reused the validated `b09cd28` build after verifying source equality outside docs/e2e.
+  No ERR_ABORTED in either run; no claim of repeated stress verification or Codex's own pre-repair baseline.
+  Existing copied dependencies; no full unit/lint/architecture/export/audit gate repeated for test-only changes.
+- Claude merged exact `29fe06f` as `f7c21a0` and approved its documentation delta. Earlier unread-record
+  limits remain; this new documentation awaits review. Temporary loopback servers stopped; no hosted calls.
+- J1 real-database/operator, N4/H5 hosted/binding and N1/N2 Stage-C/Japanese provenance gates remain open.
+  Next Codex checkpoint: read-only revision-key ordering test. Claude retains H4/H5/H3b. Main/activation unchanged.
