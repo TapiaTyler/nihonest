@@ -2,12 +2,12 @@ import "server-only";
 import { z } from "zod";
 
 /** Bounds the request and response body for both PostgREST and the administrative Auth API. */
-export function createWorkerDatabaseFetch(fetcher: typeof fetch, timeoutMs = 10_000): typeof fetch {
+export function createWorkerDatabaseFetch(fetcher: typeof fetch, timeoutMs = 10_000, operationSignal?: AbortSignal): typeof fetch {
   z.number().int().min(1).max(30_000).parse(timeoutMs);
   return async (input, init) => {
     const controller = new AbortController();
     const originalSignal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
-    const signal = originalSignal ? AbortSignal.any([controller.signal, originalSignal]) : controller.signal;
+    const signal = AbortSignal.any([controller.signal, ...(originalSignal ? [originalSignal] : []), ...(operationSignal ? [operationSignal] : [])]);
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
     try {

@@ -10,6 +10,7 @@
     "cms": "node --require ./tools/cms/tsx-bootstrap.cjs --import tsx scripts/cms.ts",
     "cms:check-build": "tsx scripts/check-cms-build-exclusion.ts",
     "cms:a11y": "node --require ./tools/cms/tsx-bootstrap.cjs --import tsx scripts/cms-a11y.ts",
+    "notification:once": "node --import ./scripts/notification-worker-register.mjs --import tsx scripts/notification-worker.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
