@@ -5,6 +5,20 @@ import { describe, expect, it, vi } from "vitest";
 import { createWorkerDatabaseFetch } from "./worker-database-fetch";
 
 describe("worker database request bounds", () => {
+  it("propagates the enclosing claim budget through the native fetch transport", async () => {
+    const parent = new AbortController();
+    let requestSignal: AbortSignal | undefined;
+    const fetcher = vi.fn<typeof fetch>(async (_input, init) => {
+      requestSignal = init?.signal ?? undefined;
+      return new Promise<Response>((_resolve, reject) => requestSignal?.addEventListener("abort", () => reject(new Error("private aborted request"))));
+    });
+    const request = createWorkerDatabaseFetch(fetcher, 10_000, parent.signal)("https://example.test");
+    await Promise.resolve();
+    parent.abort();
+    await expect(request).rejects.toThrow("The worker database request could not complete.");
+    expect(requestSignal?.aborted).toBe(true);
+  });
+
   it("aborts a stalled native response body after headers have arrived", async () => {
     const server = createServer((_request, response) => {
       response.writeHead(200, { "Content-Type": "application/json" });

@@ -327,6 +327,24 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      read_notification_worker_time: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
+      inspect_email_notification_delivery_backlog: {
+        Args: { p_max_attempts?: number };
+        Returns: Json;
+      };
+      finalize_email_notification_delivery_now: {
+        Args: {
+          p_delivery_id: string;
+          p_claim_token: string;
+          p_state: "sent" | "failed" | "suppressed";
+          p_provider_message_id?: string | null;
+          p_error?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["notification_deliveries"]["Row"];
+      };
       generate_due_reminder_events: {
         Args: { p_now?: string; p_limit?: number };
         Returns: number;

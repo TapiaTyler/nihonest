@@ -1,11 +1,17 @@
 # Hosting and native readiness refactor roadmap
 
-Status: implementation in progress, 2026-09-28. H3a, J1 preparation/hardening, CMS LF/stability fixes,
+Status: implementation in progress, 2026-09-30. H3a, J1 preparation/hardening, CMS LF/stability fixes,
 compile-cache cleanup, H1 (including marker fix `1d46b0d`), H2 `581ed1e`, and scope-limited J1 adapter
 `9dee0a0` are reviewed/integrated. Combined source `4f41ec5` is validated. Claude approved prior
 consolidated documentation through `b494ed0`; the `e374bbe` and subsequent consolidated records await
-review. J1 remains incomplete with no runnable command; H4, H5 and H3b have not started. Wider hosting
-acceptance and activation remain pending. This replaces the completed structural-refactor working notes.
+review. J1 implementation and acceptance/output follow-ups, N4 extraction and foreign-cache fix,
+N1 Stage-B catalog/integrity contracts, and N2 standalone parser/component contracts are implemented on
+the working branch and await review/integration. The [pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md)
+lists exact hashes, dependencies and deferred documentation. Explicit N1 catalog families are represented;
+Stage-C component payloads/renderer wiring and remaining native contracts are pending.
+J1/N1/N2/N4 acceptance remains open;
+H4, H5 and H3b have not started. Wider hosting acceptance and activation remain pending. This replaces
+the completed structural-refactor working notes.
 
 ## Purpose
 
@@ -308,12 +314,17 @@ services or declaring the hosted gate complete.
 
 Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
 J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
-The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. The command,
-final configuration wiring, isolated SQL integration tests, and final acceptance remain pending. Configuration wiring
-is unblocked by the validated H3a handoff `6eb2fa6` in both working branches (see the handoff and integration rules).
+The injectable runner, fixtures and scope-limited adapter are integrated into the integration branch. New command
+and configuration wiring are implemented only on the working branch; review/integration, isolated SQL integration
+tests and final acceptance remain pending. Configuration wiring is unblocked by the validated H3a handoff
+`6eb2fa6` in both working branches (see the handoff and integration rules).
 Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
-it has no live command consumer and does not resolve finalization clock authority. See
+that reviewed adapter alone has no command consumer and does not resolve finalization clock authority. See
 [the mapping review and acceptance notes](checkpoints/J1-store-mapping.md#claude-review-and-acceptance-notes--2026-09-28).
+Codex's subsequent [database-authority checkpoint](checkpoints/J1-database-authority.md), dated 2026-09-29,
+implements store-provided database time, a service-only finalizer and aggregate exhausted-claim inspection
+on the working branch. The recipient (`904856e`), lease-budget (`4b4bb37`) and command (`7fdea85`)
+checkpoints follow it there. All four await review/integration and real PostgreSQL 17 acceptance.
 
 Implementation:
 
@@ -363,7 +374,20 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 ### N1 — Complete the portable content bundle
 
-Status: planned. Coordinate translation selectors with Claude.
+Status: integrity validation and the catalog exports linked below are implemented, review/integration
+pending. [Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; review and final acceptance remain pending.
+See [integrity preparation](checkpoints/N1-bundle-integrity.md)
+and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
+See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
+Structured English guidance remains in status records; [its overlay export](checkpoints/N1-status-guidance-bundle.md)
+preserves canonical research/approval metadata.
+[Localized discovery export](checkpoints/N1-discovery-bundle.md) preserves journey relationships and route choices.
+[Annotated-document export](checkpoints/N1-annotated-documents-bundle.md) preserves versions, attribution and complete-overlay fallback.
+[Activity cross-reference export](checkpoints/N1-activities-bundle.md) preserves rule selection and research/approval metadata.
+[Administrative geography export](checkpoints/N1-geography-bundle.md) preserves names, hierarchy, provenance and legacy IDs.
+[Article provenance](checkpoints/N1-article-provenance.md) preserves complete artifacts and binds them to portable translations.
+[Catalog relationship acceptance](checkpoints/N1-catalog-relationships.md) reuses article/FAQ/glossary domain rules.
+Coordinate translation selectors with Claude.
 
 Stage B delivers catalog coverage only; Stage C adds component payloads. Record partial delivery separately
 and complete final acceptance after integrating Stage C.
@@ -388,7 +412,12 @@ Acceptance:
 
 ### N2 — Shared component content and inline formatting
 
-Status: planned. Suggested split: Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
+Status: [standalone inline parser](checkpoints/N2-inline-parser.md) implemented; review/integration and component data pending.
+See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
+[tax/training table contracts](checkpoints/N2-table-contracts.md) and
+[practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
+The [combined review and Stage-C handoff](checkpoints/N2-stage-c-handoff.md) records prerequisites and proposed sequencing.
+Codex owns portable parsing/data contracts; Claude reviews Japanese rendering
 and owns translation catalog edits. Each shared file has one active owner.
 
 Stage B delivers parser/data contracts only; Stage C wires renderers and component content. Final acceptance
@@ -420,7 +449,9 @@ Status: planned. Depends on H1. Claude owns Japanese catalog edits.
 
 ### N4 — Platform-independent account coordinator
 
-Status: planned. Suggested owner: Codex; reviewer: Claude. Supports Phase 15; does not block hosting.
+Status: Stage-A portable coordinator extraction and web binding implemented by Codex, review/integration
+pending. See [the checkpoint and H5 session handoff](checkpoints/N4-account-coordinator.md).
+Hosted cross-device and combined H5 acceptance remain open. Supports Phase 15; does not block hosting.
 
 Implementation:
 
@@ -686,3 +717,412 @@ editorial approval, and a documentation status change cannot authorize external 
   continue J1 and Stage-A N4, holding new implementation checkpoints for Claude's review. J2 still needs an
   execution-location decision. Stale browser tests, artificial CMS stress stalls, clean-install/hosted checks
   and wider hosting gates remain open. Production activation none; no main merge.
+
+### J1 database-authority preparation — 2026-09-29
+
+- Claude reports merging exact `e4fc1ff` into `claude/hosting-readiness` as `93e44b4`, conflict-free and
+  pushed. Both working branches now carry the validated handoff. Claude confirmed the five-file documentation-only
+  delta after `4f41ec5`; line-by-line documentation review since `b494ed0` remains deferred until reset.
+- Codex's next bounded working-branch checkpoint adds a new service-only clock/finalizer/inspection migration,
+  its RPC type entries and pgTAP fixtures, and updates only owned notification runner/adapter files and tests.
+  The runner requires asynchronous store time, adds conservative monotonic transport age, preserves clock
+  latching, and reports aggregate exhausted failures/expired fifth claims with exit 1. The database finalizer
+  reads current time after locking/rechecking the token and computes failure backoff from the locked attempt.
+  [The checkpoint record](checkpoints/J1-database-authority.md) supplies the exact contract, commands and limits.
+- Working-branch checks: 61 focused tests / three files, full **621 tests / 154 files** with four workers,
+  TypeScript, targeted lint, architecture (691 modules), and whitespace passed. Temporary in-memory PGlite
+  0.5.8 / PostgreSQL 18.3 applied the real migrations and passed 26 SQL assertions with fixture Auth roles;
+  repository dependencies are unchanged. This is a single-connection smoke, not Supabase/PostgreSQL 17
+  concurrency acceptance. The new 24-assertion pgTAP fixture was not run; Docker's Linux engine remains
+  unavailable. No daemon/stack was started or reset. Build/browser/editorial gates were not repeated for
+  the still-unconsumed adapter; the reviewed integration's results remain separate.
+- Review and integration wait for Claude; integration branch remains at `e4fc1ff`. Real concurrency/lock-wait
+  and SQL/RLS acceptance, recipient suppression/confirmation policy, exhaustive event mapping, standalone
+  command/config wiring, provider/whole-lease budgets and operating docs remain pending. No main merge,
+  translation edit, hosted service, recurring schedule or real email.
+
+### J1 recipient-policy preparation — 2026-09-29
+
+- The database-authority working checkpoint is pushed as `6aa8f1c`, awaiting Claude's review. The next
+  [bounded checkpoint](checkpoints/J1-recipient-policy.md) replaces the context's address string with a strict
+  eligible/suppressed union. Delivery requires a valid current Auth email and `email_confirmed_at`; general
+  or phone confirmation, pending addresses and event payload addresses cannot substitute. Missing, invalid
+  or unconfirmed email is terminally suppressed with the original claim token; later confirmation does not
+  revive old suppressed deliveries. Auth lookup/ownership failures remain retryable context failures.
+- Suppression still validates event identity, preferences and lease time. Ineligible critical recipients skip
+  relevance reads; eligible event targets use an exhaustive switch. No command or app consumer is added.
+- Checks passed: **84 focused tests / four files**, full **644 tests / 155 files** with four workers,
+  TypeScript, targeted lint, architecture (**692 modules**) and whitespace. Existing dependencies and fixture
+  Auth/provider/database responses were used; no new SQL/build/browser/editorial checks are claimed.
+- Both new J1 checkpoints and consolidated documentation await Claude after reset. Integration remains
+  `e4fc1ff`; provider/whole-lease budgets, standalone command/config wiring, real SQL concurrency/lock-wait
+  and pgTAP acceptance, and operator docs remain open. No main merge, hosted activation or real email.
+
+### J1 provider and claim-lease budget preparation — 2026-09-29
+
+- After recipient-policy `904856e` (pushed, review pending), Codex added a separate
+  [I/O budget checkpoint](checkpoints/J1-lease-io-budget.md). Store and provider operations gain bounded
+  cancellable deadlines. A monotonic claim budget starts before claiming, shortens to database expiry,
+  and reserves time for send and finalization. A lease too short for configured worst-case I/O fails
+  before database work; near-expiry claims remain for recovery without a new send/finalizer call.
+- The configured SES adapter takes explicit email config, makes one SDK attempt with a bounded request,
+  propagates abort, and exposes resource disposal to the future command. A provider timeout can mean
+  uncertain acceptance and a duplicate on recovery; the database remains final expiry authority.
+- Checks: **86 focused tests / six files**, full **656 tests / 157 files** with four workers, TypeScript,
+  targeted lint, architecture (**693 modules**) and whitespace passed. All remote operations were fixtures.
+  SQL/build/browser/editorial gates were not repeated. No command/activation was added.
+- `6aa8f1c`, `904856e`, this checkpoint and consolidated docs await Claude's review after reset. Integration
+  remains `e4fc1ff`; command/config wiring, real PostgreSQL 17 concurrency/pgTAP and operator docs remain.
+
+### J1 standalone command preparation — 2026-09-29
+
+- Following pushed lease-budget checkpoint `4b4bb37` (review pending), Codex added the
+  [one-pass command checkpoint](checkpoints/J1-command.md) and
+  [operating record](NOTIFICATION-WORKER-OPERATIONS.md). The command validates H3a production job settings
+  before constructing clients, aligns runner/SES deadlines, supports enabled/disabled email correctly,
+  disposes resources and emits only aggregate JSON/exit status. A scoped Node hook handles `server-only`
+  outside Next.js. Exactly one `package.json` script line is added; scripts are not reordered.
+- Fixture command tests (4), full **660 tests / 158 files**, TypeScript, targeted lint, architecture
+  (**694 modules**), whitespace and `npm run notification:once -- --help` passed. No real database,
+  provider send, hosted service or schedule was invoked. SQL/build/browser/editorial gates were not repeated.
+- This and the three prior J1 working checkpoints plus consolidated documentation await Claude. Integration
+  remains `e4fc1ff`. Real isolated PostgreSQL 17 SQL concurrency/lock-wait/pgTAP and combined acceptance
+  remain before any hosted activation or main merge.
+
+### N4 Stage-A coordinator preparation — 2026-09-29
+
+- Codex extracted a portable serial coordinator with injected snapshots/storage ownership, sync transport
+  and status publication, then wired the web provider to it. Queued edits, retry, account revision checks,
+  sign-out and disposal move outside React. Existing storage keys, merge rules and RPC payloads remain.
+  [The record](checkpoints/N4-account-coordinator.md) specifies contracts and the H5 session handoff.
+- Added coverage for stale initial identity, stale errors after sign-out, cleanup, unchanged token refresh
+  and A -> B -> A transitions. Focused **20 tests / three files**, full **675 tests / 159 files**, types,
+  targeted lint, architecture (**696 modules**) and whitespace passed. Public-only build generated **415
+  pages**; CMS exclusion and browser bundle checks (**42 scripts**) passed. Existing dependencies were used.
+- This working checkpoint awaits Claude, with no branch-head integration across the pending J1 ancestors.
+  Integration remains `e4fc1ff`. Hosted cross-device and combined H5 session/refresh/transport binding remain
+  unvalidated. No Claude-owned configuration/session/rendering/translation file or hosted service was changed.
+
+### N1 Stage-B bundle integrity preparation — 2026-09-29
+
+- After pending N4 checkpoint `9061031`, Codex added [existing-file integrity validation](checkpoints/N1-bundle-integrity.md).
+  Eight explicit format-1 contracts reuse domain schemas. The exporter validates payloads and the complete
+  bundle; a portable verifier accepts only complete supported files with valid records, unique IDs/paths,
+  correct UTF-8 checksums, record counts and catalog version. Canonical JSON and version inputs remain.
+- Focused **21 tests / two files**, full **693 tests / 160 files** with four workers, TypeScript, full lint,
+  architecture (**697 modules**) and whitespace passed. Existing dependencies were used; build/browser,
+  SQL, translation audit and native installation were not repeated.
+- This is preparation only: expanded catalog/translation coverage, cross-catalog references and Stage-C
+  component payloads remain pending. Review/integration awaits Claude; integration remains `e4fc1ff`.
+  No translation artifacts, renderers, configuration, main or hosted activation changed.
+
+- Follow-up self-review found an identity-field precedence gap: an extra top-level `id` could hide duplicate
+  article/translation IDs. Duplicate checking now uses each validated file kind's canonical identity.
+  Four regression cases pass; focused **25 tests / two files**, types and targeted lint passed. Review pending.
+
+### N1 Stage-B first catalog expansion — 2026-09-29
+
+- Following pushed identity fix `fb5f999`, Codex added [Japanese FAQ/glossary/status artifact export](checkpoints/N1-catalog-translations.md).
+  Existing read-only availability/source-field rules select current registered artifacts; full provenance and
+  review state survive serialization. Missing/stale overlays leave English fallback. New per-kind schemas
+  and portable target/source-revision validation protect the three new payloads.
+- The mandatory file set changes format **1 to 2**, with eleven files. This is an explicit incompatible
+  reader contract; older consumers must reject it. Existing eight file representations remain unchanged.
+  Observed translations: **116 FAQ, 236 glossary, 30 statuses**. Export and independent disk acceptance passed.
+- Focused **38 tests / three files**, full **710 tests / 161 files** with four workers, types, full lint,
+  architecture (**699 modules**) and whitespace passed. Existing dependencies used; no production
+  build/browser/SQL/translation audit repeated. No Japanese catalog/module, renderer or configuration edit.
+- Remaining catalog families, broader relationships/article provenance and Stage-C component payloads keep
+  N1 incomplete. Exact checkpoints await Claude; integration remains `e4fc1ff`. Main and activation unchanged.
+
+### N1 Stage-B local guidance expansion — 2026-09-29
+
+- Following pushed first expansion `5d3263b`, Codex added [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
+  Canonical supplements, supported geography and lookup prompts join current Japanese artifacts with full
+  provenance. The existing source revision rules and per-field supplement/whole-entry advice fallback remain.
+- Consumer acceptance checks local article/source/geography relationships, selectable municipalities,
+  geography parents, overlay target/revisions, known field keys and complete general advice. Missing
+  supplement fields remain eligible for English fallback. No canonical content or translation module changed.
+- Five mandatory files bump format **2 to 3**, sixteen files total. Observed counts: **784 supplements**,
+  **159 supported geographies**, **7 general advice**, and **784/7 Japanese overlays**. Previous eleven file
+  checksums remain unchanged. Export and independent disk acceptance passed.
+- Focused **53 tests / four files**, full **725 tests / 162 files** with four workers, types, full lint,
+  architecture (**700 modules**) and whitespace passed using existing dependencies. No production
+  build/browser/SQL/translation audit or research fetch repeated. Other N1 families and Stage-C payloads
+  remain pending; exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B structured status guidance — 2026-09-29
+
+- Following pushed local guidance expansion `9638a9e`, Codex added [structured status overlay export](checkpoints/N1-status-guidance-bundle.md).
+  English guidance remains inside complete status records. Current Japanese artifacts use existing reader-path
+  extraction/revision rules, retain full provenance and per-path English fallback, and remain distinct from
+  summary artifacts despite the shared historical kind. No canonical/Japanese/shared translation module edit.
+- Portable acceptance rejects unstructured/stale targets and unsupported paths, including assertion metadata.
+  It also checks direct and structured status source/article/glossary/transition references with the existing
+  collection validator. Tests show reader-text localization preserves research/approval/authorization metadata.
+- One mandatory file bumps format **3 to 4**, seventeen files total and **30** observed guidance artifacts.
+  Previous sixteen payload checksums remain unchanged. Export and independent disk verification passed.
+  Focused **72 tests / five files**, full **744 tests / 163 files** with four workers, types, full lint,
+  architecture (**701 modules**) and whitespace passed using existing dependencies. No production
+  build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain pending;
+  exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B localized discovery — 2026-09-29
+
+- Following pushed structured-status checkpoint `14cf823`, Codex added [article-group/journey artifact export](checkpoints/N1-discovery-bundle.md).
+  Complete current Japanese artifacts preserve provenance; source inputs match existing catalog revision
+  rules. Strict route/phase/condition array contracts reject malformed/duplicate IDs and relationship
+  properties. Partial nested translations retain English via the existing portable journey localizer.
+- Consumer acceptance validates discovery article/group/route relationships and nested translation targets.
+  Tests confirm route choices, canonical relationships and current web presentation parity. No canonical,
+  Japanese/shared translation, renderer or configuration edit. Two mandatory files bump format **4 to 5**,
+  nineteen files total, with **15 group/20 journey** artifacts observed. Prior seventeen checksums unchanged.
+- Focused **90 tests / six files**, full **762 tests / 164 files** with four workers, types, full lint,
+  architecture (**702 modules**), whitespace, export and disk verification passed using existing dependencies.
+  No production build/browser/SQL/translation audit repeated. Other N1 families and Stage-C payloads remain
+  pending; exact checkpoints await Claude. Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B annotated documents — 2026-09-29
+
+- Following pushed discovery checkpoint `7db7fb3`, Codex added [annotated-document catalog/overlay export](checkpoints/N1-annotated-documents-bundle.md).
+  Complete families preserve versions, jurisdiction variants, lifecycle/review dates, fictional notices and
+  visual attribution. Current complete Japanese artifacts preserve provenance and the viewer's whole-family
+  English fallback. No canonical/Japanese/shared translation, renderer or configuration edits.
+- Acceptance checks article/glossary/source/geography relationships, current-version rules and visual
+  source/rights membership, plus unambiguous section/visual paths and ordered validity dates. Unsupported
+  or incomplete overlay fields fail. Assets remain external URL metadata; no download or rights approval.
+- Two mandatory files bump format **5 to 6**, twenty-one files total, with **6 families/6 overlays** observed.
+  Prior nineteen payload checksums remain unchanged. Focused **107 tests / seven files**, full **779 tests /
+  165 files** with four workers, types, full lint, architecture (**703 modules**), whitespace, export and disk
+  verification passed using existing dependencies. No production build/browser/SQL/translation audit repeated.
+  Other N1 families and Stage-C payloads remain pending; exact checkpoints await Claude. Integration remains
+  `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B activity cross-references — 2026-09-29
+
+- Following pushed document checkpoint `2f2eb0a`, Codex added [activity catalog/overlay export](checkpoints/N1-activities-bundle.md).
+  Canonical guided/handoff activities preserve questions, rule layers/conditions, target links and source/
+  approval metadata. Current Japanese artifacts retain provenance and per-path English fallback. Existing
+  text extraction/application contracts remain read-only; no canonical/Japanese/shared translation edit.
+- Acceptance checks article/status/journey/source references, question/choice conditions, unambiguous IDs
+  and known translation paths. Tests exercise every registered answer combination before/after localization
+  and preserve rule selection, approval state and target URLs. No renderer/configuration edit or new eligibility engine.
+- Two mandatory files bump format **6 to 7**, twenty-three files total, with **8 activities/8 overlays**
+  observed. Prior twenty-one payload checksums remain unchanged. Focused **126 tests / eight files**, full
+  **798 tests / 166 files** with four workers, types, full lint, architecture (**704 modules**), whitespace,
+  export and disk verification passed using existing dependencies. No production build/browser/SQL/translation
+  audit repeated. Remaining N1 coverage and Stage-C payloads stay pending; exact checkpoints await Claude.
+  Integration remains `e4fc1ff`; main/activation unchanged.
+
+### N1 Stage-B administrative geography — 2026-09-30
+
+- Following pushed activity checkpoint `d443e9d`, Codex added [administrative geography export](checkpoints/N1-geography-bundle.md).
+- Preserves 194 registered places, 48 dated source records and four saved-ID aliases unchanged. Acceptance
+  checks hierarchy/check digits, source references/snapshot counts, alias targets/collisions and supported
+  guidance identity/type/parent parity. Counts are observations, not pinned acceptance requirements.
+- Format 7 → 8 adds three mandatory files (26 total); prior twenty-three payload checksums are unchanged.
+- Focused 105 tests / four files, types, full lint, architecture (705 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **808 tests / 167 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL, research fetch or translation audit repeated.
+- Article provenance, remaining relationships and Stage-C payloads remain pending. Exact checkpoints and
+  consolidated docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
+### N1 Stage-B article provenance — 2026-09-30
+
+- Following pushed geography checkpoint `b276cf4`, Codex added [article provenance](checkpoints/N1-article-provenance.md).
+- Exports canonical whole-MDX revisions and complete current active Japanese artifacts; compact translations
+  use the same selection. Reader checks exact article coverage and artifact/portable target, revision, review,
+  title/description/body agreement. Canonical sources and translation artifacts are unchanged.
+- Source revisions are producer declarations; portable blocks cannot reconstruct original MDX. Checksums
+  establish integrity, not publisher authenticity. Existing parser/component gates remain open.
+- Format 8 → 9 adds two mandatory files (28 total); prior twenty-six payload checksums are unchanged.
+- Focused 115 tests / five files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **824 tests / 168 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Remaining relationships and Stage-C payloads remain pending. Exact checkpoints and consolidated docs
+  await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
+### N1 Stage-B article/FAQ/glossary relationships — 2026-09-30
+
+- Following pushed provenance checkpoint `13344ab`, Codex added [catalog relationship acceptance](checkpoints/N1-catalog-relationships.md).
+- Reader reuses existing article, glossary and FAQ collection validators against candidate bundle records.
+  Checks cover known source/content targets, article/glossary self-links, unique slugs and all six FAQ
+  target families. No canonical or translation edits and no added platform dependency.
+- Format remains 9 / 28 files; the prior catalog version and all payload checksums are unchanged.
+- Focused 119 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **843 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Stage-B coverage inventory/review and Stage-C payloads remain pending. Exact checkpoints and consolidated
+  docs await Claude; reviewed integration remains `e4fc1ff`. Main/activation unchanged.
+
+### N1 Stage-B inventory and translation field contracts — 2026-09-30
+
+- Following pushed relationship checkpoint `a0bd248`, Codex recorded [the Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md).
+  All explicit N1 catalog families are represented; exact review/integration and final acceptance remain open.
+- Audit found FAQ/glossary/status-summary translation field contracts allowed undeclared fields. Strict
+  per-kind validation now rejects them, with six direct/whole-bundle cases using a valid extra field name.
+- Format remains 9 / 28 files, with unchanged catalog version/payload checksums and no canonical or translation
+  catalog edits. Component payloads/renderer alignment remain Stage C; messages remain Claude/N3-owned.
+- Personalized roadmap rules are not exported; native offline rule ownership/payload parity remains an
+  explicit open contract item. The inventory does not claim a complete native offline application.
+- Focused 117 tests / three files, types, full lint, architecture (706 modules), whitespace, export and
+  independent disk verification passed. Full four-worker suite: **849 tests / 169 files**, all passed. Existing dependencies;
+  no clean install, production build/browser, SQL or translation audit repeated.
+- Next independent work is N2 standalone inline parser/data contracts. Reviewed integration remains
+  `e4fc1ff`; exact checkpoints/docs await Claude. Main/activation unchanged.
+
+### N2 Stage-B standalone inline parser — 2026-09-30
+
+- Following pushed N1 inventory `2c6a95d`, Codex added [a portable inline display parser](checkpoints/N2-inline-parser.md).
+- Supports text, emphasis/bold nesting, escaped punctuation, code runs and formatted-label links with
+  balanced destinations. Unsupported/malformed markup remains protected raw spans with offsets/reasons;
+  bounded inputs fail loudly. No renderer/export/CMS/translation changes or production consumer.
+- Real current corpus: 6,187 text units with exact source reconstruction and serializable trees. The only
+  protected spans observed are 30 `[ ]` checklist blanks (15 per locale); literal/protected renderer handling
+  remains an explicit integration decision. Counts are observations, not pinned acceptance requirements.
+- Focused 36 tests / three files, types, full lint, architecture (707 modules) and whitespace passed.
+  Full four-worker suite: **880 tests / 171 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL, translation audit or hosted execution repeated. Format remains 9 / 28 files.
+- N2 renderer/export alignment, component contracts/payloads, Stage-C ownership handoff and N1/N2 final
+  acceptance remain pending. Reviewed integration remains `e4fc1ff`; exact checkpoints/docs await Claude.
+  Main/activation unchanged.
+
+### N2 inline edge-case follow-up — 2026-09-30
+
+- Following pushed standalone parser `ca87cf6`, Codex fixed [confirmed delimiter and repeated-scan gaps](checkpoints/N2-inline-hardening.md).
+  Intraword underscores no longer close outer formatting early, including supplementary Unicode letters;
+  excessive closing runs remain protected. Unclosed angle/brace syntax protects the remaining raw input
+  once rather than repeatedly scanning. Supported nesting/API and production consumers are unchanged.
+- Focused 47 tests / three files, types, full lint, architecture (707 modules) and whitespace passed. Full
+  four-worker suite: **891 tests / 171 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- Read-only component inventory records tax row pairs, training row suffixes/links and practical-basics
+  labels/links for Stage-B contract preparation. No component copy extraction, renderer or translation edits.
+- Existing dependencies; no generation/build/browser, clean install, SQL or translation audit repeated.
+  N1/N2 acceptance and Stage-C payload/renderer handoff remain open. Reviewed integration stays `e4fc1ff`;
+  exact checkpoints/docs await Claude. Main/activation unchanged.
+
+### N2 Stage-B tax/training table contracts — 2026-09-30
+
+- Following pushed inline hardening `802c618`, Codex added [two portable table contracts](checkpoints/N2-table-contracts.md).
+  Strict bilingual caption/header/row shapes preserve tax pairs and training activity/route/suffix tuples;
+  suffixes remain required even when empty. Training hrefs validate against canonical article slugs.
+- Test-only TypeScript literal inspection reads existing component data without executing JSX or writing
+  content files. Actual bilingual wording/order/captions/headers/suffixes/links survive validation unchanged.
+  No renderer, canonical data, translation catalog or bundle edit; format remains 9 / 28 files.
+- Focused 56 tests / three files, types, full lint, architecture (708 modules) and whitespace passed. Full
+  four-worker suite: **905 tests / 172 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL or translation audit repeated.
+- Practical-basics contract, content extraction, Stage-C renderer/payload wiring and Japanese final checks
+  remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact checkpoints/docs
+  await Claude. Main/activation unchanged.
+
+### N2 Stage-B practical-basics contract — 2026-09-30
+
+- Following pushed table contracts `04814ca`, Codex added [practical-basics rich-text validation](checkpoints/N2-practical-basics-contract.md).
+  Strict ordered bilingual paragraphs preserve literal text, leading strong labels and article links.
+  Target order agrees across locales; hrefs resolve by slug. Proposed paragraph IDs require Stage-C review.
+- Test-only TypeScript literal inspection reads existing JSX without executing it or writing content files.
+  Current bilingual paragraph/label/link wording and order survive unchanged. No canonical/translation,
+  renderer or bundle edit; format remains 9 / 28 files and no production consumer is wired.
+- Focused 66 tests / three files, types, full lint, architecture (709 modules) and whitespace passed. Full
+  four-worker suite: **916 tests / 173 files**, all passed. Existing dependencies; no generation/build/browser, clean
+  install, SQL or translation audit repeated.
+- Parser and three component contracts are prepared; actual extraction, Stage-C wiring/payloads and Japanese
+  final checks remain pending. N1/N2 acceptance stays open; reviewed integration remains `e4fc1ff`. Exact
+  checkpoints/docs await Claude. Main/activation unchanged.
+
+### N2 combined contract review and Stage-C handoff — 2026-09-30
+
+- Following pushed practical-basics contract `8c56ed3`, Codex recorded [the exact review queue and Stage-C sequence](checkpoints/N2-stage-c-handoff.md).
+  Self-review fixed combining marks being omitted from inline word boundaries; decomposed accents and
+  combining-script words now preserve internal underscores. Five cases also verify the 32/33 depth boundary.
+- No additional blocker found in the three component schemas; Claude review and rendered/native parity
+  remain pending. The handoff proposes explicit checklist handling, paragraph IDs, canonical copy extraction,
+  renderer/export alignment and all-directive payload gates; it does not transfer Stage-B ownership.
+- Focused 72 tests / four files, types, full lint, architecture (709 modules) and whitespace passed. Full
+  four-worker suite: **921 tests / 173 files**, all passed. Corpus remains 6,187 units / 30 protected checklist blanks.
+- No consumers/content/translations or format/payload change. Existing dependencies; no generation/build/
+  browser, clean install, SQL or translation audit repeated. Reviewed integration stays `e4fc1ff`; exact
+  checkpoints/docs await Claude. Stage-C handoff and N1/N2 final acceptance remain open. Main/activation unchanged.
+
+
+### J1 acceptance preparation and operator review — 2026-09-30
+
+- Following pushed N2 handoff `810e262`, Codex reviewed the J1 worker, adapter, command, authority SQL,
+  acceptance fixture and operator contract together; no new runtime defect was found.
+- [The preparation record](checkpoints/J1-acceptance-preparation.md) defines the outstanding PostgreSQL 17
+  multi-connection claim/lock-wait, real Auth/PostgREST and fake-sender acceptance. It records transaction-start
+  claim defaults separately from completion clock authority. No runtime/migration/configuration change.
+- Authority pgTAP fixture grows from 24 to 29 assertions: upper attempt bound, invalid failed/suppressed
+  metadata, unchanged rows after rejection and rejection of the original token after reclaim.
+- Local embedded SQL: **30 assertions passed**, PostgreSQL 18.3 / PGlite 0.5.8, stub Auth, one connection.
+  Static pgTAP plan count passed; pgTAP itself and PostgreSQL 17/concurrency acceptance remain unrun.
+- Focused notification suite: **133 tests / 15 files passed**; no-service command help and whitespace passed.
+  Existing dependencies; no full-suite/types/lint/build/browser, clean install or translation audit repeated.
+- Exact checkpoint and four J1 implementation checkpoints still await Claude. Reviewed integration remains
+  `e4fc1ff`; no working-head integration, main merge, hosted execution or activation.
+
+
+### N4 foreign-cache handoff follow-up — 2026-09-30
+
+- Following pushed J1 acceptance preparation `b427fd4`, Codex confirmed and fixed a foreign-cache
+  ownership race. A newer family retained during B-to-A canonical application could be relabeled A and
+  uploaded on the next pass. The new saved-family regression failed against the prior implementation.
+- [The follow-up record](checkpoints/N4-foreign-cache-handoff.md) documents the stable-snapshot handoff:
+  changes to any foreign-owned family queue a fresh empty import without applying canonical data or
+  transferring ownership. The existing foreign-cache replacement policy remains; no per-account cache
+  preservation is added. Same-account newer-edit handling is unchanged.
+- Three portable family cases plus a browser storage-event fixture pass. Focused **24 tests / three files**,
+  types, targeted lint, architecture (**709 modules**) and whitespace passed. Full four-worker suite:
+  **925 tests / 173 files**, all passed; existing jsdom navigation diagnostic remained non-failing.
+- Existing dependencies; no clean install, production build/browser UI, hosted cross-device, SQL or
+  translation audit repeated. No RPC, auth/session, storage-key or provider implementation change.
+- Exact follow-up and original N4 extraction `9061031` await Claude. H5 request/session binding and combined
+  acceptance remain open; reviewed integration stays `e4fc1ff`. No main merge, hosted execution or activation.
+
+
+### N1 reader rejection-path review — 2026-09-30
+
+- Following pushed N4 ownership fix `f14bf04`, Codex reviewed the manifest/registered payload contracts,
+  candidate reader and provenance/translation/geography/relationship rejection paths. No new defect found;
+  [the review record](checkpoints/N1-reader-rejection-review.md) is self-review evidence, not Claude approval.
+- All bundle suites: **177 tests / 11 files passed**. Independent local disk inventory/hash/count/catalog
+  verification and reader acceptance passed for format 9 / 28 files, with unchanged catalog version
+  `160b2acf9368dd4fce2855016fbfc496a8d69883b637c969b4895398585f86d2`.
+- Additional read-only probes rejected duplicate canonical identities in all **28 rehashed payloads**,
+  including unrelated extra IDs, and rejected **eight malformed manifests**. No runtime, test, canonical,
+  translation, generated-file, consumer or dependency changes; no regeneration.
+- Existing dependencies; no clean install, full-suite/types/lint/build/browser, editorial/translation,
+  SQL or hosted checks repeated. Exact checkpoints/docs still await Claude. N1/N2 acceptance and Stage-C
+  payload/renderer handoff remain open; reviewed integration stays `e4fc1ff`. Main/activation unchanged.
+
+
+### J1 command output and exit-path verification — 2026-09-30
+
+- Following pushed N1 reader review `2c36708`, Codex added [exact entry-script boundary coverage](checkpoints/J1-command-output.md).
+  Eight fixtures cover help/argument no-I/O paths, completed/disabled/failed aggregate reports, deduplicated
+  configuration setting names and generic startup failure without error/cause disclosure. No runtime change.
+- The committed script is transpiled with existing TypeScript and run with explicit process/import bindings;
+  global environment/process and real SDKs are untouched. Four real Node child probes also passed with a
+  system/path/temp-only environment: help, invalid argument, missing settings and invalid URL/dummy secret.
+- Notification suites: **141 tests / 16 files passed**. Types, targeted lint, architecture (**709 modules**)
+  and whitespace passed. Full four-worker suite: **933 tests / 174 files**, all passed; existing jsdom
+  navigation diagnostic remained non-failing.
+- Existing dependencies; no clean install, successful real job, hosted/Auth/database/SES call, production
+  build/browser UI or translation audit. J1 reciprocal review/integration and PostgreSQL 17/pgTAP/concurrency
+  acceptance remain open. Reviewed integration stays `e4fc1ff`; no main merge or activation.
+
+
+### Consolidated pending review queue — 2026-09-30
+
+- Codex prepared [the exact pending review queue](checkpoints/PENDING-REVIEW-QUEUE.md), snapshot ending
+  at `185add75b5ed86e3d788bc08b434dfae75e7b6e6`: **26 commits** grouped as J1 (six), N4 (two),
+  N1 (thirteen, including documentation-only self-review), and N2 (five). All remain review/integration pending.
+- Queue generation verified every full hash/actual parent against Git, exact coverage since handoff
+  `ece6c4a`, all checkpoint links, and identical handoff/reviewed-integration trees. Deferred consolidated
+  documentation since `b494ed0` is listed separately. Current refactor overview now reflects Stage-B coverage.
+- Code dependencies and Git ancestry are distinguished: later group approval does not authorize merging
+  unrelated ancestors. Shared-doc overlaps require agreed integration and consolidated conflict handling.
+- Documentation only; no implementation/content/translation/test/generated changes or new test/build run.
+  Existing verification is attributed to exact checkpoints. Combined, real SQL, H5/hosted and Stage-C gates
+  remain open; reviewed integration stays `e4fc1ff`. No main merge or activation.

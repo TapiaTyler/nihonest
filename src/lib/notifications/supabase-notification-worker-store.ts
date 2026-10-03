@@ -2,14 +2,27 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { notificationDeliverySchema, type NotificationDelivery } from "@/domain/notifications/notification-delivery";
-import { createDefaultNotificationPreferences, notificationEventSchema, notificationPreferencesSchema } from "@/domain/notifications/notifications";
+import { createDefaultNotificationPreferences, notificationEventSchema, notificationPreferencesSchema, type NotificationEvent } from "@/domain/notifications/notifications";
 import { criticalUpdateAccountContextSchema } from "@/domain/notifications/critical-updates";
 import type { JobConfig } from "@/lib/config/deployment-config";
 import type { Database } from "@/types/database";
-import type { NotificationWorkerStore, EmailDeliveryCompletion } from "./notification-worker";
+import type { NotificationWorkerStore, EmailDeliveryCompletion, WorkerOperationOptions } from "./notification-worker";
 import { createWorkerDatabaseFetch } from "./worker-database-fetch";
+import { resolveWorkerRecipient } from "./worker-recipient";
 
 type DeliveryRow = Database["public"]["Tables"]["notification_deliveries"]["Row"];
+
+function criticalTarget(event: NotificationEvent): { kind: "article" | "residence-status"; target: string } | undefined {
+  switch (event.type) {
+    case "reminder-due": return undefined;
+    case "article-critical-update": return { kind: "article", target: event.payload.articleId };
+    case "residence-status-guidance-updated": return { kind: "residence-status", target: event.payload.residenceStatusId };
+    default: {
+      const unsupported: never = event;
+      throw new Error(`Unsupported notification event: ${typeof unsupported}`);
+    }
+  }
+}
 
 function timestamp(value: string): string {
   // PostgREST returns PostgreSQL offsets and microseconds; domain schemas require ISO UTC.
@@ -45,29 +58,55 @@ const completionSchema = z.discriminatedUnion("state", [
 /**
  * The mapping/transport layer for the existing RPCs. Accepts H3a's validated explicit JobConfig;
  * constructs no provider and reads no process environment. This is not yet a live command:
- * database-authoritative finalization time and exhausted-claim inspection remain separate J1 work.
+ * database-authoritative time/finalization and read-only exhausted-claim inspection are service-only RPCs.
+ * Complete provider/lease I/O budgets and real SQL concurrency acceptance remain separate J1 work.
  */
 export function createSupabaseNotificationWorkerStore(
   config: Pick<JobConfig, "supabaseUrl" | "supabaseSecretKey">,
-  options: Readonly<{ fetch?: typeof fetch; timeoutMs?: number }> = {},
+  options: Readonly<{ fetch?: typeof fetch; timeoutMs?: number; monotonicNow?: () => number }> = {},
 ): NotificationWorkerStore {
-  const client = createClient<Database>(config.supabaseUrl, config.supabaseSecretKey, {
+  const operationClient = (operation?: WorkerOperationOptions) => createClient<Database>(config.supabaseUrl, config.supabaseSecretKey, {
     auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
     db: { retry: false },
-    global: { fetch: createWorkerDatabaseFetch(options.fetch ?? globalThis.fetch, options.timeoutMs) },
+    global: { fetch: createWorkerDatabaseFetch(options.fetch ?? globalThis.fetch, options.timeoutMs, operation?.signal) },
   });
+  const monotonicNow = options.monotonicNow ?? (() => performance.now());
 
   return {
-    async generateDueReminderEvents({ limit }) {
+    async readWorkerTime(operation) {
+      const client = operationClient(operation);
+      const started = z.number().finite().parse(monotonicNow());
+      const serverTime = timestamp(requireResult(await client.rpc("read_notification_worker_time", {})));
+      const elapsed = z.number().finite().nonnegative().parse(monotonicNow() - started);
+      // The server timestamp can age while its response arrives. Add the WHOLE round trip (a conservative
+      // upper bound), plus 1 ms for discarded PostgreSQL microseconds. No Date.now/system-clock comparison.
+      return new Date(Date.parse(serverTime) + Math.ceil(elapsed) + 1).toISOString();
+    },
+    async inspectEmailDeliveryBacklog({ maxAttempts }, operation) {
+      const client = operationClient(operation);
+      const result = requireResult(await client.rpc("inspect_email_notification_delivery_backlog", {
+        p_max_attempts: z.number().int().min(1).max(20).parse(maxAttempts),
+      }));
+      const backlog = z.object({
+        exhausted_failed: z.number().int().nonnegative(),
+        exhausted_expired_processing: z.number().int().nonnegative(),
+      }).strict().parse(result);
+      return { exhaustedFailures: backlog.exhausted_failed, exhaustedExpiredClaims: backlog.exhausted_expired_processing };
+    },
+    async generateDueReminderEvents({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("generate_due_reminder_events", { p_limit: limit })));
     },
-    async generateTargetedCriticalUpdateEvents({ limit }) {
+    async generateTargetedCriticalUpdateEvents({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("generate_targeted_critical_update_events", { p_limit: limit })));
     },
-    async prepareEmailDeliveries({ limit }) {
+    async prepareEmailDeliveries({ limit }, operation) {
+      const client = operationClient(operation);
       return z.number().int().nonnegative().parse(requireResult(await client.rpc("prepare_email_notification_deliveries", { p_limit: limit })));
     },
-    async claimEmailDeliveries({ limit, maxAttempts, leaseSeconds }) {
+    async claimEmailDeliveries({ limit, maxAttempts, leaseSeconds }, operation) {
+      const client = operationClient(operation);
       // Omit p_now: generation, preparation, and claims use the RPC's database-time default.
       const rows = requireResult(await client.rpc("claim_email_notification_deliveries", {
         p_limit: limit, p_max_attempts: maxAttempts, p_lease_seconds: leaseSeconds,
@@ -79,7 +118,8 @@ export function createSupabaseNotificationWorkerStore(
         return delivery;
       });
     },
-    async loadEmailContext(input) {
+    async loadEmailContext(input, operation) {
+      const client = operationClient(operation);
       const delivery = notificationDeliverySchema.parse(input);
       if (delivery.state !== "processing") throw new Error("Only a processing delivery can load context.");
       const [eventResult, preferencesResult, authResult] = await Promise.all([
@@ -103,11 +143,11 @@ export function createSupabaseNotificationWorkerStore(
       if (authResult.error || !authResult.data.user || authResult.data.user.id !== delivery.userId) {
         throw new Error("The notification recipient could not be loaded.");
       }
-      const recipientAddress = z.email().parse(authResult.data.user.email);
-      if (event.type === "reminder-due") return { event, preferences, recipientAddress };
+      const recipient = resolveWorkerRecipient(authResult.data.user);
+      const critical = criticalTarget(event);
+      if (recipient.status === "suppressed" || !critical) return { event, preferences, recipient };
 
-      const kind = event.type === "article-critical-update" ? "article" : "residence-status";
-      const target = event.type === "article-critical-update" ? event.payload.articleId : event.payload.residenceStatusId;
+      const { kind, target } = critical;
       const [savedResult, journeyResult] = await Promise.all([
         client.from("saved_content").select("user_id,content_kind,content_id,state").eq("user_id", delivery.userId)
           .eq("content_kind", kind).eq("content_id", target).limit(1),
@@ -116,19 +156,21 @@ export function createSupabaseNotificationWorkerStore(
       const saved = requireResult(savedResult);
       if (journeyResult.error || saved.some((item) => item.user_id !== delivery.userId || item.content_kind !== kind || item.content_id !== target)
         || (journeyResult.data && journeyResult.data.user_id !== delivery.userId)) throw new Error("Critical relevance could not be loaded.");
-      return { event, preferences, recipientAddress, criticalUpdateAccountContext: criticalUpdateAccountContextSchema.parse({
+      return { event, preferences, recipient, criticalUpdateAccountContext: criticalUpdateAccountContextSchema.parse({
         userId: delivery.userId, criticalUpdatesEnabled: preferences.criticalUpdatesEnabled,
         savedContent: saved.map((item) => ({ kind: item.content_kind, contentId: item.content_id, state: item.state })),
         journeyId: journeyResult.data?.journey_id ?? undefined, routeId: journeyResult.data?.route_id ?? undefined,
       }) };
     },
-    async finalizeEmailDelivery(input: EmailDeliveryCompletion) {
+    async finalizeEmailDelivery(input: EmailDeliveryCompletion, operation) {
+      const client = operationClient(operation);
       const completion = completionSchema.parse(input);
-      // Existing RPC requires caller time. Live CLI wiring waits for the database-authoritative wrapper.
-      const row = requireResult(await client.rpc("finalize_email_notification_delivery", {
+      // The wrapper locks/rechecks the token, reads database time after the lock and computes backoff.
+      // completion.now/retryAt describe the domain outcome; neither can override database authority.
+      const row = requireResult(await client.rpc("finalize_email_notification_delivery_now", {
         p_delivery_id: completion.deliveryId, p_claim_token: completion.claimToken,
-        p_state: completion.state, p_now: completion.now, p_provider_message_id: completion.providerMessageId ?? null,
-        p_error: completion.errorSummary ?? null, p_retry_at: completion.retryAt ?? null,
+        p_state: completion.state, p_provider_message_id: completion.providerMessageId ?? null,
+        p_error: completion.errorSummary ?? null,
       }));
       const finalized = deliveryFromRow(row);
       if (finalized.id !== completion.deliveryId || finalized.state !== completion.state) {
