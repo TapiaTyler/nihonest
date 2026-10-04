@@ -123,3 +123,23 @@ What automation does not prove (hosted gate):
 - sign-in, callbacks, and account sync against the real Supabase project under the Content-Security-Policy;
 - reviewed migrations applied and backups configured; notification jobs remain unscheduled until J1's own gates;
 - real email stays disabled until an explicitly authorized opt-in test.
+
+## Session scope
+
+`src/proxy.ts` refreshes Supabase sessions only on `/account`, `/account/*`, `/api/account`, `/api/account/*`, and
+`/auth/*`, the routes that read a verified server identity. Prebuilt public pages and `/api/health` make no
+per-request Auth call; on public pages the browser Supabase client refreshes an expiring session and rewrites the
+cookies that those routes read. The authentication callback redirects with a relative `Location`, so the browser
+stays on the host where its session cookies were set.
+
+`e2e/session-scope.spec.ts` checks this against a local Supabase stack: signed-in public browsing across a real
+access-token expiry, direct account/API requests after expiry, sign-out from a public page followed by 401/403
+API responses, and account switching. Run it with a JWT lifetime longer than the 90-second supabase-js refresh
+margin (for example 180 seconds):
+
+```bash
+RUN_SUPABASE_E2E=1 SUPABASE_JWT_EXPIRY_SECONDS=180 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 npx playwright test e2e/session-scope.spec.ts e2e/account.spec.ts
+```
+
+`SUPABASE_MAILPIT_URL` points the tests at a non-default Mailpit. Hosted check still required: the same flows on the
+production Supabase project and host, including cross-device sync.
