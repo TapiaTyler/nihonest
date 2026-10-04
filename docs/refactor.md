@@ -9,8 +9,13 @@ acceptance remain open. The older consolidated delta through `e4fc1ff` is docume
 the `29b212c..29fe06f` handoff documentation is approved; earlier unread records retain their limits.
 Claude's stale Playwright repair `888c7a0` is approved and integrated at `ffdeef6`, with full production e2e
 checks passed. See [the review record](checkpoints/Playwright-stale-spec-review-20261003.md). Claude approved the handoff documentation through `10883fa`.
-H4 is locally approved/integrated at `52f8a08`; H3b needs a CI readiness fix. See [the new review record](checkpoints/H4-H3b-review-20261003.md).
-Claude retains H5 and H3b repairs; new documentation awaits review. No Stage-C handoff, main merge or activation.
+H4 is locally approved/integrated at `52f8a08`; H3b's readiness repair and four newly approved Codex
+checkpoints are integrated at `0e5fcf9`. The combined local release gate passed all 13 checks,
+971 tests, PostgreSQL concurrency 36 assertions and a final 32-pass/1-skipped browser run.
+See [the review and integration record](checkpoints/H3b-H5-review-integration-20261003.md) for
+initial browser failures, review limits and the callback open-redirect blocker in `1857817`.
+Claude retains the callback/H5 reliability work; both commits are excluded. New documentation awaits
+review. No Batch 1 completion, Stage-C handoff, main merge or activation.
 
 ## Purpose
 
@@ -238,7 +243,7 @@ Acceptance:
 
 ### H3 — Configuration preflight and release automation
 
-Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b `3feb37f` is implemented but needs a CI health-readiness failure guard before approval.
+Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b `3feb37f` plus readiness repair `8d6f6dc` are locally approved/integrated at `0e5fcf9`; GitHub Actions/clean-install and hosted acceptance remain open.
 H3a code is integrated and validated with J1 preparation and the CMS LF fix at `669fa99`.
 The validated handoff `6eb2fa6` is in both working branches; H3b and hosted checks remain pending.
 
@@ -281,7 +286,10 @@ Acceptance:
 
 ### H5 — Narrow session handling safely
 
-Status: proposed by Claude; database-authoritative expected-account binding selected for coordination. Implementation and isolated Auth/refresh/account-switch acceptance remain pending. Verify alongside H2/H4.
+Status: Claude implemented `6866b97` with local acceptance evidence. Integration is held for its callback
+parent `1857817` (normalized-path open redirect) and investigation of reported intermittent PGRST303
+account/export failures. Codex's expected-account binding `a39d01b` is code-approved and integrated at
+`0e5fcf9`; Claude reports combined local Auth evidence. Independent final and hosted acceptance remain open.
 
 Entry points: `src/proxy.ts`, `src/lib/supabase/proxy.ts`, authentication callbacks, account pages, and API routes.
 
@@ -1237,3 +1245,22 @@ editorial approval, and a documentation status change cannot authorize external 
 - This supplies local concurrency evidence, not Auth/PostgREST/fake-sender or final combined acceptance.
   All pending checkpoints still require review; integration remains `52f8a08` / `3bf4e94`.
   No main merge, hosted email, scheduling or activation.
+
+### H3b / H5 review and approved checkpoint integration — 2026-10-03
+
+- H3b `3feb37f` plus `8d6f6dc` approved for local scope. The exact readiness run block fails before
+  Playwright on permanent probe failure and reaches it on success. GitHub Actions/clean-install execution
+  remains unverified. [The review record](checkpoints/H3b-H5-review-integration-20261003.md) details evidence.
+- Callback `1857817` needs a Claude-owned P2 fix: accepted `/account/..//attacker.example` normalizes
+  to a protocol-relative external Location. H5 `6866b97` is excluded with that parent; reported
+  intermittent PGRST303 account/export failures need investigation. No Batch 1 completion/Stage-C handoff.
+- Claude code-approved `a39d01b`, `938b869`, `8f9646a`, `7758622` for their bounded scopes;
+  these and H3b were integrated by exact hash. **Combined source `0e5fcf9`**: release checks 13/13,
+  **971 tests / 177 files**, **712 modules**, public-only build **416 entries**, audits/types/lint/CMS/bundles
+  passed. PostgreSQL concurrency rerun **36 assertions passed** against all eight exact-source migrations.
+- Browser first full run: 30 passed / 2 failed / 1 skipped; both failures passed unchanged on targeted
+  rerun. Second full run: **32 passed / 1 skipped**, one worker. Account/Auth opt-in skipped; intermittency
+  remains recorded. Existing copied dependencies; no new pgTAP/operator, real Auth/fake-sender or hosted run.
+- Claude approved the earlier H4-H3b review record; consolidated ROADMAP/refactor were only skimmed.
+  This new documentation awaits review. Owned server/container stopped; Claude's checkout/stack untouched.
+  Next Codex: J1 dedicated-stack preflight and fake-sender acceptance preparation. No main merge or activation.
