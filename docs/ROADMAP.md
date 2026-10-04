@@ -1953,3 +1953,18 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   Syntax, targeted lint, help and invalid source checks passed. No pgTAP/concurrency/Auth/web/hosted rerun.
 - Scoped real-row/operator approval and host/schedule/provider gates remain unchanged. New checkpoint and
   operations/status updates stay in the held queue; integration is `1a4ab65` / `4372d4a`. No main merge or activation.
+
+### J1 uncertain accepted-send lease-recovery acceptance — 2026-10-04
+
+- Codex checkpoint `44990f8` adds [a real local recovery scenario](checkpoints/J1-uncertain-send-recovery-20261004.md)
+  to the reviewed Auth/PostgREST harness. New scenario/evidence await Claude review; production runtime/SQL
+  are unchanged. Tested exact production `1a4ab65` in clean reviewed-source context `4372d4a`, temporarily
+  copying only the harness; pending Stage-C code excluded.
+- All **15 scenarios passed**. Fake provider acceptance without committed finalization leaves processing;
+  immediate pass cannot resend; expiry/reclaim advances attempt/token, rejects the old token without changes
+  and can accept a second fake send for the same event. Successful finalization prevents a third send.
+  A committed-before-throw negative control failed at the new scenario as expected.
+- Final independent preflight: 11 tables empty / zero Auth users. Owned `nihonest-j1-auth-recovery-20261004`
+  stack/volumes removed, validation checkout restored clean; types/targeted lint/whitespace passed. No real
+  provider, SMTP, browser, full web/SQL-suite rerun or hosted activation. Held queue/integration remain
+  `1a4ab65` / `4372d4a`; scoped operator/scheduling/hosted and other acceptance limits remain.

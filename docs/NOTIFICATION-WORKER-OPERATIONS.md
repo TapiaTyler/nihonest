@@ -51,6 +51,12 @@ and reviewed local PostgreSQL acceptance covers competing claims and post-lock l
 After the separate scheduling gate, start with one invocation at a time; choose frequency from measured run duration,
 backlog and provider/database costs. The command contains no scheduler and no cost-creating background loop.
 
+Additional local recovery fixture `44990f8` **awaits independent review/integration**.
+[Its 15-scenario run](checkpoints/J1-uncertain-send-recovery-20261004.md), against reviewed production
+`1a4ab65`, demonstrates two accepted fake sends for one event when finalization never commits and the
+lease is reclaimed. Immediate retry cannot claim live processing; successful recovery finalization prevents
+a third send. This is fake-provider evidence, not real SES or actual HTTP-loss acceptance.
+
 The runner uses database time for lease decisions. A timeout or post-send expiry can leave uncertain provider
 acceptance. A later reclaim may send a duplicate; the command does not promise exactly-once delivery.
 Suppressed deliveries are terminal; a later email confirmation does not revive the old event. Failed deliveries
