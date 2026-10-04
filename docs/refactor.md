@@ -1541,3 +1541,15 @@ editorial approval, and a documentation status change cannot authorize external 
   requests complete. Fee numeric adoption should consolidate the period type under its domain owner.
 - New consolidated documentation awaits Claude review. Hosted/native/operator/scheduling gates remain;
   no main merge, activation or real email. Codex can prepare standalone pack contracts while awaiting fee copy.
+
+### N1 standalone interface catalog-pack preparation — 2026-10-04
+
+- Codex checkpoint `e0836f0` implements Claude's agreed separate catalog-pack shape with strict locale/identity,
+  machine-translated-only Japanese metadata, exact paired keys and Japanese placeholder-subset validation.
+  Public IDs and untrimmed values are preserved; no shared artifact relaxation, catalog edit or lookup added.
+- [Focused validation](checkpoints/N1-interface-pack-contract-20261004.md): ten new contract plus eight existing
+  lookup tests passed (18 / two files), all 775 canonical keys/text/order preserved, TypeScript/targeted lint,
+  architecture 720 and whitespace passed. No full release/build/SQL/Auth rerun for this standalone preparation.
+- New checkpoint awaits Claude review and remains outside integration `500c2db` / source `9b5d937`.
+  Format 9/exporter remains unchanged; format 10 (38 files) still waits for reviewed fee extraction/parity.
+  No main merge, activation, real email or scheduling.
