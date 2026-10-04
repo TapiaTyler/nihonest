@@ -1701,3 +1701,19 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - N4 `a39d01b` and N1 `938b869` remain unreviewed ancestors; single-checkpoint approval must not bring
   them into integration implicitly. Integration remains H4 `52f8a08` / documentation `3bf4e94`.
   H3b/H5/Stage-C/native and J1 activation gates remain; no main merge or activation.
+
+### J1 real PostgreSQL concurrency acceptance — 2026-10-03
+
+- Codex added [a reproducible standalone harness](checkpoints/J1-postgres-concurrency-acceptance.md)
+  on base `8f9646a`; harness/evidence review and integration await Claude. The harness loads SQL only
+  from exact reviewed integration `3bf4e94`, avoiding the working branch's unreviewed migrations.
+- PostgreSQL **17.6**, independent backend connections: **36 assertions passed**. B claims different
+  work while A holds its claim transaction; persisted attempts/tokens match. Reclaimed old tokens fail.
+  A finalizer genuinely blocked before expiry rejects after lock release past expiry, leaving the row
+  unchanged. A transaction-time negative control wrongly accepts the expired claim and is detected.
+- Fifth-attempt backlog remains aggregate-only and unchanged. No network/ports/host volumes; owned
+  container and temporary files removed. Existing H5 containers were untouched. No app/SQL/translation
+  implementation changed; no repeated web build or full suite is claimed.
+- This supplies local concurrency evidence, not Auth/PostgREST/fake-sender or final combined acceptance.
+  All pending checkpoints still require review; integration remains `52f8a08` / `3bf4e94`.
+  No main merge, hosted email, scheduling or activation.
