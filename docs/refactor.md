@@ -1454,3 +1454,14 @@ editorial approval, and a documentation status change cannot authorize external 
 - Three Tokyo grouping labels outside N3 require Claude's provenance decision; even the currently unused
   island group remains a dependency. This documentation checkpoint is retained in the held queue. Integration
   remains `1a4ab65` / `4372d4a`; no main merge, activation or scheduling.
+
+### N1 fee/map preparation boundary self-review — 2026-10-04
+
+- Codex [implementer self-review](checkpoints/N1-fee-map-contract-self-review-20261004.md), checkpoint
+  `393d324`, found no code defect requiring a fix in fee `c72bcd2` or orientation `dc97629`.
+  Combined focused verification passed 83 tests / five files; independent deterministic probes passed
+  2,002 geometry cases (including the exact length ceiling), 112 BigInt-oracle fee calculations and
+  17 additional date/identity/collection boundaries. No implementation or test change was needed.
+- This additional evidence does not replace Claude's independent review or authorize adoption. Earlier
+  type/lint/architecture results retain their scope; no full release/build/browser/SQL/hosted/source refresh
+  was repeated. Held handoff and integration `1a4ab65` / `4372d4a` remain unchanged; no main merge/activation.
