@@ -18,8 +18,10 @@ Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C ownersh
 Japanese provenance are confirmed. Approved J1 acceptance `733c827` and article artifacts `5b58f06` are
 integrated at `4139f0c`: public-only release 13/13, 1,018 tests / 181 files, 716 modules, 416 entries.
 Claude approved English v2 `a74926b`; it and reviewed N3 `997f0ab` are integrated at `4372d4a`:
-release 13/13, 1,028 tests / 181 files, 716 modules, 416 entries. Extraction is a separate checkpoint;
-markup parity and N1 export remain pending. See [the current record](checkpoints/N3-English-v2-integration-20261004.md).
+release 13/13, 1,028 tests / 181 files, 716 modules, 416 entries. Extraction checkpoint `f9681f9`
+passed its own 13/13 release (1,037 tests / 182 files), awaiting Claude markup parity review and integration.
+N1 export remains pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
+[the extraction checkpoint](checkpoints/N2-component-renderer-extraction-20261004.md).
 New documentation awaits review; no main merge or activation.
 
 ## Purpose
@@ -1349,19 +1351,6 @@ editorial approval, and a documentation status change cannot authorize external 
   or activation. Prior documentation review limits remain.
 
 
-### N2 English-only component data v2 preparation — 2026-10-04
-
-- Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C ownership is effective. Japanese
-  component provenance is machine-translated; tax/training renderer ownership is explicitly handed to Codex.
-- [The preparation checkpoint](checkpoints/N2-English-component-data-v2.md) adds English-only v2 data and
-  strict contracts, preserving stable IDs, link targets, empty suffixes and whitespace. AST parity fixtures
-  compare the new data to current English literals. Renderers/catalogs and bundle format remain unchanged.
-- Focused 32 tests passed; full public-only release 13/13, 1,018 tests / 180 files, 714 modules, 416 entries.
-  Browser/Auth/SQL/hosted checks not repeated. This checkpoint awaits Claude review; artifact `5b58f06`
-  awaits Codex review. Extraction and byte-exact static markup parity remain pending.
-- Claude code-approved J1 `733c827` for scope without rerunning real acceptance; integration remains pending.
-  Earlier documentation limits remain. No main merge or activation.
-
 ### N3 messages / approved English v2 integration — 2026-10-04
 
 - Claude merged `1f5668c` as `b84336c`, approved its checkpoint record (two wording corrections applied),
@@ -1374,3 +1363,19 @@ editorial approval, and a documentation status change cannot authorize external 
   181 files, 716 modules, 416 public build entries, lint/types/audits/CMS/all-chunk boundaries passed.
   No browser, real Auth/SQL, hosted or clean-install checks repeated. Extraction is separate and awaits
   Claude markup parity review; N1 payload/export and final N1/N2 gates remain open. No main merge/activation.
+
+### N2 three-renderer extraction review handoff — 2026-10-04
+
+- Reviewed English v2/N3 integration is pushed as documentation handoff `1a4ab65`, source `4372d4a`;
+  source release passed 13/13, 1,028 tests / 181 files. Claude's artifact/J1 record review was approved;
+  its two wording corrections were applied. New N3/consolidated documentation awaits review.
+- Codex extraction checkpoint `f9681f9` against `ded19b4` is ready for Claude's independent en/ja static
+  markup parity review. [The checkpoint](https://github.com/TapiaTyler/nihonest/blob/f9681f9/docs/checkpoints/N2-component-renderer-extraction-20261004.md)
+  removes bilingual renderer literals, uses canonical English plus the reviewed server selector, preserves
+  all training hrefs and marks whole-component English fallback correctly. No Japanese catalog was edited.
+- Six full parent snapshots, href/fallback cases and updated canonical contracts passed: 48 focused tests.
+  Extraction release 13/13, 1,037 tests / 182 files, 716 modules, 416 entries, CMS/all 43 JS boundaries passed.
+  No browser, real Auth/SQL, clean-install/CI or hosted checks repeated. Extraction remains outside the
+  integration branch pending review. N1 export and broader inline/native gates remain open.
+- Removed a duplicated, identical preparation-history entry introduced by the working-branch merge.
+  No main merge, hosted service, real email or schedule activation.
