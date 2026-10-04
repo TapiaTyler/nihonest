@@ -19,7 +19,8 @@ Japanese provenance are confirmed. Approved J1 acceptance `733c827` and article 
 integrated at `4139f0c`: public-only release 13/13, 1,018 tests / 181 files, 716 modules, 416 entries.
 Claude approved English v2 `a74926b`; it and reviewed N3 `997f0ab` are integrated at `4372d4a`:
 release 13/13, 1,028 tests / 181 files, 716 modules, 416 entries. Extraction checkpoint `f9681f9`
-passed its own 13/13 release (1,037 tests / 182 files), awaiting Claude markup parity review and integration.
+is Claude markup-parity approved and integrated at source `9b5d937`, with 1,123 tests / 187 files,
+719 modules, 416 static entries and all 43 browser files checked. See the latest receipt below.
 N1 export remains pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
 [the extraction checkpoint](checkpoints/N2-component-renderer-extraction-20261004.md).
 New documentation awaits review; no main merge or activation.
@@ -331,7 +332,7 @@ Status: worker implementation and the listed local acceptance are code-reviewed 
 operational/hosted readiness remains open. Foundation `b09cd28` includes database-authoritative time and
 finalization, recipient/lease rules and the runnable command. Approved local target/operator `8f9646a`
 and concurrency harness `7758622` were integrated as `8ea7bf7` / `36377bf`; Auth/PostgREST harness
-`733c827` was integrated as `b3742db`. Reviewed integration now remains `1a4ab65` / source `4372d4a`.
+`733c827` was integrated as `b3742db`. Reviewed integration source is now `9b5d937`; current receipt below records the additional approvals.
 [Current acceptance status](checkpoints/J1-local-acceptance-status-20261004.md) records 72 real local pgTAP,
 49 operator, 36 concurrency (including a reviewed-source rerun), and 14 real Auth/PostgREST/fake-sender
 cases with their tested sources and review attribution. Those checks were not repeated by later web gates.
@@ -430,7 +431,7 @@ Acceptance:
 
 Status: standalone inline parser and component contracts are code-approved and integrated at `b09cd28`;
 English v2 data and article-component artifacts are reviewed/integrated. Renderer extraction `f9681f9`
-awaits Claude parity review and integration; broader inline consumer alignment and final acceptance remain pending.
+is Claude parity-approved and integrated at `9b5d937`; broader inline consumer alignment and final acceptance remain pending.
 See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
 [tax/training table contracts](checkpoints/N2-table-contracts.md) and
 [practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
@@ -1520,3 +1521,23 @@ editorial approval, and a documentation status change cannot authorize external 
   types/targeted lint/whitespace passed. No production changes, full web/SQL-suite rerun, real email, scheduling
   or hosted activation. Selected branches retain coverage limits; held queue and integration stay
   `1a4ab65` / `4372d4a`. No main merge.
+
+### Stage-C reviewed queue and Claude contracts integration — 2026-10-04
+
+- Claude receipt `cc35f96` confirms earlier `1a4ab65`; approves renderer `f9681f9`, fee `c72bcd2`,
+  orientation `dc97629`, operator `832d9c7` and scope-limited recovery/targeting `44990f8` / `66b0721`.
+  Renderer parity and 59 operator assertions independently reproduced; Auth/negative controls not rerun by
+  Claude. Held documentation through `fbf2c69` approved with prior scope limits preserved.
+- Codex approves helper `5506d43`, labels `d3f3415` and report `0d385c9`: unchanged validator bodies,
+  12 helper/selector tests, 17 interface/finder tests, 11 label/target comparisons and eight byte-identical
+  DOM comparisons. [Exact record](checkpoints/Stage-C-reviewed-integration-20261004.md).
+- Reviewed queue merged as `dd05008`; Claude inputs integrated as `e399f21` / `e2b19fd` / `9b5d937`.
+  Validated source `9b5d937`: all 13 applicable checks passed across fresh LF release and resumed build checks;
+  1,123 tests / 187 files, 719 modules, 416 static entries, 43 browser JS files. CRLF/dependency-junction setup
+  failures recorded; no source fix needed. No Auth/SQL/browser rerun on this combined source.
+- Export direction is 10 additions / 38 files; format 10 waits for Claude's fourth fee component/artifact/parity
+  checkpoint. Finder labels use interface packs; Tokyo labels canonical geography. Japanese interface pack
+  metadata is machine-translated only, without invented artifact currency; catalogs now 775 keys. Helper/report
+  requests complete. Fee numeric adoption should consolidate the period type under its domain owner.
+- New consolidated documentation awaits Claude review. Hosted/native/operator/scheduling gates remain;
+  no main merge, activation or real email. Codex can prepare standalone pack contracts while awaiting fee copy.
