@@ -53,10 +53,10 @@ or enabled email configuration. Cleanup must run in finally and affect only owne
 
 | Scenario | Required observation |
 | --- | --- |
-| Missing notification preferences | Preparation produces no email delivery; defaults remain false. |
+| Missing notification preferences | Preparation records a suppressed delivery, never eligible for claim/send; defaults remain false. |
 | Confirmed opted-in Auth recipient | Address comes from current Auth identity, fake sender receives once, sent row/acknowledgement persists. |
 | Unconfirmed or absent email | No sender invocation; terminal suppression, never repeated context failure. Establish valid real Auth fixture capabilities first. |
-| Consent/reminder withdrawn after claim | Mutate only owned fixture between actual claim and context read; no send, suppression persists. |
+| Email/deadline consent withdrawn after claim | Mutate only owned fixture preferences between actual claim and context read; no send, suppression persists. |
 | Critical target no longer relevant | Actual saved/preference state changes before context read; no send. |
 | Fake provider failure/timeout | Persisted retry state, attempt count and database-authoritative retry availability; bounded pass continues as specified. |
 | Finalization response lost after commit | Actual finalizer commits, wrapper loses its acknowledgement; report uncertainty while database remains sent and cannot be reclaimed. |
@@ -66,3 +66,11 @@ Do not claim these scenarios passed from the preflight or mock tests. J1 schedul
 the exhausted-backlog incident acknowledgement/resolution contract and operational host decisions.
 H5 callback/PGRST303 investigation, final hosted acceptance, Stage-C ownership transfer and Japanese
 component provenance gates stay open. No main merge or activation.
+
+## Subsequent review and acceptance — 2026-10-04
+
+Claude code-approved `759a4e4` against `90804bb` for the read-only scope and reran its 16 tests plus
+TypeScript. Documentation was not reviewed line by line. Integration remains a separate exact-hash gate.
+The subsequent [real Auth/PostgREST acceptance record](J1-auth-postgrest-acceptance.md) corrects the
+planned missing-preferences assertion above to match actual SQL's suppressed-row behavior and exercises
+deadline consent withdrawal, not deletion/cancellation of an already-fulfilled reminder.

@@ -1769,3 +1769,33 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
 - Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
   scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
+### J1 real local Auth/PostgREST acceptance — 2026-10-04
+
+- Claude code-approved preflight `759a4e4` and reran its 16 tests/types; documentation not read line by line.
+  Codex's [new acceptance harness/record](checkpoints/J1-auth-postgrest-acceptance.md) await review/integration.
+- A separately owned local Auth/PostgREST stack applied all eight migrations from exact reviewed `f70069c`.
+  Real production runner/adapter plus fake sender: **14 scenarios passed**, final Auth/table inventory empty.
+  Recipient confirmation/no-email, consent/relevance withdrawal, disabled delivery, retry/timeout, lost
+  finalization acknowledgement and expired/reclaimed token rejection were exercised. A copied-migration
+  mismatch was rejected before fixture creation. Types, targeted lint, help and whitespace passed.
+- Missing preferences create a suppressed row, never eligible for claim/send; the earlier planned assertion
+  was corrected. Deadline withdrawal means consent withdrawal, not deleting/cancelling a fulfilled reminder.
+  No new production runtime/SQL/dependencies or repeated web release/build/browser checks.
+- Owned stack/volumes removed; Claude's H5 stack untouched. This is local worker acceptance, not browser
+  session/hosted/real-provider proof. Operator acknowledgement, final review/integration and scheduling gates
+  remain open. Claude's callback repair `27f791a` now awaits Codex review; PGRST303 remains a watch item
+  following Claude's reported non-reproduction investigation. No main merge, Stage-C handoff or activation.
+
+### Stage-C article artifacts / J1 acceptance integration — 2026-10-04
+
+- Codex approves Claude artifact/selector `5b58f06` for scope: seven focused tests, generated route types,
+  TypeScript and targeted lint passed. All 37 source fields/revisions match proposed English v2 data.
+  Whole-component fallback, empty suffixes, ordered practical links and machine provenance are preserved.
+- Integrated exact approved `733c827` as `b3742db` and `5b58f06` as `4139f0c`, after `ea715b1`.
+  [Review and combined evidence](checkpoints/Stage-C-artifacts-J1-integration-20261004.md): release **13/13**,
+  **1,018 tests / 181 files**, **716 modules**, public production **416 entries**, CMS/all-chunk checks passed.
+  No browser, real Auth/SQL, hosted or clean-install checks repeated. J1 operator/scheduling gates remain.
+- Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C handoff and Japanese provenance
+  decision are received. Codex English v2 preparation `a74926b` awaits Claude review and is excluded here.
+  Extraction/full markup parity and N1 component export remain pending. New docs await review; no main merge
+  or activation. Prior documentation review limits remain.
