@@ -1,7 +1,7 @@
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
 import { englishInterfaceMessages, type InterfaceMessageId } from "./interface-message-catalogs/english";
 import { japaneseInterfaceMessages } from "./interface-message-catalogs/japanese";
-import { fillInterfaceMessage, interfaceMessageText, serviceMessageId, type InterfaceMessageCatalog } from "./interface-message-lookup";
+import { fillInterfaceMessage, interfaceMessageGroup, interfaceMessageText, serviceMessageId, type InterfaceMessageCatalog, type InterfaceMessageGroup } from "./interface-message-lookup";
 
 /**
  * Interface messages with every catalog loaded, for server components, tests, and build scripts. Client components
@@ -9,7 +9,7 @@ import { fillInterfaceMessage, interfaceMessageText, serviceMessageId, type Inte
  * The catalogs live in `interface-message-catalogs/`, one file per locale.
  */
 
-export type { InterfaceMessageId };
+export type { InterfaceMessageGroup, InterfaceMessageId };
 
 const interfaceMessages = {
   en: englishInterfaceMessages,
@@ -29,4 +29,9 @@ export function localizeServiceMessage(locale: ContentLocalePreference, text: st
 /** A message with `{name}` placeholders filled, for server code that cannot use the client hook. */
 export function formatInterfaceMessage(locale: ContentLocalePreference, id: InterfaceMessageId, values: Readonly<Record<string, string | number>>): string {
   return fillInterfaceMessage(getInterfaceMessage(locale, id), values);
+}
+
+/** One group of messages (ids starting with `prefix`) in a locale, for a server component to pass to a client one. */
+export function getInterfaceMessageGroup<Prefix extends string>(locale: ContentLocalePreference, prefix: Prefix): InterfaceMessageGroup<Prefix> {
+  return interfaceMessageGroup(interfaceMessages[locale], prefix);
 }

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getInterfaceMessageGroup } from "@/domain/localization/interface-messages";
 import { getPrefectureFinderData } from "@/lib/content/prefecture-finder";
 import { localGuidanceLocationStorageKey } from "@/lib/storage/local-guidance-location";
 import { PrefectureFinder } from "./prefecture-finder";
@@ -9,7 +10,7 @@ const data = getPrefectureFinderData();
 describe("PrefectureFinder", () => {
   it("searches and selects without changing saved local context", () => {
     window.localStorage.setItem(localGuidanceLocationStorageKey, "nagoya");
-    render(<PrefectureFinder locale="en" {...data} />);
+    render(<PrefectureFinder locale="en" messages={getInterfaceMessageGroup("en", "finder.")} {...data} />);
     const search = screen.getByRole("searchbox", { name: "Search prefectures" });
     const select = screen.getByRole("combobox", { name: "Choose a prefecture" });
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -40,7 +41,7 @@ describe("PrefectureFinder", () => {
   it("shows an explicit local coverage gap in Japanese", () => {
     const unresearched = data.prefectures[0];
     const locationsWithoutLocalResearch = data.municipalities.filter(({ prefectureId }) => prefectureId !== unresearched.id);
-    const { container } = render(<PrefectureFinder locale="ja" {...data} municipalities={locationsWithoutLocalResearch} />);
+    const { container } = render(<PrefectureFinder locale="ja" messages={getInterfaceMessageGroup("ja", "finder.")} {...data} municipalities={locationsWithoutLocalResearch} />);
     expect(container.querySelector("section")).toHaveAttribute("lang", "ja");
     expect(screen.queryByText(/currently in English/)).not.toBeInTheDocument();
     const select = screen.getByRole("combobox", { name: "都道府県を選択" });
@@ -55,7 +56,7 @@ describe("PrefectureFinder", () => {
 
   it("names municipalities, Tokyo areas, dates, and translated supplements in Japanese", () => {
     const supplement = data.coverage.flatMap(({ municipalities }) => municipalities).find(({ id }) => id === "jp-13104")!.supplements[0]!;
-    render(<PrefectureFinder locale="ja" {...data} japaneseSupplementTitles={{ [supplement.id]: "新宿区での住所の登録" }} />);
+    render(<PrefectureFinder locale="ja" messages={getInterfaceMessageGroup("ja", "finder.")} {...data} japaneseSupplementTitles={{ [supplement.id]: "新宿区での住所の登録" }} />);
     fireEvent.change(screen.getByRole("combobox", { name: "都道府県を選択" }), { target: { value: "jp-13000" } });
     const municipalitySelect = screen.getByRole("combobox", { name: "市区町村を選択" });
     expect(within(municipalitySelect).getByRole("option", { name: "新宿区" })).toHaveValue("jp-13104");
@@ -71,7 +72,7 @@ describe("PrefectureFinder", () => {
 
   it("uses the same ephemeral selection for map and list, including keyboard selection", () => {
     window.localStorage.setItem(localGuidanceLocationStorageKey, "nagoya");
-    render(<PrefectureFinder locale="en" {...data} />);
+    render(<PrefectureFinder locale="en" messages={getInterfaceMessageGroup("en", "finder.")} {...data} />);
     const mapDisclosure = screen.getByText("Japan prefecture map").closest("details");
     expect(mapDisclosure).not.toHaveAttribute("open");
     fireEvent.click(screen.getByText("Japan prefecture map"));
@@ -127,7 +128,7 @@ describe("PrefectureFinder", () => {
   });
 
   it("lists only researched municipalities and offers Other for general starting points", () => {
-    render(<PrefectureFinder locale="en" {...data} />);
+    render(<PrefectureFinder locale="en" messages={getInterfaceMessageGroup("en", "finder.")} {...data} />);
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-13000" } });
     const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
     expect(within(municipalitySelect).queryByRole("option", { name: "Chofu City" })).not.toBeInTheDocument();
@@ -139,7 +140,7 @@ describe("PrefectureFinder", () => {
   });
 
   it("lists a designated city once and notes that its wards may differ", () => {
-    render(<PrefectureFinder locale="en" {...data} />);
+    render(<PrefectureFinder locale="en" messages={getInterfaceMessageGroup("en", "finder.")} {...data} />);
     fireEvent.change(screen.getByRole("combobox", { name: "Choose a prefecture" }), { target: { value: "jp-23000" } });
     const municipalitySelect = screen.getByRole("combobox", { name: "Choose a municipality or ward" });
     const optionNames = within(municipalitySelect).getAllByRole("option").map(({ textContent }) => textContent);
