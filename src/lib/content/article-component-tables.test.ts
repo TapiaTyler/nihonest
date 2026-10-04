@@ -1,74 +1,26 @@
-import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
 import { articleComponentTableSchema, validateArticleComponentTable, type ArticleComponentTable } from "@/domain/article/article-component-tables";
 import { readCanonicalArticleSources } from "./content-bundle";
 import { taxResidenceScopeComponent, trainingRouteComparisonComponent } from "@/data/article-components";
-
-/** Test-only literal inspection: reads existing copy without executing JSX or producing new content files. */
-function literal(node: ts.Node): unknown {
-  if (ts.isAsExpression(node)) return literal(node.expression);
-  if (ts.isStringLiteral(node)) return node.text;
-  if (ts.isArrayLiteralExpression(node)) return node.elements.map(literal);
-  if (ts.isObjectLiteralExpression(node)) return Object.fromEntries(node.properties.map((property) => {
-    if (!ts.isPropertyAssignment(property) || (!ts.isIdentifier(property.name) && !ts.isStringLiteral(property.name))) {
-      throw new Error("Expected a literal component property.");
-    }
-    return [property.name.text, literal(property.initializer)];
-  }));
-  throw new Error("Expected literal component data; update the read-only fixture for a changed owner.");
-}
-
-async function readTableFixture(file: string, kind: ArticleComponentTable["kind"]) {
-  const source = await readFile(resolve("src/components/content", file), "utf8");
-  const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  let rows: unknown;
-  const chrome: { en: string; ja: string }[] = [];
-  const visit = (node: ts.Node) => {
-    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === "rows" && node.initializer) {
-      rows = literal(node.initializer);
-    }
-    if (ts.isJsxElement(node)) {
-      const tag = node.openingElement.tagName.getText(tree);
-      const column = node.openingElement.attributes.properties.some((attribute) => ts.isJsxAttribute(attribute)
-        && attribute.name.getText(tree) === "scope" && attribute.initializer && ts.isStringLiteral(attribute.initializer)
-        && attribute.initializer.text === "col");
-      if (tag === "caption" || (tag === "th" && column)) {
-        const expression = node.children.find(ts.isJsxExpression)?.expression;
-        if (!expression || !ts.isConditionalExpression(expression)) throw new Error("Expected bilingual table chrome.");
-        const ja = literal(expression.whenTrue);
-        const en = literal(expression.whenFalse);
-        if (typeof ja !== "string" || typeof en !== "string") throw new Error("Expected literal bilingual text.");
-        chrome.push({ en, ja });
-      }
-    }
-    ts.forEachChild(node, visit);
-  };
-  visit(tree);
-  if (chrome.length !== 3) throw new Error("Expected one caption and two column headers.");
-  return { schemaVersion: 2, kind, caption: chrome[0]!.en, headers: [chrome[1]!.en, chrome[2]!.en],
-    rows: (rows as Array<{ id: string; en: string[]; href?: string }>).map((row) => ({
-      id: row.id, cells: row.en, ...(row.href ? { href: row.href } : {}),
-    })) };
-}
+import { articleComponentEnglishFixture } from "./article-component-english.fixture";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 
 let tables: ArticleComponentTable[];
 let slugs: string[];
 beforeAll(async () => {
-  const fixtures = await Promise.all([
-    readTableFixture("tax-residence-scope-table.tsx", "tax-residence-scope"),
-    readTableFixture("training-route-comparison-table.tsx", "training-route-comparison"),
-  ]);
-  tables = fixtures.map((fixture) => articleComponentTableSchema.parse(fixture));
-  // Parsing must not rewrite wording, IDs, order, suffixes or English chrome.
-  expect(tables).toEqual(fixtures);
-  expect(tables).toEqual([taxResidenceScopeComponent, trainingRouteComparisonComponent]);
+  const canonical = [taxResidenceScopeComponent, trainingRouteComparisonComponent];
+  tables = canonical.map((component) => articleComponentTableSchema.parse(component));
+  expect(tables).toEqual(canonical);
+  for (const component of tables) {
+    const fixture = articleComponentEnglishFixture.find(({ kind }) => kind === component.kind)!;
+    expect(translationSourceFields["article-component"](component)).toEqual(translationSourceFields["article-component"](fixture));
+  }
   slugs = (await readCanonicalArticleSources(resolve("content/articles"))).map(({ article }) => article.metadata.slug);
 });
 
 describe("Stage-C English-only v2 component table contracts", () => {
-  it("accepts actual tax/training copy and links without changing serialized evidence", () => {
+  it("accepts canonical tax/training copy and links without changing serialized evidence", () => {
     const before = JSON.stringify(tables);
     for (const table of tables) expect(validateArticleComponentTable(table, slugs)).toEqual(table);
     expect(JSON.stringify(tables)).toBe(before);
