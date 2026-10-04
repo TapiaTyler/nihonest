@@ -1736,3 +1736,16 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - Claude approved the earlier H4-H3b review record; consolidated ROADMAP/refactor were only skimmed.
   This new documentation awaits review. Owned server/container stopped; Claude's checkout/stack untouched.
   Next Codex: J1 dedicated-stack preflight and fake-sender acceptance preparation. No main merge or activation.
+
+### J1 Auth/PostgREST preflight preparation — 2026-10-04
+
+- Codex added [the dedicated-stack read-only preflight](checkpoints/J1-auth-postgrest-preflight.md) on
+  validated handoff `f70069c` / working merge `90804bb`; review/integration await Claude. Explicit
+  loopback credentials, exact HEAD and a clean checkout are required. Auth administration, eleven empty
+  table inventories and database-clock reads are bounded; there are no fixtures, worker writes or sender.
+- New guard/SDK transport tests **16 passed**; with existing CLI/command cases **41 passed / three files**.
+  TypeScript, targeted lint, architecture **713 modules**, help/argument and whitespace checks passed.
+  These are fetch-fixture tests; no real Auth/PostgREST stack or fake-sender acceptance is claimed.
+- The checkpoint lists the next owned disposable-stack scenarios and separates preflight from migration
+  identity/exclusive ownership. J1 real full-stack/operational acceptance, H5 callback/PGRST303 reliability,
+  hosted and Stage-C/provenance gates remain open. No main merge or activation.
