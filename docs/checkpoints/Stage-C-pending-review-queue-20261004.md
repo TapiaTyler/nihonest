@@ -21,6 +21,7 @@ The designated integration branch remains `codex/hosting-native-integration` at 
 | J1 current local acceptance status correction | `09748cafa44df08ed20dd45b3fbb3193e8aab78f` against `60e6591` | Documentation only; pending review. Operations/refactor current status reconciled to reviewed local evidence; scoped operator/hosted/scheduling gates retained. Three no-I/O help commands passed; no real acceptance rerun. |
 | J1 operator reproduction harness | `832d9c7429c46ade2693bdc757ccf64b5f76f8bf` against `58bbc57` | Pending Claude review. New exact-source disposable PostgreSQL harness, 59 real assertions against reviewed `1a4ab65`; rehearsal negative control detected; cleanup verified. No production SQL/runtime change or real-row authorization. |
 | J1 uncertain accepted-send recovery | `44990f82d1e4c4a51e28a3202e929b43743c1f08` against `7cd951b` | Pending Claude review. 15 real local Auth/PostgREST/fake-sender scenarios against reviewed `1a4ab65`; duplicate after lease recovery demonstrated, committed-finalization negative control detected, final empty inventories/stack cleanup verified. No production change. |
+| J1 published critical-update targeting | `66b0721869ec7dd0eff1924193b8c447c60b5c54` against `95ab4dd` | Pending Claude review. Ten new real Auth/PostgREST/fake-sender targeting scenarios; all 25 passed against reviewed `1a4ab65`. Mismatch negative control detected; release/Auth cleanup, empty inventories and stack removal verified. No production change. |
 
 Records to include in the eventual documentation review:
 
@@ -35,6 +36,7 @@ Records to include in the eventual documentation review:
 - [J1 current local acceptance status](J1-local-acceptance-status-20261004.md) and corrected operations guide.
 - [J1 repository-backed operator reproduction](J1-operator-reproduction-20261004.md).
 - [J1 uncertain accepted-send recovery](J1-uncertain-send-recovery-20261004.md).
+- [J1 published critical-update targeting](J1-published-critical-targeting-20261004.md).
 - Consolidated `docs/refactor.md` / `docs/ROADMAP.md` updates and this queue; earlier limited documentation
   approvals remain limited. The Stage-C artifact/J1 record was approved and its two corrections applied.
 

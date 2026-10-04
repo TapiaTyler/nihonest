@@ -40,6 +40,12 @@ service credential. A loopback address does not prove the database is disposable
 avoid tunnels to hosted data. Fake-sender acceptance uses a separate injected runner harness; local CLI
 mode cannot enable SES. This option starts no stack and installs no scheduler.
 
+Additional targeting fixture `66b0721` **awaits independent review/integration**.
+[Its 25-scenario real local run](checkpoints/J1-published-critical-targeting-20261004.md), against reviewed
+production `1a4ab65`, adds published-release saved-status/journey/route targeting, mismatch exclusions,
+deduplication and post-claim relevance/consent changes. This extends pending harness evidence; it does not
+replace hosted/provider acceptance or authorize operation on real rows.
+
 ## Work bounds and concurrency
 
 One pass has defaults of at most 100 due reminder events, 25 targeted critical releases, 100 delivery

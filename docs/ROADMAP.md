@@ -1968,3 +1968,17 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   stack/volumes removed, validation checkout restored clean; types/targeted lint/whitespace passed. No real
   provider, SMTP, browser, full web/SQL-suite rerun or hosted activation. Held queue/integration remain
   `1a4ab65` / `4372d4a`; scoped operator/scheduling/hosted and other acceptance limits remain.
+
+### J1 published critical-update targeting acceptance — 2026-10-04
+
+- Codex checkpoint `66b0721` adds [ten real local targeting scenarios](checkpoints/J1-published-critical-targeting-20261004.md)
+  to the Auth/PostgREST/fake-sender harness; new code/evidence await Claude review. Production source stays
+  reviewed `1a4ab65`, tested in clean-source context `4372d4a` with only the harness temporarily copied.
+- All **25 scenarios passed**: saved status, journey-wide/exact-route matches, route/journey exclusions,
+  saved-plus-journey deduplication, post-claim relevance/consent withdrawal, and disabled-topic generation.
+  A matching-route negative control failed the mismatch assertion. Release fixtures are tracked and cleaned
+  by allocated ID, alongside Auth fixtures; final independent preflight found 11 empty tables / zero users.
+- Owned `nihonest-j1-auth-critical-20261004` stack/volumes removed, validation checkout restored clean;
+  types/targeted lint/whitespace passed. No production changes, full web/SQL-suite rerun, real email, scheduling
+  or hosted activation. Selected branches retain coverage limits; held queue and integration stay
+  `1a4ab65` / `4372d4a`. No main merge.
