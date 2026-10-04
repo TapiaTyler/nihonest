@@ -1671,3 +1671,16 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   Claude retains proxy/session changes. Source integration remains `52f8a08`, documentation handoff
   `3bf4e94`; this checkpoint has not been integrated. H3b repair and the other open gates remain.
   No main merge, hosted service, email, schedule or translation activation.
+
+### N1 revision-key ordering acceptance checkpoint — 2026-10-03
+
+- Codex added [a read-only corpus regression test](checkpoints/N1-revision-ordering-acceptance.md) on
+  base `a39d01b`; review/integration await Claude. All **1,349 current revision inputs** across ten
+  structured families and articles match code-unit ordering/digests; insertion order is immaterial.
+  Production revision code, translation catalogs/prompts and artifacts are unchanged.
+- New test: **13 passed**; related bundle gate: **71 tests / eight files passed**. TypeScript, targeted
+  lint and whitespace passed. No full build or full-suite repetition is claimed for this test-only change.
+- This is Node/current-corpus evidence, not Hermes or universal locale equivalence. The N4 parent
+  `a39d01b` remains unreviewed; approval of this test alone must not integrate that parent implicitly.
+  Integration remains H4 `52f8a08` / documentation `3bf4e94`. Stage-C/native, H5/Auth, H3b and J1
+  acceptance remain open; no main merge, artifact approval or activation.
