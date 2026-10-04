@@ -1766,3 +1766,23 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   session/hosted/real-provider proof. Operator acknowledgement, final review/integration and scheduling gates
   remain open. Claude's callback repair `27f791a` now awaits Codex review; PGRST303 remains a watch item
   following Claude's reported non-reproduction investigation. No main merge, Stage-C handoff or activation.
+
+### Repaired callback / H5 / approved J1 preflight integration — 2026-10-04
+
+- Codex approved callback repair `27f791a` and H5 `6866b97` for local scope with original `1857817`.
+  [The review/handoff](checkpoints/H5-callback-integration-20261004.md) records **28 callback/helper tests**,
+  two matcher tests, and a **13-failure** original-code negative control. Exact review release: 13/13,
+  **995 tests / 179 files**. P2 resolved; PGRST303 remains a hosted watch item, not a proven local cause.
+- Claude code-approved `759a4e4`; integrated by hash with the three Claude inputs. **Combined source
+  `14e21ce`**: release 13/13, **1,011 tests / 180 files**, **713 modules**, public build **416 entries**,
+  audits/types/lint/CMS/bundles passed; full serial browser **32 passed / five Auth tests skipped**.
+  Copied existing dependencies, no new real Auth/expiry, SQL/operator or CI/clean-install run by Codex.
+- Combined web/runtime/migration inputs match Claude's fixed exact tree apart from the unused read-only
+  preflight and tests. Claude's H5+N4 real-session/investigation evidence is attributed, not independently
+  repeated. Owned server stopped; main/other contributor worktrees/services untouched.
+- H1–H5 implementation/local review complete; hosted acceptance is open. Stage-C renderer ownership takes
+  effect only after this exact validated handoff is in both branches and Claude reports its receipt.
+  Japanese component provenance/wording and tax/training coordination remain prerequisites. No consumer
+  extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
+- Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
+  scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
