@@ -208,6 +208,56 @@ async function main() {
       assert.equal(report.exitCode, 1); assert.equal((await row(id)).state, "sent");
       await pass(fake.provider); assert.equal(fake.calls(), 1);
     });
+    await scenario("accepted-send-unfinalized-lease-recovery-can-duplicate", async (id, address) => {
+      await preferences(id); await reminder(id); const fake = sender(address);
+      let finalizationAttempts = 0;
+      const unfinalized: NotificationWorkerStore = { ...store, async finalizeEmailDelivery(input) {
+        assert.equal(input.state, "sent"); assert.equal(fake.calls(), 1);
+        finalizationAttempts++;
+        // The fake provider accepted, but no finalization RPC reaches the database in this fixture.
+        throw new Error("Fixture loses finalization before commit.");
+      } };
+      const first = await pass(fake.provider, unfinalized);
+      assert.equal(first.claimed, 1); assert.equal(first.sent, 0); assert.equal(first.failed, 0);
+      assert.equal(first.infrastructureErrors, 1); assert.equal(first.exitCode, 1);
+      assert.equal(finalizationAttempts, 1); assert.equal(fake.calls(), 1);
+      const processing = await row(id);
+      assert.equal(processing.state, "processing"); assert.equal(processing.attempt_count, 1);
+      assert.equal(processing.sent_at, null); assert.equal(processing.provider_message_id, null);
+      const oldToken = processing.claim_token; assert.ok(oldToken); assert.ok(processing.claim_expires_at);
+
+      const immediate = await pass(fake.provider);
+      assert.equal(immediate.claimed, 0); assert.equal(immediate.exitCode, 0); assert.equal(fake.calls(), 1);
+      assert.deepEqual(await row(id), processing);
+      // Shorten only this owned claim's expiry, rather than waiting for the normal 300-second lease.
+      const expired = await client.from("notification_deliveries").update({
+        claim_expires_at: new Date(Date.parse(await store.readWorkerTime()) - 1_000).toISOString(),
+      }).eq("id", processing.id).eq("user_id", id).eq("state", "processing").eq("claim_token", oldToken).select("id").single();
+      requireSuccess(expired); assert.equal(expired.data!.id, processing.id);
+      const recovery: NotificationWorkerStore = { ...store, async claimEmailDeliveries(input, options) {
+        const claims = await store.claimEmailDeliveries(input, options);
+        assert.equal(claims.length, 1);
+        const reclaimed = notificationDeliverySchema.parse(claims[0]);
+        assert.equal(reclaimed.id, processing.id); assert.equal(reclaimed.attemptCount, 2);
+        assert.notEqual(reclaimed.claimToken, oldToken);
+        const before = await row(id);
+        await assert.rejects(store.finalizeEmailDelivery({ deliveryId: processing.id, claimToken: oldToken,
+          state: "suppressed", now: await store.readWorkerTime() }));
+        assert.deepEqual(await row(id), before);
+        return claims;
+      } };
+      const recovered = await pass(fake.provider, recovery);
+      assert.equal(recovered.claimed, 1); assert.equal(recovered.sent, 1);
+      assert.equal(recovered.infrastructureErrors, 0); assert.equal(recovered.exitCode, 0);
+      // Two accepted fake sends for one event demonstrate the documented duplicate-on-recovery limit.
+      assert.equal(fake.calls(), 2);
+      const sent = await row(id);
+      assert.equal(sent.id, processing.id); assert.equal(sent.event_id, processing.event_id);
+      assert.equal(sent.state, "sent"); assert.equal(sent.attempt_count, 2);
+      assert.equal(sent.provider_message_id, "fake-provider-message"); assert.ok(sent.sent_at);
+      assert.equal(sent.claim_token, null); assert.equal(sent.claim_expires_at, null);
+      await pass(fake.provider); assert.equal(fake.calls(), 2); assert.deepEqual(await row(id), sent);
+    });
     for (const reclaim of [false, true]) await scenario(reclaim ? "reclaimed-old-token-rejected" : "expired-token-finalization-rejected", async (id) => {
       await preferences(id); await reminder(id); const now = await store.readWorkerTime();
       assert.equal(await store.generateDueReminderEvents({ now, limit: 1 }), 1);
