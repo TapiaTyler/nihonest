@@ -1,4 +1,5 @@
 import type { generalLocalAdvice } from "@/data/local-guidance/general-advice";
+import type { InterfaceMessageId } from "@/domain/localization/interface-message-catalogs/english";
 
 /**
  * Lightweight finder constants and payload types for the browser. This module must not import geography or
@@ -30,19 +31,20 @@ export type FinderMunicipality = Readonly<{
   isDesignatedCity: boolean;
 }>;
 
+/** Short guide labels live in the interface catalogs (`finder.nationalGuide.*`, `finder.generalGuide.*`). */
 export const prefectureNationalGuides = [
-  { articleId: "registering-your-address-after-arrival", title: "Registering your address", japaneseTitle: "住所の登録" },
-  { articleId: "joining-national-health-insurance", title: "National Health Insurance", japaneseTitle: "国民健康保険" },
-  { articleId: "preparing-for-disasters-and-evacuation-in-japan", title: "Disaster preparation and evacuation", japaneseTitle: "災害への備えと避難" },
-  { articleId: "finding-japanese-language-and-local-support", title: "Japanese language and local support", japaneseTitle: "日本語学習と地域の支援" },
-] as const;
+  { articleId: "registering-your-address-after-arrival", messageId: "finder.nationalGuide.address" },
+  { articleId: "joining-national-health-insurance", messageId: "finder.nationalGuide.healthInsurance" },
+  { articleId: "preparing-for-disasters-and-evacuation-in-japan", messageId: "finder.nationalGuide.disasters" },
+  { articleId: "finding-japanese-language-and-local-support", messageId: "finder.nationalGuide.languageSupport" },
+] as const satisfies readonly { articleId: string; messageId: InterfaceMessageId }[];
 
 export const prefectureGeneralGuides = [
-  { articleId: "registering-your-address-after-arrival", title: "Address registration", japaneseTitle: "住所の登録" },
-  { articleId: "joining-national-health-insurance", title: "National Health Insurance", japaneseTitle: "国民健康保険" },
-  { articleId: "sorting-household-waste-and-arranging-disposal", title: "Household waste", japaneseTitle: "家庭ごみ" },
-  { articleId: "preparing-for-disasters-and-evacuation-in-japan", title: "Disaster preparation", japaneseTitle: "災害への備え" },
-  { articleId: "finding-japanese-language-and-local-support", title: "Language and local support", japaneseTitle: "日本語と地域の支援" },
-  { articleId: "income-and-resident-tax-after-moving-to-japan", title: "Income and resident tax", japaneseTitle: "所得税と住民税" },
-  { articleId: "national-pension-after-moving-to-japan", title: "National Pension", japaneseTitle: "国民年金" },
-] as const satisfies readonly { articleId: keyof typeof generalLocalAdvice; title: string; japaneseTitle: string }[];
+  { articleId: "registering-your-address-after-arrival", messageId: "finder.generalGuide.address" },
+  { articleId: "joining-national-health-insurance", messageId: "finder.generalGuide.healthInsurance" },
+  { articleId: "sorting-household-waste-and-arranging-disposal", messageId: "finder.generalGuide.waste" },
+  { articleId: "preparing-for-disasters-and-evacuation-in-japan", messageId: "finder.generalGuide.disasters" },
+  { articleId: "finding-japanese-language-and-local-support", messageId: "finder.generalGuide.languageSupport" },
+  { articleId: "income-and-resident-tax-after-moving-to-japan", messageId: "finder.generalGuide.tax" },
+  { articleId: "national-pension-after-moving-to-japan", messageId: "finder.generalGuide.pension" },
+] as const satisfies readonly { articleId: keyof typeof generalLocalAdvice; messageId: InterfaceMessageId }[];
