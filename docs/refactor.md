@@ -1299,3 +1299,19 @@ editorial approval, and a documentation status change cannot authorize external 
   extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
 - Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
   scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
+### J1 real local Auth/PostgREST acceptance — 2026-10-04
+
+- Claude code-approved preflight `759a4e4` and reran its 16 tests/types; documentation not read line by line.
+  Codex's [new acceptance harness/record](checkpoints/J1-auth-postgrest-acceptance.md) await review/integration.
+- A separately owned local Auth/PostgREST stack applied all eight migrations from exact reviewed `f70069c`.
+  Real production runner/adapter plus fake sender: **14 scenarios passed**, final Auth/table inventory empty.
+  Recipient confirmation/no-email, consent/relevance withdrawal, disabled delivery, retry/timeout, lost
+  finalization acknowledgement and expired/reclaimed token rejection were exercised. A copied-migration
+  mismatch was rejected before fixture creation. Types, targeted lint, help and whitespace passed.
+- Missing preferences create a suppressed row, never eligible for claim/send; the earlier planned assertion
+  was corrected. Deadline withdrawal means consent withdrawal, not deleting/cancelling a fulfilled reminder.
+  No new production runtime/SQL/dependencies or repeated web release/build/browser checks.
+- Owned stack/volumes removed; Claude's H5 stack untouched. This is local worker acceptance, not browser
+  session/hosted/real-provider proof. Operator acknowledgement, final review/integration and scheduling gates
+  remain open. Claude's callback repair `27f791a` now awaits Codex review; PGRST303 remains a watch item
+  following Claude's reported non-reproduction investigation. No main merge, Stage-C handoff or activation.
