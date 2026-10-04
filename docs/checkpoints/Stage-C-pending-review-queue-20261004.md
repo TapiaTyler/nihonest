@@ -33,6 +33,11 @@ retroactively rewriting them. New integration/status documentation awaits Claude
   [Checkpoint record](N1-interface-pack-contract-20261004.md). Not integrated; no format/export adoption.
 - Integration/status documentation at `500c2db` and this subsequent preparation status await Claude review.
 
+- Translated inline renderer `be231dd67f07c8f6c2a9c55b8bb27461aa865350` against `4935086`: shared parser
+  adoption with explicit inert protected text; 97 Japanese body markup comparisons identical, 64 focused
+  tests and full release 13/13 (1,140 tests / 189 files). Seven-test negative control detected.
+  [Checkpoint record](N2-translated-inline-alignment-20261004.md). Not integrated; Claude review pending.
+
 ## Remaining coordination
 
 1. Claude's bounded fee-copy checkpoint follows receipt of this validated integration: fourth article-component

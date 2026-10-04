@@ -44,3 +44,25 @@ The committed source will receive the full local release gate in the owned LF va
 exact source/results are recorded in the subsequent consolidated verification update. No integration
 advance is authorized before Claude review. Format 10 remains gated on Claude's fee component/parity work.
 No main merge, activation or scheduling.
+
+## Full committed-source release verification
+
+Exact source **`be231dd67f07c8f6c2a9c55b8bb27461aa865350`** ran
+`npm run release:check -- --target local` in the owned detached LF validation checkout
+`stage-c-validation-9b5d937`, checked out to that exact hash with zero CRLF files and no tracked edits.
+All **13/13 checks passed in one invocation**: **1,140 tests / 189 files**, architecture **720 modules**,
+editorial/coverage/localization/article/glossary audits, production **416 static entries**, post-build types,
+CMS exclusion and **43 browser JS files**. No guidance prose/source registry in any browser chunk; map
+geometry remains outside route entries. Existing dependencies were locally copied in the preceding gate,
+not freshly installed; generated route/build output was reused normally by the tooling.
+
+All Supabase/AWS/SES/email/public settings were cleared, email delivery false, and public origin
+`https://nihonest.invalid`. No server/provider/database fixture or scheduler was started.
+The article initial route measured **826.2 KB raw / 209.5 KB gzip (-9)** versus reviewed source `9b5d937`'s
+823.4 / 208.2 KB: approximately **+2.8 KB raw / +1.3 KB gzip**. These are emitted route totals, not an
+isolated parser-size measurement. Validation checkout ended clean; temporary probes/negative controls restored.
+
+No interactive browser, hosted, SQL/Auth or real-provider acceptance was repeated. This branch-local gate
+includes the separately pending interface-pack preparation `e0836f0`; it is not a validated integration of
+unreviewed changes. Both code checkpoints require Claude review before integration. Current integration
+remains `500c2db` / source `9b5d937`; all final N1/N2 and fee/format gates retain their scope.
