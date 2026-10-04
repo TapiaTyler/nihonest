@@ -14,7 +14,9 @@ export type ArticleComponentSource =
   | Readonly<{ kind: "tax-residence-scope"; caption: string; headers: readonly [string, string]; rows: readonly Readonly<{ id: string; cells: readonly [string, string] }>[] }>
   | Readonly<{ kind: "training-route-comparison"; caption: string; headers: readonly [string, string]; rows: readonly Readonly<{ id: string; cells: readonly [string, string, string] }>[] }>
   /** Each paragraph is one N2 inline-grammar string: a leading **label**, body text, and optional [text](/articles/slug) links. */
-  | Readonly<{ kind: "japan-practical-basics"; paragraphs: readonly Readonly<{ id: string; text: string }>[] }>;
+  | Readonly<{ kind: "japan-practical-basics"; paragraphs: readonly Readonly<{ id: string; text: string }>[] }>
+  /** Fee section copy: each message is a template whose `{placeholders}` are filled from the numeric fee record. */
+  | Readonly<{ kind: "residence-application-fees"; messages: readonly Readonly<{ id: string; text: string }>[] }>;
 
 function addAnnotatedDocumentVersion(fields: Record<string, string>, prefix: string, version: AnnotatedDocumentVersion) {
   fields[`${prefix}.label`] = version.label;
@@ -106,6 +108,10 @@ export const translationSourceFields = {
     const fields: Record<string, string> = {};
     if (component.kind === "japan-practical-basics") {
       for (const paragraph of component.paragraphs) fields[`paragraphs.${paragraph.id}`] = paragraph.text;
+      return fields;
+    }
+    if (component.kind === "residence-application-fees") {
+      for (const message of component.messages) fields[`messages.${message.id}`] = message.text;
       return fields;
     }
     fields.caption = component.caption;

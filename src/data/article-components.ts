@@ -1,5 +1,6 @@
 import type { ArticleComponentTable } from "@/domain/article/article-component-tables";
 import type { ArticlePracticalBasics } from "@/domain/article/article-practical-basics";
+import type { ResidenceApplicationFeeCopy } from "@/domain/article/residence-application-fee-copy";
 
 /** English-only component data for Stage C. Renderer adoption waits for reviewed Japanese artifact selectors. */
 export const taxResidenceScopeComponent = {
@@ -38,9 +39,39 @@ export const japanPracticalBasicsComponent = {
   ],
 } satisfies ArticlePracticalBasics;
 
+/**
+ * English copy of the residence application fee section. Amounts and dates are `{placeholders}` filled from
+ * `residenceApplicationFees`, so the copy never restates a number.
+ */
+export const residenceApplicationFeesComponent = {
+  schemaVersion: 2, kind: "residence-application-fees",
+  messages: [
+    { id: "heading", text: "Fees depend on acceptance date, channel, and the period granted" },
+    { id: "previous-schedule", text: "For applications accepted from {previousFrom} through {previousThrough}, an approved change or extension costs {previousCounter} at a counter or {previousOnline} online." },
+    { id: "current-schedule", text: "For applications accepted on or after {currentFrom}, the fee is determined by the period ISA actually grants:" },
+    { id: "caption", text: "Change-of-status and extension fees for applications accepted on or after {currentFrom}" },
+    { id: "header-period", text: "Period granted" },
+    { id: "header-counter", text: "Counter" },
+    { id: "header-online-base", text: "Online base fee" },
+    { id: "header-online-total", text: "Online total with processing" },
+    { id: "period-up-to-three-months", text: "3 months or less" },
+    { id: "period-over-three-through-six-months", text: "Over 3 through 6 months" },
+    { id: "period-over-six-months-under-one-year", text: "Over 6 months but under 1 year" },
+    { id: "period-one-year", text: "1 year" },
+    { id: "period-over-one-under-three-years", text: "Over 1 but under 3 years" },
+    { id: "period-three-under-five-years", text: "3 to under 5 years" },
+    { id: "period-five-years-or-more", text: "5 years or more" },
+    { id: "processing", text: "The online processing charge is {processingUnderThree} for a grant under three years and {processingThreeOrMore} for three years or more. ISA sends payment instructions after examination. Covered online applications use convenience-store or bank payment; credit cards and QR-code payment are not supported in the published process. Counter applications continue to use revenue stamps." },
+    { id: "schedule-rule", text: "The application acceptance date controls the schedule. An application accepted by {previousThrough} retains the earlier fee and revenue-stamp process even if decided later. Published relief can reduce a qualifying change or extension fee to {reducedFee}, but reduction or exemption requests must be filed at a counter because the online system does not support them." },
+    { id: "fraud-label", text: "Fraud warning:" },
+    { id: "fraud-body", text: "ISA states that legitimate online-payment messages for the new process come only from an address ending in {emailDomain}. Recheck the official page before paying if the sender, channel, or instructions differ." },
+  ],
+} satisfies ResidenceApplicationFeeCopy;
+
 /** Registration/display order is stable; translation field maps use the separately agreed field-key rules. */
 export const articleComponents = {
   "tax-residence-scope": taxResidenceScopeComponent,
   "training-route-comparison": trainingRouteComparisonComponent,
   "japan-practical-basics": japanPracticalBasicsComponent,
+  "residence-application-fees": residenceApplicationFeesComponent,
 };

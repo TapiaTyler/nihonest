@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { japaneseArticleComponentTranslations } from "@/data/translations/ja/article-components";
+import { residenceApplicationFeesComponent } from "@/data/article-components";
 import { articleComponentEnglishFixture } from "@/lib/content/article-component-english.fixture";
 import { areArticleComponentTranslationFieldsValid } from "./article-component-translation-fields";
 import type { ArticleComponentSource } from "./translation-source-fields";
 
-const component = (kind: ArticleComponentSource["kind"]) => articleComponentEnglishFixture.find((source) => source.kind === kind)!;
+const sources: readonly ArticleComponentSource[] = [...articleComponentEnglishFixture, residenceApplicationFeesComponent];
+const component = (kind: ArticleComponentSource["kind"]) => sources.find((source) => source.kind === kind)!;
 const fields = (kind: ArticleComponentSource["kind"]) => japaneseArticleComponentTranslations.find(({ contentId }) => contentId === kind)!.fields;
 const valid = (kind: ArticleComponentSource["kind"], changes: Readonly<Record<string, string | undefined>>) => {
   const next: Record<string, string> = { ...fields(kind) };
@@ -17,7 +19,7 @@ const valid = (kind: ArticleComponentSource["kind"], changes: Readonly<Record<st
 
 describe("areArticleComponentTranslationFieldsValid", () => {
   it("accepts every current artifact as stored", () => {
-    for (const source of articleComponentEnglishFixture) expect(areArticleComponentTranslationFieldsValid(source, fields(source.kind))).toBe(true);
+    for (const source of sources) expect(areArticleComponentTranslationFieldsValid(source, fields(source.kind))).toBe(true);
   });
 
   it("requires exactly the English field keys", () => {
@@ -47,5 +49,13 @@ describe("areArticleComponentTranslationFieldsValid", () => {
       .replace("__first__", "/articles/preparing-for-disasters-and-evacuation-in-japan");
     expect(valid("japan-practical-basics", { "paragraphs.emergencies": swapped })).toBe(false);
     expect(valid("japan-practical-basics", { "paragraphs.emergencies": emergencies.replace(/\]\([^)]+\)/, "](/articles/other)") })).toBe(false);
+  });
+
+  it("requires fee copy to keep exactly the English placeholders, in any order", () => {
+    const previous = fields("residence-application-fees")["messages.previous-schedule"]!;
+    expect(valid("residence-application-fees", { "messages.previous-schedule": previous.replace("{previousOnline}", "5,500円") })).toBe(false);
+    expect(valid("residence-application-fees", { "messages.heading": "手数料{reducedFee}" })).toBe(false);
+    expect(valid("residence-application-fees", { "messages.previous-schedule": previous.replace("{previousFrom}", "{previousTemp}").replace("{previousThrough}", "{previousFrom}").replace("{previousTemp}", "{previousThrough}") })).toBe(true);
+    expect(valid("residence-application-fees", { "messages.fraud-label": " " })).toBe(false);
   });
 });
