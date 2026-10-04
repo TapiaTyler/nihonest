@@ -19,7 +19,7 @@ const advice = Object.entries(generalLocalAdvice).map(([id, record]) => ({ id, k
 
 describe("local guidance bundle coverage", () => {
   it("preserves canonical supplements, researched geography and general lookup prompts in registration order", () => {
-    expect(bundle.manifest.formatVersion).toBe(9);
+    expect(bundle.manifest.formatVersion).toBe(10);
     expect(JSON.parse(bundle.files.get("local-guidance.en.json")!)).toEqual(localGuidanceSupplements);
     expect(JSON.parse(bundle.files.get("supported-geographies.en.json")!)).toEqual(supportedGeographies);
     expect(JSON.parse(bundle.files.get("general-local-advice.en.json")!)).toEqual(advice);
