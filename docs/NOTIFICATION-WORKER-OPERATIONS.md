@@ -1,13 +1,16 @@
 # Notification worker operations
 
-This is the operating contract for J1's one-pass command. It is **not an activation instruction**: the
-database-authority, recipient, lease-budget and command checkpoints are code-reviewed and integrated
-([receipt](checkpoints/J1-N4-N1-N2-integration-20261003.md)), while real isolated Supabase/PostgreSQL,
-concurrency, pgTAP and pre-scheduling operator gates remain open. No schedule,
-hosted service or real email has been activated by these commits.
+This is the operating contract for J1's one-pass command. It is **not an activation instruction**.
+The worker, explicit local target, operator procedure and local acceptance harnesses are code-reviewed and
+integrated. Recorded real local evidence includes 72 notification pgTAP assertions, 49 operator-procedure
+assertions, 36 concurrency assertions (also rerun on reviewed combined SQL), and 14 Auth/PostgREST scenarios
+with a fake sender. Review attribution, tested sources and limits are in
+[the current acceptance status](checkpoints/J1-local-acceptance-status-20261004.md).
 
-[The acceptance preparation record](checkpoints/J1-acceptance-preparation.md) lists the outstanding
-database, lock-wait, Auth/PostgREST and fake-sender scenarios. Local fixture results do not replace those gates.
+Host/scheduler/credentials/monitoring decisions, scoped exhausted-backlog operator approval and any real
+provider/hosted acceptance remain separate gates. No schedule, hosted service or real email is activated.
+[The earlier preparation record](checkpoints/J1-acceptance-preparation.md) is historical planning; the current
+status above supersedes its pending local-gate statements without extending the recorded evidence.
 
 ## Command and configuration
 
@@ -37,6 +40,12 @@ service credential. A loopback address does not prove the database is disposable
 avoid tunnels to hosted data. Fake-sender acceptance uses a separate injected runner harness; local CLI
 mode cannot enable SES. This option starts no stack and installs no scheduler.
 
+Additional targeting fixture `66b0721` **awaits independent review/integration**.
+[Its 25-scenario real local run](checkpoints/J1-published-critical-targeting-20261004.md), against reviewed
+production `1a4ab65`, adds published-release saved-status/journey/route targeting, mismatch exclusions,
+deduplication and post-claim relevance/consent changes. This extends pending harness evidence; it does not
+replace hosted/provider acceptance or authorize operation on real rows.
+
 ## Work bounds and concurrency
 
 One pass has defaults of at most 100 due reminder events, 25 targeted critical releases, 100 delivery
@@ -44,9 +53,15 @@ preparations and 25 one-at-a-time email claims. Claims have a 300-second lease a
 Database/provider operations each have a 10-second deadline; the configured SES client makes one SDK
 attempt and the runner reserves lease time for finalization. The Supabase adapter limits response bodies to
 2 MiB and disables SDK database retries. SQL claims use `FOR UPDATE SKIP LOCKED` and token-bound finalization,
-but overlapping invocations and lock waits still need real PostgreSQL acceptance before relying on them.
-Start with one scheduler invocation at a time after that gate; choose frequency from measured run duration,
+and reviewed local PostgreSQL acceptance covers competing claims and post-lock lease expiry.
+After the separate scheduling gate, start with one invocation at a time; choose frequency from measured run duration,
 backlog and provider/database costs. The command contains no scheduler and no cost-creating background loop.
+
+Additional local recovery fixture `44990f8` **awaits independent review/integration**.
+[Its 15-scenario run](checkpoints/J1-uncertain-send-recovery-20261004.md), against reviewed production
+`1a4ab65`, demonstrates two accepted fake sends for one event when finalization never commits and the
+lease is reclaimed. Immediate retry cannot claim live processing; successful recovery finalization prevents
+a third send. This is fake-provider evidence, not real SES or actual HTTP-loss acceptance.
 
 The runner uses database time for lease decisions. A timeout or post-send expiry can leave uncertain provider
 acceptance. A later reclaim may send a duplicate; the command does not promise exactly-once delivery.
@@ -68,9 +83,25 @@ For a future rollback, stop the scheduler first and set `EMAIL_DELIVERY_ENABLED=
 job runs. Disabling delivery leaves pending rows untouched. It does not undo previously accepted sends or
 change existing delivery state. Database rollback/requeue requires a separate, reviewed recovery procedure.
 
+## Disposable operator regression reproduction
+
+New harness checkpoint `832d9c7` is locally validated and **awaits independent review/integration**.
+[Its record](checkpoints/J1-operator-reproduction-20261004.md) supplies an exact-source reproduction of
+the resolution checks without a shared stack or deployed rows:
+
+```text
+node scripts/acceptance/notification-worker-operator.mjs --source-ref <reviewed-40-character-commit>
+```
+
+It requires the existing local PostgreSQL image, creates a uniquely owned network-disabled fixture with no
+ports/host binds, reads committed SQL and removes the fixture/anonymous volumes in finally. Final acceptance
+against `1a4ab65`: 59 assertions passed; a commit-for-rehearsal negative control failed as expected. This
+harness is test infrastructure, not approval to execute the procedure on real deliveries.
+
 ## Exhausted-backlog investigation and terminal resolution
 
-This procedure and its companion checkpoint await review before operational use. It does not authorize
+This procedure is code-reviewed and has recorded disposable PostgreSQL acceptance. Operational use still
+requires the scoped environment/row/investigation/reviewer decision below; code review does not authorize
 scheduling or changes to deployed data. Exit semantics remain unchanged: exhausted rows keep exit code 1;
 an incident acknowledgement never turns a failed report into success or hides the backlog counters.
 
