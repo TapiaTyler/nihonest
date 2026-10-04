@@ -71,6 +71,21 @@ For a future rollback, stop the scheduler first and set `EMAIL_DELIVERY_ENABLED=
 job runs. Disabling delivery leaves pending rows untouched. It does not undo previously accepted sends or
 change existing delivery state. Database rollback/requeue requires a separate, reviewed recovery procedure.
 
+## Disposable operator regression reproduction
+
+New harness checkpoint `832d9c7` is locally validated and **awaits independent review/integration**.
+[Its record](checkpoints/J1-operator-reproduction-20261004.md) supplies an exact-source reproduction of
+the resolution checks without a shared stack or deployed rows:
+
+```text
+node scripts/acceptance/notification-worker-operator.mjs --source-ref <reviewed-40-character-commit>
+```
+
+It requires the existing local PostgreSQL image, creates a uniquely owned network-disabled fixture with no
+ports/host binds, reads committed SQL and removes the fixture/anonymous volumes in finally. Final acceptance
+against `1a4ab65`: 59 assertions passed; a commit-for-rehearsal negative control failed as expected. This
+harness is test infrastructure, not approval to execute the procedure on real deliveries.
+
 ## Exhausted-backlog investigation and terminal resolution
 
 This procedure is code-reviewed and has recorded disposable PostgreSQL acceptance. Operational use still

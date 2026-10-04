@@ -1479,3 +1479,15 @@ editorial approval, and a documentation status change cannot authorize external 
 - These documentation corrections await review in the held queue. Independent follow-up can make the
   session-only operator regression harness portable and reproducible against exact reviewed source, without
   borrowing another contributor's stack. Integration remains `1a4ab65` / `4372d4a`; no main merge/activation.
+
+### J1 repository-backed operator regression acceptance — 2026-10-04
+
+- Codex checkpoint `832d9c7` adds [an exact-source disposable operator harness](checkpoints/J1-operator-reproduction-20261004.md),
+  replacing reliance on a hardcoded session artifact for reproduction. New harness/evidence await Claude review;
+  production SQL/runtime/settings are unchanged. It validates the commit before Docker, uses a local-only image
+  and uniquely owned network-disabled container, and emits success only after fixture/volume/temp-file cleanup.
+- Against reviewed SQL source `1a4ab65`, all eight migrations and **59 real PostgreSQL 17.6 assertions** passed.
+  A temporary variant committing the rehearsal failed its snapshot check; all owned containers were removed.
+  Syntax, targeted lint, help and invalid source checks passed. No pgTAP/concurrency/Auth/web/hosted rerun.
+- Scoped real-row/operator approval and host/schedule/provider gates remain unchanged. New checkpoint and
+  operations/status updates stay in the held queue; integration is `1a4ab65` / `4372d4a`. No main merge or activation.
