@@ -23,8 +23,8 @@ is Claude markup-parity approved and integrated at source `9b5d937`, with 1,123 
 719 modules, 416 static entries and all 43 browser files checked. See the latest receipt below.
 Latest source `ea8ed5c` integrates approved interface/inline and fourth fee component: release 13/13,
 1,147 tests / 190 files, 721 modules; Claude adopted/documentation-approved handoff `0da60ef` as `9ca257b`.
-Format 10 checkpoint `934db81` is implemented and passed branch-local release 13/13 (1,187 tests / 192 files,
-724 modules); review/integration and final export/native acceptance remain pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
+Format 10 checkpoint `934db81` is Claude-approved and integrated at source `883cdff`; combined release
+13/13 passed (1,187 tests / 192 files, 724 modules). Final export/native acceptance remains open. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
 [the extraction checkpoint](checkpoints/N2-component-renderer-extraction-20261004.md).
 New documentation awaits review; no main merge or activation.
 
@@ -1614,3 +1614,19 @@ editorial approval, and a documentation status change cannot authorize external 
   `ea8ed5c`). This is not combined integration validation or native renderer/UI acceptance. No browser/Auth/SQL/
   provider/hosted rerun, clean install, main merge, activation, real email or scheduling. Broader N1/N2/native
   and operational gates remain open; N5 metadata-boundary preparation can proceed read-only while review waits.
+
+### N1 format 10 approval and combined integration — 2026-10-04
+
+- Claude approved `934db81` against `d1fef2f`, independently ran **1,187 tests / 192 files** and checked
+  exported artifacts, interface values, fee-template reproduction and all eleven guide labels. Approved
+  documentation `e9354e0`; requested table wording is fixed: code-reviewed pack contracts, Japanese values
+  remain machine-translated. Claude did not rerun release/build/browser-bundle checks.
+- Exact inputs cherry-picked as `c9bcf50` / `cdff1a2`; wording fix `883cdff`. No conflicts or unrelated source.
+  [Receipt and combined validation](checkpoints/N1-format-10-integration-20261004.md): exact `883cdff` passed
+  local release **13/13**, **1,187 tests / 192 files**, **724 modules**, **416 static entries**, CMS exclusion
+  and all **43 browser JS files**. Article initial JS unchanged at 826.2 KB raw / 209.5 KB gzip. Clean owned LF
+  checkout, reused local dependencies, hosted/email settings cleared; no clean install or browser/Auth/SQL rerun.
+- Two timestamped combined builds verified identical bytes/version for all 38 files. Code review and combined
+  validation complete; new consolidated documentation awaits review. Both branches adopt the exact final
+  documentation handoff before dependent work. N5 preparation remains read-only; final native/UI/activation,
+  broader grammar and prior operational/hosted gates remain open. No main merge or service activation.

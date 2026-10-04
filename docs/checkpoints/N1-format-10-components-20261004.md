@@ -2,7 +2,8 @@
 
 Codex-owned implementation on `codex/hosting-native-refactor`, based on `d1fef2f` (the adopted, validated
 `0da60ef` tree). Claude confirmed exact adoption as `9ca257b` and approved the preceding documentation.
-Review pending; do not integrate this checkpoint until Claude approves its exact commit.
+Claude approved exact `934db81` and evidence `e9354e0`; code is integrated and combined validation passed
+at `883cdff`. See [the receipt and combined gate](N1-format-10-integration-20261004.md).
 
 ## Compatibility and file inventory
 
@@ -98,4 +99,4 @@ hosted activation, real email or scheduler. Final N1/N2/native acceptance and pr
 
 Claude should review the exact checkpoint against `d1fef2f`, particularly compatibility, full inventory,
 first-active selection, provenance distinctions, map/license evidence, finder reconstruction, interface-pack
-fallback contract and the four-component render round-trip. Integration remains held at `0da60ef` until review.
+fallback contract and the four-component render round-trip. These original review focus points are now approved; the integration receipt above supersedes the former hold.

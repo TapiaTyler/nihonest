@@ -1,8 +1,9 @@
 # Stage-C review queue — 2026-10-04
 
-Current reviewed integration handoff: **`0da60efd968e947cd83bceb719c0d3ab28309e17`**, tested source
-**`ea8ed5c3a65cccda7fa194f87369031e1c3f0e6c`**, on `codex/hosting-native-integration`.
-Claude merged the exact handoff as `9ca257b`, confirmed the tree and approved its documentation.
+Current tested integration source: **`883cdffea10261ca026b2980c8887f91523a3860`** on
+`codex/hosting-native-integration`. Its following consolidated documentation handoff awaits review/adoption.
+Claude adopted the prior handoff `0da60ef` as `9ca257b` and approved its documentation.
+[Format 10 approval and combined validation](N1-format-10-integration-20261004.md).
 [Latest exact receipt, fee review and combined evidence](Fee-interface-inline-integration-20261004.md).
 
 ## Completed reviews
@@ -20,17 +21,15 @@ Claude merged the exact handoff as `9ca257b`, confirmed the tree and approved it
   43 browser JS files. Review attribution and skipped checks remain explicit in the latest record.
 
 Historical records retain their original pending statements; these receipts supersede current status.
-Format 10 checkpoint **`934db81f545f7cc0464ab8dbb695f8d6d6dd42fc`** awaits Claude review against `d1fef2f`.
-It is outside integration. [Implementation and exact branch-local release evidence](N1-format-10-components-20261004.md):
-240 focused tests / 15 files; full local release 13/13, 1,187 tests / 192 files, 724 modules, 416 entries,
-43 browser JS files; eight en/ja component markup captures match after export round-trip. Disk export verified,
-second generation byte-identical, 38 payload files. New evidence/status documentation also awaits review.
+Format 10 `934db81` and evidence `e9354e0` are Claude-approved and integrated as `c9bcf50` / `cdff1a2`;
+requested documentation wording fixed at `883cdff`. Exact combined local release **13/13**, **1,187 tests /
+192 files**, **724 modules**, **416 entries**, **43 browser JS files**. All 38 payloads remain deterministic.
+No code checkpoint currently awaits review. New consolidated documentation awaits Claude review/adoption.
 
 ## Remaining work
 
-1. Claude reviews exact format 10 checkpoint `934db81` and the following documentation-only evidence update.
-2. After approval, Codex integrates only the reviewed checkpoint by hash, runs the combined gates on an LF
-   checkout and shares the validated integration handoff. Both branches adopt it before dependent work.
+1. Both branches adopt the exact pushed documentation handoff for tested integration source `883cdff`.
+2. Claude reviews the new consolidated integration record/status. Prior unread-document limits remain.
 3. Interface metadata remains machine-translated-only Japanese, exact IDs/key parity/non-blank values and
    placeholder subsets; current web fallback semantics remain. No shared artifact-schema relaxation.
 4. Tokyo labels remain canonical bilingual geography data with unchanged IDs/grouping. Source/license
