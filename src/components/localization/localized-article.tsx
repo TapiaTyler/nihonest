@@ -3,6 +3,7 @@
 import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
 import { parseArticleMarkdown, type ArticleComponentBlockKind } from "@/domain/article/article-blocks";
+import { parseArticleInline, type ArticleInline } from "@/domain/article/article-inline";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
 import { useInterfaceMessages } from "./interface-text";
@@ -18,22 +19,39 @@ function completeJapaneseTranslation(translation?: ArticleTranslation) {
     : undefined;
 }
 
-function InlineMarkdown({ children }: Readonly<{ children: string }>) {
-  return children.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\\?\((?:\/|https?:\/\/)[^)\s]+\))/g).map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <strong key={index} className="font-semibold text-slate-950">
-          <InlineMarkdown>{part.slice(2, -2)}</InlineMarkdown>
-        </strong>
-      );
+/** Protected spans stay visible as inert raw text, including existing form blanks; never evaluate HTML/MDX. */
+function inlineNodes(nodes: readonly ArticleInline[]): ReactNode[] {
+  const rendered: ReactNode[] = [];
+  let literal = "";
+  const flush = () => {
+    if (literal) rendered.push(literal);
+    literal = "";
+  };
+  for (const [index, node] of nodes.entries()) {
+    if (node.kind === "text" || node.kind === "protected") {
+      // Coalesce adjacent literal spans so protected syntax does not add text boundaries to existing markup.
+      literal += node.kind === "text" ? node.text : node.raw;
+      continue;
     }
-    const link = part.match(/^\[([^\]]+)\]\\?\(((?:\/|https?:\/\/)[^)\s]+)\)$/);
-    if (!link) return <Fragment key={index}>{part}</Fragment>;
-    const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
-    return link[2].startsWith("/")
-      ? <Link key={index} href={link[2]} className={className}>{link[1]}</Link>
-      : <a key={index} href={link[2]} className={className}>{link[1]}</a>;
-  });
+    flush();
+    if (node.kind === "code") rendered.push(<code key={index}>{node.text}</code>);
+    else if (node.kind === "strong") rendered.push(<strong key={index} className="font-semibold text-slate-950">{inlineNodes(node.children)}</strong>);
+    else if (node.kind === "emphasis") rendered.push(<em key={index}>{inlineNodes(node.children)}</em>);
+    else if (node.kind === "link") {
+      const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
+      const label = inlineNodes(node.children);
+      rendered.push(node.href.startsWith("/")
+        ? <Link key={index} href={node.href} className={className}>{label}</Link>
+        : <a key={index} href={node.href} className={className}>{label}</a>);
+    }
+    else throw new Error("Unsupported article inline node.");
+  }
+  flush();
+  return rendered;
+}
+
+function InlineMarkdown({ children }: Readonly<{ children: string }>) {
+  return inlineNodes(parseArticleInline(children));
 }
 
 /** Server-rendered component blocks by kind; see renderJapaneseArticleComponents. */
