@@ -116,7 +116,7 @@ describe("AccountContentSyncProvider", () => {
     render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
 
     await screen.findByText("synchronized");
-    expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), {
+    expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), "30000000-0000-4000-8000-000000000003", {
       ...emptyAccountContentState,
       savedContent: [deviceRecord],
     });
@@ -134,7 +134,7 @@ describe("AccountContentSyncProvider", () => {
 
     render(<AccountContentSyncProvider><SyncStatus /></AccountContentSyncProvider>);
 
-    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), emptyAccountContentState));
+    await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledWith(expect.anything(), "30000000-0000-4000-8000-000000000003", emptyAccountContentState));
     expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([accountRecord]);
   });
 
@@ -152,7 +152,7 @@ describe("AccountContentSyncProvider", () => {
     act(() => writeSavedContent([record("B-new-edit")]));
     await act(async () => { finishFirst({ ok: true, state: { ...emptyAccountContentState, savedContent: [record("A-canonical")] } }); });
     await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(2));
-    expect(mocks.synchronize.mock.calls[1][1]).toEqual(emptyAccountContentState);
+    expect(mocks.synchronize.mock.calls[1][2]).toEqual(emptyAccountContentState);
     expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe("account-B");
     expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "null")).toEqual([record("B-new-edit")]);
     await act(async () => { finishSecond({ ok: true, state: { ...emptyAccountContentState, savedContent: [record("A-canonical")] } }); });
@@ -187,6 +187,8 @@ describe("AccountContentSyncProvider", () => {
 
     await waitFor(() => expect(mocks.synchronize).toHaveBeenCalledTimes(2));
     await screen.findByText("synchronized");
+    expect(mocks.synchronize.mock.calls[0][1]).toBe(firstUser);
+    expect(mocks.synchronize.mock.calls[1][1]).toBe(secondUser);
     expect(window.localStorage.getItem(accountContentOwnerStorageKey)).toBe(secondUser);
     expect(JSON.parse(window.localStorage.getItem(savedContentStorageKey) ?? "[]")).toEqual([]);
   });
