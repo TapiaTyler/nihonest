@@ -1,5 +1,7 @@
 # N5 checkpoint 1: standalone metadata and selectors — 2026-10-04
 
+Exact implementation commit: **`6c7fb4d8fed3a646d618729f61ee3df4cab7f51e`**. Claude review pending.
+
 Codex implementation, based on documentation-only preparation `4b44660` and the adopted validated format 10
 tree `dbd7a83`. Claude adopted `dbd7a83` as `d367cd9`, approved its documentation and approved the N5 plan.
 Claude granted a later, bounded import-only handoff for eleven metadata-only pages and four helpers, after
@@ -66,8 +68,18 @@ rejection, transitive runtime isolation, tuple-order preservation, body independ
 and fixture mutations of family assembly, import/tuple completeness, syntax, side effects and identities.
 
 TypeScript, targeted ESLint, architecture **729 production modules**, non-writing generation check and
-whitespace checks passed. Full local release on the exact committed checkpoint will be recorded in the
-following evidence update. Fixtures use owned temporary directories; no canonical write tests run on the
+whitespace checks passed. Exact `6c7fb4d` subsequently passed `npm run release:check -- --target local` **13/13** in one invocation:
+**1,205 tests / 194 files**, **729 production modules**, editorial/coverage/localization/article/glossary
+checks, production **416 static entries**, post-build types, CMS exclusion and all **43 browser JS files**.
+Article initial JS unchanged at **826.2 KB raw / 209.5 KB gzip (-9)**. Owned LF validation checkout was clean,
+with zero CRLF files and existing locally copied dependencies. Hosted/email/public settings cleared; delivery
+false and public origin https://nihonest.invalid. No clean install, browser interactions, hosted/Auth/SQL/provider
+rerun or savings claim. Validation checkout ended clean; later evidence commits change documentation only.
+
+A separate disposable full-source fixture exercised the CLI: fresh output accepted; a metadata edit rejected
+without changing the generated file; explicit generation refreshed it; missing output rejected without creating
+it. The initial probe used a Windows path in `--import` and failed before execution; rerun with a file URL
+passed. This is an additional command probe, not extra committed Vitest tests. Fixtures use owned temporary directories; no canonical write tests run on the
 working checkout. Generation writes only the new derived module; no services started.
 
 Claude should review the exact checkpoint against `4b44660`, focusing on strict literal/registration parsing,
