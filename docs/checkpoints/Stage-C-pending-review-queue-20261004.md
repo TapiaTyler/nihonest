@@ -1,6 +1,6 @@
 # Stage-C review queue — 2026-10-04
 
-Current tested integration source: **`883cdffea10261ca026b2980c8887f91523a3860`** on
+Current tested integration source: **`5f29566b74c3be6026ef95179419675691b96b18`** on
 `codex/hosting-native-integration`. Claude adopted its documentation handoff `dbd7a83` as `d367cd9` and approved it.
 Claude adopted the prior handoff `0da60ef` as `9ca257b` and approved its documentation.
 [Format 10 approval and combined validation](N1-format-10-integration-20261004.md).
@@ -44,3 +44,7 @@ no consumers switched; 18 focused tests and exact branch-local release 13/13 (1,
 
 Claude owns Japanese catalogs, source-field rules/prompts and final Japanese checks. Codex owns integration,
 N1 exporter/contracts and consolidated status documentation. No main merge, activation, email or scheduling.
+
+## N5 approval receipt
+
+Claude approved checkpoint 1 `6c7fb4d` and evidence `99b170a`; these supersede the pending statuses above. Integrated and combined-validated at `5f29566`: release 13/13, 1,205 tests / 194 files. [Exact receipt](N5-checkpoint-1-integration-20261004.md). Consumer switching is authorized for checkpoint 2; direct-build/release/CMS freshness wiring belongs to Claude. This integration documentation awaits review.

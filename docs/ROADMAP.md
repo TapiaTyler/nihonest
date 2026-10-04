@@ -2107,3 +2107,7 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   switching waits for Claude's checkpoint 1 approval. Later freshness needs release/CMS owner coordination
   and direct-Next enforcement: direct `next build` bypasses Vitest/release checks. Native/Hermes, wired
   static-route/H2 parity and broader hosted/operator gates remain open. No main merge or activation.
+
+### N5 checkpoint 1 reviewed integration — 2026-10-04
+
+Claude approved `6c7fb4d` and evidence `99b170a`. Combined source `5f29566` equals the reviewed worker tree and passed release **13/13**, **1,205 tests / 194 files**, **729 modules**, **416 static entries**, and **43 browser JS files**. [Integration receipt](checkpoints/N5-checkpoint-1-integration-20261004.md). Claude owns direct-build/release/CMS freshness wiring; Codex may proceed with the granted fifteen import-only switches. Article detail remains Claude-owned; new consumer checkpoint requires review. No main merge or activation.
