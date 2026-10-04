@@ -22,8 +22,9 @@ release 13/13, 1,028 tests / 181 files, 716 modules, 416 entries. Extraction che
 is Claude markup-parity approved and integrated at source `9b5d937`, with 1,123 tests / 187 files,
 719 modules, 416 static entries and all 43 browser files checked. See the latest receipt below.
 Latest source `ea8ed5c` integrates approved interface/inline and fourth fee component: release 13/13,
-1,147 tests / 190 files, 721 modules. Format 10 wiring is ready after validated handoff adoption; final
-export/native acceptance remains pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
+1,147 tests / 190 files, 721 modules; Claude adopted/documentation-approved handoff `0da60ef` as `9ca257b`.
+Format 10 checkpoint `934db81` is implemented and passed branch-local release 13/13 (1,187 tests / 192 files,
+724 modules); review/integration and final export/native acceptance remain pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
 [the extraction checkpoint](checkpoints/N2-component-renderer-extraction-20261004.md).
 New documentation awaits review; no main merge or activation.
 
@@ -1582,7 +1583,7 @@ editorial approval, and a documentation status change cannot authorize external 
   bodies including two non-current and reproduced all seven positive/negative tests; full release not rerun.
 - Codex approves fee `ea2ba52` / report `cefaddf`: 19 ordered templates, exact fee placeholder sets,
   whole-English fallback and type consolidation. Two byte-identical fee outputs; 58 committed focused tests,
-  lint/architecture pass. Own captured size 10,181 UTF-8 bytes; Claude's slightly different count is recorded.
+  lint/architecture pass. Own captured size 10,181 UTF-8 bytes; Claude's 10,188 includes a seven-byte capture separator.
   [Exact review and combined evidence](checkpoints/Fee-interface-inline-integration-20261004.md).
 - Reviewed `4ea3432` merged as `6e6b34d`; fee/report cherry-picked as `c77f5e3` / `ea8ed5c`. No conflicts.
   Exact combined source `ea8ed5c` passed full release 13/13: 1,147 tests / 190 files, 721 modules, 416 static
@@ -1592,3 +1593,24 @@ editorial approval, and a documentation status change cannot authorize external 
   ten additions / 38 files with all four component owners and existing provenance. No component-copy files,
   invented interface currency or shared artifact relaxation. Final N1/N2/native and operational gates remain.
   No main merge, activation, real email or scheduling.
+
+### N1 format 10 component export checkpoint — 2026-10-04
+
+- Claude merged exact `0da60ef` as `9ca257b`, verified its tree and approved its documentation. The fee
+  capture count difference is resolved: 4,836 + 5,345 markup bytes plus Claude's seven-byte separator = 10,188.
+- Codex checkpoint `934db81` implements the agreed ten additions / **38 mandatory files**, retaining all
+  prior files and adding all four component owners/current artifacts, eight directive bindings/provenance,
+  numeric fees, ordered region/Tokyo data, recorded map/license resources, finder bindings and interface packs.
+  No component-copy files or translation/catalog edits. First-active selection and the shared field validator
+  preserve web fallback; strict links, registration, contexts, map/license and interface references are checked.
+- [Exact checkpoint and evidence](checkpoints/N1-format-10-components-20261004.md): **240 focused tests / 15 files**;
+  eight en/ja web-renderer static captures byte-identical after export round-trip, whole-English fallback,
+  one-character mutation control and exact finder projection (47 prefectures / 112 municipalities / 784 supplements).
+- Exact `934db81` passed local release **13/13**, **1,187 tests / 192 files**, **724 modules**, **416 static entries**,
+  CMS exclusion and all **43 browser JS files**. Article JS unchanged at 826.2 KB raw / 209.5 KB gzip. Owned LF
+  checkout stayed clean; existing dependencies reused, hosted/email settings cleared. Generated disk bundle
+  verified; a second timestamp produced identical bytes/checksums/version, **7,657,916 payload bytes**.
+- Implementation/full branch-local evidence await Claude's review; integration remains `0da60ef` (tested source
+  `ea8ed5c`). This is not combined integration validation or native renderer/UI acceptance. No browser/Auth/SQL/
+  provider/hosted rerun, clean install, main merge, activation, real email or scheduling. Broader N1/N2/native
+  and operational gates remain open; N5 metadata-boundary preparation can proceed read-only while review waits.

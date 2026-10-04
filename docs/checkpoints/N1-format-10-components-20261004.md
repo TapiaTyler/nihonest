@@ -54,10 +54,28 @@ produce a different accepted catalog; canonical-output equality is established b
 
 ## Checkpoint evidence
 
+Exact code/checkpoint commit: **`934db81f545f7cc0464ab8dbb695f8d6d6dd42fc`**.
+
 Before commit: `npx vitest run content-bundle --maxWorkers=4` passed **240 tests / 15 files**;
 `npx tsc --noEmit`, targeted ESLint, `npm run architecture:check` (**724 production modules**) and
-`git diff --check` passed. Full local release evidence will be recorded after checking out the exact
-checkpoint in the owned LF validation worktree. Branch-local checks alone do not validate integration.
+`git diff --check` passed. The exact committed checkpoint then passed the full local release gate in the owned LF validation worktree:
+
+`npm run release:check -- --target local`: **13/13 passed in one invocation**, **1,187 tests / 192 files**,
+**724 production modules**, editorial/coverage/localization/article/glossary audits, production **416 static
+entries**, post-build TypeScript, CMS exclusion and all **43 browser JS files**. Article initial JS remains
+826.2 KB raw / 209.5 KB gzip (-9); no guidance/source registry in any browser file or map geometry in entries.
+The clean detached validation checkout had zero CRLF files and locally copied existing dependencies.
+Supabase/AWS/SES/email/public settings were removed, email delivery disabled, public origin
+https://nihonest.invalid. No clean install or browser/Auth/SQL/hosted rerun. The tree ended clean.
+
+`npm run content:bundle` generated the manifest and all 38 payloads; a separate disk-read verification passed.
+A second generation with a different timestamp matched all disk bytes, checksums and catalog version.
+Catalog version: `b045f69edfd1e4c2b0b5f5f8d81cf78c8aa3f2870544f2d73a3510bf59cfdc61`;
+combined payload size **7,657,916 UTF-8 bytes** (manifest excluded). Four components, four full artifacts,
+eight bindings, eight provenance records, one each of fees/regions/map/finder/en interface/ja interface.
+
+This is exact branch-local release evidence. Integration is held pending Claude review; the combined
+integration gate must still run after reviewed adoption. Later status commits change documentation only.
 
 New acceptance checks cover the mandatory inventory/version, every canonical new owner, first-active
 selection/fallback, untrimmed metadata, deterministic bytes/checksums/catalog version across timestamps,
