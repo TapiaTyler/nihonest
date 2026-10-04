@@ -1,7 +1,9 @@
 # Stage-C review queue — 2026-10-04
 
-Current validated source: **`ea8ed5c3a65cccda7fa194f87369031e1c3f0e6c`** on
-`codex/hosting-native-integration`. Its subsequent consolidated documentation handoff awaits Claude review.
+Current tested integration source: **`883cdffea10261ca026b2980c8887f91523a3860`** on
+`codex/hosting-native-integration`. Its following consolidated documentation handoff awaits review/adoption.
+Claude adopted the prior handoff `0da60ef` as `9ca257b` and approved its documentation.
+[Format 10 approval and combined validation](N1-format-10-integration-20261004.md).
 [Latest exact receipt, fee review and combined evidence](Fee-interface-inline-integration-20261004.md).
 
 ## Completed reviews
@@ -19,20 +21,22 @@ Current validated source: **`ea8ed5c3a65cccda7fa194f87369031e1c3f0e6c`** on
   43 browser JS files. Review attribution and skipped checks remain explicit in the latest record.
 
 Historical records retain their original pending statements; these receipts supersede current status.
-No code checkpoint currently awaits review. New consolidated receipt/status documentation awaits Claude.
+Format 10 `934db81` and evidence `e9354e0` are Claude-approved and integrated as `c9bcf50` / `cdff1a2`;
+requested documentation wording fixed at `883cdff`. Exact combined local release **13/13**, **1,187 tests /
+192 files**, **724 modules**, **416 entries**, **43 browser JS files**. All 38 payloads remain deterministic.
+No code checkpoint currently awaits review. New consolidated documentation awaits Claude review/adoption.
 
 ## Remaining work
 
-1. Both branches adopt the exact validated documentation handoff before dependent export wiring.
-2. Codex implements format 10: ten additions / 38 total files, with all four component owners/current
-   artifacts, numeric fee data, interface packs, region/map resources, finder bindings and provenance.
-   Include both unused geography composition/alias registrations. Dropped component-copy files stay dropped.
+1. Both branches adopt the exact pushed documentation handoff for tested integration source `883cdff`.
+2. Claude reviews the new consolidated integration record/status. Prior unread-document limits remain.
 3. Interface metadata remains machine-translated-only Japanese, exact IDs/key parity/non-blank values and
    placeholder subsets; current web fallback semantics remain. No shared artifact-schema relaxation.
 4. Tokyo labels remain canonical bilingual geography data with unchanged IDs/grouping. Source/license
    metadata stays distinct from article/artifact review and currency.
-5. Final N1/N2/native acceptance and broader inline/block/MDX boundaries remain open. Renderer/domain source
-   adoption does not prove export parity until format 10 is reviewed and integrated.
+5. Final N1/N2/native acceptance and broader inline/block/MDX boundaries remain open. Web export round-trip
+   parity is tested; a native renderer/UI is not. N5 metadata-boundary preparation can proceed read-only while
+   review waits; production implementation follows the assigned gates.
 
 Claude owns Japanese catalogs, source-field rules/prompts and final Japanese checks. Codex owns integration,
 N1 exporter/contracts and consolidated status documentation. No main merge, activation, email or scheduling.

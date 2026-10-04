@@ -1,3 +1,4 @@
+import { buildComponentBundleEntries } from "./content-bundle-components";
 import { administrativeGeographies, administrativeGeographySources, legacyGeographyIds } from "@/data/geography";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
@@ -143,6 +144,7 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "geography-aliases.en.json", kind: "catalog", locale: "en" }, Object.entries(legacyGeographyIds).map(([id, geographyId]) => ({ id, geographyId }))],
     [{ path: "article-provenance.en.json", kind: "catalog", locale: "en" }, articles.map(({ article, sourceRevision }) => ({ id: article.metadata.id, sourceRevision }))],
     [{ path: "article-translation-artifacts.ja.json", kind: "catalog-translations", locale: "ja" }, currentArticleTranslationArtifacts(articles)],
+    ...await buildComponentBundleEntries(articles.map(({ article }) => article)),
   ];
 
   const files = new Map<string, string>();

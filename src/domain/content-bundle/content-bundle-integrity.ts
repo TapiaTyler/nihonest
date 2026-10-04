@@ -1,3 +1,5 @@
+import { bundledArticleComponentSchema, bundledArticleComponentArtifactSchema, bundledComponentBindingSchema, bundledComponentProvenanceSchema, bundledFeeDataSchema, bundledOrientationRegionsSchema, bundledPrefectureMapSchema, bundledFinderBindingSchema, validateBundledComponents } from "./component-payloads";
+import { englishInterfaceMessagePackSchema, japaneseInterfaceMessagePackSchema } from "./interface-message-pack";
 import { bundledArticleProvenanceSchema, bundledArticleArtifactSchema, validateBundledArticleProvenance } from "./article-provenance";
 import { administrativeGeographySchema } from "@/domain/geography/administrative-geography";
 import { bundledGeographySourceSchema, bundledGeographyAliasSchema, validateBundledGeographies } from "./geography-payload";
@@ -30,7 +32,7 @@ import { bundledActivitySchema, bundledActivityTranslationSchema } from "./activ
 import { validateActivityCrossReferences } from "@/domain/activity-cross-reference/activity-cross-reference";
 import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
 
-/** Format 9's supported files. New catalog families need an explicit contract here before export. */
+/** Format 10's supported files. New catalog families need an explicit contract here before export. */
 export const contentBundlePayloadContracts = {
   "articles.en.json": { kind: "articles", locale: "en", schema: bundledArticleSchema.array() },
   "article-translations.ja.json": { kind: "article-translations", locale: "ja", schema: bundledArticleTranslationSchema.array() },
@@ -60,6 +62,16 @@ export const contentBundlePayloadContracts = {
   "geography-aliases.en.json": { kind: "catalog", locale: "en", schema: bundledGeographyAliasSchema.array() },
   "article-provenance.en.json": { kind: "catalog", locale: "en", schema: bundledArticleProvenanceSchema.array() },
   "article-translation-artifacts.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledArticleArtifactSchema.array() },
+  "article-components.en.json": { kind: "catalog", locale: "en", schema: bundledArticleComponentSchema.array() },
+  "article-component-translations.ja.json": { kind: "catalog-translations", locale: "ja", schema: bundledArticleComponentArtifactSchema.array() },
+  "component-bindings.en.json": { kind: "catalog", locale: "en", schema: bundledComponentBindingSchema.array() },
+  "component-provenance.en.json": { kind: "catalog", locale: "en", schema: bundledComponentProvenanceSchema.array() },
+  "residence-application-fees.en.json": { kind: "catalog", locale: "en", schema: bundledFeeDataSchema.array() },
+  "orientation-regions.en.json": { kind: "catalog", locale: "en", schema: bundledOrientationRegionsSchema.array() },
+  "prefecture-map-resources.en.json": { kind: "catalog", locale: "en", schema: bundledPrefectureMapSchema.array() },
+  "finder-bindings.en.json": { kind: "catalog", locale: "en", schema: bundledFinderBindingSchema.array() },
+  "interface-messages.en.json": { kind: "catalog", locale: "en", schema: englishInterfaceMessagePackSchema.array() },
+  "interface-messages.ja.json": { kind: "catalog", locale: "ja", schema: japaneseInterfaceMessagePackSchema.array() },
 } as const satisfies Record<string, { kind: ContentBundleFile["kind"]; locale: ContentBundleFile["locale"]; schema: z.ZodType }>;
 
 export function validateContentBundlePayload(file: Pick<ContentBundleFile, "path" | "kind" | "locale">, payload: unknown): readonly unknown[] {
@@ -212,5 +224,6 @@ export function verifyContentBundle(
       }
     }
   }
+  validateBundledComponents(files, sha256, revision);
   return manifest;
 }

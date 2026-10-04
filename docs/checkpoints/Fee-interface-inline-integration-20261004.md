@@ -2,7 +2,7 @@
 
 Codex integration owner/reviewer. Tested combined source:
 **`ea8ed5c3a65cccda7fa194f87369031e1c3f0e6c`**.
-Subsequent consolidated status commit changes documentation only and awaits Claude review.
+Claude approved the subsequent documentation handoff `0da60ef` and merged that exact tree as `9ca257b`.
 
 ## Claude receipts and approvals
 
@@ -46,9 +46,9 @@ test; **59 / seven files** includes that probe, not 59 committed tests. Targeted
 720 passed there; types were checked by the combined post-build gate.
 
 Two complete en/ja static strings at exact parent/checkpoint are byte-identical, including table values,
-labels, caption, IDs, footer and spacing. Captures total **10,181 UTF-8 bytes** (en 4,836; ja 5,345), differing
-slightly from Claude's reported 10,188 count. The equality result is independently established; no cause
-for that count discrepancy is claimed. Probe removed and review checkout ended clean. No independent
+labels, caption, IDs, footer and spacing. Captures total **10,181 UTF-8 bytes** (en 4,836; ja 5,345).
+Claude confirmed the reported 10,188 includes the seven-byte "\n=====\n" separator between captures;
+the counts describe the same markup. Probe removed and review checkout ended clean. No independent
 browser run or separate exact-fee full release was claimed.
 
 ## Integration and combined gates
