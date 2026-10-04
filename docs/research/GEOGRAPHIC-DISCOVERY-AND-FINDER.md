@@ -29,8 +29,9 @@ Japanese translation in this module for now; the Japanese article retains an
 explicit English fallback notice. Finder engineering is complete within that
 language scope. Translation can be resumed as a separate iteration.
 
-The deferred A3 translation contract is
-`src/components/content/prefecture-finder-messages.ts`. Claude should author
+The deferred A3 translation contract was
+`src/components/content/prefecture-finder-messages.ts`; since N3 these messages are the `finder.` and `regionMap.`
+entries of the interface message catalogs. Claude should author
 Japanese values for `heading`, `intro`, `searchLabel`, `searchPlaceholder`,
 `selectLabel`, `selectPlaceholder`, `clearSearch`, `clearSelection`,
 `resultCount(count)`, `empty`, `selected`, `filteredSelection`,

@@ -11,6 +11,18 @@ export function interfaceMessageText(catalog: InterfaceMessageCatalog | undefine
   return catalog?.[id] ?? englishInterfaceMessages[id];
 }
 
+/** The messages whose ids start with `Prefix`, e.g. every `finder.` message for one client component. */
+export type InterfaceMessageGroup<Prefix extends string> = Readonly<Record<Extract<InterfaceMessageId, `${Prefix}${string}`>, string>>;
+
+/**
+ * Picks one group of messages from a catalog, with English for any id the catalog lacks. Server components pass the
+ * group to a client component as a prop, so the page renders in its locale without the client loading a catalog.
+ */
+export function interfaceMessageGroup<Prefix extends string>(catalog: InterfaceMessageCatalog | undefined, prefix: Prefix): InterfaceMessageGroup<Prefix> {
+  const ids = (Object.keys(englishInterfaceMessages) as InterfaceMessageId[]).filter((id) => id.startsWith(prefix));
+  return Object.fromEntries(ids.map((id) => [id, interfaceMessageText(catalog, id)])) as InterfaceMessageGroup<Prefix>;
+}
+
 /** Fills `{name}` placeholders so word order can differ between languages; unknown names are left as written. */
 export function fillInterfaceMessage(template: string, values: Readonly<Record<string, string | number | undefined>>): string {
   return template.replace(/\{(\w+)\}/g, (placeholder, name: string) => String(values[name] ?? placeholder));
