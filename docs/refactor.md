@@ -4,7 +4,7 @@ Status: implementation in progress, 2026-10-04. H3a, H1/H2, CMS fixes and the pr
 remain reviewed/integrated. Claude approved all 26 queued J1/N4/N1/N2 code checkpoints for their scope
 and queue `29b212c`; integrated source `b09cd28` passed combined local tests and a public-only build.
 See [the integration receipt and evidence](checkpoints/J1-N4-N1-N2-integration-20261003.md) for exact hashes and review limits.
-J1 real-database/operator gates, N4/H5 authenticated binding/hosted checks and N1/N2 Stage-C/native
+J1 operational/hosted gates, N4/H5 hosted checks and N1/N2 Stage-C/native
 acceptance remain open. The older consolidated delta through `e4fc1ff` is documentation-approved;
 the `29b212c..29fe06f` handoff documentation is approved; earlier unread records retain their limits.
 Claude's stale Playwright repair `888c7a0` is approved and integrated at `ffdeef6`, with full production e2e
@@ -21,7 +21,9 @@ Claude approved English v2 `a74926b`; it and reviewed N3 `997f0ab` are integrate
 release 13/13, 1,028 tests / 181 files, 716 modules, 416 entries. Extraction checkpoint `f9681f9`
 is Claude markup-parity approved and integrated at source `9b5d937`, with 1,123 tests / 187 files,
 719 modules, 416 static entries and all 43 browser files checked. See the latest receipt below.
-N1 export remains pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
+Latest source `ea8ed5c` integrates approved interface/inline and fourth fee component: release 13/13,
+1,147 tests / 190 files, 721 modules. Format 10 wiring is ready after validated handoff adoption; final
+export/native acceptance remains pending. See [the reviewed integration](checkpoints/N3-English-v2-integration-20261004.md) and
 [the extraction checkpoint](checkpoints/N2-component-renderer-extraction-20261004.md).
 New documentation awaits review; no main merge or activation.
 
@@ -391,6 +393,8 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 ### N1 — Complete the portable content bundle
 
 Status: Stage-B integrity/catalog contracts are code-approved and integrated at `b09cd28`.
+Stage-C prerequisites, including fourth fee copy and interface pack, are reviewed/integrated at `ea8ed5c`;
+format 10 wiring follows exact validated handoff adoption. Final component/native acceptance remains open.
 [Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; Stage-C/native and final acceptance remain pending.
 [Stage-C component inventory](checkpoints/N1-stage-c-component-inventory-20261004.md) records all eight directive dependencies, ownership requests and proposed export sequencing.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
@@ -1570,3 +1574,21 @@ editorial approval, and a documentation status change cannot authorize external 
 - New code/evidence await Claude review alongside interface-pack `e0836f0`; integration stays `500c2db` /
   `9b5d937`. N1 format 10 waits for reviewed fee extraction/parity; broader N1/N2/native acceptance remains
   open. No main merge, activation, real email or scheduling.
+
+### Fee, interface pack and translated inline review/integration — 2026-10-04
+
+- Claude received `500c2db` as `69756a3` and documentation-approved it; approved interface pack `e0836f0`
+  plus `4935086`, and inline renderer `be231dd` plus `4ea3432`. Claude independently checked 99 Japanese
+  bodies including two non-current and reproduced all seven positive/negative tests; full release not rerun.
+- Codex approves fee `ea2ba52` / report `cefaddf`: 19 ordered templates, exact fee placeholder sets,
+  whole-English fallback and type consolidation. Two byte-identical fee outputs; 58 committed focused tests,
+  lint/architecture pass. Own captured size 10,181 UTF-8 bytes; Claude's slightly different count is recorded.
+  [Exact review and combined evidence](checkpoints/Fee-interface-inline-integration-20261004.md).
+- Reviewed `4ea3432` merged as `6e6b34d`; fee/report cherry-picked as `c77f5e3` / `ea8ed5c`. No conflicts.
+  Exact combined source `ea8ed5c` passed full release 13/13: 1,147 tests / 190 files, 721 modules, 416 static
+  entries, 43 browser JS files. Article JS remains 826.2 KB raw / 209.5 KB gzip. Owned LF checkout ended clean;
+  reused dependencies, no browser/Auth/SQL/hosted rerun. New status documentation awaits Claude review.
+- Format 10 fee prerequisite is satisfied; after exact handoff adoption, Codex can implement the agreed
+  ten additions / 38 files with all four component owners and existing provenance. No component-copy files,
+  invented interface currency or shared artifact relaxation. Final N1/N2/native and operational gates remain.
+  No main merge, activation, real email or scheduling.

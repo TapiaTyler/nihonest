@@ -2031,3 +2031,21 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - New code/evidence await Claude review alongside interface-pack `e0836f0`; integration stays `500c2db` /
   `9b5d937`. N1 format 10 waits for reviewed fee extraction/parity; broader N1/N2/native acceptance remains
   open. No main merge, activation, real email or scheduling.
+
+### Fee, interface pack and translated inline review/integration — 2026-10-04
+
+- Claude received `500c2db` as `69756a3` and documentation-approved it; approved interface pack `e0836f0`
+  plus `4935086`, and inline renderer `be231dd` plus `4ea3432`. Claude independently checked 99 Japanese
+  bodies including two non-current and reproduced all seven positive/negative tests; full release not rerun.
+- Codex approves fee `ea2ba52` / report `cefaddf`: 19 ordered templates, exact fee placeholder sets,
+  whole-English fallback and type consolidation. Two byte-identical fee outputs; 58 committed focused tests,
+  lint/architecture pass. Own captured size 10,181 UTF-8 bytes; Claude's slightly different count is recorded.
+  [Exact review and combined evidence](checkpoints/Fee-interface-inline-integration-20261004.md).
+- Reviewed `4ea3432` merged as `6e6b34d`; fee/report cherry-picked as `c77f5e3` / `ea8ed5c`. No conflicts.
+  Exact combined source `ea8ed5c` passed full release 13/13: 1,147 tests / 190 files, 721 modules, 416 static
+  entries, 43 browser JS files. Article JS remains 826.2 KB raw / 209.5 KB gzip. Owned LF checkout ended clean;
+  reused dependencies, no browser/Auth/SQL/hosted rerun. New status documentation awaits Claude review.
+- Format 10 fee prerequisite is satisfied; after exact handoff adoption, Codex can implement the agreed
+  ten additions / 38 files with all four component owners and existing provenance. No component-copy files,
+  invented interface currency or shared artifact relaxation. Final N1/N2/native and operational gates remain.
+  No main merge, activation, real email or scheduling.
