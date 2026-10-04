@@ -8,8 +8,9 @@ J1 real-database/operator gates, N4/H5 authenticated binding/hosted checks and N
 acceptance remain open. The older consolidated delta through `e4fc1ff` is documentation-approved;
 the `29b212c..29fe06f` handoff documentation is approved; earlier unread records retain their limits.
 Claude's stale Playwright repair `888c7a0` is approved and integrated at `ffdeef6`, with full production e2e
-checks passed. See [the review record](checkpoints/Playwright-stale-spec-review-20261003.md). This new status update awaits documentation review.
-Claude retains H4/H5/H3b. No Stage-C ownership handoff, main merge or activation.
+checks passed. See [the review record](checkpoints/Playwright-stale-spec-review-20261003.md). Claude approved the handoff documentation through `10883fa`.
+H4 is locally approved/integrated at `52f8a08`; H3b needs a CI readiness fix. See [the new review record](checkpoints/H4-H3b-review-20261003.md).
+Claude retains H5 and H3b repairs; new documentation awaits review. No Stage-C handoff, main merge or activation.
 
 ## Purpose
 
@@ -237,7 +238,7 @@ Acceptance:
 
 ### H3 — Configuration preflight and release automation
 
-Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b remains planned.
+Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b `3feb37f` is implemented but needs a CI health-readiness failure guard before approval.
 H3a code is integrated and validated with J1 preparation and the CMS LF fix at `669fa99`.
 The validated handoff `6eb2fa6` is in both working branches; H3b and hosted checks remain pending.
 
@@ -260,7 +261,7 @@ Acceptance:
 
 ### H4 — Security headers and health check
 
-Status: planned. Coordinate with H3 and the deployment environment.
+Status: `d4a4b1f` approved for local scope and integrated as `52f8a08`. Hosted/CDN headers, real Auth/CSP and host health setup remain open. See [the review](checkpoints/H4-H3b-review-20261003.md).
 
 Implementation:
 
@@ -280,7 +281,7 @@ Acceptance:
 
 ### H5 — Narrow session handling safely
 
-Status: planned. Verify alongside H2/H4.
+Status: proposed by Claude; database-authoritative expected-account binding selected for coordination. Implementation and isolated Auth/refresh/account-switch acceptance remain pending. Verify alongside H2/H4.
 
 Entry points: `src/proxy.ts`, `src/lib/supabase/proxy.ts`, authentication callbacks, account pages, and API routes.
 
@@ -1159,3 +1160,19 @@ editorial approval, and a documentation status change cannot authorize external 
   limits remain; this new documentation awaits review. Temporary loopback servers stopped; no hosted calls.
 - J1 real-database/operator, N4/H5 hosted/binding and N1/N2 Stage-C/Japanese provenance gates remain open.
   Next Codex checkpoint: read-only revision-key ordering test. Claude retains H4/H5/H3b. Main/activation unchanged.
+
+### H4 / H3b review and H5 coordination — 2026-10-03
+
+- Claude's H4 `d4a4b1f` is approved for local scope and integrated alone as
+  `52f8a08b8b5d3953fe91cea280b67bd2b858d12c` after `10883fa`. H3b `3feb37f` is excluded:
+  its CI readiness loop continues when every health probe fails. Codex requests a bounded Claude-owned
+  fix with a negative readiness check before approval.
+- [The review record](checkpoints/H4-H3b-review-20261003.md) records exact-commit release checks (13/13),
+  **940 tests / 176 files**, **712 modules**, public-only build, headers/liveness and a verified CSP sweep.
+  Browser intermittency remains recorded; real Auth/hosted/CI/clean-install acceptance is not claimed.
+- H5 coordination selects database-authoritative expected-account binding before writes. Codex owns
+  SQL/adapter/provider binding; Claude owns proxy/session. RLS/invoker security and stale-response
+  rejection remain required; combined isolated-Auth and hosted acceptance stays open.
+- Claude approved documentation `ffdeef6..10883fa` and merged the exact handoff as `0d7021e`.
+  This new consolidated record awaits documentation review. J1 database/operator and N1/N2 Stage-C
+  gates remain open; no ownership transfer, main merge or activation.
