@@ -66,6 +66,7 @@ select results_eq($$select count(*) from public.checklist_progress$$, array[0::b
 select lives_ok(
   $sql$
     select public.sync_account_content(
+      '30000000-0000-4000-8000-000000000003'::uuid,
       '[{"kind":"article","contentId":"banking","state":"saved","updatedAt":"2026-09-08T12:00:00.000Z"}]'::jsonb,
       '[{"termId":"zairyu-card","state":"reviewed","reviewCount":2,"lastReviewedAt":"2026-09-08T12:00:00.000Z","updatedAt":"2026-09-08T12:00:00.000Z"}]'::jsonb,
       '[{"checklistId":"register-address","state":"complete","completedAt":"2026-09-08T12:00:00.000Z","updatedAt":"2026-09-08T12:00:00.000Z"}]'::jsonb
@@ -85,6 +86,7 @@ select results_eq($$select state from public.checklist_progress where checklist_
 select lives_ok(
   $sql$
     select public.sync_account_content(
+      '30000000-0000-4000-8000-000000000003'::uuid,
       '[{"kind":"article","contentId":"banking","state":"removed","updatedAt":"2026-09-08T11:00:00.000Z"}]'::jsonb,
       '[{"termId":"zairyu-card","state":"new","reviewCount":0,"updatedAt":"2026-09-08T11:00:00.000Z"}]'::jsonb,
       '[{"checklistId":"register-address","state":"in-progress","updatedAt":"2026-09-08T11:00:00.000Z"}]'::jsonb
@@ -100,6 +102,7 @@ select results_eq($$select state from public.checklist_progress where checklist_
 select lives_ok(
   $sql$
     select public.sync_account_content(
+      '30000000-0000-4000-8000-000000000003'::uuid,
       '[{"kind":"article","contentId":"banking","state":"removed","updatedAt":"2026-09-08T12:00:00.000Z"}]'::jsonb,
       '[]'::jsonb,
       '[]'::jsonb
@@ -110,7 +113,7 @@ select lives_ok(
 select results_eq($$select state from public.saved_content where content_id = 'banking'$$, array['removed'::text], 'an equal-time removal prevents resurrection');
 
 select results_eq(
-  $$select jsonb_array_length(public.sync_account_content('[]'::jsonb, '[]'::jsonb, '[]'::jsonb)->'savedContent')$$,
+  $$select jsonb_array_length(public.sync_account_content('30000000-0000-4000-8000-000000000003'::uuid, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb)->'savedContent')$$,
   array[1],
   'the transfer response contains the canonical owner-scoped records'
 );
@@ -119,7 +122,7 @@ reset role;
 set local role anon;
 select set_config('request.jwt.claim.sub', '', true);
 select throws_ok(
-  $$select public.sync_account_content('[]'::jsonb, '[]'::jsonb, '[]'::jsonb)$$,
+  $$select public.sync_account_content('30000000-0000-4000-8000-000000000003'::uuid, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb)$$,
   '42501',
   'permission denied for function sync_account_content',
   'anonymous transfers are rejected at the database privilege boundary'

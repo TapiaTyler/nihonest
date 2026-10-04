@@ -64,7 +64,7 @@ export function AccountContentSyncProvider({ children }: Readonly<{ children: Re
       readOwner: readAccountContentOwner,
       applyCanonical: applyCanonicalState,
       writeOwner: writeAccountContentOwner,
-      synchronize: (_accountId, deviceState) => synchronizeAccountContent(client, deviceState),
+      synchronize: (accountId, deviceState) => synchronizeAccountContent(client, accountId, deviceState),
       publish: setState,
     });
     coordinatorRef.current = coordinator;

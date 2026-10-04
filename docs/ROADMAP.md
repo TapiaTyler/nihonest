@@ -1656,3 +1656,18 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - Claude approved documentation `ffdeef6..10883fa` and merged the exact handoff as `0d7021e`.
   This new consolidated record awaits documentation review. J1 database/operator and N1/N2 Stage-C
   gates remain open; no ownership transfer, main merge or activation.
+
+### N4 / H5 expected-account binding checkpoint — 2026-10-03
+
+- Codex implemented the bounded SQL/adapter/provider binding on base `adaf2b9`; review and integration
+  await Claude. [The checkpoint](checkpoints/N4-expected-account-binding.md) documents the required
+  `p_expected_user_id` RPC argument, pre-write `auth.uid()` comparison and removal of the old unbound
+  signature. Invoker security, RLS, merge rules and coordinator stale-response rejection are preserved.
+- Focused tests: **29 passed**. Full Vitest: **945 tests / 176 files**; TypeScript, targeted lint,
+  architecture (**712 modules**), public-only build, CMS exclusion and bundle boundaries passed.
+  Disposable network-isolated PostgreSQL 17: **27 existing + 13 new SQL assertions passed**;
+  removing the guard failed seven assertions, restoring it passed. The container was removed.
+- These SQL fixtures do not establish real JWT/Auth/PostgREST or combined H5 session acceptance.
+  Claude retains proxy/session changes. Source integration remains `52f8a08`, documentation handoff
+  `3bf4e94`; this checkpoint has not been integrated. H3b repair and the other open gates remain.
+  No main merge, hosted service, email, schedule or translation activation.
