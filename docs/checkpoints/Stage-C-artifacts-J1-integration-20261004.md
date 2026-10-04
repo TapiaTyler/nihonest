@@ -14,7 +14,7 @@ Stored values are returned untrimmed. Undefined means whole-component English fa
 The exported `ArticleComponentSource` maps directly to Codex's proposed English v2 data. A read-only
 assertion probe compared every field with Claude's fixture and all three artifact revisions: **37 fields**
 (9 tax, 24 training, 4 practical), all equal. Full revisions are in
-[N2-English-component-data-v2.md](N2-English-component-data-v2.md) on Codex's preparation branch; that
+[N2-English-component-data-v2.md](https://github.com/TapiaTyler/nihonest/blob/a74926b/docs/checkpoints/N2-English-component-data-v2.md) on Codex's preparation branch; that
 checkpoint `a74926b` remains unreviewed and is deliberately absent from this integration.
 
 Exact review commands, in a clean detached LF worktree at `5b58f06` with copied existing dependencies:
