@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
-import { safeAuthReturnPath } from "@/lib/auth/return-path";
+import { isSameSiteRelativePath, safeAuthReturnPath } from "@/lib/auth/return-path";
 import { getSupabasePublicConfig, isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Database } from "@/types/database";
 
@@ -15,7 +15,12 @@ const emailOtpTypes: readonly EmailOtpType[] = ["email", "signup", "invite", "ma
 function redirectTo(path: string, auth: "unavailable" | "error" | "success") {
   const destination = new URL(path, "http://relative.invalid");
   destination.searchParams.set("auth", auth);
-  return new NextResponse(null, { status: 307, headers: { Location: `${destination.pathname}${destination.search}${destination.hash}` } });
+  const location = `${destination.pathname}${destination.search}${destination.hash}`;
+  // Defense in depth: a protocol-relative Location would leave the site even though the path was validated.
+  const safeLocation = destination.origin === "http://relative.invalid" && isSameSiteRelativePath(location)
+    ? location
+    : `/account?auth=${auth}`;
+  return new NextResponse(null, { status: 307, headers: { Location: safeLocation } });
 }
 
 export async function GET(request: NextRequest) {
