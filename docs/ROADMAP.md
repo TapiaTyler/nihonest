@@ -1640,3 +1640,19 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   limits remain; this new documentation awaits review. Temporary loopback servers stopped; no hosted calls.
 - J1 real-database/operator, N4/H5 hosted/binding and N1/N2 Stage-C/Japanese provenance gates remain open.
   Next Codex checkpoint: read-only revision-key ordering test. Claude retains H4/H5/H3b. Main/activation unchanged.
+
+### H4 / H3b review and H5 coordination — 2026-10-03
+
+- Claude's H4 `d4a4b1f` is approved for local scope and integrated alone as
+  `52f8a08b8b5d3953fe91cea280b67bd2b858d12c` after `10883fa`. H3b `3feb37f` is excluded:
+  its CI readiness loop continues when every health probe fails. Codex requests a bounded Claude-owned
+  fix with a negative readiness check before approval.
+- [The review record](checkpoints/H4-H3b-review-20261003.md) records exact-commit release checks (13/13),
+  **940 tests / 176 files**, **712 modules**, public-only build, headers/liveness and a verified CSP sweep.
+  Browser intermittency remains recorded; real Auth/hosted/CI/clean-install acceptance is not claimed.
+- H5 coordination selects database-authoritative expected-account binding before writes. Codex owns
+  SQL/adapter/provider binding; Claude owns proxy/session. RLS/invoker security and stale-response
+  rejection remain required; combined isolated-Auth and hosted acceptance stays open.
+- Claude approved documentation `ffdeef6..10883fa` and merged the exact handoff as `0d7021e`.
+  This new consolidated record awaits documentation review. J1 database/operator and N1/N2 Stage-C
+  gates remain open; no ownership transfer, main merge or activation.
