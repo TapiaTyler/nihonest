@@ -7,6 +7,11 @@ assertions, 36 concurrency assertions (also rerun on reviewed combined SQL), and
 with a fake sender. Review attribution, tested sources and limits are in
 [the current acceptance status](checkpoints/J1-local-acceptance-status-20261004.md).
 
+Claude independently reproduced and approved operator harness `832d9c7`: 59 real PostgreSQL assertions
+against `1a4ab65`. Recovery/targeting extensions are code-approved for scope, retaining Codex’s 25-scenario
+real local run as implementer evidence. [The latest receipt](checkpoints/Stage-C-reviewed-integration-20261004.md)
+records source `9b5d937`; production notification/SQL inputs remain unchanged.
+
 Host/scheduler/credentials/monitoring decisions, scoped exhausted-backlog operator approval and any real
 provider/hosted acceptance remain separate gates. No schedule, hosted service or real email is activated.
 [The earlier preparation record](checkpoints/J1-acceptance-preparation.md) is historical planning; the current
@@ -40,10 +45,10 @@ service credential. A loopback address does not prove the database is disposable
 avoid tunnels to hosted data. Fake-sender acceptance uses a separate injected runner harness; local CLI
 mode cannot enable SES. This option starts no stack and installs no scheduler.
 
-Additional targeting fixture `66b0721` **awaits independent review/integration**.
+Additional targeting fixture `66b0721` is **code-approved by Claude and integrated**, without a Claude real-stack rerun.
 [Its 25-scenario real local run](checkpoints/J1-published-critical-targeting-20261004.md), against reviewed
 production `1a4ab65`, adds published-release saved-status/journey/route targeting, mismatch exclusions,
-deduplication and post-claim relevance/consent changes. This extends pending harness evidence; it does not
+deduplication and post-claim relevance/consent changes. This extends recorded local harness evidence; it does not
 replace hosted/provider acceptance or authorize operation on real rows.
 
 ## Work bounds and concurrency
@@ -57,7 +62,7 @@ and reviewed local PostgreSQL acceptance covers competing claims and post-lock l
 After the separate scheduling gate, start with one invocation at a time; choose frequency from measured run duration,
 backlog and provider/database costs. The command contains no scheduler and no cost-creating background loop.
 
-Additional local recovery fixture `44990f8` **awaits independent review/integration**.
+Additional local recovery fixture `44990f8` is **code-approved by Claude and integrated**, without a Claude real-stack rerun.
 [Its 15-scenario run](checkpoints/J1-uncertain-send-recovery-20261004.md), against reviewed production
 `1a4ab65`, demonstrates two accepted fake sends for one event when finalization never commits and the
 lease is reclaimed. Immediate retry cannot claim live processing; successful recovery finalization prevents
