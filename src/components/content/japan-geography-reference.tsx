@@ -1,6 +1,7 @@
 import "server-only";
 
 import { japanPrefectureRegions } from "@/data/geography/regions";
+import { getInterfaceMessageGroup } from "@/domain/localization/interface-messages";
 import { getPrefectureFinderData } from "@/lib/content/prefecture-finder";
 import Link from "next/link";
 import { LazyJapanRegionMapView, LazyPrefectureFinder } from "./lazy-geography";
@@ -30,7 +31,7 @@ type SupplementTitles = Readonly<Record<string, string>>;
  * client components, so browser code never imports the geography registry or municipality guidance catalogs.
  */
 export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>) {
-  return <LazyJapanRegionMapView regions={japanPrefectureRegions} locale={locale} />;
+  return <LazyJapanRegionMapView regions={japanPrefectureRegions} messages={getInterfaceMessageGroup(locale, "regionMap.")} locale={locale} />;
 }
 
 export { JapanRegionMap as JapanPrefectureRegionCards };
@@ -46,7 +47,7 @@ export function JapanPrefectureRegionGrid({ locale = "en", japaneseSupplementTit
 
 export function JapanPrefectureFinder({ locale = "en", japaneseSupplementTitles }: Readonly<{ locale?: Locale; japaneseSupplementTitles?: SupplementTitles }>) {
   const { prefectures, municipalities, coverage } = getPrefectureFinderData();
-  return <LazyPrefectureFinder locale={locale} prefectures={prefectures} municipalities={municipalities} coverage={coverage} japaneseSupplementTitles={japaneseSupplementTitles} />;
+  return <LazyPrefectureFinder locale={locale} messages={getInterfaceMessageGroup(locale, "finder.")} prefectures={prefectures} municipalities={municipalities} coverage={coverage} japaneseSupplementTitles={japaneseSupplementTitles} />;
 }
 
 export function JapanPracticalBasics({ locale = "en" }: Readonly<{ locale?: Locale }>) {
