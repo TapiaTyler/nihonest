@@ -1736,3 +1736,36 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - Claude approved the earlier H4-H3b review record; consolidated ROADMAP/refactor were only skimmed.
   This new documentation awaits review. Owned server/container stopped; Claude's checkout/stack untouched.
   Next Codex: J1 dedicated-stack preflight and fake-sender acceptance preparation. No main merge or activation.
+
+### J1 Auth/PostgREST preflight preparation — 2026-10-04
+
+- Codex added [the dedicated-stack read-only preflight](checkpoints/J1-auth-postgrest-preflight.md) on
+  validated handoff `f70069c` / working merge `90804bb`; review/integration await Claude. Explicit
+  loopback credentials, exact HEAD and a clean checkout are required. Auth administration, eleven empty
+  table inventories and database-clock reads are bounded; there are no fixtures, worker writes or sender.
+- New guard/SDK transport tests **16 passed**; with existing CLI/command cases **41 passed / three files**.
+  TypeScript, targeted lint, architecture **713 modules**, help/argument and whitespace checks passed.
+  These are fetch-fixture tests; no real Auth/PostgREST stack or fake-sender acceptance is claimed.
+- The checkpoint lists the next owned disposable-stack scenarios and separates preflight from migration
+  identity/exclusive ownership. J1 real full-stack/operational acceptance, H5 callback/PGRST303 reliability,
+  hosted and Stage-C/provenance gates remain open. No main merge or activation.
+
+### Repaired callback / H5 / approved J1 preflight integration — 2026-10-04
+
+- Codex approved callback repair `27f791a` and H5 `6866b97` for local scope with original `1857817`.
+  [The review/handoff](checkpoints/H5-callback-integration-20261004.md) records **28 callback/helper tests**,
+  two matcher tests, and a **13-failure** original-code negative control. Exact review release: 13/13,
+  **995 tests / 179 files**. P2 resolved; PGRST303 remains a hosted watch item, not a proven local cause.
+- Claude code-approved `759a4e4`; integrated by hash with the three Claude inputs. **Combined source
+  `14e21ce`**: release 13/13, **1,011 tests / 180 files**, **713 modules**, public build **416 entries**,
+  audits/types/lint/CMS/bundles passed; full serial browser **32 passed / five Auth tests skipped**.
+  Copied existing dependencies, no new real Auth/expiry, SQL/operator or CI/clean-install run by Codex.
+- Combined web/runtime/migration inputs match Claude's fixed exact tree apart from the unused read-only
+  preflight and tests. Claude's H5+N4 real-session/investigation evidence is attributed, not independently
+  repeated. Owned server stopped; main/other contributor worktrees/services untouched.
+- H1–H5 implementation/local review complete; hosted acceptance is open. Stage-C renderer ownership takes
+  effect only after this exact validated handoff is in both branches and Claude reports its receipt.
+  Japanese component provenance/wording and tax/training coordination remain prerequisites. No consumer
+  extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
+- Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
+  scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
