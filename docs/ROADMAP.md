@@ -1888,3 +1888,17 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   reference set; canonical acceptance supplies all 47 prefectures/metropolis records. Source/provenance bindings
   remain open. The held queue retains this checkpoint; integration stays `1a4ab65` / source `4372d4a`.
   No main merge or activation.
+
+### N1 component export/provenance proposal — 2026-10-04
+
+- [Codex read-only proposal](checkpoints/N1-component-export-proposal-20261004.md), checkpoint `4fea7e9`,
+  specifies a candidate 12 additions (40 total) for reviewed format 10, all eight directive bindings including
+  unused composition/alias kinds, canonical references and separate article/translation/map provenance.
+  These names/counts are proposals; no payload schema, exporter or format is changed.
+- Two in-memory builds retain deterministic format 9 / 28 files; the existing verifier rejects version 10.
+  Interface catalogs have 764 keys each with key/placeholder coverage, but 550 raw IDs do not satisfy the
+  existing artifact field grammar. Claude's representation/provenance decision is required; public IDs and
+  shared translation contracts remain unchanged. The retained map license's LF text hash is recorded.
+- This documentation-only checkpoint and consolidated updates await review in the held queue. No full
+  release/build/browser/SQL/external-source/license revalidation repeated. Integration remains `1a4ab65` /
+  source `4372d4a`; no main merge or activation.

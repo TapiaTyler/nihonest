@@ -15,6 +15,7 @@ The designated integration branch remains `codex/hosting-native-integration` at 
 | N1 component inventory | `b8e37f1b280d692ffebaf6484809557ae07cca2b` against `b0a3a86` | Documentation only; pending review. In-memory format-9 generation/integrity, en/ja component order, guide/source references and region/map coverage passed. |
 | Numeric fee contract preparation | `c72bcd216eaacd317643e48f9d8e564f45e89fb9` against `b8e37f1` | Pending Claude review. Only new domain contract/calculation and tests plus record. 39 focused tests (37 new, two existing), types, targeted lint and architecture 717 passed. No canonical data, renderer, translation or export change. |
 | Orientation region/map contract preparation | `dc9762991a89ad658f76f9f8d7839a47a3f3067d` against `97159da` | Pending Claude review. Standalone pure schemas/coverage validation only; 44 tests / two files, exact canonical JSON preservation, types, targeted lint and architecture 718 passed. Existing data, map/finder code, translations and exporter unchanged. |
+| Component export/provenance proposal | `4fea7e9390064bfda947011fbde7efdec5561841` against `fe54e32` | Documentation only; pending review. Candidate 12 additions / format 10, registration/composition coverage and provenance decisions. Current format 9 / 28 files remains deterministic; raw interface artifact-key incompatibility recorded. No wiring or format change. |
 
 Records to include in the eventual documentation review:
 
@@ -23,6 +24,7 @@ Records to include in the eventual documentation review:
 - [N1 Stage-C component inventory](N1-stage-c-component-inventory-20261004.md).
 - [Numeric fee contract preparation](N1-numeric-fee-contract-preparation-20261004.md).
 - [Orientation region/map contract preparation](N1-orientation-map-contract-preparation-20261004.md).
+- [Component export/provenance proposal](N1-component-export-proposal-20261004.md).
 - Consolidated `docs/refactor.md` / `docs/ROADMAP.md` updates and this queue; earlier limited documentation
   approvals remain limited. The Stage-C artifact/J1 record was approved and its two corrections applied.
 
@@ -48,6 +50,14 @@ Records to include in the eventual documentation review:
    preserving role-specific wording and targets. These labels were outside N3's migrated message groups.
 4. Review proposed complete file set/format transition and component provenance bindings before final N1
    wiring. Two unused geography composition/alias registrations still require explicit coverage.
+
+5. Decide interface-pack provenance/currency representation: plain catalog strings are not full artifacts,
+   and 550 current message IDs do not fit the artifact field-key grammar. Preserve public IDs; no shared
+   schema relaxation or invented generation metadata is assumed. See the export proposal.
+6. On Claude's next translation-report touch, refresh its finder section: it still points to the removed
+   `prefecture-finder-messages.ts` and older guide-label module location. N3 messages now live in the interface
+   catalogs, and abbreviated guide labels remain in `src/lib/content/prefecture-finder-guides.ts`. Codex
+   leaves that Claude-owned report unchanged.
 
 ## Work boundaries while waiting
 
