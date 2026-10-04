@@ -15,7 +15,7 @@ database, lock-wait, Auth/PostgREST and fake-sender scenarios. Local fixture res
 Use `npm run --silent notification:once` when a scheduler needs only the command's JSON line without npm's
 script banner.
 `npm run notification:once -- --help` prints usage without reading job settings or making service calls.
-The command always validates the **production job** settings in the process environment through H3a's
+The command defaults to the **production job** target and validates settings through H3a's
 `requireJobConfig` before constructing a client. A deployment preflight can use
 `npm run config:check -- --deployment job --target production`; add `--require emailDelivery` only if the
 deployment is supposed to send. The job needs `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or the
@@ -27,6 +27,15 @@ environment; never pass them as arguments or put them in build-time public setti
 With email disabled, a pass **still generates reminder/critical events and prepares deliveries** in the
 database, but makes no claim, recipient lookup or provider call. Running with email disabled is therefore
 not a no-op or a dry run. The only no-I/O command option is `--help`.
+
+For isolated acceptance only, `npm run --silent notification:once -- --target local` selects H3a's
+local target, with additional worker restrictions: the Supabase origin must use `localhost`, `127.0.0.1`
+or `[::1]`, and email must be disabled. Validation precedes provider/store construction. Explicit
+`--target production` retains the default production rules; no settings infer the target automatically.
+Local mode still writes events/deliveries and requires an intentionally selected disposable stack and its
+service credential. A loopback address does not prove the database is disposable: check its identity and
+avoid tunnels to hosted data. Fake-sender acceptance uses a separate injected runner harness; local CLI
+mode cannot enable SES. This option starts no stack and installs no scheduler.
 
 ## Work bounds and concurrency
 
@@ -59,7 +68,38 @@ For a future rollback, stop the scheduler first and set `EMAIL_DELIVERY_ENABLED=
 job runs. Disabling delivery leaves pending rows untouched. It does not undo previously accepted sends or
 change existing delivery state. Database rollback/requeue requires a separate, reviewed recovery procedure.
 
-Before scheduling, define a reviewed acknowledge/resolve procedure or distinct exit behavior for exhausted
-backlog: its nonzero aggregate counts currently make every later pass exit 1 until the rows are resolved.
-This contract authorizes no automatic reset/requeue/delete. The command remains production-targeted; local
-acceptance needs an explicit local service target or separately reviewed harness, preserving production checks.
+## Exhausted-backlog investigation and terminal resolution
+
+This procedure and its companion checkpoint await review before operational use. It does not authorize
+scheduling or changes to deployed data. Exit semantics remain unchanged: exhausted rows keep exit code 1;
+an incident acknowledgement never turns a failed report into success or hides the backlog counters.
+
+1. Open a private incident and acknowledge the aggregate alert. Record the target environment, delivery
+   ID, state/attempts, lease expiry, investigation evidence, decision, operator and reviewer. Keep recipient
+   data, errors and provider evidence out of public docs/scheduler logs. Acknowledge duplicate alerts in
+   that incident while continuing to investigate new work and infrastructure failures independently.
+2. For expired processing, determine provider acceptance from restricted provider records. Timeout/lease
+   expiry is not proof that no email was sent. If the outcome is unknown, record it as uncertain. Never
+   mark it sent without evidence or reset/requeue automatically. A replacement send requires a separately
+   reviewed procedure with consent/relevance checks and explicit acceptance of duplicate-send risk.
+3. If the reviewed decision is to **abandon this delivery permanently**, preserve necessary sanitized
+   failure evidence in the private incident before suppression clears `last_error`. Use an authorized
+   database administrator connection to rehearse `scripts/sql/resolve-exhausted-email-delivery.sql` with
+   `psql -X -v delivery_id=<uuid> -v resolution_reference=<incident-reference> -f <script>`.
+   Supply connection credentials through the protected connection environment, never command arguments.
+   The script defaults to ROLLBACK. The reference is validated but not stored in the database; the private
+   incident is the audit record and must include the resulting state and execution time.
+4. After confirming the exact environment/row and receiving the scoped resolution review, repeat with
+   `-v commit_resolution=true`. Only that explicit invocation commits terminal suppression. The script
+   locks one email row, then uses database wall time to require a failed or expired-processing delivery
+   with at least five attempts. Absent, live, retryable or already-terminal rows produce a nonzero psql exit with no
+   changes. Attempts, last-attempt time, event and available-at are preserved; claims are cleared. This
+   records a decision not to attempt delivery again, not whether the provider actually sent a message.
+5. Confirm the row is suppressed, append the result to the private incident and re-read aggregate
+   backlog through `inspect_email_notification_delivery_backlog(5)`. Resolve all separately reviewed
+   rows; any remaining exhausted counts still cause exit 1. A later deliberate pass may also fail for
+   independent work; zero backlog alone does not establish worker success or authorize scheduling.
+
+No worker or scheduled process invokes this procedure. It does not change grants, delete deliveries,
+reset attempts or requeue events. Suppression is terminal; rollback after commitment requires a separate
+reviewed recovery decision, not a reverse update or rerun of this script.
