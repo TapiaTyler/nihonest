@@ -1,18 +1,22 @@
-import { ConfigurationError } from "@/lib/config/deployment-config";
+import { ConfigurationError, type DeploymentTarget } from "@/lib/config/deployment-config";
 import { executeNotificationWorkerJob } from "@/lib/notifications/notification-worker-command";
 
 async function main() {
-  if (process.argv.length !== 2) {
-    if (process.argv.length === 3 && process.argv[2] === "--help") {
-      process.stdout.write("Usage: npm run notification:once\nRuns one bounded notification pass using job-only environment settings.\n");
-      return;
-    }
+  const args = process.argv.slice(2);
+  if (args.length === 1 && args[0] === "--help") {
+    process.stdout.write("Usage: npm run notification:once [-- --target production|local]\nRuns one bounded pass; production is the default. Local requires loopback Supabase and disabled email.\n");
+    return;
+  }
+  let target: DeploymentTarget = "production";
+  if (args.length === 2 && args[0] === "--target" && (args[1] === "production" || args[1] === "local")) {
+    target = args[1];
+  } else if (args.length) {
     process.stderr.write("notification-worker: unexpected arguments; use --help\n");
     process.exitCode = 1;
     return;
   }
   try {
-    const report = await executeNotificationWorkerJob(process.env);
+    const report = await executeNotificationWorkerJob(process.env, target);
     process.stdout.write(`${JSON.stringify(report)}\n`);
     process.exitCode = report.exitCode;
   } catch (error) {

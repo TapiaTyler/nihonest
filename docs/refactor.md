@@ -9,8 +9,13 @@ acceptance remain open. The older consolidated delta through `e4fc1ff` is docume
 the `29b212c..29fe06f` handoff documentation is approved; earlier unread records retain their limits.
 Claude's stale Playwright repair `888c7a0` is approved and integrated at `ffdeef6`, with full production e2e
 checks passed. See [the review record](checkpoints/Playwright-stale-spec-review-20261003.md). Claude approved the handoff documentation through `10883fa`.
-H4 is locally approved/integrated at `52f8a08`; H3b needs a CI readiness fix. See [the new review record](checkpoints/H4-H3b-review-20261003.md).
-Claude retains H5 and H3b repairs; new documentation awaits review. No Stage-C handoff, main merge or activation.
+H4 is locally approved/integrated at `52f8a08`; H3b's readiness repair and four newly approved Codex
+checkpoints are integrated at `0e5fcf9`. The combined local release gate passed all 13 checks,
+971 tests, PostgreSQL concurrency 36 assertions and a final 32-pass/1-skipped browser run.
+See [the review and integration record](checkpoints/H3b-H5-review-integration-20261003.md) for
+initial browser failures, review limits and the callback open-redirect blocker in `1857817`.
+Claude retains the callback/H5 reliability work; both commits are excluded. New documentation awaits
+review. No Batch 1 completion, Stage-C handoff, main merge or activation.
 
 ## Purpose
 
@@ -238,7 +243,7 @@ Acceptance:
 
 ### H3 — Configuration preflight and release automation
 
-Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b `3feb37f` is implemented but needs a CI health-readiness failure guard before approval.
+Status: H3a implemented by Claude and reviewed by Codex (`9d3442b` + `86218cc`). H3b `3feb37f` plus readiness repair `8d6f6dc` are locally approved/integrated at `0e5fcf9`; GitHub Actions/clean-install and hosted acceptance remain open.
 H3a code is integrated and validated with J1 preparation and the CMS LF fix at `669fa99`.
 The validated handoff `6eb2fa6` is in both working branches; H3b and hosted checks remain pending.
 
@@ -281,7 +286,10 @@ Acceptance:
 
 ### H5 — Narrow session handling safely
 
-Status: proposed by Claude; database-authoritative expected-account binding selected for coordination. Implementation and isolated Auth/refresh/account-switch acceptance remain pending. Verify alongside H2/H4.
+Status: Claude implemented `6866b97` with local acceptance evidence. Integration is held for its callback
+parent `1857817` (normalized-path open redirect) and investigation of reported intermittent PGRST303
+account/export failures. Codex's expected-account binding `a39d01b` is code-approved and integrated at
+`0e5fcf9`; Claude reports combined local Auth evidence. Independent final and hosted acceptance remain open.
 
 Entry points: `src/proxy.ts`, `src/lib/supabase/proxy.ts`, authentication callbacks, account pages, and API routes.
 
@@ -1176,3 +1184,83 @@ editorial approval, and a documentation status change cannot authorize external 
 - Claude approved documentation `ffdeef6..10883fa` and merged the exact handoff as `0d7021e`.
   This new consolidated record awaits documentation review. J1 database/operator and N1/N2 Stage-C
   gates remain open; no ownership transfer, main merge or activation.
+
+### N4 / H5 expected-account binding checkpoint — 2026-10-03
+
+- Codex implemented the bounded SQL/adapter/provider binding on base `adaf2b9`; review and integration
+  await Claude. [The checkpoint](checkpoints/N4-expected-account-binding.md) documents the required
+  `p_expected_user_id` RPC argument, pre-write `auth.uid()` comparison and removal of the old unbound
+  signature. Invoker security, RLS, merge rules and coordinator stale-response rejection are preserved.
+- Focused tests: **29 passed**. Full Vitest: **945 tests / 176 files**; TypeScript, targeted lint,
+  architecture (**712 modules**), public-only build, CMS exclusion and bundle boundaries passed.
+  Disposable network-isolated PostgreSQL 17: **27 existing + 13 new SQL assertions passed**;
+  removing the guard failed seven assertions, restoring it passed. The container was removed.
+- These SQL fixtures do not establish real JWT/Auth/PostgREST or combined H5 session acceptance.
+  Claude retains proxy/session changes. Source integration remains `52f8a08`, documentation handoff
+  `3bf4e94`; this checkpoint has not been integrated. H3b repair and the other open gates remain.
+  No main merge, hosted service, email, schedule or translation activation.
+
+### N1 revision-key ordering acceptance checkpoint — 2026-10-03
+
+- Codex added [a read-only corpus regression test](checkpoints/N1-revision-ordering-acceptance.md) on
+  base `a39d01b`; review/integration await Claude. All **1,349 current revision inputs** across ten
+  structured families and articles match code-unit ordering/digests; insertion order is immaterial.
+  Production revision code, translation catalogs/prompts and artifacts are unchanged.
+- New test: **13 passed**; related bundle gate: **71 tests / eight files passed**. TypeScript, targeted
+  lint and whitespace passed. No full build or full-suite repetition is claimed for this test-only change.
+- This is Node/current-corpus evidence, not Hermes or universal locale equivalence. The N4 parent
+  `a39d01b` remains unreviewed; approval of this test alone must not integrate that parent implicitly.
+  Integration remains H4 `52f8a08` / documentation `3bf4e94`. Stage-C/native, H5/Auth, H3b and J1
+  acceptance remain open; no main merge, artifact approval or activation.
+
+### J1 local acceptance target and exhausted-backlog procedure — 2026-10-03
+
+- Codex implemented [the bounded follow-up](checkpoints/J1-local-target-backlog-procedure.md) on base
+  `938b869`; review/integration await Claude. The command defaults to production; explicit local mode
+  requires loopback Supabase and disabled email before client construction. Production validation stays
+  intact. Disabled-email runs still write events/deliveries and are not dry runs.
+- The operator contract retains exhausted-backlog exit 1 and adds private incident acknowledgement plus
+  manual one-row terminal suppression. The psql procedure defaults to ROLLBACK; only an explicitly
+  committed, separately reviewed abandonment resolves an eligible exhausted row. No automatic retry/reset.
+- **154 notification tests / 16 files**, types, targeted lint and actual help/config-error probes passed.
+  Network-isolated PostgreSQL 17: all migrations applied, **72 notification pgTAP assertions** and
+  **49 operator-procedure assertions** passed. Containers removed. Real concurrent connections,
+  Auth/PostgREST/fake-sender and full-stack acceptance remain open.
+- N4 `a39d01b` and N1 `938b869` remain unreviewed ancestors; single-checkpoint approval must not bring
+  them into integration implicitly. Integration remains H4 `52f8a08` / documentation `3bf4e94`.
+  H3b/H5/Stage-C/native and J1 activation gates remain; no main merge or activation.
+
+### J1 real PostgreSQL concurrency acceptance — 2026-10-03
+
+- Codex added [a reproducible standalone harness](checkpoints/J1-postgres-concurrency-acceptance.md)
+  on base `8f9646a`; harness/evidence review and integration await Claude. The harness loads SQL only
+  from exact reviewed integration `3bf4e94`, avoiding the working branch's unreviewed migrations.
+- PostgreSQL **17.6**, independent backend connections: **36 assertions passed**. B claims different
+  work while A holds its claim transaction; persisted attempts/tokens match. Reclaimed old tokens fail.
+  A finalizer genuinely blocked before expiry rejects after lock release past expiry, leaving the row
+  unchanged. A transaction-time negative control wrongly accepts the expired claim and is detected.
+- Fifth-attempt backlog remains aggregate-only and unchanged. No network/ports/host volumes; owned
+  container and temporary files removed. Existing H5 containers were untouched. No app/SQL/translation
+  implementation changed; no repeated web build or full suite is claimed.
+- This supplies local concurrency evidence, not Auth/PostgREST/fake-sender or final combined acceptance.
+  All pending checkpoints still require review; integration remains `52f8a08` / `3bf4e94`.
+  No main merge, hosted email, scheduling or activation.
+
+### H3b / H5 review and approved checkpoint integration — 2026-10-03
+
+- H3b `3feb37f` plus `8d6f6dc` approved for local scope. The exact readiness run block fails before
+  Playwright on permanent probe failure and reaches it on success. GitHub Actions/clean-install execution
+  remains unverified. [The review record](checkpoints/H3b-H5-review-integration-20261003.md) details evidence.
+- Callback `1857817` needs a Claude-owned P2 fix: accepted `/account/..//attacker.example` normalizes
+  to a protocol-relative external Location. H5 `6866b97` is excluded with that parent; reported
+  intermittent PGRST303 account/export failures need investigation. No Batch 1 completion/Stage-C handoff.
+- Claude code-approved `a39d01b`, `938b869`, `8f9646a`, `7758622` for their bounded scopes;
+  these and H3b were integrated by exact hash. **Combined source `0e5fcf9`**: release checks 13/13,
+  **971 tests / 177 files**, **712 modules**, public-only build **416 entries**, audits/types/lint/CMS/bundles
+  passed. PostgreSQL concurrency rerun **36 assertions passed** against all eight exact-source migrations.
+- Browser first full run: 30 passed / 2 failed / 1 skipped; both failures passed unchanged on targeted
+  rerun. Second full run: **32 passed / 1 skipped**, one worker. Account/Auth opt-in skipped; intermittency
+  remains recorded. Existing copied dependencies; no new pgTAP/operator, real Auth/fake-sender or hosted run.
+- Claude approved the earlier H4-H3b review record; consolidated ROADMAP/refactor were only skimmed.
+  This new documentation awaits review. Owned server/container stopped; Claude's checkout/stack untouched.
+  Next Codex: J1 dedicated-stack preflight and fake-sender acceptance preparation. No main merge or activation.

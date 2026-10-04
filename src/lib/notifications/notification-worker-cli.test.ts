@@ -49,7 +49,7 @@ describe("notification worker entry output", () => {
   it("prints help without reading environment or invoking a job", () => {
     const f = fixture(["--help"]);
     f.run();
-    expect(f.stdout.join("")).toContain("Usage: npm run notification:once\n");
+    expect(f.stdout.join("")).toContain("Usage: npm run notification:once [-- --target production|local]\n");
     expect(f.stderr).toEqual([]);
     expect(f.processBinding.exitCode).toBe(0);
     expect(f.readEnvironment).not.toHaveBeenCalled();
@@ -58,6 +58,8 @@ describe("notification worker entry output", () => {
 
   it.each([
     { args: ["private-argument-canary"] }, { args: ["--help", "private-argument-canary"] },
+    { args: ["--target"] }, { args: ["--target", "private-target-canary"] },
+    { args: ["--target", "local", "--target", "production"] },
   ])("rejects arguments without echoing them or reading settings: $args", ({ args }) => {
     const f = fixture(args);
     f.run();
@@ -79,8 +81,17 @@ describe("notification worker entry output", () => {
     expect(f.stdout).toEqual([`${JSON.stringify(expected)}\n`]);
     expect(f.stderr).toEqual([]);
     expect(f.processBinding.exitCode).toBe(exitCode);
-    expect(f.execute).toHaveBeenCalledExactlyOnceWith(f.env);
+    expect(f.execute).toHaveBeenCalledExactlyOnceWith(f.env, "production");
     expect(f.stdout.join("")).not.toContain(f.env.PRIVATE_CANARY);
+  });
+
+  it.each(["local", "production"])("forwards the explicit %s target to job validation", async (target) => {
+    const f = fixture(["--target", target]);
+    f.execute.mockResolvedValue(report("delivery-disabled", 0));
+    f.run();
+    await vi.waitFor(() => expect(f.stdout).toHaveLength(1));
+    expect(f.execute).toHaveBeenCalledExactlyOnceWith(f.env, target);
+    expect(f.processBinding.exitCode).toBe(0);
   });
 
   it("reports deduplicated configuration setting names without messages or values", async () => {

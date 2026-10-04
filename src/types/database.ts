@@ -375,6 +375,7 @@ export type Database = {
       };
       sync_account_content: {
         Args: {
+          p_expected_user_id: string;
           p_saved_content?: Json;
           p_glossary_progress?: Json;
           p_checklist_progress?: Json;
