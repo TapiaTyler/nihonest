@@ -6,6 +6,16 @@ import type { AnnotatedDocumentFamily } from "@/domain/document/annotated-docume
 
 type AnnotatedDocumentVersion = AnnotatedDocumentFamily["versions"][number];
 
+/**
+ * English source of a shared article component whose Japanese is a machine-translated `article-component` artifact.
+ * Canonical component data (English only) maps to this shape; hrefs stay in that data and are not translated.
+ */
+export type ArticleComponentSource =
+  | Readonly<{ kind: "tax-residence-scope"; caption: string; headers: readonly [string, string]; rows: readonly Readonly<{ id: string; cells: readonly [string, string] }>[] }>
+  | Readonly<{ kind: "training-route-comparison"; caption: string; headers: readonly [string, string]; rows: readonly Readonly<{ id: string; cells: readonly [string, string, string] }>[] }>
+  /** Each paragraph is one N2 inline-grammar string: a leading **label**, body text, and optional [text](/articles/slug) links. */
+  | Readonly<{ kind: "japan-practical-basics"; paragraphs: readonly Readonly<{ id: string; text: string }>[] }>;
+
 function addAnnotatedDocumentVersion(fields: Record<string, string>, prefix: string, version: AnnotatedDocumentVersion) {
   fields[`${prefix}.label`] = version.label;
   fields[`${prefix}.notice`] = version.notice;
@@ -89,6 +99,18 @@ export const translationSourceFields = {
       fields[`actions.${index}.description`] = action.description;
     });
     if (supplement.sourceFormatNote) fields["source-format-note"] = supplement.sourceFormatNote;
+    return fields;
+  },
+  /** Caption, headers in column order, then rows in display order with cells in numeric order; paragraphs in order. */
+  "article-component": (component: ArticleComponentSource) => {
+    const fields: Record<string, string> = {};
+    if (component.kind === "japan-practical-basics") {
+      for (const paragraph of component.paragraphs) fields[`paragraphs.${paragraph.id}`] = paragraph.text;
+      return fields;
+    }
+    fields.caption = component.caption;
+    component.headers.forEach((header, index) => { fields[`headers.${index}`] = header; });
+    for (const row of component.rows) row.cells.forEach((cell, index) => { fields[`rows.${row.id}.${index}`] = cell; });
     return fields;
   },
 } as const;
