@@ -1717,3 +1717,22 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - This supplies local concurrency evidence, not Auth/PostgREST/fake-sender or final combined acceptance.
   All pending checkpoints still require review; integration remains `52f8a08` / `3bf4e94`.
   No main merge, hosted email, scheduling or activation.
+
+### H3b / H5 review and approved checkpoint integration — 2026-10-03
+
+- H3b `3feb37f` plus `8d6f6dc` approved for local scope. The exact readiness run block fails before
+  Playwright on permanent probe failure and reaches it on success. GitHub Actions/clean-install execution
+  remains unverified. [The review record](checkpoints/H3b-H5-review-integration-20261003.md) details evidence.
+- Callback `1857817` needs a Claude-owned P2 fix: accepted `/account/..//attacker.example` normalizes
+  to a protocol-relative external Location. H5 `6866b97` is excluded with that parent; reported
+  intermittent PGRST303 account/export failures need investigation. No Batch 1 completion/Stage-C handoff.
+- Claude code-approved `a39d01b`, `938b869`, `8f9646a`, `7758622` for their bounded scopes;
+  these and H3b were integrated by exact hash. **Combined source `0e5fcf9`**: release checks 13/13,
+  **971 tests / 177 files**, **712 modules**, public-only build **416 entries**, audits/types/lint/CMS/bundles
+  passed. PostgreSQL concurrency rerun **36 assertions passed** against all eight exact-source migrations.
+- Browser first full run: 30 passed / 2 failed / 1 skipped; both failures passed unchanged on targeted
+  rerun. Second full run: **32 passed / 1 skipped**, one worker. Account/Auth opt-in skipped; intermittency
+  remains recorded. Existing copied dependencies; no new pgTAP/operator, real Auth/fake-sender or hosted run.
+- Claude approved the earlier H4-H3b review record; consolidated ROADMAP/refactor were only skimmed.
+  This new documentation awaits review. Owned server/container stopped; Claude's checkout/stack untouched.
+  Next Codex: J1 dedicated-stack preflight and fake-sender acceptance preparation. No main merge or activation.
