@@ -107,8 +107,8 @@ export function PrefectureFinder({
           <h5 className="mt-4 font-semibold text-slate-900">{messages["finder.generalHeading"]}</h5>
           <p className="mt-1 text-sm leading-6 text-slate-700">{selectedMunicipality ? fillInterfaceMessage(messages["finder.municipalityNotice"], { name: municipalityName(selectedMunicipality) }) : messages["finder.generalNotice"]}</p>
           <ul className="mt-2 grid list-inside list-disc gap-1 text-sm sm:grid-cols-2">
-            {prefectureGeneralGuides.map(({ articleId, title, japaneseTitle }) => (
-              <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}?local=${guidanceLocationId}#local-guidance-heading`}>{japanese ? japaneseTitle : title}</Link></li>
+            {prefectureGeneralGuides.map(({ articleId, messageId }) => (
+              <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}?local=${guidanceLocationId}#local-guidance-heading`}>{messages[messageId]}</Link></li>
             ))}
           </ul>
           {selectedMunicipality && (
@@ -139,7 +139,7 @@ export function PrefectureFinder({
       <div className="mt-5">
         <h4 className="font-semibold text-slate-900">{messages["finder.nationalHeading"]}</h4>
         <ul className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
-          {prefectureNationalGuides.map(({ articleId, title, japaneseTitle }) => <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}`}>{japanese ? japaneseTitle : title}</Link></li>)}
+          {prefectureNationalGuides.map(({ articleId, messageId }) => <li key={articleId}><Link className={linkClass} href={`/articles/${articleId}`}>{messages[messageId]}</Link></li>)}
         </ul>
       </div>
     </section>

@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { japanPrefectureRegions } from "@/data/geography/regions";
 import { administrativeGeographies, getAdministrativeGeography } from "@/data/geography";
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { getInterfaceMessageGroup } from "@/domain/localization/interface-messages";
 import { prefectureGeneralGuides, prefectureNationalGuides, getPrefectureFinderData } from "./prefecture-finder";
 
 const articleExists = (id: string) => existsSync(resolve(process.cwd(), `content/articles/${id}.mdx`));
@@ -55,6 +56,8 @@ describe("prefecture finder data", () => {
     }
     for (const guide of [...prefectureNationalGuides, ...prefectureGeneralGuides]) {
       expect(articleExists(guide.articleId)).toBe(true);
+      // Labels are finder messages, so the server-chosen finder group carries them in both languages.
+      for (const locale of ["en", "ja"] as const) expect(getInterfaceMessageGroup(locale, "finder.")[guide.messageId].trim()).not.toBe("");
     }
   });
 });
