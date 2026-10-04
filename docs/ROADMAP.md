@@ -1927,3 +1927,17 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - This additional evidence does not replace Claude's independent review or authorize adoption. Earlier
   type/lint/architecture results retain their scope; no full release/build/browser/SQL/hosted/source refresh
   was repeated. Held handoff and integration `1a4ab65` / `4372d4a` remain unchanged; no main merge/activation.
+
+### J1 current local acceptance status reconciliation — 2026-10-04
+
+- Codex documentation checkpoint `09748ca` corrects stale current operations/refactor text: reviewed local
+  evidence already includes 72 pgTAP, 49 operator, 36 concurrency (also rerun on reviewed combined SQL) and
+  14 real Auth/PostgREST/fake-sender cases. [The current status](checkpoints/J1-local-acceptance-status-20261004.md)
+  preserves exact source/review attribution and distinguishes these from later web gates, which did not rerun
+  real acceptance. Historical checkpoint records remain historical.
+- Scoped row/environment/operator approval, host/schedule/credentials/monitoring decisions and real-provider/
+  hosted acceptance remain separate gates. Source comparisons confirm the accepted worker/SQL inputs are
+  unchanged; three no-I/O help commands exited 0. No stack, credentials, fixtures or sender was used this pass.
+- These documentation corrections await review in the held queue. Independent follow-up can make the
+  session-only operator regression harness portable and reproducible against exact reviewed source, without
+  borrowing another contributor's stack. Integration remains `1a4ab65` / `4372d4a`; no main merge/activation.

@@ -18,6 +18,7 @@ The designated integration branch remains `codex/hosting-native-integration` at 
 | Component export/provenance proposal | `4fea7e9390064bfda947011fbde7efdec5561841` against `fe54e32` | Documentation only; pending review. Candidate 12 additions / format 10, registration/composition coverage and provenance decisions. Current format 9 / 28 files remains deterministic; raw interface artifact-key incompatibility recorded. No wiring or format change. |
 | Finder projection/fallback audit | `f7968660fdfe94c7914483474addc1326eda54ab` against `6ae03cc` | Documentation only; pending review. Exact full payload reconstruction from existing bundle, 784 title-field parity, 16 existing tests / five files passed. Three Tokyo grouping labels added to coordination scope; no finder/catalog change. |
 | Fee/map contract self-review | `393d324f7c5c8b0caa5b7f606a838ea84aa42c11` against `9a7a158` | Documentation only; Codex implementer review, no required fixes. 83 tests / five files, 2,002 geometry, 112 exact-arithmetic and 17 additional boundary probes passed. Claude independent review still required. |
+| J1 current local acceptance status correction | `09748cafa44df08ed20dd45b3fbb3193e8aab78f` against `60e6591` | Documentation only; pending review. Operations/refactor current status reconciled to reviewed local evidence; scoped operator/hosted/scheduling gates retained. Three no-I/O help commands passed; no real acceptance rerun. |
 
 Records to include in the eventual documentation review:
 
@@ -29,6 +30,7 @@ Records to include in the eventual documentation review:
 - [Component export/provenance proposal](N1-component-export-proposal-20261004.md).
 - [Finder projection/fallback audit](N1-finder-binding-audit-20261004.md).
 - [Fee/map contract self-review](N1-fee-map-contract-self-review-20261004.md).
+- [J1 current local acceptance status](J1-local-acceptance-status-20261004.md) and corrected operations guide.
 - Consolidated `docs/refactor.md` / `docs/ROADMAP.md` updates and this queue; earlier limited documentation
   approvals remain limited. The Stage-C artifact/J1 record was approved and its two corrections applied.
 
