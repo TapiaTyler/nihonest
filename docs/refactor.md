@@ -327,19 +327,19 @@ services or declaring the hosted gate complete.
 
 ### J1 — Notification worker
 
-Status: preparation and runner hardening implemented by Codex and reviewed by Claude (`6624e27`, `7c272d2`);
-J1 remains incomplete. The hardening is integrated by exact hash; see [its record](checkpoints/J1-runner-hardening.md).
-The injectable runner, database-authority/recipient/budget changes and runnable command/configuration wiring
-are code-approved and integrated at `b09cd28`. Isolated real SQL/operator acceptance remains pending. Configuration wiring is unblocked by the validated H3a handoff
-`6eb2fa6` in both working branches (see the handoff and integration rules).
-Adapter mapping/transport at `9dee0a0` was approved by Claude for that scope and integrated at `4f41ec5`;
-that reviewed adapter alone has no command consumer and does not resolve finalization clock authority. See
-[the mapping review and acceptance notes](checkpoints/J1-store-mapping.md#claude-review-and-acceptance-notes--2026-09-28).
-Codex's subsequent [database-authority checkpoint](checkpoints/J1-database-authority.md), dated 2026-09-29,
-implements store-provided database time, a service-only finalizer and aggregate exhausted-claim inspection
-on the working branch. The recipient (`904856e`), lease-budget (`4b4bb37`) and command (`7fdea85`)
-checkpoints follow it. All four and the acceptance/output follow-ups are code-approved/integrated;
-real PostgreSQL 17 acceptance and pre-scheduling operator follow-ups remain open.
+Status: worker implementation and the listed local acceptance are code-reviewed and integrated; J1
+operational/hosted readiness remains open. Foundation `b09cd28` includes database-authoritative time and
+finalization, recipient/lease rules and the runnable command. Approved local target/operator `8f9646a`
+and concurrency harness `7758622` were integrated as `8ea7bf7` / `36377bf`; Auth/PostgREST harness
+`733c827` was integrated as `b3742db`. Reviewed integration now remains `1a4ab65` / source `4372d4a`.
+[Current acceptance status](checkpoints/J1-local-acceptance-status-20261004.md) records 72 real local pgTAP,
+49 operator, 36 concurrency (including a reviewed-source rerun), and 14 real Auth/PostgREST/fake-sender
+cases with their tested sources and review attribution. Those checks were not repeated by later web gates.
+
+The earlier adapter-only clock limitation is historical; the current command consumes the adapter with
+database-authoritative finalization. Host/schedule/credential/monitoring choices, scoped exhausted-backlog
+operator decisions and any explicitly authorized real-provider/hosted acceptance remain gates. No main
+merge, hosted activation, real email or scheduling is authorized by implementation review alone.
 
 Implementation:
 

@@ -1,13 +1,16 @@
 # Notification worker operations
 
-This is the operating contract for J1's one-pass command. It is **not an activation instruction**: the
-database-authority, recipient, lease-budget and command checkpoints are code-reviewed and integrated
-([receipt](checkpoints/J1-N4-N1-N2-integration-20261003.md)), while real isolated Supabase/PostgreSQL,
-concurrency, pgTAP and pre-scheduling operator gates remain open. No schedule,
-hosted service or real email has been activated by these commits.
+This is the operating contract for J1's one-pass command. It is **not an activation instruction**.
+The worker, explicit local target, operator procedure and local acceptance harnesses are code-reviewed and
+integrated. Recorded real local evidence includes 72 notification pgTAP assertions, 49 operator-procedure
+assertions, 36 concurrency assertions (also rerun on reviewed combined SQL), and 14 Auth/PostgREST scenarios
+with a fake sender. Review attribution, tested sources and limits are in
+[the current acceptance status](checkpoints/J1-local-acceptance-status-20261004.md).
 
-[The acceptance preparation record](checkpoints/J1-acceptance-preparation.md) lists the outstanding
-database, lock-wait, Auth/PostgREST and fake-sender scenarios. Local fixture results do not replace those gates.
+Host/scheduler/credentials/monitoring decisions, scoped exhausted-backlog operator approval and any real
+provider/hosted acceptance remain separate gates. No schedule, hosted service or real email is activated.
+[The earlier preparation record](checkpoints/J1-acceptance-preparation.md) is historical planning; the current
+status above supersedes its pending local-gate statements without extending the recorded evidence.
 
 ## Command and configuration
 
@@ -44,8 +47,8 @@ preparations and 25 one-at-a-time email claims. Claims have a 300-second lease a
 Database/provider operations each have a 10-second deadline; the configured SES client makes one SDK
 attempt and the runner reserves lease time for finalization. The Supabase adapter limits response bodies to
 2 MiB and disables SDK database retries. SQL claims use `FOR UPDATE SKIP LOCKED` and token-bound finalization,
-but overlapping invocations and lock waits still need real PostgreSQL acceptance before relying on them.
-Start with one scheduler invocation at a time after that gate; choose frequency from measured run duration,
+and reviewed local PostgreSQL acceptance covers competing claims and post-lock lease expiry.
+After the separate scheduling gate, start with one invocation at a time; choose frequency from measured run duration,
 backlog and provider/database costs. The command contains no scheduler and no cost-creating background loop.
 
 The runner uses database time for lease decisions. A timeout or post-send expiry can leave uncertain provider
@@ -70,7 +73,8 @@ change existing delivery state. Database rollback/requeue requires a separate, r
 
 ## Exhausted-backlog investigation and terminal resolution
 
-This procedure and its companion checkpoint await review before operational use. It does not authorize
+This procedure is code-reviewed and has recorded disposable PostgreSQL acceptance. Operational use still
+requires the scoped environment/row/investigation/reviewer decision below; code review does not authorize
 scheduling or changes to deployed data. Exit semantics remain unchanged: exhausted rows keep exit code 1;
 an incident acknowledgement never turns a failed report into success or hides the backlog counters.
 
