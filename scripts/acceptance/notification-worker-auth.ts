@@ -69,7 +69,14 @@ async function main() {
   const store = createSupabaseNotificationWorkerStore(target, { timeoutMs: 10_000 });
   const results: string[] = [];
   const users = new Set<string>();
+  const releases = new Set<string>();
   function requireSuccess(result: { error: unknown }) { assert.equal(result.error, null); }
+  async function cleanupReleases() {
+    for (const id of releases) {
+      requireSuccess(await client.from("critical_update_releases").delete().eq("id", id));
+      releases.delete(id);
+    }
+  }
   const context = { fromName: "Fixture", fromAddress: "sender@example.invalid", siteOrigin: "http://127.0.0.1:55439" };
 
   async function scenario(name: string, test: (userId: string, address: string) => Promise<void>, identity: "confirmed" | "unconfirmed" | "phone" = "confirmed") {
@@ -86,8 +93,8 @@ async function main() {
       results.push(name);
       process.stdout.write(`${JSON.stringify({ scenario: name, status: "passed" })}\n`);
     } finally {
-      requireSuccess(await client.auth.admin.deleteUser(id));
-      users.delete(id);
+      try { requireSuccess(await client.auth.admin.deleteUser(id)); users.delete(id); }
+      finally { await cleanupReleases(); }
       // Prevent a later global generation/claim pass from ever seeing leftovers from earlier fixtures.
       await runAcceptancePreflight(preflightInput);
     }
@@ -113,11 +120,38 @@ async function main() {
     requireSuccess(await client.from("notification_events").insert({ user_id: userId, event_type: "article-critical-update", deduplication_key: randomUUID(),
       payload: { releaseId: randomUUID(), title: "Fixture critical update", revision: "fixture", summary: "Owned fixture summary", journeyTargets: [], articleId: "artist-status" } }));
   }
+  async function publishedRelease(userId: string, kind: "article" | "residence-status",
+    mode: "saved" | "journey-wide" | "route" | "both" | "route-mismatch" | "journey-mismatch") {
+    const target = kind === "article" ? "artist-status" : "student";
+    const now = await store.readWorkerTime();
+    if (mode === "saved" || mode === "both") requireSuccess(await client.from("saved_content").insert({
+      user_id: userId, content_kind: kind, content_id: target, state: "saved", updated_at: now,
+    }));
+    if (mode !== "saved") requireSuccess(await client.from("user_preferences").insert({ user_id: userId,
+      journey_id: mode === "journey-mismatch" ? "other-journey" : "fixture-journey",
+      route_id: mode === "route-mismatch" ? "other-route" : "fixture-route",
+    }));
+    const id = randomUUID(); releases.add(id);
+    requireSuccess(await client.from("critical_update_releases").insert({ id, target_kind: kind, target_id: target,
+      title: "Owned fixture release", summary: "Owned fixture summary", revision: id, editorial_state: "published",
+      created_at: now, approved_at: now, published_at: now,
+    }));
+    if (mode !== "saved") requireSuccess(await client.from("critical_update_journey_targets").insert({
+      release_id: id, journey_id: "fixture-journey", route_id: mode === "journey-wide" || mode === "both" ? null : "fixture-route",
+    }));
+    return id;
+  }
+  async function releaseGenerated(releaseId: string) {
+    const result = await client.from("critical_update_releases").select("events_generated_at").eq("id", releaseId).single();
+    requireSuccess(result); assert.ok(result.data!.events_generated_at);
+  }
   function sender(expectedAddress: string, mode: "success" | "failure" | "timeout" = "success") {
     let calls = 0;
+    const texts: string[] = [];
     const provider: NotificationEmailSender = { async send(message, options) {
       assert.equal(message.to, expectedAddress);
       calls++;
+      texts.push(message.text);
       if (mode === "failure") throw new Error("Private fake provider failure.");
       if (mode === "timeout") await new Promise<void>((_, reject) => {
         const abort = () => reject(new Error("Fake send aborted."));
@@ -126,7 +160,7 @@ async function main() {
       });
       return { providerMessageId: "fake-provider-message" };
     } };
-    return { provider, calls: () => calls };
+    return { provider, calls: () => calls, texts: () => texts };
   }
   const pass = (provider: NotificationEmailSender, selectedStore = store) => runNotificationWorker({
     jobsEnabled: true, store: selectedStore, delivery: { provider, context },
@@ -190,6 +224,55 @@ async function main() {
         assert.equal(owner, id); requireSuccess(await client.from("saved_content").update({ state: "removed" }).eq("user_id", id));
       }));
       assert.equal(report.suppressed, 1); assert.equal(fake.calls(), 0); assert.equal((await row(id)).state, "suppressed");
+    });
+    for (const [kind, mode] of [
+      ["residence-status", "saved"], ["article", "journey-wide"], ["residence-status", "route"],
+      ["article", "route-mismatch"], ["article", "journey-mismatch"], ["article", "both"],
+    ] as const) await scenario(`published-${kind}-${mode}-targeting`, async (id, address) => {
+      await preferences(id); const releaseId = await publishedRelease(id, kind, mode); const fake = sender(address);
+      const report = await pass(fake.provider); assert.equal(report.exitCode, 0); await releaseGenerated(releaseId);
+      const matching = mode !== "route-mismatch" && mode !== "journey-mismatch";
+      assert.equal(report.criticalEventsGenerated, matching ? 1 : 0);
+      assert.equal(report.sent, matching ? 1 : 0); assert.equal(fake.calls(), matching ? 1 : 0);
+      const events = await client.from("notification_events").select("*").eq("user_id", id);
+      requireSuccess(events); assert.equal(events.data!.length, matching ? 1 : 0);
+      if (matching) {
+        const event = events.data![0]!;
+        assert.equal(event.event_type, kind === "article" ? "article-critical-update" : "residence-status-guidance-updated");
+        assert.equal(event.deduplication_key, `critical-update-release:${releaseId}`);
+        assert.equal((event.payload as { releaseId: string }).releaseId, releaseId);
+        const delivery = await row(id); assert.equal(delivery.state, "sent"); assert.equal(delivery.attempt_count, 1);
+        assert.equal(delivery.event_id, event.id);
+        assert.ok(fake.texts()[0]!.includes(kind === "article" ? "/articles/artist-status" : "/residence-statuses/student"));
+        if (mode === "both") assert.match(fake.texts()[0]!, /current Nihonest journey and is in your Saved items/);
+      } else {
+        const deliveries = await client.from("notification_deliveries").select("id").eq("user_id", id);
+        requireSuccess(deliveries); assert.equal(deliveries.data!.length, 0);
+      }
+      const repeat = await pass(fake.provider); assert.equal(repeat.criticalEventsGenerated, 0);
+      assert.equal(repeat.claimed, 0); assert.equal(fake.calls(), matching ? 1 : 0);
+    });
+    for (const change of ["route", "journey", "consent"] as const) await scenario(`published-critical-${change}-withdrawn-after-claim`, async (id, address) => {
+      await preferences(id); const releaseId = await publishedRelease(id, "article", "route"); const fake = sender(address);
+      const report = await pass(fake.provider, afterClaim(async (owner) => {
+        assert.equal(owner, id);
+        if (change === "consent") requireSuccess(await client.from("notification_preferences").update({ critical_updates_enabled: false }).eq("user_id", id));
+        else requireSuccess(await client.from("user_preferences").update(change === "route"
+          ? { route_id: "other-route" } : { journey_id: "other-journey" }).eq("user_id", id));
+      }));
+      assert.equal(report.criticalEventsGenerated, 1); assert.equal(report.claimed, 1); assert.equal(report.suppressed, 1);
+      assert.equal(report.exitCode, 0); assert.equal(report.infrastructureErrors, 0); assert.equal(fake.calls(), 0);
+      const delivery = await row(id); assert.equal(delivery.state, "suppressed"); assert.equal(delivery.attempt_count, 1);
+      await releaseGenerated(releaseId); await pass(fake.provider); assert.equal(fake.calls(), 0);
+    });
+    await scenario("published-critical-topic-disabled-not-generated", async (id, address) => {
+      await preferences(id); await publishedRelease(id, "article", "saved"); const fake = sender(address);
+      requireSuccess(await client.from("notification_preferences").update({ critical_updates_enabled: false }).eq("user_id", id));
+      const report = await pass(fake.provider); assert.equal(report.criticalEventsGenerated, 0);
+      assert.equal(report.claimed, 0); assert.equal(report.exitCode, 0); assert.equal(fake.calls(), 0);
+      const events = await client.from("notification_events").select("id").eq("user_id", id);
+      const deliveries = await client.from("notification_deliveries").select("id").eq("user_id", id);
+      requireSuccess(events); requireSuccess(deliveries); assert.equal(events.data!.length, 0); assert.equal(deliveries.data!.length, 0);
     });
     for (const mode of ["failure", "timeout"] as const) await scenario(`provider-${mode}-database-retry`, async (id, address) => {
       await preferences(id); await reminder(id); const fake = sender(address, mode);
@@ -282,7 +365,8 @@ async function main() {
     });
   } finally {
     // Only recorded fixture IDs may be deleted. Cleanup errors also fail the acceptance run.
-    for (const id of users) requireSuccess(await client.auth.admin.deleteUser(id));
+    try { for (const id of users) requireSuccess(await client.auth.admin.deleteUser(id)); }
+    finally { await cleanupReleases(); }
   }
   await runAcceptancePreflight(preflightInput);
   process.stdout.write(`${JSON.stringify({ status: "passed", sourceRef, harnessRef: currentRef, scenarios: results.length, emptyAfterCleanup: true })}\n`);
