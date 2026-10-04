@@ -1204,3 +1204,20 @@ editorial approval, and a documentation status change cannot authorize external 
   `a39d01b` remains unreviewed; approval of this test alone must not integrate that parent implicitly.
   Integration remains H4 `52f8a08` / documentation `3bf4e94`. Stage-C/native, H5/Auth, H3b and J1
   acceptance remain open; no main merge, artifact approval or activation.
+
+### J1 local acceptance target and exhausted-backlog procedure — 2026-10-03
+
+- Codex implemented [the bounded follow-up](checkpoints/J1-local-target-backlog-procedure.md) on base
+  `938b869`; review/integration await Claude. The command defaults to production; explicit local mode
+  requires loopback Supabase and disabled email before client construction. Production validation stays
+  intact. Disabled-email runs still write events/deliveries and are not dry runs.
+- The operator contract retains exhausted-backlog exit 1 and adds private incident acknowledgement plus
+  manual one-row terminal suppression. The psql procedure defaults to ROLLBACK; only an explicitly
+  committed, separately reviewed abandonment resolves an eligible exhausted row. No automatic retry/reset.
+- **154 notification tests / 16 files**, types, targeted lint and actual help/config-error probes passed.
+  Network-isolated PostgreSQL 17: all migrations applied, **72 notification pgTAP assertions** and
+  **49 operator-procedure assertions** passed. Containers removed. Real concurrent connections,
+  Auth/PostgREST/fake-sender and full-stack acceptance remain open.
+- N4 `a39d01b` and N1 `938b869` remain unreviewed ancestors; single-checkpoint approval must not bring
+  them into integration implicitly. Integration remains H4 `52f8a08` / documentation `3bf4e94`.
+  H3b/H5/Stage-C/native and J1 activation gates remain; no main merge or activation.

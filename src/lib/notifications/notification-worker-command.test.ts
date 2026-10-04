@@ -34,6 +34,37 @@ function fixture(deliveryEnabled = false) {
 }
 
 describe("one-pass notification command", () => {
+  it.each(["http://127.0.0.1:54321", "http://localhost:54321", "http://[::1]:54321"])("permits explicit local acceptance at %s with disabled email", async (url) => {
+    const f = fixture();
+    const report = await executeNotificationWorkerJob({ ...jobEnv, NEXT_PUBLIC_SUPABASE_URL: url }, "local", f.dependencies);
+    expect(report).toMatchObject({ status: "delivery-disabled", exitCode: 0, deliveriesPrepared: 4, claimed: 0 });
+    expect(f.provider.send).not.toHaveBeenCalled();
+  });
+
+  it("keeps the default production target strict for a loopback URL", async () => {
+    const f = fixture();
+    await expect(executeNotificationWorkerJob({ ...jobEnv, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321" }, undefined, f.dependencies)).rejects.toThrow();
+    expect(f.dependencies.createStore).not.toHaveBeenCalled();
+    expect(f.dependencies.createDelivery).not.toHaveBeenCalled();
+  });
+
+  it.each(["https://project.supabase.co", "http://127.0.0.2:54321", "http://localhost.example.test:54321"])("rejects a non-acceptance host in local mode: %s", async (url) => {
+    const f = fixture();
+    await expect(executeNotificationWorkerJob({ ...jobEnv, NEXT_PUBLIC_SUPABASE_URL: url }, "local", f.dependencies)).rejects.toThrow();
+    expect(f.dependencies.createStore).not.toHaveBeenCalled();
+    expect(f.dependencies.createDelivery).not.toHaveBeenCalled();
+  });
+
+  it("rejects enabled email locally before constructing a provider or store", async () => {
+    const f = fixture(true);
+    const env = { ...jobEnv, NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321", EMAIL_DELIVERY_ENABLED: "true",
+      EMAIL_PROVIDER: "amazon-ses", AWS_REGION: "ap-northeast-1", EMAIL_FROM_NAME: "Nihonest",
+      EMAIL_FROM_ADDRESS: "sender@example.test", NEXT_PUBLIC_SITE_URL: "https://example.test" };
+    await expect(executeNotificationWorkerJob(env, "local", f.dependencies)).rejects.toThrow();
+    expect(f.dependencies.createStore).not.toHaveBeenCalled();
+    expect(f.dependencies.createDelivery).not.toHaveBeenCalled();
+  });
+
   it("validates job-only settings before constructing any client", async () => {
     const f = fixture();
     await expect(executeNotificationWorkerJob({ EMAIL_DELIVERY_ENABLED: "false" }, "production", f.dependencies)).rejects.toThrow();
