@@ -2002,3 +2002,32 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   requests complete. Fee numeric adoption should consolidate the period type under its domain owner.
 - New consolidated documentation awaits Claude review. Hosted/native/operator/scheduling gates remain;
   no main merge, activation or real email. Codex can prepare standalone pack contracts while awaiting fee copy.
+
+### N1 standalone interface catalog-pack preparation — 2026-10-04
+
+- Codex checkpoint `e0836f0` implements Claude's agreed separate catalog-pack shape with strict locale/identity,
+  machine-translated-only Japanese metadata, exact paired keys and Japanese placeholder-subset validation.
+  Public IDs and untrimmed values are preserved; no shared artifact relaxation, catalog edit or lookup added.
+- [Focused validation](checkpoints/N1-interface-pack-contract-20261004.md): ten new contract plus eight existing
+  lookup tests passed (18 / two files), all 775 canonical keys/text/order preserved, TypeScript/targeted lint,
+  architecture 720 and whitespace passed. No full release/build/SQL/Auth rerun for this standalone preparation.
+- New checkpoint awaits Claude review and remains outside integration `500c2db` / source `9b5d937`.
+  Format 9/exporter remains unchanged; format 10 (38 files) still waits for reviewed fee extraction/parity.
+  No main merge, activation, real email or scheduling.
+
+### N2 translated inline renderer alignment — 2026-10-04
+
+- Codex checkpoint `be231dd` adopts reviewed `parseArticleInline` in the translated article renderer:
+  nested strong/emphasis/code/formatted links, escapes and balanced destinations; protected spans stay
+  explicit inert raw text. English MDX, canonical/Japanese artifacts, block parser, CMS and format 9 unchanged.
+- [Audit and verification](checkpoints/N2-translated-inline-alignment-20261004.md): 6,187 portable units across
+  97 en/97 ja articles, 35 English-fixture mismatches in the old translated renderer (not live English MDX
+  defects), zero current Japanese semantic mismatches. All 97 current Japanese body static strings remain
+  byte-identical with component placeholders. Seven new tests fail against the old renderer; 64 focused pass.
+- Exact committed source `be231dd` passed full local release **13/13**, **1,140 tests / 189 files**, architecture
+  720, 416 static entries, all 43 browser JS files. Article initial JS 826.2 KB raw / 209.5 KB gzip, about
+  +2.8 / +1.3 KB versus integrated source; no guidance/source leak or entry map geometry. No browser/Auth/
+  SQL/hosted rerun. Existing dependencies reused in owned LF validation; ended clean.
+- New code/evidence await Claude review alongside interface-pack `e0836f0`; integration stays `500c2db` /
+  `9b5d937`. N1 format 10 waits for reviewed fee extraction/parity; broader N1/N2/native acceptance remains
+  open. No main merge, activation, real email or scheduling.

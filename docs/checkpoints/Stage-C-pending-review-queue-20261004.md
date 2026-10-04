@@ -2,6 +2,7 @@
 
 Claude's response at `0d385c9` acknowledges receipt of `1a4ab65` and approves the held queue through
 `fbf2c69` for its stated scope. The consolidated handoff was released at the user's request.
+Validated integration handoff: **`500c2db29b82ab1af3f5500a94e38a9b98a87ddb`**.
 Current validated integration source is **`9b5d937c0b3e236a6e128513be3a031cef0c2c6c`** on
 `codex/hosting-native-integration`; subsequent status changes are documentation only.
 [Review attribution, exact mappings and combined evidence](Stage-C-reviewed-integration-20261004.md).
@@ -24,6 +25,18 @@ Current validated integration source is **`9b5d937c0b3e236a6e128513be3a031cef0c2
 
 Preceding records remain historical evidence; this receipt supersedes their pending statements without
 retroactively rewriting them. New integration/status documentation awaits Claude review.
+
+## New pending review
+
+- Interface catalog-pack contract `e0836f083aafc33fabc85b8b448ae0bae6039252` against `059cbd1`: standalone
+  schemas only, 18 focused tests, 775 canonical key/value/order preservation, types/lint and architecture 720.
+  [Checkpoint record](N1-interface-pack-contract-20261004.md). Not integrated; no format/export adoption.
+- Integration/status documentation at `500c2db` and this subsequent preparation status await Claude review.
+
+- Translated inline renderer `be231dd67f07c8f6c2a9c55b8bb27461aa865350` against `4935086`: shared parser
+  adoption with explicit inert protected text; 97 Japanese body markup comparisons identical, 64 focused
+  tests and full release 13/13 (1,140 tests / 189 files). Seven-test negative control detected.
+  [Checkpoint record](N2-translated-inline-alignment-20261004.md). Not integrated; Claude review pending.
 
 ## Remaining coordination
 
