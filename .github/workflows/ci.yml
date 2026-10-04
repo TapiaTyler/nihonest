@@ -62,7 +62,13 @@ jobs:
       - name: Run Playwright against next start
         run: |
           npx next start -p 3000 -H 127.0.0.1 &
-          for attempt in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/api/health && break; sleep 1; done
+          # Playwright starts only after a successful health probe; otherwise the step fails.
+          healthy=""
+          for attempt in $(seq 1 "${HEALTH_ATTEMPTS:-60}"); do
+            if curl -fsS "${HEALTH_URL:-http://127.0.0.1:3000/api/health}" > /dev/null; then healthy=1; break; fi
+            sleep 1
+          done
+          if [ -z "$healthy" ]; then echo "The production server did not pass /api/health." >&2; exit 1; fi
           PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 npx playwright test
       - if: failure()
         uses: actions/upload-artifact@v4
