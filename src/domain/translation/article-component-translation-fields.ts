@@ -42,10 +42,19 @@ function practicalParagraph(source: string): Readonly<{ targets: readonly string
   return { targets };
 }
 
+function placeholders(text: string): string[] {
+  return [...new Set(Array.from(text.matchAll(/\{(\w+)\}/g), (match) => match[1]!))].sort();
+}
+
+function samePlaceholders(translated: string, english: string): boolean {
+  return JSON.stringify(placeholders(translated)) === JSON.stringify(placeholders(english));
+}
+
 /**
  * True when `fields` has exactly the component's English field keys and every value is usable as stored
  * (values are never trimmed). Empty English route suffixes must stay exactly ""; practical paragraphs must keep
- * the inline grammar, a leading label, body text, and the same link targets in the same order.
+ * the inline grammar, a leading label, body text, and the same link targets in the same order; fee copy must use
+ * exactly the English `{placeholders}`.
  */
 export function areArticleComponentTranslationFieldsValid(
   component: ArticleComponentSource,
@@ -61,6 +70,11 @@ export function areArticleComponentTranslationFieldsValid(
       const translated = practicalParagraph(value);
       const source = practicalParagraph(english[key]!);
       if (!translated || !source || JSON.stringify(translated.targets) !== JSON.stringify(source.targets)) return false;
+      continue;
+    }
+    // Fee copy must use exactly the English placeholders, so no amount or date is dropped or invented.
+    if (component.kind === "residence-application-fees") {
+      if (!value.trim() || !samePlaceholders(value, english[key]!)) return false;
       continue;
     }
     // An empty English route suffix must stay exactly empty; every other value must have visible text.

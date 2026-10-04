@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { JapanPracticalBasics } from "@/components/content/japan-geography-reference";
 import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
 import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
+import { residenceApplicationFeesComponent } from "@/data/article-components";
 import { japaneseArticleComponentTranslations } from "@/data/translations/ja/article-components";
 import { parseArticleInline, type ArticleInline } from "@/domain/article/article-inline";
 import { translationArtifactSchema, type TranslationArtifact } from "@/domain/translation/translation";
@@ -45,8 +46,8 @@ function inlineLinks(nodes: readonly ArticleInline[]): [string, string][] {
 
 describe("article component translations", () => {
   it("are machine-translated and addressed to the agreed English revisions", () => {
-    expect(japaneseArticleComponentTranslations.map(({ contentId }) => contentId)).toEqual(["tax-residence-scope", "training-route-comparison", "japan-practical-basics"]);
-    for (const component of articleComponentEnglishFixture) {
+    expect(japaneseArticleComponentTranslations.map(({ contentId }) => contentId)).toEqual(["tax-residence-scope", "training-route-comparison", "japan-practical-basics", "residence-application-fees"]);
+    for (const component of [...articleComponentEnglishFixture, residenceApplicationFeesComponent]) {
       const current = artifact(component.kind);
       expect(current.reviewState).toBe("machine-translated");
       expect(current.contentKind).toBe("article-component");
