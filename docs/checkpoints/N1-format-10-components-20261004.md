@@ -18,8 +18,8 @@ Format 10 retains all 28 prior payloads and requires these ten additions togethe
 | orientation-regions.en.json | Ordered eight groups and the three canonical bilingual Tokyo area labels |
 | prefecture-map-resources.en.json | All 47 paths/focus tuples, recorded source/transform/limits and retained checksummed LF MIT license |
 | finder-bindings.en.json | Existing catalog references, ordered national/general guide roles, message IDs and explicit behavior |
-| interface-messages.en.json | Full reviewed English interface pack, retaining public IDs and values |
-| interface-messages.ja.json | Full reviewed Japanese interface pack, machine-translated; no fabricated generation/currency metadata |
+| interface-messages.en.json | English interface pack under the code-reviewed contract, retaining public IDs and values |
+| interface-messages.ja.json | Japanese interface pack under the code-reviewed contract; values remain machine-translated, with no fabricated generation/currency metadata |
 
 The dropped component-copy files are not exported. Version 9 candidates are rejected by the new verifier;
 old version 9 readers reject version 10. This changes the producer/portable verification contract, not a
