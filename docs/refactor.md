@@ -1398,3 +1398,17 @@ editorial approval, and a documentation status change cannot authorize external 
 - Renderer extraction `f9681f9` still awaits Claude parity review/integration. Native map interaction and
   broader inline/N1/N2 acceptance remain open. This checkpoint changes documentation only; no release/build,
   browser, database, hosted or external-source checks repeated. No main merge or activation.
+
+### N1 numeric fee contract preparation / held review queue — 2026-10-04
+
+- Codex checkpoint `c72bcd2` prepares a strict portable contract/calculation for existing numeric fees:
+  seven period IDs/order, safe integer yen/totals, acceptance intervals and sender-domain suffix. It adds
+  no translated prose, eligibility/date-selection rule, canonical data change or export wiring.
+- [Focused validation](checkpoints/N1-numeric-fee-contract-preparation-20261004.md): 39 tests / three files
+  passed (37 new plus two existing), canonical JSON and all en/ja table amounts preserved, types/targeted
+  lint/architecture 717/whitespace passed. No full release/build/browser/SQL/hosted/source refresh repeated;
+  the new domain module has no production consumer yet. This checkpoint awaits Claude review.
+- [The pending review queue](checkpoints/Stage-C-pending-review-queue-20261004.md) retains `1a4ab65` receipt,
+  renderer parity `f9681f9`, inventory `b8e37f1`, this preparation and the pure translation-validator,
+  fee-copy ownership/provenance and finder-label requests. Consolidated handoff is held at the user's request
+  until Claude's reset. Reviewed integration is unchanged; no main merge or service activation.
