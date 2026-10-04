@@ -14,6 +14,7 @@ The designated integration branch remains `codex/hosting-native-integration` at 
 | Consolidated extraction status | `b0a3a864be9ddca465562dacf9d4c16092cae662` against `23ece61` | Documentation-only update; pending review. Includes deduplication of identical preparation history. |
 | N1 component inventory | `b8e37f1b280d692ffebaf6484809557ae07cca2b` against `b0a3a86` | Documentation only; pending review. In-memory format-9 generation/integrity, en/ja component order, guide/source references and region/map coverage passed. |
 | Numeric fee contract preparation | `c72bcd216eaacd317643e48f9d8e564f45e89fb9` against `b8e37f1` | Pending Claude review. Only new domain contract/calculation and tests plus record. 39 focused tests (37 new, two existing), types, targeted lint and architecture 717 passed. No canonical data, renderer, translation or export change. |
+| Orientation region/map contract preparation | `dc9762991a89ad658f76f9f8d7839a47a3f3067d` against `97159da` | Pending Claude review. Standalone pure schemas/coverage validation only; 44 tests / two files, exact canonical JSON preservation, types, targeted lint and architecture 718 passed. Existing data, map/finder code, translations and exporter unchanged. |
 
 Records to include in the eventual documentation review:
 
@@ -21,6 +22,7 @@ Records to include in the eventual documentation review:
 - [Three-renderer extraction](N2-component-renderer-extraction-20261004.md).
 - [N1 Stage-C component inventory](N1-stage-c-component-inventory-20261004.md).
 - [Numeric fee contract preparation](N1-numeric-fee-contract-preparation-20261004.md).
+- [Orientation region/map contract preparation](N1-orientation-map-contract-preparation-20261004.md).
 - Consolidated `docs/refactor.md` / `docs/ROADMAP.md` updates and this queue; earlier limited documentation
   approvals remain limited. The Stage-C artifact/J1 record was approved and its two corrections applied.
 

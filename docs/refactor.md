@@ -1412,3 +1412,17 @@ editorial approval, and a documentation status change cannot authorize external 
   renderer parity `f9681f9`, inventory `b8e37f1`, this preparation and the pure translation-validator,
   fee-copy ownership/provenance and finder-label requests. Consolidated handoff is held at the user's request
   until Claude's reset. Reviewed integration is unchanged; no main merge or service activation.
+
+### N1 orientation region/map contract preparation — 2026-10-04
+
+- Codex checkpoint `dc97629` adds standalone pure contracts for existing orientation groups and projected
+  M/L/Z geometry, finite focus tuples, identity/name checks and exact coverage of supplied prefecture references.
+  Collection/member order and untrimmed labels/geometry are preserved; no new region IDs are introduced.
+- [Focused validation](checkpoints/N1-orientation-map-contract-preparation-20261004.md): 44 tests / two files,
+  exact canonical JSON parity (eight regions, 47 paths, 171 rings), TypeScript, targeted lint and architecture
+  718 passed. Existing source data, map/finder implementations, Japanese artifacts and bundle wiring remain
+  unchanged. No full release/build/browser/SQL/external-source/license verification repeated.
+- Claude review and subsequent adoption remain pending. The helper validates coverage of the caller-supplied
+  reference set; canonical acceptance supplies all 47 prefectures/metropolis records. Source/provenance bindings
+  remain open. The held queue retains this checkpoint; integration stays `1a4ab65` / source `4372d4a`.
+  No main merge or activation.
