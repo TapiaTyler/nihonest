@@ -1902,3 +1902,17 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
 - This documentation-only checkpoint and consolidated updates await review in the held queue. No full
   release/build/browser/SQL/external-source/license revalidation repeated. Integration remains `1a4ab65` /
   source `4372d4a`; no main merge or activation.
+
+### N1 finder projection/fallback binding audit — 2026-10-04
+
+- [Codex read-only audit](checkpoints/N1-finder-binding-audit-20261004.md), checkpoint `f796866`, reconstructs
+  the entire finder payload exactly from existing bundle catalogs: 47 prefectures, 112 researched municipalities,
+  47 coverage groups and 784 summaries. Guide targets resolve; locale/order, designated-city, local-link,
+  temporary-selection and English-title fallback semantics are recorded for later native binding.
+- Current bundled titles match the inspected server-selection rule exactly (784 titles, no duplicate IDs);
+  the standalone Next selector was not directly executable in Node, so no runtime/cache execution is claimed.
+  Six requested test paths selected five existing files: 16 tests passed; the absent selector-test path
+  contributes no coverage. No production/catalog code changed or full release/build/SQL/hosted checks repeated.
+- Three Tokyo grouping labels outside N3 require Claude's provenance decision; even the currently unused
+  island group remains a dependency. This documentation checkpoint is retained in the held queue. Integration
+  remains `1a4ab65` / `4372d4a`; no main merge, activation or scheduling.

@@ -16,6 +16,7 @@ The designated integration branch remains `codex/hosting-native-integration` at 
 | Numeric fee contract preparation | `c72bcd216eaacd317643e48f9d8e564f45e89fb9` against `b8e37f1` | Pending Claude review. Only new domain contract/calculation and tests plus record. 39 focused tests (37 new, two existing), types, targeted lint and architecture 717 passed. No canonical data, renderer, translation or export change. |
 | Orientation region/map contract preparation | `dc9762991a89ad658f76f9f8d7839a47a3f3067d` against `97159da` | Pending Claude review. Standalone pure schemas/coverage validation only; 44 tests / two files, exact canonical JSON preservation, types, targeted lint and architecture 718 passed. Existing data, map/finder code, translations and exporter unchanged. |
 | Component export/provenance proposal | `4fea7e9390064bfda947011fbde7efdec5561841` against `fe54e32` | Documentation only; pending review. Candidate 12 additions / format 10, registration/composition coverage and provenance decisions. Current format 9 / 28 files remains deterministic; raw interface artifact-key incompatibility recorded. No wiring or format change. |
+| Finder projection/fallback audit | `f7968660fdfe94c7914483474addc1326eda54ab` against `6ae03cc` | Documentation only; pending review. Exact full payload reconstruction from existing bundle, 784 title-field parity, 16 existing tests / five files passed. Three Tokyo grouping labels added to coordination scope; no finder/catalog change. |
 
 Records to include in the eventual documentation review:
 
@@ -25,6 +26,7 @@ Records to include in the eventual documentation review:
 - [Numeric fee contract preparation](N1-numeric-fee-contract-preparation-20261004.md).
 - [Orientation region/map contract preparation](N1-orientation-map-contract-preparation-20261004.md).
 - [Component export/provenance proposal](N1-component-export-proposal-20261004.md).
+- [Finder projection/fallback audit](N1-finder-binding-audit-20261004.md).
 - Consolidated `docs/refactor.md` / `docs/ROADMAP.md` updates and this queue; earlier limited documentation
   approvals remain limited. The Stage-C artifact/J1 record was approved and its two corrections applied.
 
@@ -58,6 +60,10 @@ Records to include in the eventual documentation review:
    `prefecture-finder-messages.ts` and older guide-label module location. N3 messages now live in the interface
    catalogs, and abbreviated guide labels remain in `src/lib/content/prefecture-finder-guides.ts`. Codex
    leaves that Claude-owned report unchanged.
+
+7. Decide provenance/catalog treatment of the three Tokyo area labels in `tokyo-areas.ts` (special wards,
+   Tama, islands), in addition to the eleven guide labels. They are not N3 interface keys. Keep the stable
+   group IDs and code-based grouping; the unrepresented island group remains a supported dependency.
 
 ## Work boundaries while waiting
 
