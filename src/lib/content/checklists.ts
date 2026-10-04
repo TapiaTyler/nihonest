@@ -1,5 +1,5 @@
 import { checklistDefinitionSchema, type ChecklistDefinition } from "@/domain/roadmap/personalized-roadmap";
-import { getAllArticles } from "./articles";
+import { getAllArticles } from "./article-metadata";
 
 // One canonical article-backed definition lets shared journey steps retain the same progress everywhere they appear.
 const checklistDefinitions: readonly ChecklistDefinition[] = getAllArticles().map(({ metadata }) => checklistDefinitionSchema.parse({

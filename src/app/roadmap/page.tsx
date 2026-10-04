@@ -3,7 +3,7 @@ import { InterfaceText } from "@/components/localization/interface-text";
 import { PersonalizedRoadmap } from "@/components/roadmap/personalized-roadmap";
 import { guidedJourneys } from "@/data/discovery";
 import { roadmapRecommendationRules } from "@/data/roadmap";
-import { getAllArticles } from "@/lib/content/articles";
+import { getAllArticles } from "@/lib/content/article-metadata";
 import { getAllChecklistDefinitions } from "@/lib/content/checklists";
 import { getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";

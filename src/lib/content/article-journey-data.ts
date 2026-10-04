@@ -1,6 +1,6 @@
 import { localizeJourney } from "@/domain/localization/journey-presentation";
 import type { ArticleJourneyData } from "@/lib/navigation/article-journey";
-import { getArticleById, getGuidedJourneysByArticleIds, getJourneySteps } from "./articles";
+import { getArticleById, getGuidedJourneysByArticleIds, getJourneySteps } from "./article-metadata";
 import { getJapaneseArticleTranslation, getJourneyTranslations } from "./translations";
 
 /**

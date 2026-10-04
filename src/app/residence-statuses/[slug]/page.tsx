@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { OfficialSourceList } from "@/components/content/official-source-list";
-import { getArticleById, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
+import { getArticleById, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/article-metadata";
 import { journeyHref } from "@/lib/navigation/journey-context";
 import { getResidenceStatusBySlug, residenceStatuses } from "@/data/residence-statuses";
 import { getSourceById } from "@/data/sources";

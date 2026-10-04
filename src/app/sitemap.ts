@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { residenceStatuses } from "@/data/residence-statuses";
-import { getAllArticles } from "@/lib/content/articles";
+import { getAllArticles } from "@/lib/content/article-metadata";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { siteUrl } from "@/lib/site-url";
 

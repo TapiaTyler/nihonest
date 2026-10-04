@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { LocalizedArticleCard } from "@/components/localization/localized-article-card";
 import { LocalizedArticleGroupHeading } from "@/components/localization/localized-article-group";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
-import { getAllArticleGroups, getArticleGroupById, getArticlesByGroup, getJourneysByGroup } from "@/lib/content/articles";
+import { getAllArticleGroups, getArticleGroupById, getArticlesByGroup, getJourneysByGroup } from "@/lib/content/article-metadata";
 import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";

@@ -5,7 +5,7 @@ import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToGlossaryLink } from "@/components/navigation/back-to-glossary-link";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import { getSourceById } from "@/data/sources";
-import { getArticleById } from "@/lib/content/articles";
+import { getArticleById } from "@/lib/content/article-metadata";
 import { getAllGlossaryTerms, getGlossaryTermById, getGlossaryTermBySlug } from "@/lib/content/glossary";
 import { PronunciationButton } from "@/components/glossary/pronunciation-button";
 import { JapaneseReading } from "@/components/localization/japanese-reading";

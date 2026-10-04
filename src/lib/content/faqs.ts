@@ -3,7 +3,7 @@ import { articleGroups, guidedJourneys } from "@/data/discovery";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { activityCrossReferences } from "@/data/activity-cross-references";
 import { validateFaqCollection, type Faq } from "@/domain/faq/faq";
-import { getAllArticles } from "./articles";
+import { getAllArticles } from "./article-metadata";
 import { getAllGlossaryTerms } from "./glossary";
 import {
   getArticleGroupSearchTranslations,

@@ -1,7 +1,7 @@
 import { HomeHero } from "@/components/personalization/home-hero";
 import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { InterfaceText } from "@/components/localization/interface-text";
-import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/articles";
+import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/article-metadata";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 import { getArticleSearchTranslations, getJourneyTitleTranslations } from "@/lib/content/translations";

@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { GuidedJourneyView } from "@/components/journey/guided-journey-view";
 import { QueryGuidedJourneyView } from "@/components/journey/query-guided-journey-view";
 import { guidedJourneys } from "@/data/discovery";
-import { getArticleById, getArticleGroupById, getGuidedJourneyById } from "@/lib/content/articles";
+import { getArticleById, getArticleGroupById, getGuidedJourneyById } from "@/lib/content/article-metadata";
 import { journeyCandidateArticleIds, resolveJourneyViewSteps } from "@/lib/navigation/journey-context";
 import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
