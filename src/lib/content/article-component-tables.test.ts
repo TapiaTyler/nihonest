@@ -4,6 +4,7 @@ import ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
 import { articleComponentTableSchema, validateArticleComponentTable, type ArticleComponentTable } from "@/domain/article/article-component-tables";
 import { readCanonicalArticleSources } from "./content-bundle";
+import { taxResidenceScopeComponent, trainingRouteComparisonComponent } from "@/data/article-components";
 
 /** Test-only literal inspection: reads existing copy without executing JSX or producing new content files. */
 function literal(node: ts.Node): unknown {
@@ -46,8 +47,10 @@ async function readTableFixture(file: string, kind: ArticleComponentTable["kind"
   };
   visit(tree);
   if (chrome.length !== 3) throw new Error("Expected one caption and two column headers.");
-  return { schemaVersion: 1, kind, rows, caption: chrome[0],
-    headers: { en: [chrome[1]!.en, chrome[2]!.en], ja: [chrome[1]!.ja, chrome[2]!.ja] } };
+  return { schemaVersion: 2, kind, caption: chrome[0]!.en, headers: [chrome[1]!.en, chrome[2]!.en],
+    rows: (rows as Array<{ id: string; en: string[]; href?: string }>).map((row) => ({
+      id: row.id, cells: row.en, ...(row.href ? { href: row.href } : {}),
+    })) };
 }
 
 let tables: ArticleComponentTable[];
@@ -58,12 +61,13 @@ beforeAll(async () => {
     readTableFixture("training-route-comparison-table.tsx", "training-route-comparison"),
   ]);
   tables = fixtures.map((fixture) => articleComponentTableSchema.parse(fixture));
-  // Parsing must not rewrite wording, IDs, order, suffixes or bilingual chrome.
+  // Parsing must not rewrite wording, IDs, order, suffixes or English chrome.
   expect(tables).toEqual(fixtures);
+  expect(tables).toEqual([taxResidenceScopeComponent, trainingRouteComparisonComponent]);
   slugs = (await readCanonicalArticleSources(resolve("content/articles"))).map(({ article }) => article.metadata.slug);
 });
 
-describe("Stage-B portable component table contracts", () => {
+describe("Stage-C English-only v2 component table contracts", () => {
   it("accepts actual tax/training copy and links without changing serialized evidence", () => {
     const before = JSON.stringify(tables);
     for (const table of tables) expect(validateArticleComponentTable(table, slugs)).toEqual(table);
@@ -72,23 +76,24 @@ describe("Stage-B portable component table contracts", () => {
   });
   it("preserves required empty and nonempty training suffixes", () => {
     const training = tables.find((table) => table.kind === "training-route-comparison")!;
-    expect(training.rows.some(({ en, ja }) => en[2] === "" && ja[2] === "")).toBe(true);
-    expect(training.rows.some(({ en, ja }) => en[2].length > 0 && ja[2].length > 0)).toBe(true);
+    expect(training.rows.some(({ cells }) => cells[2] === "")).toBe(true);
+    expect(training.rows.some(({ cells }) => cells[2].length > 0)).toBe(true);
     const copy = structuredClone(training);
-    copy.rows[0]!.en.pop();
+    copy.rows[0]!.cells.pop();
     expect(() => articleComponentTableSchema.parse(copy)).toThrow();
   });
-  it.each(["caption", "headers", "row", "locale", "id", "unknown", "duplicate"])(
+  it.each(["caption", "headers", "row", "locale", "id", "unknown", "duplicate", "version"])(
     "rejects incomplete or ambiguous %s in both table contracts", (mode) => {
       for (const table of tables) {
         const copy = JSON.parse(JSON.stringify(table));
-        if (mode === "caption") copy.caption.en = " ";
-        if (mode === "headers") copy.headers.ja.pop();
-        if (mode === "row") copy.rows[0].en[0] = "";
-        if (mode === "locale") delete copy.rows[0].ja;
+        if (mode === "caption") copy.caption = " ";
+        if (mode === "headers") copy.headers.pop();
+        if (mode === "row") copy.rows[0].cells[0] = "";
+        if (mode === "locale") copy.rows[0].ja = [...copy.rows[0].cells];
         if (mode === "id") copy.rows[0].id = "bad id";
         if (mode === "unknown") copy.rows[0].approved = true;
         if (mode === "duplicate") copy.rows.push(copy.rows[0]);
+        if (mode === "version") copy.schemaVersion = 1;
         expect(() => articleComponentTableSchema.parse(copy)).toThrow();
       }
     });

@@ -1786,3 +1786,16 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
 - Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
   scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
+
+### N2 English-only component data v2 preparation — 2026-10-04
+
+- Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C ownership is effective. Japanese
+  component provenance is machine-translated; tax/training renderer ownership is explicitly handed to Codex.
+- [The preparation checkpoint](checkpoints/N2-English-component-data-v2.md) adds English-only v2 data and
+  strict contracts, preserving stable IDs, link targets, empty suffixes and whitespace. AST parity fixtures
+  compare the new data to current English literals. Renderers/catalogs and bundle format remain unchanged.
+- Focused 32 tests passed; full public-only release 13/13, 1,018 tests / 180 files, 714 modules, 416 entries.
+  Browser/Auth/SQL/hosted checks not repeated. This checkpoint awaits Claude review; artifact `5b58f06`
+  awaits Codex review. Extraction and byte-exact static markup parity remain pending.
+- Claude code-approved J1 `733c827` for scope without rerunning real acceptance; integration remains pending.
+  Earlier documentation limits remain. No main merge or activation.

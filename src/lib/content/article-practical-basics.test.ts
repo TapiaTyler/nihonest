@@ -4,6 +4,7 @@ import ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
 import { articlePracticalBasicsSchema, validateArticlePracticalBasics, type ArticlePracticalBasics } from "@/domain/article/article-practical-basics";
 import { readCanonicalArticleSources } from "./content-bundle";
+import { japanPracticalBasicsComponent } from "@/data/article-components";
 
 /** Read-only JSX literal inspection; never evaluates JSX, imports the renderer or writes extracted copy. */
 async function readFixture() {
@@ -47,13 +48,11 @@ async function readFixture() {
     });
   };
   const en = readLocale("en");
-  const ja = readLocale("ja");
-  if (en.length !== ja.length) throw new Error("Locale paragraph counts must correspond.");
-  const fixture = { schemaVersion: 1, kind: "japan-practical-basics", paragraphs: en.map((nodes, index) => ({
-    // Proposed stable IDs derive from existing English labels; Stage-C owners must review their adoption.
-    id: nodes[0]!.text.replace(/:$/, "").toLowerCase(), en: nodes, ja: ja[index],
+  return { schemaVersion: 2, kind: "japan-practical-basics", paragraphs: en.map((nodes) => ({
+    id: nodes[0]!.text.replace(/:$/, "").toLowerCase(),
+    text: nodes.map((node) => node.kind === "strong" ? `**${node.text}**`
+      : node.kind === "link" ? `[${node.text}](${node.href})` : node.text).join(""),
   })) };
-  return fixture;
 }
 
 let content: ArticlePracticalBasics;
@@ -62,52 +61,42 @@ beforeAll(async () => {
   const fixture = await readFixture();
   content = articlePracticalBasicsSchema.parse(fixture);
   expect(content).toEqual(fixture);
+  expect(content).toEqual(japanPracticalBasicsComponent);
   slugs = (await readCanonicalArticleSources(resolve("content/articles"))).map(({ article }) => article.metadata.slug);
 });
 
-describe("Stage-B practical-basics rich-text contract", () => {
-  it("preserves literal paragraph/text/label/link order and wording in both locales", () => {
-    const before = JSON.stringify(content);
+describe("Stage-C English-only v2 practical basics", () => {
+  it("preserves current English labels, spacing, paragraph order and linked targets from JSX", () => {
     expect(validateArticlePracticalBasics(content, slugs)).toEqual(content);
-    expect(JSON.stringify(content)).toBe(before);
+    expect(content.paragraphs.map(({ id }) => id)).toEqual(["time", "money", "measurements", "emergencies"]);
     expect(JSON.parse(JSON.stringify(content))).toEqual(content);
-    const emergency = content.paragraphs.find(({ en }) => en.some(({ kind }) => kind === "link"))!;
-    for (const nodes of [emergency.en, emergency.ja]) {
-      expect(nodes[0]!.kind).toBe("strong");
-      expect(nodes.map(({ kind }) => kind)).toEqual(["strong", "text", "link", "text", "link", "text"]);
-    }
   });
-  it.each(["duplicate", "locale", "label", "body", "empty", "unknown", "target-order", "href"])(
-    "rejects incomplete or ambiguous %s", (mode) => {
-      const copy = JSON.parse(JSON.stringify(content));
-      const first = copy.paragraphs[0];
-      const emergency = copy.paragraphs.find((paragraph: { en: { kind: string }[] }) => paragraph.en.some(({ kind }) => kind === "link"));
-      if (mode === "duplicate") copy.paragraphs.push(first);
-      if (mode === "locale") delete first.ja;
-      if (mode === "label") first.en[0].kind = "text";
-      if (mode === "body") first.en = [first.en[0], { kind: "text", text: " " }];
-      if (mode === "empty") first.en[0].text = "";
-      if (mode === "unknown") first.en[0].approved = true;
-      if (mode === "target-order") { const links = emergency.ja.filter((node: { kind: string }) => node.kind === "link");
-        [links[0].href, links[1].href] = [links[1].href, links[0].href]; }
-      if (mode === "href") emergency.en.find((node: { kind: string }) => node.kind === "link").href = "https://example.com";
-      expect(() => articlePracticalBasicsSchema.parse(copy)).toThrow();
-    });
-  it("rejects matching cross-locale targets absent from the candidate article catalog", () => {
-    const copy = structuredClone(content);
-    for (const paragraph of copy.paragraphs) for (const nodes of [paragraph.en, paragraph.ja]) for (const node of nodes) {
-      if (node.kind === "link") node.href = "/articles/unknown-article";
-    }
-    expect(() => validateArticlePracticalBasics(copy, slugs)).toThrow("unknown article slug");
+
+  it.each(["version", "locale", "id", "duplicate", "unknown"])("rejects ambiguous or old %s records", (mode) => {
+    const copy = JSON.parse(JSON.stringify(content));
+    if (mode === "version") copy.schemaVersion = 1;
+    if (mode === "locale") copy.paragraphs[0].ja = "Japanese belongs to artifacts";
+    if (mode === "id") copy.paragraphs[0].id = "bad id";
+    if (mode === "duplicate") copy.paragraphs.push(copy.paragraphs[0]);
+    if (mode === "unknown") copy.approved = true;
+    expect(() => articlePracticalBasicsSchema.parse(copy)).toThrow();
   });
-  it("resolves targets by slug and preserves leading text spaces without Markdown interpretation", () => {
+
+  it.each([
+    "Plain body without a label", "**Label:**", "**Label:**   ", "** ** body",
+    "**Label:** <script>unsafe</script>", "**Label:** **unclosed", "**Label:** [ ]",
+    "**Label:** [outside](https://example.com)", "**Label:** [outside](//example.com)",
+    "**Label:** [outside](/account)",
+  ])("rejects invalid body/label/grammar/target %j", (text) => {
     const copy = structuredClone(content);
-    for (const paragraph of copy.paragraphs) for (const nodes of [paragraph.en, paragraph.ja]) for (const node of nodes) {
-      if (node.kind === "link") node.href = "/articles/public-article-slug";
-    }
-    expect(validateArticlePracticalBasics(copy, ["public-article-slug"])).toEqual(copy);
-    expect(() => validateArticlePracticalBasics(copy, ["different-article-id"])).toThrow();
-    copy.paragraphs[0]!.en[1]!.text = "  **literal text** ";
-    expect(articlePracticalBasicsSchema.parse(copy).paragraphs[0]!.en[1]!.text).toBe("  **literal text** ");
+    copy.paragraphs[0]!.text = text;
+    expect(() => articlePracticalBasicsSchema.parse(copy)).toThrow();
+  });
+
+  it("validates links by canonical slug and preserves inline source without trimming", () => {
+    const copy = structuredClone(content);
+    copy.paragraphs = [{ id: "fixture", text: "**Label:**  [visible label](/articles/public-slug)  " }];
+    expect(validateArticlePracticalBasics(copy, ["public-slug"])).toEqual(copy);
+    expect(() => validateArticlePracticalBasics(copy, ["different-record-id"])).toThrow("unknown article slug");
   });
 });
