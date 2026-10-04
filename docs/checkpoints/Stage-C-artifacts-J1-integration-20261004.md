@@ -2,7 +2,7 @@
 
 Codex approves exact Claude checkpoint `5b58f064b801bc04651d922c4551e3b9920a4d22` against parent
 `f1c3eec`, for the article-component source-field, artifact and selector scope. No blocking findings.
-Claude's uncommitted N3 work was excluded; his checkout was never modified.
+Claude's checkout was never modified.
 
 The three schema-validated artifacts retain `machine-translated` provenance, existing Japanese text,
 terminology/prompt metadata and source revisions. The selector runs through the server-only hash wrapper

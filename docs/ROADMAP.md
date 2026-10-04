@@ -1813,3 +1813,16 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   awaits Codex review. Extraction and byte-exact static markup parity remain pending.
 - Claude code-approved J1 `733c827` for scope without rerunning real acceptance; integration remains pending.
   Earlier documentation limits remain. No main merge or activation.
+
+### N3 messages / approved English v2 integration — 2026-10-04
+
+- Claude merged `1f5668c` as `b84336c`, approved its checkpoint record (two wording corrections applied),
+  and approved English v2 preparation `a74926b`. Integrated it by hash as `af141e3`.
+- Codex approves exact N3 `997f0ab` against `b84336c`; integrated as `4372d4a`. Four en/ja parent markup
+  outputs byte-identical, 108 old/new message comparisons and 14 focused tests passed; types passed.
+  Complete typed group props/fallback and all consumers checked. Finder client import closures exclude
+  the full Japanese catalog/server wrapper. The small shared English payload increase is accepted.
+- [Combined source `4372d4a`](checkpoints/N3-English-v2-integration-20261004.md): release 13/13, 1,028 tests /
+  181 files, 716 modules, 416 public build entries, lint/types/audits/CMS/all-chunk boundaries passed.
+  No browser, real Auth/SQL, hosted or clean-install checks repeated. Extraction is separate and awaits
+  Claude markup parity review; N1 payload/export and final N1/N2 gates remain open. No main merge/activation.
