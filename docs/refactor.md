@@ -391,6 +391,7 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 
 Status: Stage-B integrity/catalog contracts are code-approved and integrated at `b09cd28`.
 [Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; Stage-C/native and final acceptance remain pending.
+[Stage-C component inventory](checkpoints/N1-stage-c-component-inventory-20261004.md) records all eight directive dependencies, ownership requests and proposed export sequencing.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
 See also [municipality guidance and general-advice export](checkpoints/N1-local-guidance-bundle.md).
@@ -428,7 +429,8 @@ Acceptance:
 ### N2 — Shared component content and inline formatting
 
 Status: standalone inline parser and component contracts are code-approved and integrated at `b09cd28`;
-Stage-C component data/renderer handoff and final acceptance remain pending.
+English v2 data and article-component artifacts are reviewed/integrated. Renderer extraction `f9681f9`
+awaits Claude parity review and integration; broader inline consumer alignment and final acceptance remain pending.
 See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
 [tax/training table contracts](checkpoints/N2-table-contracts.md) and
 [practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
@@ -1379,3 +1381,20 @@ editorial approval, and a documentation status change cannot authorize external 
   integration branch pending review. N1 export and broader inline/native gates remain open.
 - Removed a duplicated, identical preparation-history entry introduced by the working-branch merge.
   No main merge, hosted service, real email or schedule activation.
+
+### N1 Stage-C component payload inventory — 2026-10-04
+
+- [The read-only inventory](checkpoints/N1-stage-c-component-inventory-20261004.md) covers all eight
+  registrations at `b0a3a86`: format 9 / 28 files still export component markers only. Six kinds are used
+  once per locale; all 97 current Japanese articles preserve English component order. Two unused geography
+  composition/alias kinds still require coverage. No payload/export contract was wired.
+- In-memory generation/integrity, all guide targets/host source references, region partition and map-code
+  parity passed. Snapshot: 47 prefectures, eight regions, 112 researched municipalities, 784 supplements,
+  seven fee bands, eleven guide labels and 47 map paths. Counts are observations, not schema requirements.
+- Coordination requests: Claude-owned pure article-component field validator shared with the server selector;
+  fee-copy provenance/renderer ownership; eleven finder guide labels outside N3. The server-only selector
+  cannot be imported directly by the ordinary Node exporter or portable verifier. Format/file-set and
+  component provenance bindings require review; proposed format 10 is not implemented.
+- Renderer extraction `f9681f9` still awaits Claude parity review/integration. Native map interaction and
+  broader inline/N1/N2 acceptance remain open. This checkpoint changes documentation only; no release/build,
+  browser, database, hosted or external-source checks repeated. No main merge or activation.
