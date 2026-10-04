@@ -495,7 +495,8 @@ Acceptance:
 
 ### N5 — Metadata independent of MDX rendering
 
-Status: planned; lowest priority. Implement when native catalog integration benefits from the boundary.
+Status: checkpoint 1 standalone metadata implemented at `6c7fb4d`, review pending; no consumer switching.
+Lowest priority; wiring/freshness follows the approved staged handoff and owner coordination.
 
 - Separate plain metadata/selectors from the web MDX registry, both derived from canonical content.
 - Do not introduce a second hand-maintained inventory.
@@ -1630,3 +1631,28 @@ editorial approval, and a documentation status change cannot authorize external 
   validation complete; new consolidated documentation awaits review. Both branches adopt the exact final
   documentation handoff before dependent work. N5 preparation remains read-only; final native/UI/activation,
   broader grammar and prior operational/hosted gates remain open. No main merge or service activation.
+
+### N5 checkpoint 1: standalone metadata — 2026-10-04
+
+- Claude adopted exact format 10 handoff `dbd7a83` as `d367cd9`, verified source equals reviewed `934db81`
+  and documentation-approved it. Claude approved N5 plan `4b44660` and staged ownership: Codex checkpoint 1
+  standalone producer/contract/selectors; checkpoint 2's import-only eleven pages/four helpers after review;
+  article detail remains Claude-owned. Japanese lookup ownership unchanged.
+- Codex `6c7fb4d`: strict AST registration/literal reader (no MDX execution), checked-in 97-record metadata
+  in existing tuple order, portable selector factory and validated facade. No consumer/config/release/CMS
+  switches. [Implementation/evidence](checkpoints/N5-standalone-metadata-20261004.md): **18 focused tests /
+  two files**, generated/web parity and all ID/slug/group/journey/route variants, syntax/completeness mutation
+  fixtures, metadata freshness and transitive runtime isolation. Explicit CLI generate/check is available.
+- Exact checkpoint passed branch-local release **13/13**, **1,205 tests / 194 files**, **729 modules**, **416
+  static entries**, CMS exclusion and **43 browser JS files**. Article JS unchanged at 826.2 KB raw / 209.5 KB
+  gzip. Clean owned LF checkout, reused dependencies, hosted/email settings cleared; no clean install or
+  browser/Auth/SQL rerun. Disposable CLI fixture confirmed stale/missing checks do not write and generation
+  refreshes. No compilation/browser savings claimed before wiring/measurement.
+- Review/integration pending; reviewed integration remains `dbd7a83` / tested source `883cdff`. Next consumer
+  switching waits for Claude's checkpoint 1 approval. Later freshness needs release/CMS owner coordination
+  and direct-Next enforcement: direct `next build` bypasses Vitest/release checks. Native/Hermes, wired
+  static-route/H2 parity and broader hosted/operator gates remain open. No main merge or activation.
+
+### N5 checkpoint 1 reviewed integration — 2026-10-04
+
+Claude approved `6c7fb4d` and evidence `99b170a`. Combined source `5f29566` equals the reviewed worker tree and passed release **13/13**, **1,205 tests / 194 files**, **729 modules**, **416 static entries**, and **43 browser JS files**. [Integration receipt](checkpoints/N5-checkpoint-1-integration-20261004.md). Claude owns direct-build/release/CMS freshness wiring; Codex may proceed with the granted fifteen import-only switches. Article detail remains Claude-owned; new consumer checkpoint requires review. No main merge or activation.
