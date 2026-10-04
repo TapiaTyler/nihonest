@@ -1750,6 +1750,23 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   identity/exclusive ownership. J1 real full-stack/operational acceptance, H5 callback/PGRST303 reliability,
   hosted and Stage-C/provenance gates remain open. No main merge or activation.
 
+### J1 real local Auth/PostgREST acceptance — 2026-10-04
+
+- Claude code-approved preflight `759a4e4` and reran its 16 tests/types; documentation not read line by line.
+  Codex's [new acceptance harness/record](checkpoints/J1-auth-postgrest-acceptance.md) await review/integration.
+- A separately owned local Auth/PostgREST stack applied all eight migrations from exact reviewed `f70069c`.
+  Real production runner/adapter plus fake sender: **14 scenarios passed**, final Auth/table inventory empty.
+  Recipient confirmation/no-email, consent/relevance withdrawal, disabled delivery, retry/timeout, lost
+  finalization acknowledgement and expired/reclaimed token rejection were exercised. A copied-migration
+  mismatch was rejected before fixture creation. Types, targeted lint, help and whitespace passed.
+- Missing preferences create a suppressed row, never eligible for claim/send; the earlier planned assertion
+  was corrected. Deadline withdrawal means consent withdrawal, not deleting/cancelling a fulfilled reminder.
+  No new production runtime/SQL/dependencies or repeated web release/build/browser checks.
+- Owned stack/volumes removed; Claude's H5 stack untouched. This is local worker acceptance, not browser
+  session/hosted/real-provider proof. Operator acknowledgement, final review/integration and scheduling gates
+  remain open. Claude's callback repair `27f791a` now awaits Codex review; PGRST303 remains a watch item
+  following Claude's reported non-reproduction investigation. No main merge, Stage-C handoff or activation.
+
 ### Repaired callback / H5 / approved J1 preflight integration — 2026-10-04
 
 - Codex approved callback repair `27f791a` and H5 `6866b97` for local scope with original `1857817`.
@@ -1769,22 +1786,19 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   extraction has begun. J1 real fake-sender harness/evidence `733c827` remain separate pending review.
 - Claude approved the prior H3b-H5 review record after merging `f70069c` as `510553e`; other documentation
   scope limits remain. This consolidated update awaits review. No main merge, hosted/email/scheduler activation.
-### J1 real local Auth/PostgREST acceptance — 2026-10-04
 
-- Claude code-approved preflight `759a4e4` and reran its 16 tests/types; documentation not read line by line.
-  Codex's [new acceptance harness/record](checkpoints/J1-auth-postgrest-acceptance.md) await review/integration.
-- A separately owned local Auth/PostgREST stack applied all eight migrations from exact reviewed `f70069c`.
-  Real production runner/adapter plus fake sender: **14 scenarios passed**, final Auth/table inventory empty.
-  Recipient confirmation/no-email, consent/relevance withdrawal, disabled delivery, retry/timeout, lost
-  finalization acknowledgement and expired/reclaimed token rejection were exercised. A copied-migration
-  mismatch was rejected before fixture creation. Types, targeted lint, help and whitespace passed.
-- Missing preferences create a suppressed row, never eligible for claim/send; the earlier planned assertion
-  was corrected. Deadline withdrawal means consent withdrawal, not deleting/cancelling a fulfilled reminder.
-  No new production runtime/SQL/dependencies or repeated web release/build/browser checks.
-- Owned stack/volumes removed; Claude's H5 stack untouched. This is local worker acceptance, not browser
-  session/hosted/real-provider proof. Operator acknowledgement, final review/integration and scheduling gates
-  remain open. Claude's callback repair `27f791a` now awaits Codex review; PGRST303 remains a watch item
-  following Claude's reported non-reproduction investigation. No main merge, Stage-C handoff or activation.
+### N2 English-only component data v2 preparation — 2026-10-04
+
+- Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C ownership is effective. Japanese
+  component provenance is machine-translated; tax/training renderer ownership is explicitly handed to Codex.
+- [The preparation checkpoint](checkpoints/N2-English-component-data-v2.md) adds English-only v2 data and
+  strict contracts, preserving stable IDs, link targets, empty suffixes and whitespace. AST parity fixtures
+  compare the new data to current English literals. Renderers/catalogs and bundle format remain unchanged.
+- Focused 32 tests passed; full public-only release 13/13, 1,018 tests / 180 files, 714 modules, 416 entries.
+  Browser/Auth/SQL/hosted checks not repeated. This checkpoint awaits Claude review; artifact `5b58f06`
+  awaits Codex review. Extraction and byte-exact static markup parity remain pending.
+- Claude code-approved J1 `733c827` for scope without rerunning real acceptance; integration remains pending.
+  Earlier documentation limits remain. No main merge or activation.
 
 ### Stage-C article artifacts / J1 acceptance integration — 2026-10-04
 
@@ -1801,19 +1815,6 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   or activation. Prior documentation review limits remain.
 
 
-### N2 English-only component data v2 preparation — 2026-10-04
-
-- Claude merged and documentation-approved `ea715b1` as `f1c3eec`; Stage-C ownership is effective. Japanese
-  component provenance is machine-translated; tax/training renderer ownership is explicitly handed to Codex.
-- [The preparation checkpoint](checkpoints/N2-English-component-data-v2.md) adds English-only v2 data and
-  strict contracts, preserving stable IDs, link targets, empty suffixes and whitespace. AST parity fixtures
-  compare the new data to current English literals. Renderers/catalogs and bundle format remain unchanged.
-- Focused 32 tests passed; full public-only release 13/13, 1,018 tests / 180 files, 714 modules, 416 entries.
-  Browser/Auth/SQL/hosted checks not repeated. This checkpoint awaits Claude review; artifact `5b58f06`
-  awaits Codex review. Extraction and byte-exact static markup parity remain pending.
-- Claude code-approved J1 `733c827` for scope without rerunning real acceptance; integration remains pending.
-  Earlier documentation limits remain. No main merge or activation.
-
 ### N3 messages / approved English v2 integration — 2026-10-04
 
 - Claude merged `1f5668c` as `b84336c`, approved its checkpoint record (two wording corrections applied),
@@ -1826,3 +1827,178 @@ When a coherent phase/checkpoint is completed and tested, Codex should explicitl
   181 files, 716 modules, 416 public build entries, lint/types/audits/CMS/all-chunk boundaries passed.
   No browser, real Auth/SQL, hosted or clean-install checks repeated. Extraction is separate and awaits
   Claude markup parity review; N1 payload/export and final N1/N2 gates remain open. No main merge/activation.
+
+### N2 three-renderer extraction review handoff — 2026-10-04
+
+- Reviewed English v2/N3 integration is pushed as documentation handoff `1a4ab65`, source `4372d4a`;
+  source release passed 13/13, 1,028 tests / 181 files. Claude's artifact/J1 record review was approved;
+  its two wording corrections were applied. New N3/consolidated documentation awaits review.
+- Codex extraction checkpoint `f9681f9` against `ded19b4` is ready for Claude's independent en/ja static
+  markup parity review. [The checkpoint](https://github.com/TapiaTyler/nihonest/blob/f9681f9/docs/checkpoints/N2-component-renderer-extraction-20261004.md)
+  removes bilingual renderer literals, uses canonical English plus the reviewed server selector, preserves
+  all training hrefs and marks whole-component English fallback correctly. No Japanese catalog was edited.
+- Six full parent snapshots, href/fallback cases and updated canonical contracts passed: 48 focused tests.
+  Extraction release 13/13, 1,037 tests / 182 files, 716 modules, 416 entries, CMS/all 43 JS boundaries passed.
+  No browser, real Auth/SQL, clean-install/CI or hosted checks repeated. Extraction remains outside the
+  integration branch pending review. N1 export and broader inline/native gates remain open.
+- Removed a duplicated, identical preparation-history entry introduced by the working-branch merge.
+  No main merge, hosted service, real email or schedule activation.
+
+### N1 Stage-C component payload inventory — 2026-10-04
+
+- [The read-only inventory](checkpoints/N1-stage-c-component-inventory-20261004.md) covers all eight
+  registrations at `b0a3a86`: format 9 / 28 files still export component markers only. Six kinds are used
+  once per locale; all 97 current Japanese articles preserve English component order. Two unused geography
+  composition/alias kinds still require coverage. No payload/export contract was wired.
+- In-memory generation/integrity, all guide targets/host source references, region partition and map-code
+  parity passed. Snapshot: 47 prefectures, eight regions, 112 researched municipalities, 784 supplements,
+  seven fee bands, eleven guide labels and 47 map paths. Counts are observations, not schema requirements.
+- Coordination requests: Claude-owned pure article-component field validator shared with the server selector;
+  fee-copy provenance/renderer ownership; eleven finder guide labels outside N3. The server-only selector
+  cannot be imported directly by the ordinary Node exporter or portable verifier. Format/file-set and
+  component provenance bindings require review; proposed format 10 is not implemented.
+- Renderer extraction `f9681f9` still awaits Claude parity review/integration. Native map interaction and
+  broader inline/N1/N2 acceptance remain open. This checkpoint changes documentation only; no release/build,
+  browser, database, hosted or external-source checks repeated. No main merge or activation.
+
+### N1 numeric fee contract preparation / held review queue — 2026-10-04
+
+- Codex checkpoint `c72bcd2` prepares a strict portable contract/calculation for existing numeric fees:
+  seven period IDs/order, safe integer yen/totals, acceptance intervals and sender-domain suffix. It adds
+  no translated prose, eligibility/date-selection rule, canonical data change or export wiring.
+- [Focused validation](checkpoints/N1-numeric-fee-contract-preparation-20261004.md): 39 tests / three files
+  passed (37 new plus two existing), canonical JSON and all en/ja table amounts preserved, types/targeted
+  lint/architecture 717/whitespace passed. No full release/build/browser/SQL/hosted/source refresh repeated;
+  the new domain module has no production consumer yet. This checkpoint awaits Claude review.
+- [The pending review queue](checkpoints/Stage-C-pending-review-queue-20261004.md) retains `1a4ab65` receipt,
+  renderer parity `f9681f9`, inventory `b8e37f1`, this preparation and the pure translation-validator,
+  fee-copy ownership/provenance and finder-label requests. Consolidated handoff is held at the user's request
+  until Claude's reset. Reviewed integration is unchanged; no main merge or service activation.
+
+### N1 orientation region/map contract preparation — 2026-10-04
+
+- Codex checkpoint `dc97629` adds standalone pure contracts for existing orientation groups and projected
+  M/L/Z geometry, finite focus tuples, identity/name checks and exact coverage of supplied prefecture references.
+  Collection/member order and untrimmed labels/geometry are preserved; no new region IDs are introduced.
+- [Focused validation](checkpoints/N1-orientation-map-contract-preparation-20261004.md): 44 tests / two files,
+  exact canonical JSON parity (eight regions, 47 paths, 171 rings), TypeScript, targeted lint and architecture
+  718 passed. Existing source data, map/finder implementations, Japanese artifacts and bundle wiring remain
+  unchanged. No full release/build/browser/SQL/external-source/license verification repeated.
+- Claude review and subsequent adoption remain pending. The helper validates coverage of the caller-supplied
+  reference set; canonical acceptance supplies all 47 prefectures/metropolis records. Source/provenance bindings
+  remain open. The held queue retains this checkpoint; integration stays `1a4ab65` / source `4372d4a`.
+  No main merge or activation.
+
+### N1 component export/provenance proposal — 2026-10-04
+
+- [Codex read-only proposal](checkpoints/N1-component-export-proposal-20261004.md), checkpoint `4fea7e9`,
+  specifies a candidate 12 additions (40 total) for reviewed format 10, all eight directive bindings including
+  unused composition/alias kinds, canonical references and separate article/translation/map provenance.
+  These names/counts are proposals; no payload schema, exporter or format is changed.
+- Two in-memory builds retain deterministic format 9 / 28 files; the existing verifier rejects version 10.
+  Interface catalogs have 764 keys each with key/placeholder coverage, but 550 raw IDs do not satisfy the
+  existing artifact field grammar. Claude's representation/provenance decision is required; public IDs and
+  shared translation contracts remain unchanged. The retained map license's LF text hash is recorded.
+- This documentation-only checkpoint and consolidated updates await review in the held queue. No full
+  release/build/browser/SQL/external-source/license revalidation repeated. Integration remains `1a4ab65` /
+  source `4372d4a`; no main merge or activation.
+
+### N1 finder projection/fallback binding audit — 2026-10-04
+
+- [Codex read-only audit](checkpoints/N1-finder-binding-audit-20261004.md), checkpoint `f796866`, reconstructs
+  the entire finder payload exactly from existing bundle catalogs: 47 prefectures, 112 researched municipalities,
+  47 coverage groups and 784 summaries. Guide targets resolve; locale/order, designated-city, local-link,
+  temporary-selection and English-title fallback semantics are recorded for later native binding.
+- Current bundled titles match the inspected server-selection rule exactly (784 titles, no duplicate IDs);
+  the standalone Next selector was not directly executable in Node, so no runtime/cache execution is claimed.
+  Six requested test paths selected five existing files: 16 tests passed; the absent selector-test path
+  contributes no coverage. No production/catalog code changed or full release/build/SQL/hosted checks repeated.
+- Three Tokyo grouping labels outside N3 require Claude's provenance decision; even the currently unused
+  island group remains a dependency. This documentation checkpoint is retained in the held queue. Integration
+  remains `1a4ab65` / `4372d4a`; no main merge, activation or scheduling.
+
+### N1 fee/map preparation boundary self-review — 2026-10-04
+
+- Codex [implementer self-review](checkpoints/N1-fee-map-contract-self-review-20261004.md), checkpoint
+  `393d324`, found no code defect requiring a fix in fee `c72bcd2` or orientation `dc97629`.
+  Combined focused verification passed 83 tests / five files; independent deterministic probes passed
+  2,002 geometry cases (including the exact length ceiling), 112 BigInt-oracle fee calculations and
+  17 additional date/identity/collection boundaries. No implementation or test change was needed.
+- This additional evidence does not replace Claude's independent review or authorize adoption. Earlier
+  type/lint/architecture results retain their scope; no full release/build/browser/SQL/hosted/source refresh
+  was repeated. Held handoff and integration `1a4ab65` / `4372d4a` remain unchanged; no main merge/activation.
+
+### J1 current local acceptance status reconciliation — 2026-10-04
+
+- Codex documentation checkpoint `09748ca` corrects stale current operations/refactor text: reviewed local
+  evidence already includes 72 pgTAP, 49 operator, 36 concurrency (also rerun on reviewed combined SQL) and
+  14 real Auth/PostgREST/fake-sender cases. [The current status](checkpoints/J1-local-acceptance-status-20261004.md)
+  preserves exact source/review attribution and distinguishes these from later web gates, which did not rerun
+  real acceptance. Historical checkpoint records remain historical.
+- Scoped row/environment/operator approval, host/schedule/credentials/monitoring decisions and real-provider/
+  hosted acceptance remain separate gates. Source comparisons confirm the accepted worker/SQL inputs are
+  unchanged; three no-I/O help commands exited 0. No stack, credentials, fixtures or sender was used this pass.
+- These documentation corrections await review in the held queue. Independent follow-up can make the
+  session-only operator regression harness portable and reproducible against exact reviewed source, without
+  borrowing another contributor's stack. Integration remains `1a4ab65` / `4372d4a`; no main merge/activation.
+
+### J1 repository-backed operator regression acceptance — 2026-10-04
+
+- Codex checkpoint `832d9c7` adds [an exact-source disposable operator harness](checkpoints/J1-operator-reproduction-20261004.md),
+  replacing reliance on a hardcoded session artifact for reproduction. New harness/evidence await Claude review;
+  production SQL/runtime/settings are unchanged. It validates the commit before Docker, uses a local-only image
+  and uniquely owned network-disabled container, and emits success only after fixture/volume/temp-file cleanup.
+- Against reviewed SQL source `1a4ab65`, all eight migrations and **59 real PostgreSQL 17.6 assertions** passed.
+  A temporary variant committing the rehearsal failed its snapshot check; all owned containers were removed.
+  Syntax, targeted lint, help and invalid source checks passed. No pgTAP/concurrency/Auth/web/hosted rerun.
+- Scoped real-row/operator approval and host/schedule/provider gates remain unchanged. New checkpoint and
+  operations/status updates stay in the held queue; integration is `1a4ab65` / `4372d4a`. No main merge or activation.
+
+### J1 uncertain accepted-send lease-recovery acceptance — 2026-10-04
+
+- Codex checkpoint `44990f8` adds [a real local recovery scenario](checkpoints/J1-uncertain-send-recovery-20261004.md)
+  to the reviewed Auth/PostgREST harness. New scenario/evidence await Claude review; production runtime/SQL
+  are unchanged. Tested exact production `1a4ab65` in clean reviewed-source context `4372d4a`, temporarily
+  copying only the harness; pending Stage-C code excluded.
+- All **15 scenarios passed**. Fake provider acceptance without committed finalization leaves processing;
+  immediate pass cannot resend; expiry/reclaim advances attempt/token, rejects the old token without changes
+  and can accept a second fake send for the same event. Successful finalization prevents a third send.
+  A committed-before-throw negative control failed at the new scenario as expected.
+- Final independent preflight: 11 tables empty / zero Auth users. Owned `nihonest-j1-auth-recovery-20261004`
+  stack/volumes removed, validation checkout restored clean; types/targeted lint/whitespace passed. No real
+  provider, SMTP, browser, full web/SQL-suite rerun or hosted activation. Held queue/integration remain
+  `1a4ab65` / `4372d4a`; scoped operator/scheduling/hosted and other acceptance limits remain.
+
+### J1 published critical-update targeting acceptance — 2026-10-04
+
+- Codex checkpoint `66b0721` adds [ten real local targeting scenarios](checkpoints/J1-published-critical-targeting-20261004.md)
+  to the Auth/PostgREST/fake-sender harness; new code/evidence await Claude review. Production source stays
+  reviewed `1a4ab65`, tested in clean-source context `4372d4a` with only the harness temporarily copied.
+- All **25 scenarios passed**: saved status, journey-wide/exact-route matches, route/journey exclusions,
+  saved-plus-journey deduplication, post-claim relevance/consent withdrawal, and disabled-topic generation.
+  A matching-route negative control failed the mismatch assertion. Release fixtures are tracked and cleaned
+  by allocated ID, alongside Auth fixtures; final independent preflight found 11 empty tables / zero users.
+- Owned `nihonest-j1-auth-critical-20261004` stack/volumes removed, validation checkout restored clean;
+  types/targeted lint/whitespace passed. No production changes, full web/SQL-suite rerun, real email, scheduling
+  or hosted activation. Selected branches retain coverage limits; held queue and integration stay
+  `1a4ab65` / `4372d4a`. No main merge.
+
+### Stage-C reviewed queue and Claude contracts integration — 2026-10-04
+
+- Claude receipt `cc35f96` confirms earlier `1a4ab65`; approves renderer `f9681f9`, fee `c72bcd2`,
+  orientation `dc97629`, operator `832d9c7` and scope-limited recovery/targeting `44990f8` / `66b0721`.
+  Renderer parity and 59 operator assertions independently reproduced; Auth/negative controls not rerun by
+  Claude. Held documentation through `fbf2c69` approved with prior scope limits preserved.
+- Codex approves helper `5506d43`, labels `d3f3415` and report `0d385c9`: unchanged validator bodies,
+  12 helper/selector tests, 17 interface/finder tests, 11 label/target comparisons and eight byte-identical
+  DOM comparisons. [Exact record](checkpoints/Stage-C-reviewed-integration-20261004.md).
+- Reviewed queue merged as `dd05008`; Claude inputs integrated as `e399f21` / `e2b19fd` / `9b5d937`.
+  Validated source `9b5d937`: all 13 applicable checks passed across fresh LF release and resumed build checks;
+  1,123 tests / 187 files, 719 modules, 416 static entries, 43 browser JS files. CRLF/dependency-junction setup
+  failures recorded; no source fix needed. No Auth/SQL/browser rerun on this combined source.
+- Export direction is 10 additions / 38 files; format 10 waits for Claude's fourth fee component/artifact/parity
+  checkpoint. Finder labels use interface packs; Tokyo labels canonical geography. Japanese interface pack
+  metadata is machine-translated only, without invented artifact currency; catalogs now 775 keys. Helper/report
+  requests complete. Fee numeric adoption should consolidate the period type under its domain owner.
+- New consolidated documentation awaits Claude review. Hosted/native/operator/scheduling gates remain;
+  no main merge, activation or real email. Codex can prepare standalone pack contracts while awaiting fee copy.
