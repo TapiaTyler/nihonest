@@ -11,7 +11,9 @@ import { ArticleHeaderBadges, ArticleHeaderStages } from "@/components/content/a
 import { localizeJourney } from "@/domain/localization/journey-presentation";
 import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
 import { getSourceById } from "@/data/sources";
-import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
+import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/article-metadata";
+// Only the article body needs the MDX registry; every other lookup uses the plain metadata catalog.
+import { getArticleBySlug as getRenderableArticleBySlug } from "@/lib/content/articles";
 import { getArticleJourneyData } from "@/lib/content/article-journey-data";
 import { getGlossaryTermById } from "@/lib/content/glossary";
 import { getJourneyRouteForArticle } from "@/domain/discovery/discovery";
@@ -67,7 +69,7 @@ function japaneseArticleTitle(id: string) {
 
 export default async function ArticlePage({ params }: PageProps<"/articles/[slug]">) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = getRenderableArticleBySlug(slug);
 
   if (!article) {
     notFound();
