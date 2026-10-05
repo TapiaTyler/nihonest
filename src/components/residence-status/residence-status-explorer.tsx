@@ -85,11 +85,11 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
         ))}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-500" aria-live="polite">
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <p className="min-w-0 flex-1 text-sm text-slate-500" aria-live="polite">
           {visibleStatuses.length} / {residenceStatuses.length} {message("status.statuses")}
         </p>
-        <ViewModeToggle mode={viewMode} onChange={setViewMode} />
+        <div className="ml-auto"><ViewModeToggle mode={viewMode} onChange={setViewMode} /></div>
       </div>
 
       {activeFilter === "all" ? (
@@ -109,7 +109,7 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
                 listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
                 items={statuses.map((residenceStatus) => ({
                   key: residenceStatus.id,
-                  node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} variant={rowVariant} showCategory={false} />,
+                  node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} variant={rowVariant} showCategory={false} locale={locale} />,
                 }))}
               />
             </details>
@@ -122,7 +122,7 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
           listContainerClassName="mt-6"
           items={visibleStatuses.map((residenceStatus) => ({
             key: residenceStatus.id,
-            node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[residenceStatus.category] : residenceStatusCategoryLabels[residenceStatus.category]} returnTo={returnTo} variant={rowVariant} />,
+            node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[residenceStatus.category] : residenceStatusCategoryLabels[residenceStatus.category]} returnTo={returnTo} variant={rowVariant} locale={locale} />,
           }))}
         />
       )}

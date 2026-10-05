@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { ArticleMetadata } from "@/domain/article/article";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { ArticleCardBadges, ArticleCardRelevance } from "@/components/content/article-card-metadata";
-import { listRowClassName } from "@/components/navigation/view-mode-items";
+import { listRowClassName, listRowDetailsClassName } from "@/components/navigation/view-mode-items";
 
 type ArticleCardProps = Readonly<{
   article: ArticleMetadata;
@@ -31,9 +31,8 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
           <p lang={contentLanguage} className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{article.description}</p>
           {notice && <p className="mt-1 text-xs font-semibold leading-5 text-teal-900">{notice}</p>}
         </div>
-        {/* Capped so a guide with many topics wraps its badges instead of squeezing the title. */}
-        <div className="flex min-w-0 items-center gap-3 sm:max-w-xs sm:shrink-0 sm:justify-end">
-          <ArticleCardBadges status={article.status} topicIds={article.topicIds} />
+        <div className={listRowDetailsClassName}>
+          <ArticleCardBadges status={article.status} topicIds={article.topicIds} stacked />
           {headerAction && <div className="relative z-10 shrink-0">{headerAction}</div>}
         </div>
       </article>

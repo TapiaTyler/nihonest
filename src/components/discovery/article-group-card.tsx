@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
-import { listRowClassName, listRowFocusClassName } from "@/components/navigation/view-mode-items";
+import { listRowClassName, listRowDetailsClassName, listRowFocusClassName } from "@/components/navigation/view-mode-items";
 
 export function ArticleGroupCard({ group, returnTo, contentLanguage = "en", variant = "card" }: Readonly<{
   group: ArticleGroup;
@@ -21,13 +21,12 @@ export function ArticleGroupCard({ group, returnTo, contentLanguage = "en", vari
     return (
       <article className="min-w-0" lang={contentLanguage}>
         <Link href={href} aria-label={`${message("content.exploreGroup")} ${group.title}`} className={`${listRowClassName} ${listRowFocusClassName}`}>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{group.title}</h2>
             <p className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{group.description}</p>
           </div>
-          <div className="flex shrink-0 items-center gap-3 text-sm">
+          <div className={listRowDetailsClassName}>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{group.articleIds.length} {articleLabel}</span>
-            <span aria-hidden="true" className="hidden select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5 sm:inline">→</span>
           </div>
         </Link>
       </article>

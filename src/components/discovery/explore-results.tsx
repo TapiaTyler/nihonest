@@ -51,14 +51,14 @@ export function ExploreResults({
 
   return (
     <section className="mt-12" aria-labelledby="search-results-heading" aria-busy={searchIsPending}>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-0 flex-1 basis-72">
           <p className="eyebrow">{message("explore.resultsEyebrow")}</p>
           <h2 id="search-results-heading" className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{message("explore.resultsHeading")}</h2>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
           <p className="text-sm text-slate-500" aria-live="polite">{message("explore.resultCount").replace("{count}", String(results.length)).replace("{label}", message(results.length === 1 ? "explore.resultSingular" : "explore.resultPlural"))}</p>
-          {setViewMode && results.length > 0 && <ViewModeToggle mode={viewMode} onChange={setViewMode} />}
+          {setViewMode && <ViewModeToggle mode={viewMode} onChange={setViewMode} />}
         </div>
       </div>
       {filters.query.trim() && <ActivitySearchSuggestion query={filters.query} returnTo={returnTo} />}

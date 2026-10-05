@@ -281,4 +281,11 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("link", { name: "Opening a bank account" }).closest("li")).toBeNull();
     expect(window.localStorage.getItem(viewModeStorageKey("explore"))).toBeNull();
   });
+
+  it("keeps the view toggle available when a search has no results", () => {
+    renderDiscovery();
+    enterSearch("zzzz-no-such-guidance");
+    expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Display as" })).toBeInTheDocument();
+  });
 });

@@ -30,9 +30,9 @@ export function ExploreGroupBrowser({ groups, translations = [], locale = "en", 
     <section className="mt-14" aria-labelledby="content-groups-heading">
       <p className="eyebrow">{message("explore.browseByGroup")}</p>
       <h2 id="content-groups-heading" className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{message("explore.choosePlace")}</h2>
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <p className="max-w-3xl leading-7 text-slate-600">{message("explore.groupHelp")}</p>
-        {setViewMode && <ViewModeToggle mode={viewMode} onChange={setViewMode} />}
+      <div className="mt-4 flex flex-wrap items-end gap-4">
+        <p className="min-w-0 max-w-3xl flex-1 basis-72 leading-7 text-slate-600">{message("explore.groupHelp")}</p>
+        {setViewMode && <div className="ml-auto"><ViewModeToggle mode={viewMode} onChange={setViewMode} /></div>}
       </div>
       <ViewModeItems
         mode={viewMode}

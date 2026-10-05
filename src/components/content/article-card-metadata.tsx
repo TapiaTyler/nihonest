@@ -25,12 +25,15 @@ function journeyStageLabel(id: JourneyStageId, locale: "en" | "ja") {
 }
 
 /** Pass only the labels' canonical IDs across the server/client boundary. */
-export function ArticleCardBadges({ status, topicIds }: Pick<ArticleMetadata, "status" | "topicIds">) {
+export function ArticleCardBadges({ status, topicIds, stacked = false }: Pick<ArticleMetadata, "status" | "topicIds"> & Readonly<{
+  /** List rows stack the status above the topics in their details column. */
+  stacked?: boolean;
+}>) {
   const { locale, message } = useInterfaceMessages();
   const topicSeparator = locale === "ja" ? "・" : " · ";
 
   return (
-    <div lang={locale} className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+    <div lang={locale} className={`flex text-xs font-semibold uppercase tracking-wide ${stacked ? "flex-col items-start gap-1.5 sm:items-end sm:text-right" : "flex-wrap items-center gap-2"}`}>
       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
         {message(articleStatusMessage[status])}
       </span>

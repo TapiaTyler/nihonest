@@ -5,7 +5,7 @@ import { JapaneseReading } from "@/components/localization/japanese-reading";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { LocalizedStatusBadge } from "@/components/localization/localized-residence-status-chrome";
 import type { ResidenceStatusTranslation } from "@/lib/content/translations";
-import { listRowClassName, listRowFocusClassName } from "@/components/navigation/view-mode-items";
+import { listRowClassName, listRowDetailsClassName, listRowFocusClassName } from "@/components/navigation/view-mode-items";
 
 type ResidenceStatusCardProps = Readonly<{
   residenceStatus: ResidenceStatus;
@@ -15,9 +15,11 @@ type ResidenceStatusCardProps = Readonly<{
   /** "row" is the compact list presentation; `showCategory` is off when rows are already grouped by category. */
   variant?: "card" | "row";
   showCategory?: boolean;
+  /** Japanese readers see the Japanese name first in list rows. */
+  locale?: "en" | "ja";
 }>;
 
-export function ResidenceStatusCard({ residenceStatus, returnTo, translation, categoryLabel, variant = "card", showCategory = true }: ResidenceStatusCardProps) {
+export function ResidenceStatusCard({ residenceStatus, returnTo, translation, categoryLabel, variant = "card", showCategory = true, locale = "en" }: ResidenceStatusCardProps) {
   const href = returnTo
     ? { pathname: `/residence-statuses/${residenceStatus.slug}`, query: { returnTo } }
     : `/residence-statuses/${residenceStatus.slug}`;
@@ -25,17 +27,25 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
     return (
       <article className="min-w-0">
         <Link href={href} aria-label={residenceStatus.englishName} className={`${listRowClassName} ${listRowFocusClassName}`}>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{residenceStatus.englishName}</h2>
-              <span lang="ja" className="text-sm text-slate-500">{residenceStatus.japaneseName}</span>
+              {locale === "ja" ? (
+                <>
+                  <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{residenceStatus.japaneseName}</h2>
+                  <span lang="en" className="text-sm text-slate-500">{residenceStatus.englishName}</span>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{residenceStatus.englishName}</h2>
+                  <span lang="ja" className="text-sm text-slate-500">{residenceStatus.japaneseName}</span>
+                </>
+              )}
             </div>
             <p lang={translation ? "ja" : "en"} className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{translation?.summary ?? residenceStatus.summary}</p>
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-3 text-sm sm:justify-end">
-            {showCategory && <span className="text-slate-500">{categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</span>}
+          <div className={listRowDetailsClassName}>
             <LocalizedStatusBadge status={residenceStatus.status} />
-            <span aria-hidden="true" className="hidden select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5 sm:inline">→</span>
+            {showCategory && <span className="text-slate-500">{categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</span>}
           </div>
         </Link>
       </article>

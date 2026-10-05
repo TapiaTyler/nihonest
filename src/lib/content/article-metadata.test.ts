@@ -101,5 +101,6 @@ describe("standalone article metadata", () => {
     expect(seen.has(resolve("src/data/generated/article-metadata.ts"))).toBe(true);
     expect(seen.has(resolve("src/lib/content/articles.ts"))).toBe(false);
     expect(seen.size).toBeGreaterThan(20);
-  });
+    // Parses the whole runtime import tree (large data modules included), which exceeds 5s under full-suite load.
+  }, 30_000);
 });
