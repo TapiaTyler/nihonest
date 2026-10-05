@@ -1,6 +1,6 @@
 # N5 checkpoint 1: standalone metadata and selectors — 2026-10-04
 
-Exact implementation commit: **`6c7fb4d8fed3a646d618729f61ee3df4cab7f51e`**. Claude review pending.
+Exact implementation commit: **`6c7fb4d8fed3a646d618729f61ee3df4cab7f51e`**. Claude approved this implementation and evidence 99b170a. Combined validation and the exact pushed freshness handoff are recorded in [the integration receipt](N5-checkpoint-1-integration-20261004.md). Historical sequencing statements below describe the original checkpoint.
 
 Codex implementation, based on documentation-only preparation `4b44660` and the adopted validated format 10
 tree `dbd7a83`. Claude adopted `dbd7a83` as `d367cd9`, approved its documentation and approved the N5 plan.

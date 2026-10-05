@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { SavedContentLibrary } from "@/components/saved-content/saved-content-library";
-import { getAllArticles } from "@/lib/content/articles";
+import { getAllArticles } from "@/lib/content/article-metadata";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { getArticleSearchTranslations, getGlossarySearchTranslations, getResidenceStatusTranslations } from "@/lib/content/translations";
 import { residenceStatuses } from "@/data/residence-statuses";
