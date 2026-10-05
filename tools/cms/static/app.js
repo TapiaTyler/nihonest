@@ -104,6 +104,54 @@ function approvalField(text) {
   return { row, check };
 }
 
+/**
+ * Article writes regenerate src/data/generated/article-metadata.ts. When that fails the canonical save still
+ * stands; this banner says so, offers the repair, and comes back after a reload until the module is current.
+ */
+function renderGeneratedMetadata(state) {
+  const notice = document.querySelector("#generated-metadata");
+  if (!notice) return;
+  if (!state || (state.status !== "stale" && state.status !== "unavailable")) {
+    notice.hidden = true;
+    notice.replaceChildren();
+    return;
+  }
+  const reason = state.lastFailure || state.message;
+  const summaryText = state.status === "unavailable"
+    ? `Generated article metadata could not be checked${reason ? `: ${reason}` : "."}`
+    : `Article changes are saved, but src/data/generated/article-metadata.ts is out of date${reason ? ` because regeneration failed: ${reason}` : "."} A production build refuses stale metadata.`;
+  const repair = el("button", "Regenerate article metadata");
+  repair.type = "button";
+  const result = el("p", "", "hint");
+  repair.addEventListener("click", async () => {
+    repair.disabled = true;
+    result.textContent = "Regenerating article metadata…";
+    try {
+      const response = await mutate("/api/generated-metadata/refresh", "POST", {});
+      renderGeneratedMetadata(response.state);
+    } catch (error) {
+      result.textContent = error.message;
+      result.className = "error";
+      repair.disabled = false;
+    }
+  });
+  notice.replaceChildren(el("p", summaryText, "check-warning"),
+    el("p", "Regenerate it here, or run npm run content:metadata, then review and commit the change.", "hint"), repair, result);
+  notice.hidden = false;
+}
+
+/** Shows the banner immediately from an article write's response; refresh() then rechecks the files. */
+function noteGeneratedMetadata(writeResult) {
+  if (writeResult?.generatedMetadata?.status === "failed") {
+    renderGeneratedMetadata({ status: "stale", lastFailure: writeResult.generatedMetadata.message });
+  }
+}
+
+async function refreshGeneratedMetadata() {
+  try { renderGeneratedMetadata(await json("/api/generated-metadata")); }
+  catch { /* Advisory only: a failed check never blocks editing. */ }
+}
+
 async function json(path) {
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error(`Request failed (${response.status}).`);
@@ -1849,9 +1897,9 @@ function articleView(article) {
       try {
         await recovery.flush();
         const savedVersion = recovery.version();
-        await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/body`, "PUT", {
+        noteGeneratedMetadata(await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/body`, "PUT", {
           expectedRevision: record.revision, body: textarea.value, updatedAt: date.value,
-        });
+        }));
         hasUnsavedChanges = false;
         await recovery.clearAfterSave(savedVersion);
         await refresh();
@@ -2333,7 +2381,7 @@ function editorialControls(article) {
     if (hasUnsavedChanges) { statusMessage.textContent = "Save or discard article body edits first."; statusMessage.className = "error"; return; }
     statusButton.disabled = true;
     try {
-      await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/status`, "PUT", { expectedRevision: record.revision, status: status.value });
+      noteGeneratedMetadata(await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/status`, "PUT", { expectedRevision: record.revision, status: status.value }));
       await refresh();
       document.querySelector("#tab-review")?.click();
     } catch (error) { statusMessage.textContent = error.message; statusMessage.className = "error"; statusButton.disabled = false; }
@@ -2389,6 +2437,7 @@ function editorialControls(article) {
         approvalNote: approval.value,
         explicitHumanApproval: check.checked,
       });
+      noteGeneratedMetadata(result);
       await refresh();
       document.querySelector("#tab-review")?.click();
       const refreshed = document.querySelector("#panel-review .editorial-controls");
@@ -2842,6 +2891,7 @@ async function refresh() {
     renderList();
     if (selectedId) await selectRecord(selectedKind, selectedId, { keepPage: true });
     renderGit(await json("/api/git"));
+    await refreshGeneratedMetadata();
     await Promise.all([refreshImpact(), refreshHandoff()]);
     await refreshReferences();
     await refreshLocalGuidance();
@@ -3157,6 +3207,7 @@ async function openCreateForm(kind, prefill = null, options = {}) {
     status.textContent = `Creating the ${creationKindLabels[kind]}…`;
     try {
       const result = await mutate(`/api/create/${kind}`, "POST", { fields, expectedSourceRevision: kind === "article" ? plan.registrySourceRevision : plan.sourceRevision });
+      noteGeneratedMetadata(result);
       hasUnsavedChanges = false;
       creationOptionsCache = null;
       if (kind === "source") {

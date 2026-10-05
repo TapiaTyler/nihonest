@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { OnboardingForm } from "@/components/personalization/onboarding-form";
 import { InterfaceText } from "@/components/localization/interface-text";
-import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
+import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/article-metadata";
 import { getArticleGroupSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { getInterfaceMessage } from "@/domain/localization/interface-messages";

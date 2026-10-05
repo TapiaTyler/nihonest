@@ -8,7 +8,8 @@ import { buildTranslationHandoff, readTranslationHandoff } from "./translation-h
 
 const root = resolve(import.meta.dirname, "../..");
 
-describe("CMS translation handoff projection", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS translation handoff projection", { timeout: 30_000 }, () => {
   it("sorts stale and missing records deterministically and marks failed catalogs incomplete", () => {
     const record = (kind: "faq" | "residence-status" | "glossary-term", id: string, state: "stale" | "missing") => ({
       kind,

@@ -2,6 +2,7 @@
 
 import { LocalizedSourceName } from "@/components/content/localized-source-name";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 import type { ArticleLocalGuidance, SelectableLocalGuidanceLocation } from "@/lib/content/local-guidance";
 import type { LocalGuidanceJapaneseFields } from "@/lib/content/local-guidance-translations";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
@@ -108,6 +109,22 @@ export function LocalGuidancePanel({
     ? new Intl.DateTimeFormat("ja-JP", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${selected.supplement.lastCheckedAt}T00:00:00Z`))
     : selected?.supplement.lastCheckedAt ?? "";
 
+  const choosePrefecture = (value: string) => {
+    setPendingPrefectureId(value);
+    setOtherPrefectureId("");
+    setLinkedSelectionId("");
+    writeLocalGuidanceLocation(value);
+  };
+  const chooseMunicipality = (value: string) => {
+    const other = value === otherOption;
+    setLinkedSelectionId("");
+    setOtherPrefectureId(other ? selectedPrefectureId : "");
+    writeLocalGuidanceLocation(other ? selectedPrefectureId : value);
+  };
+  // A choice made before hydration is applied once the panel can respond; untouched fields keep the saved location.
+  const prefectureRef = usePreHydrationInput<HTMLSelectElement>(choosePrefecture);
+  const municipalityRef = usePreHydrationInput<HTMLSelectElement>(chooseMunicipality);
+
   return (
     <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="local-guidance-heading">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -123,12 +140,8 @@ export function LocalGuidancePanel({
               id="local-guidance-prefecture"
               className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
               value={selectedPrefectureId}
-              onChange={(event) => {
-                setPendingPrefectureId(event.target.value);
-                setOtherPrefectureId("");
-                setLinkedSelectionId("");
-                writeLocalGuidanceLocation(event.target.value);
-              }}
+              ref={prefectureRef}
+              onChange={(event) => choosePrefecture(event.target.value)}
             >
               <option value="">{message("localGuidance.notSelected")}</option>
               {prefectureOptions.map(({ geography }) => <option key={geography.id} value={geography.id}>{placeName(geography.name, geography.japaneseName)}</option>)}
@@ -143,12 +156,8 @@ export function LocalGuidancePanel({
                 value={prefectureWideOnly ? "" : municipalityValue}
                 disabled={!selectedPrefectureId || prefectureWideOnly}
                 aria-describedby={selectedPrefectureId ? "local-guidance-municipality-note" : undefined}
-                onChange={(event) => {
-                  const other = event.target.value === otherOption;
-                  setLinkedSelectionId("");
-                  setOtherPrefectureId(other ? selectedPrefectureId : "");
-                  writeLocalGuidanceLocation(other ? selectedPrefectureId : event.target.value);
-                }}
+                ref={municipalityRef}
+                onChange={(event) => chooseMunicipality(event.target.value)}
               >
                 <option value="">{message(prefectureWideOnly ? "localGuidance.prefectureWideOnly" : "localGuidance.selectMunicipality")}</option>
                 {groupMunicipalityOptions(municipalityOptions, ({ geography }) => geography.code).map(({ label, options }) => {

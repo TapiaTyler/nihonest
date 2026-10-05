@@ -159,6 +159,8 @@ select { appearance: none; background-image: url("/select-chevron.svg"); backgro
 .check-steps { margin: .5rem 0; padding-left: 1.5rem; }
 .check-steps li { margin: .2rem 0; }
 .check-warning { color: #8a4b00; font-weight: 650; }
+.generated-metadata { margin: 0 1.5rem; padding: 0.75rem 1rem; border: 1px solid #e0b25b; border-radius: 0.75rem; background: #fff8e8; color: #5c3300; }
+.generated-metadata p { margin: 0.25rem 0; }
 .error { color: #912e1d; }
 .detail-tabs { display: flex; flex-wrap: wrap; gap: .3rem; border-bottom: 1px solid #c8dbde; margin: .4rem 0 1.25rem; }
 .detail-tabs button { border: 0; border-bottom: 3px solid transparent; border-radius: .4rem .4rem 0 0; padding: .65rem .85rem; color: #38555b; font-weight: 650; }

@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ArticleTerminology } from "@/components/content/article-terminology";
 import { OfficialSourceList } from "@/components/content/official-source-list";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
-import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { SaveContentButton } from "@/components/saved-content/save-content-button";
 import type { ArticleMetadata } from "@/domain/article/article";
 import { ArticleHeaderBadges, ArticleHeaderStages } from "@/components/content/article-card-metadata";
 import { localizeJourney } from "@/domain/localization/journey-presentation";
 import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
 import { getSourceById } from "@/data/sources";
-import { getAdministrativeGeography } from "@/data/geography";
-import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/articles";
-import { getJourneySteps } from "@/lib/content/articles";
+import { getAllArticles, getArticleById, getArticleBySlug, getArticleGroupsByArticleIds, getGuidedJourneysByArticleIds } from "@/lib/content/article-metadata";
+// Only the article body needs the MDX registry; every other lookup uses the plain metadata catalog.
+import { getArticleBySlug as getRenderableArticleBySlug } from "@/lib/content/articles";
+import { getArticleJourneyData } from "@/lib/content/article-journey-data";
 import { getGlossaryTermById } from "@/lib/content/glossary";
-import { getJourneyRouteById, getJourneyRouteForArticle } from "@/domain/discovery/discovery";
-import { articleJourneyHref, journeyHref } from "@/lib/navigation/journey-context";
+import { getJourneyRouteForArticle } from "@/domain/discovery/discovery";
+import { journeyHref } from "@/lib/navigation/journey-context";
+import { ArticleBackLink, ArticleJourneySection, RelatedJourneyLink } from "@/components/journey/article-journey-context";
 import {
   ArticleTranslationNotice,
   LocalizedArticleBody,
@@ -24,14 +26,12 @@ import {
 } from "@/components/localization/localized-article";
 import { getArticleGroupSearchTranslations, getJapaneseArticleTranslation, getJourneyTranslations, getLocalizedGlossaryText } from "@/lib/content/translations";
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
-import { InterfaceFormat, InterfaceText, LocalizedText } from "@/components/localization/interface-text";
-import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
+import { InterfaceText, LocalizedText } from "@/components/localization/interface-text";
+import { LinkedAnnotatedDocumentViewer, LinkedLocalGuidancePanel } from "@/components/local-guidance/linked-location";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
-import { getLocalGuidanceForArticle, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
-import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields, getJapaneseSupplementTitles } from "@/lib/content/local-guidance-translations";
-import { localGuidanceSupplements } from "@/data/local-guidance";
-import { JapaneseSupplementTitlesProvider } from "@/components/content/prefecture-finder";
-import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
+import { getLocalGuidanceForArticle, getLocalLocationAliases, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
+import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields } from "@/lib/content/local-guidance-translations";
+import { renderJapaneseArticleComponents } from "@/components/content/japanese-article-components";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
@@ -67,10 +67,9 @@ function japaneseArticleTitle(id: string) {
   return getJapaneseArticleTranslation(id)?.fields.title;
 }
 
-export default async function ArticlePage({ params, searchParams }: PageProps<"/articles/[slug]">) {
+export default async function ArticlePage({ params }: PageProps<"/articles/[slug]">) {
   const { slug } = await params;
-  const query = await searchParams;
-  const article = getArticleBySlug(slug);
+  const article = getRenderableArticleBySlug(slug);
 
   if (!article) {
     notFound();
@@ -79,11 +78,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   const { Content, metadata } = article;
   const japaneseTranslation = getJapaneseArticleTranslation(metadata.id);
   const localGuidance = getLocalGuidanceForArticle(metadata.id);
-  const requestedLocalId = typeof query.local === "string" ? query.local : undefined;
   const localGuidanceLocations = getSelectableLocalGuidanceLocations();
-  const linkedLocalGuidanceId = localGuidanceLocations.find(({ geography }) => (
-    getAdministrativeGeography(geography.id)?.id === getAdministrativeGeography(requestedLocalId ?? "")?.id
-  ))?.geography.id;
+  // The page is prebuilt; client boundaries apply `?local=`, `?journey=&route=`, and `?returnTo=` after hydration.
+  const locationAliases = getLocalLocationAliases(localGuidanceLocations);
   const annotatedDocuments = getAnnotatedDocumentsForArticle(metadata.id);
   const articleSources = metadata.sourceIds.flatMap((sourceId) => {
     const source = getSourceById(sourceId);
@@ -99,24 +96,17 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
   });
   const relatedGroups = getArticleGroupsByArticleIds([metadata.id]);
   const relatedJourneys = getGuidedJourneysByArticleIds([metadata.id]);
-  const requestedJourneyId = typeof query.journey === "string" ? query.journey : undefined;
-  const requestedRouteId = typeof query.route === "string" ? query.route : undefined;
-  const contextualJourney = relatedJourneys.find(({ id }) => id === requestedJourneyId);
-  const contextualRoute = contextualJourney ? getJourneyRouteById(contextualJourney, requestedRouteId) : undefined;
-  const contextualSteps = contextualJourney ? getJourneySteps(contextualJourney.id, contextualRoute?.id) : [];
-  const contextualIndex = contextualSteps.findIndex(({ article: contextualArticle }) => contextualArticle.metadata.id === metadata.id);
-  const journeyContext = contextualJourney && contextualIndex >= 0 ? {
-    journey: contextualJourney,
-    route: contextualRoute,
-    steps: contextualSteps,
-    index: contextualIndex,
-  } : undefined;
   const journeyTranslations = getJourneyTranslations();
   const japaneseJourney = (journey: (typeof relatedJourneys)[number]) =>
     localizeJourney(journey, journeyTranslations.find(({ contentId }) => contentId === journey.id));
-  const japaneseContext = journeyContext ? japaneseJourney(journeyContext.journey) : undefined;
-  const japaneseRoute = japaneseContext && journeyContext?.route ? japaneseContext.routes.find(({ id }) => id === journeyContext.route?.id) : undefined;
-  const japaneseConditionLabels = new Map(japaneseContext?.phases.flatMap(({ steps }) => steps.flatMap((step) => step.type === "article" && step.conditionLabel ? [[step.articleId, step.conditionLabel] as const] : [])) ?? []);
+  const journeyData = getArticleJourneyData(metadata.id);
+  const localGuidancePanelProps = {
+    articleId: metadata.id,
+    options: localGuidance,
+    japaneseFields: getJapaneseLocalGuidanceFields(localGuidance.map(({ supplement }) => supplement)),
+    japaneseGeneralAdvice: getJapaneseGeneralLocalAdvice(metadata.id),
+    locations: localGuidanceLocations,
+  };
   const groupTranslations = getArticleGroupSearchTranslations();
   const continueGuides = new Map<string, { article: ArticleMetadata; label: InterfaceMessageId }>(
     relatedArticles.map(({ relationship, article: relatedArticle }) => [
@@ -129,15 +119,9 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
     <article className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={japaneseTranslation?.fields.title ? formatInterfaceMessage("ja", "pageTitle.withSite", { title: japaneseTranslation.fields.title }) : undefined} />
       <div className="mx-auto max-w-3xl">
-        {query.returnTo === "/roadmap" || query.returnTo === "/my-journey" ? (
-          <Link href={query.returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-            <InterfaceText id={query.returnTo === "/roadmap" ? "back.roadmap" : "back.myJourney"} />
-          </Link>
-        ) : journeyContext ? (
-          <Link href={journeyHref(journeyContext.journey.id, journeyContext.route?.id)} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
-            <InterfaceFormat id="back.toTitle" values={{ title: journeyContext.journey.title }} japaneseValues={{ title: japaneseContext?.title }} />
-          </Link>
-        ) : <BackToExploreLink />}
+        <Suspense fallback={<BackToExploreLink />}>
+          <ArticleBackLink data={journeyData} />
+        </Suspense>
         <ArticleTranslationNotice translation={japaneseTranslation} />
         <header className="relative mt-8 border-b border-slate-200 pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="article" contentId={metadata.id} /></div>
@@ -151,62 +135,26 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
         </header>
 
         <div className="mt-8">
-          <JapaneseSupplementTitlesProvider titles={japaneseTranslation?.fields.body?.includes("japan-prefecture-finder") ? getJapaneseSupplementTitles(localGuidanceSupplements) : {}}>
-            <LocalizedArticleBody translation={japaneseTranslation}>
-              <Content />
-            </LocalizedArticleBody>
-          </JapaneseSupplementTitlesProvider>
+          <LocalizedArticleBody translation={japaneseTranslation} components={typeof japaneseTranslation?.fields.body === "string" ? renderJapaneseArticleComponents(japaneseTranslation.fields.body) : undefined}>
+            <Content />
+          </LocalizedArticleBody>
         </div>
 
-        <AnnotatedDocumentViewer key={`documents-${linkedLocalGuidanceId ?? "saved"}`} families={annotatedDocuments} linkedLocationId={linkedLocalGuidanceId} />
+        {annotatedDocuments.length > 0 && (
+          <LinkedAnnotatedDocumentViewer families={annotatedDocuments} locationAliases={locationAliases} />
+        )}
 
-        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && <LocalGuidancePanel key={`local-guidance-${linkedLocalGuidanceId ?? "saved"}`} articleId={metadata.id} options={localGuidance} japaneseFields={getJapaneseLocalGuidanceFields(localGuidance.map(({ supplement }) => supplement))} japaneseGeneralAdvice={getJapaneseGeneralLocalAdvice(metadata.id)} locations={localGuidanceLocations} linkedLocationId={linkedLocalGuidanceId} />}
+        {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && (
+          <LinkedLocalGuidancePanel {...localGuidancePanelProps} locationAliases={locationAliases} />
+        )}
 
         <div className="mt-12">
           <ArticleTerminology terms={glossaryTerms} localized={Object.fromEntries(glossaryTerms.map((term) => [term.id, getLocalizedGlossaryText(term.id)]))} />
         </div>
 
-        {journeyContext && (
-          <section className="mt-12 rounded-3xl border border-teal-200 bg-teal-50/60 p-5 sm:p-7" aria-labelledby="your-journey-heading">
-            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="article.yourJourney" /></p>
-            <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h2 id="your-journey-heading" className="text-2xl font-semibold tracking-tight text-slate-950"><LocalizedText english={journeyContext.journey.title} japanese={japaneseContext?.title} /></h2>
-                {journeyContext.route && <p className="mt-2 font-medium text-teal-900"><InterfaceFormat id="roadmap.routeSuffix" values={{ route: journeyContext.route.title }} japaneseValues={{ route: japaneseRoute?.title }} /></p>}
-              </div>
-              <Link href={journeyHref(journeyContext.journey.id, journeyContext.route?.id)} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-4 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><InterfaceText id="article.viewOutline" /></Link>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {journeyContext.steps[journeyContext.index - 1] ? (
-                <Link href={articleJourneyHref(journeyContext.steps[journeyContext.index - 1].article.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="group rounded-2xl border border-teal-200 bg-white p-5 hover:border-teal-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id="article.previous" /></span>
-                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">← <LocalizedText english={journeyContext.steps[journeyContext.index - 1].article.metadata.title} japanese={japaneseArticleTitle(journeyContext.steps[journeyContext.index - 1].article.metadata.id)} /></span>
-                </Link>
-              ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600"><InterfaceText id="article.firstGuide" /></div>}
-              {journeyContext.steps[journeyContext.index + 1] ? (
-                <Link href={articleJourneyHref(journeyContext.steps[journeyContext.index + 1].article.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="group rounded-2xl border border-teal-200 bg-white p-5 hover:border-teal-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id="article.next" /></span>
-                  <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journeyContext.steps[journeyContext.index + 1].article.metadata.title} japanese={japaneseArticleTitle(journeyContext.steps[journeyContext.index + 1].article.metadata.id)} /></span>
-                </Link>
-              ) : <div className="rounded-2xl border border-dashed border-teal-200 p-5 text-sm text-slate-600"><InterfaceText id="article.finalGuide" /></div>}
-            </div>
-            <details className="group mt-5 rounded-2xl border border-teal-200 bg-white p-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span><InterfaceText id="article.showContents" /></span><DisclosureChevron /></summary>
-              <ol className="mt-4 space-y-3">
-                {journeyContext.steps.map(({ article: outlineArticle, step }, index) => (
-                  <li key={outlineArticle.metadata.id} className="flex gap-3 text-sm leading-6">
-                    <span className="shrink-0 font-semibold text-teal-700">{index + 1}.</span>
-                    {index === journeyContext.index ? (
-                      <span aria-current="step" className="font-semibold text-slate-950"><LocalizedText english={outlineArticle.metadata.title} japanese={japaneseArticleTitle(outlineArticle.metadata.id)} /> <span className="text-teal-700"><InterfaceText id="article.current" /></span></span>
-                    ) : (
-                      <Link href={articleJourneyHref(outlineArticle.metadata.slug, journeyContext.journey.id, journeyContext.route?.id)} className="text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600"><LocalizedText english={outlineArticle.metadata.title} japanese={japaneseArticleTitle(outlineArticle.metadata.id)} />{step.requiredness === "conditional" && <> — <LocalizedText english={step.conditionLabel ?? ""} japanese={japaneseConditionLabels.get(outlineArticle.metadata.id)} /></>}</Link>
-                    )}
-                  </li>
-                ))}
-              </ol>
-            </details>
-          </section>
-        )}
+        <Suspense fallback={null}>
+          <ArticleJourneySection data={journeyData} />
+        </Suspense>
 
         {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
           <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
@@ -217,16 +165,21 @@ export default async function ArticlePage({ params, searchParams }: PageProps<"/
             <ContinueExploringList
               key={metadata.id}
               cards={[
-                ...relatedJourneys.map((journey) => (
-                  <Link
-                    key={`journey-${journey.id}`}
-                    href={journeyHref(journey.id, journeyContext?.journey.id === journey.id ? journeyContext.route?.id : getJourneyRouteForArticle(journey, metadata.id)?.id)}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-                  >
-                    <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="journey.guidedJourney" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
-                  </Link>
-                )),
+                ...relatedJourneys.map((journey) => {
+                  const className = "group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700";
+                  const defaultRouteId = getJourneyRouteForArticle(journey, metadata.id)?.id;
+                  const content = (
+                    <>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="journey.guidedJourney" /></span>
+                      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
+                    </>
+                  );
+                  return (
+                    <Suspense key={`journey-${journey.id}`} fallback={<Link href={journeyHref(journey.id, defaultRouteId)} className={className}>{content}</Link>}>
+                      <RelatedJourneyLink data={journeyData} journeyId={journey.id} defaultRouteId={defaultRouteId} className={className}>{content}</RelatedJourneyLink>
+                    </Suspense>
+                  );
+                }),
                 ...relatedGroups.map((group) => (
                   <Link
                     key={`group-${group.id}`}

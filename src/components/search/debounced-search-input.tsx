@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 
 const searchCommitDelayMs = 200;
 
@@ -33,6 +34,10 @@ export function DebouncedSearchInput({
     setDraftValue(value);
   }, [value]);
 
+  // Declared after the effect above so text typed before hydration wins over its mount-time reset; it then
+  // commits like any other typing.
+  const inputRef = usePreHydrationInput<HTMLInputElement>(setDraftValue);
+
   const commitValue = useCallback((nextValue: string) => {
     if (nextValue === value) return;
     locallyCommittedValues.current.add(nextValue);
@@ -51,6 +56,7 @@ export function DebouncedSearchInput({
 
   return (
     <input
+      ref={inputRef}
       id={id}
       type="search"
       value={draftValue}

@@ -18,6 +18,7 @@ import { readLocalGuidanceCatalog } from "./local-guidance-catalog";
 import { saveLocalGuidanceContent } from "./local-guidance-writer";
 import { createRecord, creationOptions, planRecordCreation, type CreatableKind } from "./record-creator";
 import { articleCreationOptions, createArticle, planArticleCreation } from "./article-creator";
+import { inspectArticleMetadata, refreshArticleMetadata } from "./article-metadata-sync";
 
 const assets = new Map<string, readonly [string, string]>([
   ["/", ["index.html", "text/html; charset=utf-8"]],
@@ -81,6 +82,23 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
       await recordOperation(kind, error instanceof CmsEditError && error.status === 409 || error instanceof RecoveryDraftConflictError ? "conflict" : "failed", recordKind, recordId);
       throw error;
     }
+  }
+  /** Article writes change metadata (status, dates, new entries); keep the generated module in step and report it. */
+  async function withArticleMetadata<T extends object>(write: Promise<T>): Promise<T & { generatedMetadata: Awaited<ReturnType<typeof refreshArticleMetadata>> }> {
+    const result = await write;
+    return { ...result, generatedMetadata: await regenerateArticleMetadata() };
+  }
+  // The latest regeneration failure, kept so the editor's warning survives a page reload until a refresh succeeds.
+  let articleMetadataFailure: string | undefined;
+  async function regenerateArticleMetadata() {
+    const refresh = await refreshArticleMetadata(root);
+    articleMetadataFailure = refresh.status === "failed" ? refresh.message : undefined;
+    return refresh;
+  }
+  async function articleMetadataReport() {
+    const state = await inspectArticleMetadata(root);
+    if (state.status === "current") articleMetadataFailure = undefined;
+    return { ...state, ...(articleMetadataFailure ? { lastFailure: articleMetadataFailure } : {}) };
   }
   // Snapshot the checkout before any request can write, so pre-existing changes stay separate from CMS edits.
   const gitSession = startGitSession(root);
@@ -171,6 +189,18 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         sendJson(response, 200, draft);
         return;
       }
+      if (pathname === "/api/generated-metadata/refresh" && request.method === "POST") {
+        if (request.headers.origin !== origin || request.headers["x-cms-token"] !== sessionToken) {
+          throw new CmsEditError("This action requires the local CMS session.", 403);
+        }
+        const payload = await readJson(request);
+        if (!payload || typeof payload !== "object" || Array.isArray(payload) || Object.keys(payload).length) {
+          throw new CmsEditError("Regeneration takes no arguments.", 400);
+        }
+        const refresh = await regenerateArticleMetadata();
+        sendJson(response, 200, { refresh, state: await articleMetadataReport() });
+        return;
+      }
       if (request.method === "POST" && (pathname === "/api/checks/start" || pathname === "/api/checks/cancel")) {
         if (request.headers.origin !== origin || request.headers["x-cms-token"] !== sessionToken) {
           throw new CmsEditError("This action requires the local CMS session.", 403);
@@ -233,7 +263,7 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
           && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test((fields as { id: string }).id) ? (fields as { id: string }).id : null;
         if (!id) throw new CmsEditError("The ID must be lowercase words separated by hyphens.", 422);
         sendJson(response, 200, await tracked<unknown>("record-create", kind, id, () => kind === "article"
-          ? createArticle(root, fields, expectedSourceRevision)
+          ? withArticleMetadata(createArticle(root, fields, expectedSourceRevision))
           : createRecord(root, kind, fields, expectedSourceRevision)));
         return;
       }
@@ -264,17 +294,17 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         } else if (statusMatch) {
           const edit = payload as StatusChange;
           if (typeof edit.expectedRevision !== "string" || typeof edit.status !== "string") throw new CmsEditError("Expected revision and status.", 400);
-          sendJson(response, 200, await tracked("article-status", "article", statusMatch[1]!, () => changeArticleStatus(root, statusMatch[1]!, edit)));
+          sendJson(response, 200, await tracked("article-status", "article", statusMatch[1]!, () => withArticleMetadata(changeArticleStatus(root, statusMatch[1]!, edit))));
         } else if (reviewMatch) {
           const approval = payload as ReviewApproval;
           if (typeof approval.expectedRevision !== "string") throw new CmsEditError("Expected article revision.", 400);
-          sendJson(response, 200, await tracked("article-review", "article", reviewMatch[1]!, () => approveArticleReview(root, reviewMatch[1]!, approval)));
+          sendJson(response, 200, await tracked("article-review", "article", reviewMatch[1]!, () => withArticleMetadata(approveArticleReview(root, reviewMatch[1]!, approval))));
         } else {
           const edit = payload as BodyEdit;
           if (typeof edit.expectedRevision !== "string" || typeof edit.body !== "string" || typeof edit.updatedAt !== "string") {
             throw new CmsEditError("Expected revision, body, and update date.", 400);
           }
-          sendJson(response, 200, await tracked("article-body", "article", saveMatch![1]!, () => saveArticleBody(root, saveMatch![1]!, edit)));
+          sendJson(response, 200, await tracked("article-body", "article", saveMatch![1]!, () => withArticleMetadata(saveArticleBody(root, saveMatch![1]!, edit))));
         }
         return;
       }
@@ -381,6 +411,10 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         const { details } = await readArticleCatalog(root);
         const detail = details.get(articleMatch[1]!);
         sendJson(response, detail ? 200 : 404, detail ?? { error: "Article not found." });
+        return;
+      }
+      if (pathname === "/api/generated-metadata" && request.method === "GET") {
+        sendJson(response, 200, await articleMetadataReport());
         return;
       }
       if (pathname === "/api/git") {

@@ -21,6 +21,8 @@
 /.glossary-drafts/
 /.local-guidance/
 /.cms/
+# machine-generated caches such as NODE_COMPILE_CACHE output
+/.tmp/
 
 # logs and system files
 npm-debug.log*

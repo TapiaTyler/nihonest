@@ -6,7 +6,7 @@ import { getInterfaceMessage } from "@/domain/localization/interface-messages";
 import { MyJourney } from "@/components/journey/my-journey";
 import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getJourneyTranslations } from "@/lib/content/translations";
 import { articleGroups, guidedJourneys } from "@/data/discovery";
-import { getAllArticles } from "@/lib/content/articles";
+import { getAllArticles } from "@/lib/content/article-metadata";
 
 export const metadata: Metadata = {
   title: "My Journey | Nihonest",

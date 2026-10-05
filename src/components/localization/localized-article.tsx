@@ -2,11 +2,8 @@
 
 import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
-import { ResidenceApplicationFeeSection } from "@/components/content/residence-application-fee-section";
-import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
-import { TrainingRouteComparisonTable } from "@/components/content/training-route-comparison-table";
-import { JapanPrefectureFinder, JapanPrefectureRegionCards, JapanPrefectureRegionGrid, JapanPracticalBasics, JapanRegionMap } from "@/components/content/japan-geography-reference";
 import { parseArticleMarkdown, type ArticleComponentBlockKind } from "@/domain/article/article-blocks";
+import { parseArticleInline, type ArticleInline } from "@/domain/article/article-inline";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
 import { useInterfaceMessages } from "./interface-text";
@@ -22,38 +19,51 @@ function completeJapaneseTranslation(translation?: ArticleTranslation) {
     : undefined;
 }
 
-function InlineMarkdown({ children }: Readonly<{ children: string }>) {
-  return children.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\\?\((?:\/|https?:\/\/)[^)\s]+\))/g).map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <strong key={index} className="font-semibold text-slate-950">
-          <InlineMarkdown>{part.slice(2, -2)}</InlineMarkdown>
-        </strong>
-      );
+/** Protected spans stay visible as inert raw text, including existing form blanks; never evaluate HTML/MDX. */
+function inlineNodes(nodes: readonly ArticleInline[]): ReactNode[] {
+  const rendered: ReactNode[] = [];
+  let literal = "";
+  const flush = () => {
+    if (literal) rendered.push(literal);
+    literal = "";
+  };
+  for (const [index, node] of nodes.entries()) {
+    if (node.kind === "text" || node.kind === "protected") {
+      // Coalesce adjacent literal spans so protected syntax does not add text boundaries to existing markup.
+      literal += node.kind === "text" ? node.text : node.raw;
+      continue;
     }
-    const link = part.match(/^\[([^\]]+)\]\\?\(((?:\/|https?:\/\/)[^)\s]+)\)$/);
-    if (!link) return <Fragment key={index}>{part}</Fragment>;
-    const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
-    return link[2].startsWith("/")
-      ? <Link key={index} href={link[2]} className={className}>{link[1]}</Link>
-      : <a key={index} href={link[2]} className={className}>{link[1]}</a>;
-  });
+    flush();
+    if (node.kind === "code") rendered.push(<code key={index}>{node.text}</code>);
+    else if (node.kind === "strong") rendered.push(<strong key={index} className="font-semibold text-slate-950">{inlineNodes(node.children)}</strong>);
+    else if (node.kind === "emphasis") rendered.push(<em key={index}>{inlineNodes(node.children)}</em>);
+    else if (node.kind === "link") {
+      const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
+      const label = inlineNodes(node.children);
+      rendered.push(node.href.startsWith("/")
+        ? <Link key={index} href={node.href} className={className}>{label}</Link>
+        : <a key={index} href={node.href} className={className}>{label}</a>);
+    }
+    else throw new Error("Unsupported article inline node.");
+  }
+  flush();
+  return rendered;
 }
 
-const componentBlocks: Record<ArticleComponentBlockKind, () => ReactNode> = {
-  "residence-application-fees": () => <ResidenceApplicationFeeSection locale="ja" />,
-  "tax-residence-scope": () => <TaxResidenceScopeTable locale="ja" />,
-  "training-route-comparison": () => <TrainingRouteComparisonTable locale="ja" />,
-  "japan-prefecture-regions": () => <JapanPrefectureRegionGrid locale="ja" />,
-  "japan-prefecture-finder": () => <JapanPrefectureFinder locale="ja" />,
-  "japan-prefecture-region-cards": () => <JapanPrefectureRegionCards locale="ja" />,
-  "japan-region-map": () => <JapanRegionMap locale="ja" />,
-  "japan-practical-basics": () => <JapanPracticalBasics locale="ja" />,
-};
+function InlineMarkdown({ children }: Readonly<{ children: string }>) {
+  return inlineNodes(parseArticleInline(children));
+}
 
-export function TranslatedArticleBody({ markdown }: Readonly<{ markdown: string }>) {
+/** Server-rendered component blocks by kind; see renderJapaneseArticleComponents. */
+export type TranslatedArticleComponents = Readonly<Partial<Record<ArticleComponentBlockKind, ReactNode>>>;
+
+export function TranslatedArticleBody({ markdown, components = {} }: Readonly<{ markdown: string; components?: TranslatedArticleComponents }>) {
   return parseArticleMarkdown(markdown).map((block, index) => {
-    if (block.kind === "component") return <Fragment key={index}>{componentBlocks[block.component]()}</Fragment>;
+    if (block.kind === "component") {
+      // Dropping a block silently would hide content; the server renders every kind the body uses.
+      if (!(block.component in components)) throw new Error(`The translated article uses the "${block.component}" block, but it was not rendered.`);
+      return <Fragment key={index}>{components[block.component]}</Fragment>;
+    }
     if (block.kind === "heading") {
       return block.level === 2
         ? <h2 key={index} className="mt-10 text-2xl font-semibold tracking-tight text-slate-950"><InlineMarkdown>{block.text}</InlineMarkdown></h2>
@@ -115,14 +125,15 @@ export function LocalizedArticleHeading({
   );
 }
 
-export function LocalizedArticleBody({ children, translation }: Readonly<{
+export function LocalizedArticleBody({ children, translation, components }: Readonly<{
   children: ReactNode;
   translation?: ArticleTranslation;
+  components?: TranslatedArticleComponents;
 }>) {
   const { locale } = useContentLocale();
   const activeTranslation = locale === "ja" ? completeJapaneseTranslation(translation) : undefined;
 
   return activeTranslation
-    ? <div lang="ja"><TranslatedArticleBody markdown={activeTranslation.fields.body} /></div>
+    ? <div lang="ja"><TranslatedArticleBody markdown={activeTranslation.fields.body} components={components} /></div>
     : <div lang="en">{children}</div>;
 }

@@ -13,8 +13,16 @@ const projectRoot = resolve(import.meta.dirname, "../..");
 const articleId = "artist-status";
 const articlePath = `content/articles/${articleId}.mdx`;
 
+/** Runs a fixture Git command; a failure reports Git's output (for example "nothing to commit"), not just the command. */
 function git(root: string, ...args: string[]) {
-  execFileSync("git", args, { cwd: root, stdio: "ignore" });
+  try {
+    execFileSync("git", args, { cwd: root, stdio: "pipe", encoding: "utf8" });
+  }
+  catch (error) {
+    const { stdout = "", stderr = "" } = error as { stdout?: string; stderr?: string };
+    throw new Error(`git ${args.join(" ")} failed:
+${`${stderr}${stdout}`.trim()}`, { cause: error });
+  }
 }
 
 async function start(root: string) {
@@ -32,7 +40,8 @@ function options(base: string, token: string, method: string, body: unknown) {
   return { method, headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token }, body: JSON.stringify(body) };
 }
 
-describe("CMS HTTP recovery", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS HTTP recovery", { timeout: 30_000 }, () => {
   it("captures only editable structured fields in a temporary Git checkout", async () => {
     const root = await mkdtemp(join(tmpdir(), "nihonest-cms-recovery-"));
     try {

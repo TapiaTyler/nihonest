@@ -1,5 +1,5 @@
 import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
-import { administrativeGeographies, getAdministrativeGeography, getAdministrativeGeographyAncestors } from "@/data/geography";
+import { administrativeGeographies, getAdministrativeGeography, getAdministrativeGeographyAncestors, legacyGeographyIds } from "@/data/geography";
 import { sources } from "@/data/sources";
 import { englishGeographyName } from "@/domain/geography/english-name";
 
@@ -65,4 +65,25 @@ export function getLocalGuidanceForArticle(articleId: string) {
         }),
       };
     });
+}
+
+/**
+ * Every `local` query value that selects a location, mapped to that location's ID with the same rule the article
+ * page applied at request time: the requested and location IDs resolve to the same administrative geography.
+ * Only canonical IDs and legacy aliases resolve, so those are the only keys needed.
+ */
+export function getLocalLocationAliases(locations: readonly Readonly<{ geography: Readonly<{ id: string }> }>[]): Record<string, string> {
+  const candidates = new Set<string>(Object.keys(legacyGeographyIds));
+  for (const { geography } of locations) {
+    candidates.add(geography.id);
+    const canonical = getAdministrativeGeography(geography.id)?.id;
+    if (canonical) candidates.add(canonical);
+  }
+  const aliases: Record<string, string> = {};
+  for (const requested of candidates) {
+    const target = getAdministrativeGeography(requested)?.id;
+    const match = target ? locations.find(({ geography }) => getAdministrativeGeography(geography.id)?.id === target) : undefined;
+    if (match) aliases[requested] = match.geography.id;
+  }
+  return aliases;
 }

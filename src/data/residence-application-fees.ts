@@ -1,17 +1,8 @@
-export type ResidenceApplicationFeePeriodId =
-  | "up-to-three-months"
-  | "over-three-through-six-months"
-  | "over-six-months-under-one-year"
-  | "one-year"
-  | "over-one-under-three-years"
-  | "three-under-five-years"
-  | "five-years-or-more";
+import type { ResidenceApplicationFeeBand as FeeBand, ResidenceApplicationFeePeriodId } from "@/domain/article/residence-application-fees";
 
-export type ResidenceApplicationFeeBand = Readonly<{
-  periodId: ResidenceApplicationFeePeriodId;
-  counterYen: number;
-  onlineBaseYen: number;
-}>;
+/** Period IDs and band fields come from the portable fee contract, so there is one period inventory. */
+export type { ResidenceApplicationFeePeriodId };
+export type ResidenceApplicationFeeBand = Readonly<FeeBand>;
 
 /**
  * Canonical amounts and effective dates for change-of-status and extension fees.

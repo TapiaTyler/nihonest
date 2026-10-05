@@ -29,7 +29,8 @@ function normalizedRaw(chunk: Chunk): string {
   return lines.join(" ");
 }
 
-describe("formatted article source preservation", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("formatted article source preservation", { timeout: 30_000 }, () => {
   it("reproduces every editable block in every real article without an edit", async () => {
     const directory = resolve(import.meta.dirname, "../../../content/articles");
     const names = (await readdir(directory)).filter((name) => name.endsWith(".mdx"));

@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { FinderPrefecture } from "@/domain/geography/prefecture";
 import { prefectureMapPaths } from "@/data/geography/prefecture-map-paths";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
-import { prefectureFinderMessages } from "./prefecture-finder-messages";
+import { fillInterfaceMessage, type InterfaceMessageGroup } from "@/domain/localization/interface-message-lookup";
 
 type Viewport = Readonly<{ x: number; y: number; width: number; height: number }>;
 const fullView: Viewport = { x: 145, y: 10, width: 510, height: 515 };
@@ -36,13 +36,15 @@ export function PrefectureMap({
   selectedId,
   onSelect,
   locale = "en",
+  messages,
 }: Readonly<{
   locale?: "en" | "ja";
+  /** The map's `finder.map.` interface messages in `locale`. */
+  messages: InterfaceMessageGroup<"finder.map.">;
   prefectures: readonly FinderPrefecture[];
   selectedId: string;
   onSelect: (id: string) => void;
 }>) {
-  const message = prefectureFinderMessages[locale].map;
   const [focusedCode, setFocusedCode] = useState("");
   const [controlsOpen, setControlsOpen] = useState(false);
   const controlsId = useId();
@@ -141,7 +143,7 @@ export function PrefectureMap({
         role="button"
         tabIndex={0}
         className="focus:outline-none"
-        aria-label={message.selectPrefecture(prefecture.names)}
+        aria-label={fillInterfaceMessage(messages["finder.map.selectPrefecture"], prefecture.names)}
         aria-pressed={isSelected}
         onClick={() => onSelect(prefecture.id)}
         onKeyDown={(event) => {
@@ -171,18 +173,18 @@ export function PrefectureMap({
   return (
     <details className="group rounded-xl border border-teal-200 bg-white p-3 sm:p-4">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
-        <span>{message.summary}</span>
+        <span>{messages["finder.map.summary"]}</span>
         <DisclosureChevron />
       </summary>
       <p className="mt-1 text-xs leading-5 text-slate-600">
-        {message.instructions}
+        {messages["finder.map.instructions"]}
       </p>
       <div ref={mapFrameRef} className="relative mx-auto mt-3 max-w-xl pb-24 sm:pb-0">
       <svg
         ref={mapRef}
         viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
         role="group"
-        aria-label={message.mapLabel}
+        aria-label={messages["finder.map.mapLabel"]}
         tabIndex={0}
         onKeyDown={(event) => {
           const actions: Record<string, () => void> = {
@@ -241,55 +243,55 @@ export function PrefectureMap({
         onClick={() => setControlsOpen((open) => !open)}
         className="absolute right-2 top-2 z-20 inline-flex min-h-11 items-center gap-2 rounded-lg border border-teal-600 bg-white px-3 text-sm font-semibold text-teal-900 shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
       >
-        {message.controls}
+        {messages["finder.map.controls"]}
         <DisclosureChevron open={controlsOpen} />
       </button>
       {controlsOpen && (
-        <div id={controlsId} role="group" aria-label={message.controlsLabel} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-teal-200 bg-white p-2 shadow-lg">
+        <div id={controlsId} role="group" aria-label={messages["finder.map.controlsLabel"]} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-teal-200 bg-white p-2 shadow-lg">
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" className={controlClass} onClick={() => zoom(0.75)} aria-label={message.zoomIn}>+</button>
-            <button type="button" className={controlClass} onClick={() => zoom(1 / 0.75)} aria-label={message.zoomOut}>−</button>
+            <button type="button" className={controlClass} onClick={() => zoom(0.75)} aria-label={messages["finder.map.zoomIn"]}>+</button>
+            <button type="button" className={controlClass} onClick={() => zoom(1 / 0.75)} aria-label={messages["finder.map.zoomOut"]}>−</button>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span />
-            <button type="button" className={controlClass} onClick={() => pan(0, -1)} aria-label={message.panNorth}>↑</button>
+            <button type="button" className={controlClass} onClick={() => pan(0, -1)} aria-label={messages["finder.map.panNorth"]}>↑</button>
             <span />
-            <button type="button" className={controlClass} onClick={() => pan(-1, 0)} aria-label={message.panWest}>←</button>
-            <button type="button" className={controlClass} onClick={() => pan(0, 1)} aria-label={message.panSouth}>↓</button>
-            <button type="button" className={controlClass} onClick={() => pan(1, 0)} aria-label={message.panEast}>→</button>
+            <button type="button" className={controlClass} onClick={() => pan(-1, 0)} aria-label={messages["finder.map.panWest"]}>←</button>
+            <button type="button" className={controlClass} onClick={() => pan(0, 1)} aria-label={messages["finder.map.panSouth"]}>↓</button>
+            <button type="button" className={controlClass} onClick={() => pan(1, 0)} aria-label={messages["finder.map.panEast"]}>→</button>
           </div>
-          <button type="button" className={controlClass} onClick={() => changeView(selectedPath ? focusView(selectedPath.focus) : fullView)} disabled={!selectedPath}>{message.zoomToSelection}</button>
-          <button type="button" className={controlClass} onClick={() => changeView(fullView)}>{message.fullMap}</button>
+          <button type="button" className={controlClass} onClick={() => changeView(selectedPath ? focusView(selectedPath.focus) : fullView)} disabled={!selectedPath}>{messages["finder.map.zoomToSelection"]}</button>
+          <button type="button" className={controlClass} onClick={() => changeView(fullView)}>{messages["finder.map.fullMap"]}</button>
         </div>
       )}
       {okinawa && okinawaPath && (
         <button
           type="button"
-          aria-label={message.selectInset(okinawa.names)}
+          aria-label={fillInterfaceMessage(messages["finder.map.selectInset"], okinawa.names)}
           aria-pressed={selectedId === okinawa.id}
           onClick={() => onSelect(okinawa.id)}
           className="absolute bottom-2 left-2 z-10 block w-1/3 max-w-36 cursor-pointer rounded-lg border border-slate-200 bg-slate-50 p-2 text-left shadow-sm hover:border-teal-600 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
         >
-          <span className="text-xs font-medium text-slate-700">{message.insetLabel}</span>
+          <span className="text-xs font-medium text-slate-700">{messages["finder.map.insetLabel"]}</span>
           <svg viewBox="30 510 215 110" aria-hidden="true" className="mt-1 block h-auto w-full">
             <path d={okinawaPath.d} fillRule="evenodd" fill={selectedId === okinawa.id ? "#0f766e" : "#a7dcd6"} stroke="#0f766e" strokeWidth="2" />
           </svg>
         </button>
       )}
       </div>
-      <p className="mt-2 text-xs text-slate-600" aria-live="polite">{message.zoomLevel(String(zoomLevel))}</p>
+      <p className="mt-2 text-xs text-slate-600" aria-live="polite">{fillInterfaceMessage(messages["finder.map.zoomLevel"], { level: String(zoomLevel) })}</p>
       <p className={`mt-2 text-teal-900 ${selected ? "text-lg font-semibold leading-7" : "text-sm font-medium"}`} aria-live="polite">
-        {selected ? message.selected(selected.names) : message.choose}
+        {selected ? fillInterfaceMessage(messages["finder.map.selected"], selected.names) : messages["finder.map.choose"]}
       </p>
       <p className="mt-2 text-xs leading-5 text-slate-600">
-        {message.attribution}{locale === "ja" ? "" : " "}
+        {messages["finder.map.attribution"]}{locale === "ja" ? "" : " "}
         <a
           href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html"
           target="_blank"
           rel="noreferrer"
           className="underline underline-offset-2 hover:text-teal-800"
         >
-          {message.attributionSource}
+          {messages["finder.map.attributionSource"]}
         </a>{locale === "ja" ? "。" : "."}
       </p>
     </details>

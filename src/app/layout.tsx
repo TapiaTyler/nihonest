@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { AccountContentSyncProvider } from "@/components/account/account-content-sync-provider";
+import { BrowserSchemaConfig } from "@/components/browser-schema-config";
 import { AccountSessionProvider } from "@/components/account/account-session-provider";
 import { PersonalizationProvider } from "@/components/personalization/personalization-provider";
 import { JourneyUpdateNotice } from "@/components/personalization/journey-update-notice";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="flex min-h-screen flex-col bg-stone-50 text-slate-900 antialiased">
+        <BrowserSchemaConfig />
         <ContentLocaleProvider>
           <ReadingAidProvider>
             <PersonalizationProvider>

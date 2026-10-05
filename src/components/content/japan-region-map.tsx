@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { prefectureMapPaths } from "@/data/geography/prefecture-map-paths";
-import { japanPrefectureRegions } from "@/data/geography/regions";
+import type { JapanPrefectureRegion } from "@/data/geography/regions";
+import type { InterfaceMessageGroup } from "@/domain/localization/interface-message-lookup";
 
 const regionColors = [
   "#5b8fb9", "#8a70b5", "#d17b89", "#c18c4c",
@@ -12,42 +13,25 @@ const mainMapView = "145 10 510 515";
 const okinawaMapView = "125 510 80 81";
 
 type Locale = "en" | "ja";
-const labels = {
-  en: {
-    map: "Map of Japan's regions",
-    okinawaMap: "Map of Okinawa",
-    select: "Select a region on the map or in the legend to see its prefectures.",
-    okinawaScope: "Close view of Okinawa Island and nearby islands. Okinawa Prefecture also extends farther southwest.",
-    region: "Region: ",
-    prefectures: " · Prefectures: ",
-    viewOkinawa: "View Okinawa",
-    fullMap: "Full Japan map",
-  },
-  ja: {
-    map: "日本の地方区分の地図",
-    okinawaMap: "沖縄の地図",
-    select: "地図または凡例から地方を選ぶと、その地方の都道府県が表示されます。",
-    okinawaScope: "沖縄本島と周辺の島々の拡大図です。沖縄県はさらに南西にも広がっています。",
-    region: "地方：",
-    prefectures: " · 都道府県：",
-    viewOkinawa: "沖縄を表示",
-    fullMap: "日本全体の地図",
-  },
-} as const;
 
-export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>) {
-  const text = labels[locale];
+/** Client view of the region map. The server passes the region payload so the geography registry stays out of browser code. */
+export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonly<{
+  regions: readonly JapanPrefectureRegion[];
+  /** The `regionMap.` interface messages in `locale`, chosen on the server. */
+  messages: InterfaceMessageGroup<"regionMap.">;
+  locale?: Locale;
+}>) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showOkinawa, setShowOkinawa] = useState(false);
-  const selectedRegion = selectedIndex === null ? null : japanPrefectureRegions[selectedIndex];
+  const selectedRegion = selectedIndex === null ? null : regions[selectedIndex];
 
   return (
     <div className="not-prose mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-      <p className="text-sm leading-6 text-slate-700" aria-live="polite">{showOkinawa ? text.okinawaScope : text.select}</p>
+      <p className="text-sm leading-6 text-slate-700" aria-live="polite">{showOkinawa ? messages["regionMap.okinawaScope"] : messages["regionMap.select"]}</p>
       <div className="mt-4 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_10rem]">
         <div className="relative mx-auto w-full">
-          <svg viewBox={showOkinawa ? okinawaMapView : mainMapView} role="group" aria-label={showOkinawa ? text.okinawaMap : text.map} className="block h-auto w-full">
-            {japanPrefectureRegions.map((region, index) => showOkinawa && index !== 7 ? null : (
+          <svg viewBox={showOkinawa ? okinawaMapView : mainMapView} role="group" aria-label={showOkinawa ? messages["regionMap.okinawaMap"] : messages["regionMap.map"]} className="block h-auto w-full">
+            {regions.map((region, index) => showOkinawa && index !== 7 ? null : (
               <g
                 key={region.name.en}
                 role="button"
@@ -78,11 +62,11 @@ export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>)
             }}
             className="absolute bottom-2 left-2 min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-teal-900 shadow-sm hover:border-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
           >
-            {showOkinawa ? text.fullMap : text.viewOkinawa}
+            {showOkinawa ? messages["regionMap.fullMap"] : messages["regionMap.viewOkinawa"]}
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1" aria-label={text.map}>
-          {japanPrefectureRegions.map((region, index) => (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1" aria-label={messages["regionMap.map"]}>
+          {regions.map((region, index) => (
             <button
               key={region.name.en}
               type="button"
@@ -101,8 +85,8 @@ export function JapanRegionMap({ locale = "en" }: Readonly<{ locale?: Locale }>)
       </div>
       {selectedRegion && (
         <p className="mt-4 leading-7 text-slate-700" role="status" aria-live="polite">
-          {text.region}<strong className="text-slate-950">{selectedRegion.name[locale]}</strong>
-          <span>{text.prefectures}{selectedRegion.prefectures[locale]}</span>
+          {messages["regionMap.region"]}<strong className="text-slate-950">{selectedRegion.name[locale]}</strong>
+          <span>{messages["regionMap.prefectures"]}{selectedRegion.prefectures[locale]}</span>
         </p>
       )}
     </div>

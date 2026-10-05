@@ -4,7 +4,7 @@ import { InterfaceText } from "@/components/localization/interface-text";
 import { ExploreDiscovery } from "@/components/discovery/explore-discovery";
 import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { residenceStatuses } from "@/data/residence-statuses";
-import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/articles";
+import { getAllArticles, getAllArticleGroups, getAllGuidedJourneys } from "@/lib/content/article-metadata";
 import { getAllGlossaryTerms } from "@/lib/content/glossary";
 import { getAllFaqEntries } from "@/lib/content/faqs";
 import { getArticleGroupSearchTranslations, getArticleSearchTranslations, getFaqSearchTranslations, getGlossarySearchTranslations, getJourneyTitleTranslations } from "@/lib/content/translations";

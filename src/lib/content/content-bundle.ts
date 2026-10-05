@@ -1,3 +1,5 @@
+import { buildComponentBundleEntries } from "./content-bundle-components";
+import { administrativeGeographies, administrativeGeographySources, legacyGeographyIds } from "@/data/geography";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -8,9 +10,30 @@ import { glossaryTerms } from "@/data/glossary";
 import { residenceStatuses } from "@/data/residence-statuses";
 import { sources } from "@/data/sources";
 import { currentJapaneseArticleTranslations } from "@/data/translations/ja/article-translations";
+import { japaneseFaqTranslations } from "@/data/translations/ja/faq-translations";
+import { japaneseGlossaryTranslations } from "@/data/translations/ja/glossary-translations";
+import { japaneseResidenceStatusTranslations } from "@/data/translations/ja/residence-status-translations";
+import { translationSourceFields } from "@/domain/translation/translation-source-fields";
+import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
+import { selectCurrentBundleTranslations, selectCurrentGeneralAdviceTranslations, selectCurrentStatusGuidanceTranslations,
+  selectCurrentAnnotatedDocumentTranslations } from "./content-bundle-translations";
+import { annotatedDocumentFamilies } from "@/data/annotated-documents";
+import { japaneseAnnotatedDocumentTranslations } from "@/data/translations/ja/annotated-documents";
+import { activityCrossReferences } from "@/data/activity-cross-references";
+import { japaneseActivityTranslations } from "@/data/translations/ja/activity-translations";
+import { extractActivityText } from "@/domain/activity-cross-reference/activity-text";
+import { japaneseResidenceStatusGuidanceTranslations } from "@/data/translations/ja/residence-status-guidance-translations";
+import { japaneseArticleGroupTranslations } from "@/data/translations/ja/article-group-translations";
+import { japaneseJourneyTranslations } from "@/data/translations/ja/journey-translations";
+import { bundledGroupSourceFields, bundledJourneySourceFields } from "@/domain/content-bundle/discovery-payloads";
+import { localGuidanceSupplements, supportedGeographies } from "@/data/local-guidance";
+import { generalLocalAdvice } from "@/data/local-guidance/general-advice";
+import { japaneseLocalGuidanceTranslations } from "@/data/translations/ja/local-guidance";
+import { japaneseGeneralLocalAdviceTranslations } from "@/data/translations/ja/local-guidance-general-advice";
 import { parseArticleMarkdown } from "@/domain/article/article-blocks";
 import { articleMetadataSchema } from "@/domain/article/article";
 import { splitArticleSource, toPortableArticleMarkdown } from "@/domain/article/article-source";
+import { contentBundleVersionInput, validateContentBundlePayload, verifyContentBundle } from "@/domain/content-bundle/content-bundle-integrity";
 import {
   bundledArticleSchema,
   bundledArticleTranslationSchema,
@@ -56,11 +79,16 @@ export async function readCanonicalArticleSources(directory: string): Promise<Ca
   return articles.sort((left, right) => left.article.metadata.id.localeCompare(right.article.metadata.id, "en"));
 }
 
+/** Current active artifacts retain registration order and complete generation/review provenance. */
+export function currentArticleTranslationArtifacts(articles: readonly CanonicalArticleSource[],
+  artifacts: readonly import("@/domain/translation/translation").TranslationArtifact[] = currentJapaneseArticleTranslations) {
+  const revisions = new Map(articles.map(({ article, sourceRevision }) => [article.metadata.id, sourceRevision]));
+  return selectCurrentBundleTranslations(artifacts, revisions);
+}
+
 /** Japanese translations whose source revision still matches the English article; stale ones are left out. */
 export function currentArticleTranslations(articles: readonly CanonicalArticleSource[]): BundledArticleTranslation[] {
-  const revisions = new Map(articles.map(({ article, sourceRevision }) => [article.metadata.id, sourceRevision]));
-  return currentJapaneseArticleTranslations
-    .filter((artifact) => revisions.get(artifact.contentId) === artifact.sourceRevision)
+  return currentArticleTranslationArtifacts(articles)
     .map((artifact) => bundledArticleTranslationSchema.parse({
       articleId: artifact.contentId,
       sourceRevision: artifact.sourceRevision,
@@ -76,6 +104,8 @@ export type ContentBundle = Readonly<{ manifest: ContentBundleManifest; files: R
 
 export async function buildContentBundle(options: Readonly<{ articleDirectory: string; generatedAt: string }>): Promise<ContentBundle> {
   const articles = await readCanonicalArticleSources(options.articleDirectory);
+  const advice = Object.entries(generalLocalAdvice).map(([id, value]) => ({ id, kind: "general-lookup-prompts" as const, ...value }));
+  const currentAdviceTranslations = selectCurrentGeneralAdviceTranslations(japaneseGeneralLocalAdviceTranslations, advice);
   const entries: readonly [Omit<ContentBundleFile, "checksum" | "records">, readonly unknown[]][] = [
     [{ path: "articles.en.json", kind: "articles", locale: "en" }, articles.map(({ article }) => article)],
     [{ path: "article-translations.ja.json", kind: "article-translations", locale: "ja" }, currentArticleTranslations(articles)],
@@ -85,19 +115,51 @@ export async function buildContentBundle(options: Readonly<{ articleDirectory: s
     [{ path: "residence-statuses.en.json", kind: "catalog", locale: "en" }, residenceStatuses],
     [{ path: "article-groups.en.json", kind: "catalog", locale: "en" }, articleGroups],
     [{ path: "journeys.en.json", kind: "catalog", locale: "en" }, guidedJourneys],
+    [{ path: "faq-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseFaqTranslations,
+      new Map(faqs.map((faq) => [faq.id, createTranslationSourceRevision(translationSourceFields.faq(faq))])))],
+    [{ path: "glossary-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseGlossaryTranslations,
+      new Map(glossaryTerms.map((term) => [term.id, createTranslationSourceRevision(translationSourceFields["glossary-term"](term))])))],
+    [{ path: "residence-status-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseResidenceStatusTranslations,
+      new Map(residenceStatuses.map((status) => [status.id, createTranslationSourceRevision(translationSourceFields["residence-status"](status))])))],
+    [{ path: "local-guidance.en.json", kind: "catalog", locale: "en" }, localGuidanceSupplements],
+    [{ path: "supported-geographies.en.json", kind: "catalog", locale: "en" }, supportedGeographies],
+    [{ path: "general-local-advice.en.json", kind: "catalog", locale: "en" }, advice],
+    [{ path: "local-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseLocalGuidanceTranslations,
+      new Map(localGuidanceSupplements.map((record) => [record.id, createTranslationSourceRevision(translationSourceFields["local-guidance-supplement"](record))])))],
+    [{ path: "general-local-advice-translations.ja.json", kind: "catalog-translations", locale: "ja" }, currentAdviceTranslations],
+    [{ path: "residence-status-guidance-translations.ja.json", kind: "catalog-translations", locale: "ja" },
+      selectCurrentStatusGuidanceTranslations(japaneseResidenceStatusGuidanceTranslations, residenceStatuses)],
+    [{ path: "article-group-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseArticleGroupTranslations,
+      new Map(articleGroups.map((record) => [record.id, createTranslationSourceRevision(bundledGroupSourceFields(record))])))],
+    [{ path: "journey-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseJourneyTranslations,
+      new Map(guidedJourneys.map((record) => [record.id, createTranslationSourceRevision(bundledJourneySourceFields(record))])))],
+    [{ path: "annotated-documents.en.json", kind: "catalog", locale: "en" }, annotatedDocumentFamilies],
+    [{ path: "annotated-document-translations.ja.json", kind: "catalog-translations", locale: "ja" },
+      selectCurrentAnnotatedDocumentTranslations(japaneseAnnotatedDocumentTranslations, annotatedDocumentFamilies)],
+    [{ path: "activity-cross-references.en.json", kind: "catalog", locale: "en" }, activityCrossReferences],
+    [{ path: "activity-translations.ja.json", kind: "catalog-translations", locale: "ja" }, selectCurrentBundleTranslations(japaneseActivityTranslations,
+      new Map(activityCrossReferences.map((record) => [record.id, createTranslationSourceRevision(extractActivityText(record))])))],
+    [{ path: "administrative-geographies.en.json", kind: "catalog", locale: "en" }, administrativeGeographies],
+    [{ path: "geography-sources.en.json", kind: "catalog", locale: "en" }, administrativeGeographySources],
+    [{ path: "geography-aliases.en.json", kind: "catalog", locale: "en" }, Object.entries(legacyGeographyIds).map(([id, geographyId]) => ({ id, geographyId }))],
+    [{ path: "article-provenance.en.json", kind: "catalog", locale: "en" }, articles.map(({ article, sourceRevision }) => ({ id: article.metadata.id, sourceRevision }))],
+    [{ path: "article-translation-artifacts.ja.json", kind: "catalog-translations", locale: "ja" }, currentArticleTranslationArtifacts(articles)],
+    ...await buildComponentBundleEntries(articles.map(({ article }) => article)),
   ];
 
   const files = new Map<string, string>();
   const manifestFiles: ContentBundleFile[] = entries.map(([file, records]) => {
+    validateContentBundlePayload(file, records);
     const json = `${JSON.stringify(records)}\n`;
     files.set(file.path, json);
     return { ...file, records: records.length, checksum: sha256(json) };
   });
   const manifest = contentBundleManifestSchema.parse({
     formatVersion: contentBundleFormatVersion,
-    catalogVersion: sha256(manifestFiles.map(({ path, checksum }) => `${path}:${checksum}`).join("\n")),
+    catalogVersion: sha256(contentBundleVersionInput(manifestFiles)),
     generatedAt: options.generatedAt,
     files: manifestFiles,
   });
+  verifyContentBundle(manifest, files, sha256);
   return { manifest, files };
 }

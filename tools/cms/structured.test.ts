@@ -14,7 +14,8 @@ import { approveStructuredReview, changeStructuredStatus, saveStructuredContent 
 
 const root = resolve(import.meta.dirname, "../..");
 
-describe("CMS structured editorial workflow", () => {
+// Fixture I/O (Git repositories, local servers, catalog scans) exceeded the 5 s default under full-suite parallel load; see the other CMS suites.
+describe("CMS structured editorial workflow", { timeout: 30_000 }, () => {
   it("locates every FAQ, residence status, and glossary term", async () => {
     const catalog = await readStructuredCatalog(root);
     expect(catalog.failures).toEqual([]);

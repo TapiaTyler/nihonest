@@ -1,4 +1,4 @@
-import { getAllArticles } from "@/lib/content/articles";
+import { getAllArticles } from "@/lib/content/article-metadata";
 import { buildRepositorySourceRegistry } from "@/lib/source-monitoring/repository-source-registry";
 
 const registry = buildRepositorySourceRegistry(getAllArticles().map(({ metadata }) => metadata));
