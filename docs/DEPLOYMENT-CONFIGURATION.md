@@ -99,9 +99,12 @@ origins beyond `127.0.0.1`. It has no effect on production builds and is never a
 
 `npm run release:check` runs every release gate in order and stops at the first failure: the web configuration
 preflight (`--target production` by default; `--target local` for a rehearsal without production settings), lint,
-the unit/integration suite, architecture boundaries, the editorial and coverage audits, the localization audit,
+the article metadata freshness check, the unit/integration suite, architecture boundaries, the editorial and coverage audits, the localization audit,
 the article translation and glossary consistency checks, the production build, type checking (after the build,
-which generates route types), the CMS exclusion scan, and the browser bundle boundary. Stop any `next dev` server
+which generates route types), the CMS exclusion scan, and the browser bundle boundary. The checked-in
+`src/data/generated/article-metadata.ts` must match the canonical MDX and article registrations: regenerate it with
+`npm run content:metadata` and commit the result. `next.config.ts` also runs the non-writing check in the production
+build phase, so even a direct `next build` fails on stale metadata; `next dev` does not run it. Stop any `next dev` server
 for the checkout first. No step sends email, calls a hosted service, or changes canonical content.
 
 `.github/workflows/ci.yml` runs on pushes and pull requests to `main`:

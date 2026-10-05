@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
+import { assertArticleMetadataFresh } from "./src/lib/build/article-metadata-freshness";
 import { readPublicSiteOrigin, readSupabasePublicSettings } from "./src/lib/config/deployment-config";
 import { buildSecurityHeaders, imageOriginsFromRemotePatterns } from "./src/lib/config/security-headers";
 
@@ -43,4 +45,8 @@ const nextConfig: NextConfig = {
 
 const withMDX = createMDX();
 
-export default withMDX(nextConfig);
+export default function config(phase: string): NextConfig {
+  // A production build must not ship metadata that disagrees with the canonical MDX; dev and tests skip this.
+  if (phase === PHASE_PRODUCTION_BUILD) assertArticleMetadataFresh();
+  return withMDX(nextConfig);
+}

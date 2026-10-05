@@ -12,6 +12,8 @@
     "cms:a11y": "node --require ./tools/cms/tsx-bootstrap.cjs --import tsx scripts/cms-a11y.ts",
     "notification:once": "node --import ./scripts/notification-worker-register.mjs --import tsx scripts/notification-worker.ts",
     "build": "next build",
+    "content:metadata": "node --import tsx scripts/build-article-metadata.ts",
+    "content:metadata:check": "node --import tsx scripts/build-article-metadata.ts --check",
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
