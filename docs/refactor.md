@@ -394,9 +394,8 @@ operational docs and ROADMAP.md. Code completion and hosted activation have sepa
 ### N1 — Complete the portable content bundle
 
 Status: Stage-B integrity/catalog contracts are code-approved and integrated at `b09cd28`.
-Stage-C prerequisites, including fourth fee copy and interface pack, are reviewed/integrated at `ea8ed5c`;
-format 10 wiring follows exact validated handoff adoption. Final component/native acceptance remains open.
-[Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; Stage-C/native and final acceptance remain pending.
+Stage-C component payloads, fourth fee copy and interface pack are code-reviewed and integrated in format 10 at `dbd7a83`. [Format 10 receipt](checkpoints/N1-format-10-integration-20261004.md). Native/UI and broader grammar acceptance remain open.
+[Stage-B coverage inventory](checkpoints/N1-stage-b-inventory.md) is recorded; native/UI and broader grammar acceptance remain pending.
 [Stage-C component inventory](checkpoints/N1-stage-c-component-inventory-20261004.md) records all eight directive dependencies, ownership requests and proposed export sequencing.
 See [integrity preparation](checkpoints/N1-bundle-integrity.md)
 and [the translation export checkpoint](checkpoints/N1-catalog-translations.md).
@@ -436,7 +435,7 @@ Acceptance:
 
 Status: standalone inline parser and component contracts are code-approved and integrated at `b09cd28`;
 English v2 data and article-component artifacts are reviewed/integrated. Renderer extraction `f9681f9`
-is Claude parity-approved and integrated at `9b5d937`; broader inline consumer alignment and final acceptance remain pending.
+is Claude parity-approved and integrated at `9b5d937`; translated inline alignment `be231dd` and fee/component wiring are reviewed and integrated at `0da60ef`/`dbd7a83`. [Alignment receipt](checkpoints/Fee-interface-inline-integration-20261004.md). Native rendering and broader grammar acceptance remain open.
 See [the edge-case follow-up](checkpoints/N2-inline-hardening.md), read-only component inventory and
 [tax/training table contracts](checkpoints/N2-table-contracts.md) and
 [practical-basics rich text](checkpoints/N2-practical-basics-contract.md).
@@ -465,7 +464,7 @@ Acceptance:
 
 ### N3 — Shared finder messages and labels
 
-Status: planned. Depends on H1. Claude owns Japanese catalog edits.
+Status: finder/map interface lookup `997f0ab` and guide-label follow-up `d3f3415` are reviewed and integrated. [N3 receipt](checkpoints/N3-English-v2-integration-20261004.md), [label integration](checkpoints/Stage-C-reviewed-integration-20261004.md). Claude owns Japanese catalog edits; values remain machine-translated.
 
 - Move reusable labels/messages into established owners without importing full catalogs into browser code again.
 - Preserve locale loading, key parity, accessible labels, and fallback.
@@ -495,8 +494,7 @@ Acceptance:
 
 ### N5 — Metadata independent of MDX rendering
 
-Status: checkpoint 1 standalone metadata implemented at `6c7fb4d`, review pending; no consumer switching.
-Lowest priority; wiring/freshness follows the approved staged handoff and owner coordination.
+Status: plain metadata producer/selectors, freshness wiring and all metadata-only web lookups are reviewed and complete locally at tested source `7f409a3`. Only article body rendering still imports the MDX registry; no build/size savings claim. [Completion and browser observation](checkpoints/N5-completion-integration-20261004.md). Native/hosted acceptance is separate.
 
 - Separate plain metadata/selectors from the web MDX registry, both derived from canonical content.
 - Do not introduce a second hand-maintained inventory.
@@ -1668,3 +1666,7 @@ Claude approved consumer checkpoint `068b07c` and evidence `de12151`, adopted ha
 ### N5 consumer/freshness combined integration — 2026-10-04
 
 Codex approved `3df83d2`, closing both CMS findings on `41af62c`. Reviewed consumer `068b07c`, freshness `41af62c`/`f65adee`, hydration `1dfcf38`, CMS fix and approved/accurate records were integrated by hash at source `6f83d94`. [Review receipts and combined gate](checkpoints/N5-consumer-freshness-integration-20261004.md): release **14/14**, **1,220 tests / 197 files**, **731 modules**, **416 build entries**, **37 browser JS files**; production Playwright **35 passed / 5 Auth skipped** at default eight workers, including early input and all H2 cases. Prior browser/CMS findings are closed for this checkpoint. This documentation handoff awaits review/adoption; article-detail metadata switch stays Claude-owned. Native/hosted/operational gates remain open. No main merge or activation.
+
+### N5 consumer switch complete locally — 2026-10-04
+
+Claude adopted/documentation-approved `7596efd` as `1f63d87`. Codex approved final article-detail switch `a297812`, integrated by hash at exact tested source `7f409a3` (tree-equal to a297812). [Completion record](checkpoints/N5-completion-integration-20261004.md): 24 focused tests / 3 files; release **14/14**, **1,220 tests / 197 files**, **731 modules**, **416 build entries**, **37 browser JS files**. Default-worker browser first run 34/1/5 had a FAQ-query timeout; full unchanged repeat passed **35 / 5 Auth skipped**. That initial observation remains unresolved and is shared for follow-up. All metadata-only lookups use the portable facade; only body rendering uses the MDX registry. N5 local consumer/freshness implementation is complete, with no build/size savings claim; new documentation review/adoption and prior native/hosted/operator/human-review gates remain. No main merge or activation.

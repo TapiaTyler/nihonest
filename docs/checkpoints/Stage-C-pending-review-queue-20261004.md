@@ -1,7 +1,7 @@
 # Stage-C review queue — 2026-10-04
 
-Current tested integration source: **`6f83d94f6c7deae49c73ab1698573a491ebbaee1`** on
-`codex/hosting-native-integration`. Claude adopted the prior N5 handoff `015c76d` as `8052468` and approved its docs. [Current combined receipt](N5-consumer-freshness-integration-20261004.md). New documentation handoff review/adoption is pending.
+Current tested integration source: **`7f409a30804890e80244e6d5eb5b96546bd94993`** on
+`codex/hosting-native-integration`. Claude adopted/documentation-approved the prior N5 handoff `7596efd` as `1f63d87`. [Current completion receipt](N5-completion-integration-20261004.md). New documentation handoff review/adoption is pending.
 [Format 10 approval and combined validation](N1-format-10-integration-20261004.md).
 [Latest exact receipt, fee review and combined evidence](Fee-interface-inline-integration-20261004.md).
 
@@ -28,13 +28,13 @@ N5 checkpoint 1 `6c7fb4d` and evidence `99b170a` are Claude-approved and integra
 ## Remaining work
 
 1. Claude reviews the new combined documentation and adopts the exact pushed integration handoff.
-2. Claude implements the article-detail metadata-only switch after adoption; Codex reviews it and validates the resulting combined checkpoint. Freshness and prior browser findings are closed by the reviewed fixes.
+2. N5 consumer/freshness implementation is complete locally. Carry forward the initial FAQ-query timeout recorded in the final browser gate; investigate with the shared search owner if it recurs. No assertion or timeout was changed.
 3. Interface metadata remains machine-translated-only Japanese, exact IDs/key parity/non-blank values and
    placeholder subsets; current web fallback semantics remain. No shared artifact-schema relaxation.
 4. Tokyo labels remain canonical bilingual geography data with unchanged IDs/grouping. Source/license
    metadata stays distinct from article/artifact review and currency.
 5. Final N1/N2/native acceptance and broader inline/block/MDX boundaries remain open. Web export round-trip
-   parity is tested; a native renderer/UI is not. N5 checkpoint 1 is reviewed and integrated; checkpoint 2 and freshness are reviewed and combined-validated; the article-detail metadata switch remains Claude-owned.
+   parity is tested; a native renderer/UI is not. N5 checkpoint 1 is reviewed and integrated; checkpoint 2 and freshness are reviewed and combined-validated; the final article-detail metadata switch is reviewed/integrated.
 
 Claude owns Japanese catalogs, source-field rules/prompts and final Japanese checks. Codex owns integration,
 N1 exporter/contracts and consolidated status documentation. No main merge, activation, email or scheduling.
@@ -50,3 +50,7 @@ Claude approved `068b07c`/`de12151` and adopted/documentation-approved `015c76d`
 ## N5 combined gate completion
 
 The CMS fix `3df83d2` is approved and closes both findings. All reviewed hashes are integrated at tested source `6f83d94`: release 14/14, 1,220 tests / 197 files, default-worker production browser 35/5. This supersedes earlier pending/held statuses. Claude next: adopt exact pushed documentation handoff, review it, then article-detail metadata-only switch. Codex next: review that bounded checkpoint and validate its combined result. Native/hosted/operational gates remain open.
+
+## N5 completion receipt
+
+Claude adopted/documentation-approved 7596efd as 1f63d87; Codex approved a297812 and integrated it as tested source 7f409a3. Release 14/14, 1,220 / 197, default-worker full browser repeat 35/5; initial run 34/1/5 FAQ-query failure remains explicitly unresolved. [Full evidence and limits](N5-completion-integration-20261004.md). N5 local implementation/consumer switch complete; new documentation handoff review/adoption and prior native/hosted/operator gates remain.
