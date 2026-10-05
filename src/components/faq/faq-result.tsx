@@ -70,7 +70,7 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
     return (
       <details ref={detailsRef} id={anchor} lang={translation ? locale : "en"} onToggle={onToggle} className="scroll-mt-6">
         <summary className={`${listRowClassName} ${listRowFocusClassName} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
-          <Heading className="min-w-0 text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{question}</Heading>
+          <Heading className="min-w-0 text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{question}</Heading>
           <div className={listRowDetailsClassName}>
             <span className="flex items-center gap-3">{statusBadge}<DisclosureChevron open={open} /></span>
           </div>
@@ -82,13 +82,13 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
 
   return (
     <details ref={detailsRef} id={anchor} lang={translation ? locale : "en"} onToggle={onToggle} className="scroll-mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <summary className="group flex cursor-pointer list-none items-start justify-between gap-4 p-5 transition-colors hover:bg-teal-50/60 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+      <summary className="group/item flex cursor-pointer list-none items-start justify-between gap-4 p-5 transition-colors hover:bg-teal-50/60 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("faq.label")}</span>
             {statusBadge}
           </div>
-          <Heading className="mt-3 text-xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{question}</Heading>
+          <Heading className="mt-3 text-xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{question}</Heading>
         </div>
         <div className="mt-1"><DisclosureChevron open={open} /></div>
       </summary>

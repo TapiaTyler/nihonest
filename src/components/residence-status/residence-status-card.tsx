@@ -31,12 +31,12 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               {locale === "ja" ? (
                 <>
-                  <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{residenceStatus.japaneseName}</h2>
+                  <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{residenceStatus.japaneseName}</h2>
                   <span lang="en" className="text-sm text-slate-500">{residenceStatus.englishName}</span>
                 </>
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{residenceStatus.englishName}</h2>
+                  <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{residenceStatus.englishName}</h2>
                   <span lang="ja" className="text-sm text-slate-500">{residenceStatus.japaneseName}</span>
                 </>
               )}
@@ -56,7 +56,7 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
       <Link
         href={href}
         aria-label={residenceStatus.englishName}
-        className="group flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
+        className="group/item flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >
         <div className="flex items-start justify-between gap-4">
           <LocalizedStatusBadge status={residenceStatus.status} />
@@ -67,13 +67,13 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
             </span>
           </span>
         </div>
-        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
+        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">
           {residenceStatus.englishName}
         </h2>
         <p lang={translation ? "ja" : "en"} className="mt-4 flex-1 leading-7 text-slate-600">{translation?.summary ?? residenceStatus.summary}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
           <p className="text-slate-500"><InterfaceText id="status.category" /> {categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</p>
-          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
+          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover/item:translate-x-0.5">
             <InterfaceText id="content.viewStatus" />
           </span>
         </div>

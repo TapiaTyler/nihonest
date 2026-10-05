@@ -23,7 +23,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
     return (
       <article className={listRowClassName}>
         <div className="min-w-0 flex-1">
-          <h2 lang={contentLanguage} className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
+          <h2 lang={contentLanguage} className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">
             <Link href={target} aria-label={article.title} className="before:absolute before:inset-0 focus-visible:outline-none focus-visible:before:outline-2 focus-visible:before:outline-offset-[-2px] focus-visible:before:outline-teal-700">
               {article.title}
             </Link>
@@ -39,7 +39,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
     );
   }
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md">
+    <article className="group/item relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md">
       {notice && (
         <p className="border-b border-teal-200 bg-teal-50 px-6 py-3 text-sm font-semibold leading-6 text-teal-950">
           {notice}
@@ -50,7 +50,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
           <ArticleCardBadges status={article.status} topicIds={article.topicIds} />
           {headerAction && <div className="relative z-10 shrink-0">{headerAction}</div>}
         </div>
-        <h2 lang={contentLanguage} className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
+        <h2 lang={contentLanguage} className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">
           <Link
             href={target}
             aria-label={article.title}
@@ -62,7 +62,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
         <p lang={contentLanguage} className="mt-3 flex-1 leading-7 text-slate-600">{article.description}</p>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
           <ArticleCardRelevance journeyStageIds={article.journeyStageIds} />
-          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5">
+          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover/item:translate-x-0.5">
             <InterfaceText id="content.readGuide" />
           </span>
         </div>
