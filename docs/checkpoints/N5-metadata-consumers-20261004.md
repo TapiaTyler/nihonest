@@ -1,5 +1,7 @@
 # N5 checkpoint 2: metadata-only consumers — 2026-10-04
 
+Current receipt: consumer checkpoint is Claude-approved; CMS findings are closed by Codex-reviewed `3df83d2`. Combined source `6f83d94` passed release 14/14 and default-worker production Playwright 35/5. [Latest integration](N5-consumer-freshness-integration-20261004.md). Original review/failed-run statements below are historical.
+
 Based on adopted reviewed checkpoint 1 handoff 015c76d (working adoption dbfe4a8). Claude explicitly granted the bounded import-only switch after approving 6c7fb4d. Exact implementation **068b07cee7518c3634d3a608804321ffd367cdfc** awaits review; do not integrate it before approval.
 
 Exactly fifteen production import lines change: eleven metadata-only pages/routes (home, explore index/group/journey, glossary detail, residence-status detail, my-journey, onboarding, roadmap, saved and sitemap) and four helpers (article-journey-data, checklists, faqs and source-registry). They now import article-metadata rather than articles. No selector calls, rendering, translation lookups or query handling change. Article detail, MDX registry, Japanese catalogs and freshness/configuration/CMS wiring remain Claude-owned.

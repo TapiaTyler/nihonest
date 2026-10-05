@@ -1,5 +1,7 @@
 # N5 freshness and hydration review — 2026-10-04
 
+Current receipt: consumer checkpoint is Claude-approved; CMS findings are closed by Codex-reviewed `3df83d2`. Combined source `6f83d94` passed release 14/14 and default-worker production Playwright 35/5. [Latest integration](N5-consumer-freshness-integration-20261004.md). Original review/failed-run statements below are historical.
+
 Codex reviewed exact committed changes: freshness **41af62c881f1c777a195603f09a2dff5619595d7**, typing refinement **f65adee7ceed6435ed6bd90a95c4ef1e62d43429**, hydration **1dfcf383a7dc5660fb7a341994e9c27c763f06b2**. No Claude checkout or uncommitted work touched.
 
 ## Disposition
