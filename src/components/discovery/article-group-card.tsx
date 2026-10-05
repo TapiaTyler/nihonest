@@ -4,19 +4,40 @@ import Link from "next/link";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { ContentLocalePreference } from "@/domain/localization/content-locale";
+import { listRowClassName, listRowFocusClassName } from "@/components/navigation/view-mode-items";
 
-export function ArticleGroupCard({ group, returnTo, contentLanguage = "en" }: Readonly<{
+export function ArticleGroupCard({ group, returnTo, contentLanguage = "en", variant = "card" }: Readonly<{
   group: ArticleGroup;
   returnTo?: string;
   contentLanguage?: ContentLocalePreference;
+  /** "row" is the compact list presentation. */
+  variant?: "card" | "row";
 }>) {
   const { message } = useInterfaceMessages();
   const articleLabel = message(group.articleIds.length === 1 ? "content.guide" : "content.guides");
+  const href = returnTo ? { pathname: `/explore/${group.id}`, query: { returnTo } } : `/explore/${group.id}`;
+
+  if (variant === "row") {
+    return (
+      <article className="min-w-0" lang={contentLanguage}>
+        <Link href={href} aria-label={`${message("content.exploreGroup")} ${group.title}`} className={`${listRowClassName} ${listRowFocusClassName}`}>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">{group.title}</h2>
+            <p className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{group.description}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-3 text-sm">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{group.articleIds.length} {articleLabel}</span>
+            <span aria-hidden="true" className="hidden select-none font-semibold text-teal-800 transition-transform group-hover:translate-x-0.5 sm:inline">→</span>
+          </div>
+        </Link>
+      </article>
+    );
+  }
 
   return (
     <article className="h-full" lang={contentLanguage}>
       <Link
-        href={returnTo ? { pathname: `/explore/${group.id}`, query: { returnTo } } : `/explore/${group.id}`}
+        href={href}
         aria-label={`${message("content.exploreGroup")} ${group.title}`}
         className="group flex h-full cursor-pointer flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
       >

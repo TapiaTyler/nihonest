@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { ArticleMetadata } from "@/domain/article/article";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { ArticleCardBadges, ArticleCardRelevance } from "@/components/content/article-card-metadata";
+import { listRowClassName } from "@/components/navigation/view-mode-items";
 
 type ArticleCardProps = Readonly<{
   article: ArticleMetadata;
@@ -11,9 +12,33 @@ type ArticleCardProps = Readonly<{
   notice?: string;
   headerAction?: ReactNode;
   contentLanguage?: string;
+  /** "row" is the compact list presentation. */
+  variant?: "card" | "row";
 }>;
 
-export function ArticleCard({ article, returnTo, href, notice, headerAction, contentLanguage }: ArticleCardProps) {
+export function ArticleCard({ article, returnTo, href, notice, headerAction, contentLanguage, variant = "card" }: ArticleCardProps) {
+  const target = href ?? (returnTo ? { pathname: `/articles/${article.slug}`, query: { returnTo } } : `/articles/${article.slug}`);
+  if (variant === "row") {
+    // The title link stretches over the row, so an optional header action stays independently clickable.
+    return (
+      <article className={listRowClassName}>
+        <div className="min-w-0 flex-1">
+          <h2 lang={contentLanguage} className="text-lg font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
+            <Link href={target} aria-label={article.title} className="before:absolute before:inset-0 focus-visible:outline-none focus-visible:before:outline-2 focus-visible:before:outline-offset-[-2px] focus-visible:before:outline-teal-700">
+              {article.title}
+            </Link>
+          </h2>
+          <p lang={contentLanguage} className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{article.description}</p>
+          {notice && <p className="mt-1 text-xs font-semibold leading-5 text-teal-900">{notice}</p>}
+        </div>
+        {/* Capped so a guide with many topics wraps its badges instead of squeezing the title. */}
+        <div className="flex min-w-0 items-center gap-3 sm:max-w-xs sm:shrink-0 sm:justify-end">
+          <ArticleCardBadges status={article.status} topicIds={article.topicIds} />
+          {headerAction && <div className="relative z-10 shrink-0">{headerAction}</div>}
+        </div>
+      </article>
+    );
+  }
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md">
       {notice && (
@@ -28,7 +53,7 @@ export function ArticleCard({ article, returnTo, href, notice, headerAction, con
         </div>
         <h2 lang={contentLanguage} className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover:text-teal-700">
           <Link
-            href={href ?? (returnTo ? { pathname: `/articles/${article.slug}`, query: { returnTo } } : `/articles/${article.slug}`)}
+            href={target}
             aria-label={article.title}
             className="rounded-2xl before:absolute before:inset-0 before:rounded-2xl focus-visible:outline-none focus-visible:before:outline-2 focus-visible:before:outline-offset-2 focus-visible:before:outline-teal-700"
           >

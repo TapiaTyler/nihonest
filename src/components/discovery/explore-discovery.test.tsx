@@ -9,6 +9,7 @@ import { ExploreDiscovery } from "./explore-discovery";
 import { ActivitySearchSuggestion } from "@/components/activity-cross-reference/activity-search-suggestion";
 import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
 import { contentLocaleStorageKey } from "@/lib/storage/content-locale";
+import { viewModeStorageKey } from "@/lib/storage/view-mode";
 import type { ArticleGroupSearchTranslation, ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 const bankArticle = articleMetadataSchema.parse({
@@ -263,5 +264,21 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Browse all groups" }));
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
+  });
+
+  it("offers a list view for groups and search results, remembered for Explore only", () => {
+    renderDiscovery();
+    fireEvent.click(screen.getByRole("button", { name: "List" }));
+    expect(screen.getByRole("link", { name: "Explore Arrival essentials" }).closest("li")).not.toBeNull();
+    expect(window.localStorage.getItem(viewModeStorageKey("explore"))).toBe("list");
+    expect(window.localStorage.getItem(viewModeStorageKey("residence-statuses"))).toBeNull();
+
+    // The same choice carries into search results; FAQs keep their own list.
+    enterSearch("bank account");
+    expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("link", { name: "Opening a bank account" }).closest("li")).not.toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Cards" }));
+    expect(screen.getByRole("link", { name: "Opening a bank account" }).closest("li")).toBeNull();
+    expect(window.localStorage.getItem(viewModeStorageKey("explore"))).toBeNull();
   });
 });
