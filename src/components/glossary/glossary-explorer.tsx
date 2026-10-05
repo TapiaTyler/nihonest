@@ -11,6 +11,8 @@ import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { GlossaryCard } from "./glossary-card";
+import { useViewMode, ViewModeToggle } from "@/components/navigation/view-mode-toggle";
+import { ViewModeItems } from "@/components/navigation/view-mode-items";
 import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 
 type TopicFilter = "all" | TopicId;
@@ -45,6 +47,8 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
   const { message } = useInterfaceMessages();
   const searchId = useId();
   const [filters, setFilters] = useState<GlossaryFilters>(defaultGlossaryFilters);
+  const [viewMode, setViewMode] = useViewMode("glossary");
+  const variant = viewMode === "list" ? "row" : "card";
   const filtersRef = useRef<GlossaryFilters>(defaultGlossaryFilters);
   const { query, topicId } = filters;
   const availableTopics = topics.filter((topic) =>
@@ -141,21 +145,23 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
         </div>
       </div>
 
-      <p className="mt-6 text-sm text-slate-500" aria-live="polite">
-        {message("glossaryIndex.resultCount").replace("{count}", String(visibleTerms.length)).replace("{total}", String(terms.length))}
-      </p>
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <p className="min-w-0 flex-1 text-sm text-slate-500" aria-live="polite">
+          {message("glossaryIndex.resultCount").replace("{count}", String(visibleTerms.length)).replace("{total}", String(terms.length))}
+        </p>
+        <div className="ml-auto"><ViewModeToggle mode={viewMode} onChange={setViewMode} /></div>
+      </div>
 
       {visibleTerms.length > 0 && hasFilters ? (
-        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {visibleTerms.map((term) => (
-            <GlossaryCard
-              key={term.id}
-              term={term}
-              translation={translationsById.get(term.id)}
-              returnTo={hasFilters ? returnTo : undefined}
-            />
-          ))}
-        </div>
+        <ViewModeItems
+          mode={viewMode}
+          gridClassName="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+          listContainerClassName="mt-6"
+          items={visibleTerms.map((term) => ({
+            key: term.id,
+            node: <GlossaryCard term={term} translation={translationsById.get(term.id)} returnTo={hasFilters ? returnTo : undefined} variant={variant} />,
+          }))}
+        />
       ) : visibleTerms.length > 0 ? (
         <div className="mt-6 space-y-4">
           {browseGroups.map(({ topic, terms: groupedTerms }) => (
@@ -171,9 +177,12 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
                   <DisclosureChevron />
                 </span>
               </summary>
-              <div className="grid gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3">
-                {groupedTerms.map((term) => <GlossaryCard key={term.id} term={term} translation={translationsById.get(term.id)} />)}
-              </div>
+              <ViewModeItems
+                mode={viewMode}
+                gridClassName="grid gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3"
+                listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                items={groupedTerms.map((term) => ({ key: term.id, node: <GlossaryCard term={term} translation={translationsById.get(term.id)} variant={variant} /> }))}
+              />
             </details>
           ))}
         </div>
