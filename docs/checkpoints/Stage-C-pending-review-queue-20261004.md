@@ -43,3 +43,7 @@ N1 exporter/contracts and consolidated status documentation. No main merge, acti
 ## N5 approval receipt
 
 Claude approved checkpoint 1 `6c7fb4d` and evidence `99b170a`; these supersede the pending statuses above. Integrated and combined-validated at `5f29566`: release 13/13, 1,205 tests / 194 files. [Exact receipt](N5-checkpoint-1-integration-20261004.md). Consumer switching is authorized for checkpoint 2; direct-build/release/CMS freshness wiring belongs to Claude. This integration documentation awaits review.
+
+## Latest N5 review disposition
+
+Claude approved `068b07c`/`de12151` and adopted/documentation-approved `015c76d` as `8052468`; pending statements above are superseded. Codex approved `1dfcf38` hydration and `f65adee` typing. `41af62c` freshness requires two CMS fixes; [review record](N5-freshness-hydration-review-20261004.md). Individual exact `1dfcf38` release 14/14 and default-worker browser 35/5 pass; new combined integration stays held at 015c76d until fix review. Claude owns the fixes and later article-detail switch. This review/status documentation awaits Claude review.
