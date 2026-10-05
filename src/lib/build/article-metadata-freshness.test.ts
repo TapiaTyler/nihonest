@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { articleMetadataCheckedFlag, assertArticleMetadataFresh } from "./article-metadata-freshness";
+import { articleMetadataCheckedFlag, assertArticleMetadataFresh, type ArticleMetadataCheckRunner } from "./article-metadata-freshness";
 
 describe("assertArticleMetadataFresh", () => {
   it("runs the non-writing generator check once per build process", () => {
     const env: Record<string, string | undefined> = {};
-    const run = vi.fn((_command: string, _args: readonly string[]) => ({ status: 0, stdout: "Article metadata current: 97 records.", stderr: "", error: undefined }));
+    const run = vi.fn<ArticleMetadataCheckRunner>(() => ({ status: 0, stdout: "Article metadata current: 97 records.", stderr: "", error: undefined }));
     assertArticleMetadataFresh(env, run);
     assertArticleMetadataFresh(env, run);
     expect(run).toHaveBeenCalledTimes(1);
