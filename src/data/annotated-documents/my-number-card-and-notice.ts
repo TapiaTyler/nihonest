@@ -23,8 +23,8 @@ export const myNumberCardAndNoticeDocumentFamily = annotatedDocumentFamilySchema
           {
             id: "official-card-sample",
             assetUrl: "https://www.kojinbango-card.go.jp/hpsv/wpmng/assets/img/faq/card_sample_img1.png",
-            width: 800,
-            height: 505,
+            width: 308,
+            height: 180,
             alt: "Official sample of a My Number Card with clearly fictional sample details",
             caption: "Official J-LIS sample image published in its current FAQ. Use current municipal instructions and the semantic field explanations below; notation on an individual card may differ.",
             sourceId: "jlis-my-number-card-sample-image",

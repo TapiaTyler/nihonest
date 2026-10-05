@@ -24,8 +24,8 @@ export const residenceCardDocumentFamily = annotatedDocumentFamilySchema.parse({
           {
             id: "official-format-comparison",
             assetUrl: "https://www.moj.go.jp/isa/content/001458498.jpg",
-            width: 600,
-            height: 400,
+            width: 990,
+            height: 600,
             alt: "Official ISA comparison showing residence-card formats issued through June 13, 2026 and from June 14, 2026",
             caption: "Official ISA comparison of the earlier and current residence-card formats. It is a visual reference, not a substitute for checking the printed details and current official guidance.",
             sourceId: "isa-residence-card-comparison-image",
@@ -69,8 +69,8 @@ export const residenceCardDocumentFamily = annotatedDocumentFamilySchema.parse({
           {
             id: "official-format-comparison",
             assetUrl: "https://www.moj.go.jp/isa/content/001458498.jpg",
-            width: 600,
-            height: 400,
+            width: 990,
+            height: 600,
             alt: "Official ISA comparison showing residence-card formats issued through June 13, 2026 and from June 14, 2026",
             caption: "Official ISA comparison of the earlier and current residence-card formats. Earlier cards can remain valid after the newer format was introduced, subject to the validity printed on the card.",
             sourceId: "isa-residence-card-comparison-image",
