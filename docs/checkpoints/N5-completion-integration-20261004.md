@@ -1,6 +1,6 @@
 # N5 consumer-switch completion and integration — 2026-10-04
 
-Tested exact combined source **7f409a30804890e80244e6d5eb5b96546bd94993** on codex/hosting-native-integration. The following documentation-only handoff records this gate and awaits Claude's documentation review. N5's planned metadata producer/selectors, freshness wiring and all web metadata consumer switches are complete for local code scope. Native and hosted/operator gates remain open.
+Tested exact combined source **7f409a30804890e80244e6d5eb5b96546bd94993** on codex/hosting-native-integration. Claude approved the documentation-only handoff **8352af2e800f20992a32f95b6bddbf81b708f33a** and adopted it as **47385c4**. N5's planned metadata producer/selectors, freshness wiring and all web metadata consumer switches are complete for local code scope. Native and hosted/operator gates remain open.
 
 ## Receipt and review
 
@@ -31,4 +31,19 @@ The previous combined CMS audit at exact 6f83d94 passed both widths and keyboard
 
 N5 local implementation/consumer-switch review and integration are complete. Direct production builds/release checks refuse stale generated metadata; CMS saves regenerate or clearly report guarded failure; plain metadata/selectors have the tested portable dependency boundary; all metadata-only web lookups have switched. The MDX body registry and its validation remain, so this does not claim elimination of duplicate validation or MDX compilation. Metadata is generated from canonical registrations, not a second manual inventory.
 
-N1/N2 native renderer/UI/Hermes and broader grammar acceptance, N4/H5 hosted acceptance, J1 operator/hosted gates and human Japanese review remain open as recorded elsewhere. No hosted/CI/Auth/SQL/provider acceptance rerun, human screen-reader review, clean install, main merge, real email, scheduler or activation. Final new documentation review/adoption remains; an unresolved FAQ-query observation is explicitly carried forward.
+N1/N2 native renderer/UI/Hermes and broader grammar acceptance, N4/H5 hosted acceptance, J1 operator/hosted gates and human Japanese review remain open as recorded elsewhere. No hosted/CI/Auth/SQL/provider acceptance rerun, human screen-reader review, clean install, main merge, real email, scheduler or activation. Documentation through 8352af2 is approved and adopted; an unresolved FAQ-query observation is explicitly carried forward.
+
+## Completion receipt and FAQ follow-up
+
+Codex verified that 47385c4 and 8352af2 have identical trees, and that production source/configuration at 47385c4 has no difference from reviewed a297812. Claude approved the completion record, queue and consolidated status through 8352af2 for their stated scope. This receipt update can accompany the next consolidated documentation review; it introduces no code or dependency handoff.
+
+Claude's follow-up on a production build of 47385c4 did not reproduce the FAQ timeout: an eight-worker, forty-visit probe passed **40/40**, with the heading visible after page load in **105–700 ms** (median about 200 ms) and the searchbox always containing juminhyo. Four warm and two fresh-server full Playwright runs each passed **35 / 5 Auth skipped**. These checks are attributed to Claude. Code inspection found no demonstrated URL-restoration/pre-hydration race. CPU contention during client FAQ indexing is a candidate explanation only; the cause remains unproven and the observation stays open.
+
+If the case recurs, retain a trace and send it to Claude for the shared-search follow-up. Against an already running loopback production server, use:
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL = 'http://127.0.0.1:3199'
+npx playwright test e2e/home.spec.ts --grep "carries an unsuccessful FAQ query into the complete Explore search" --trace on
+```
+
+This is a contingent diagnostic command, not an additional run claimed here. Assertions and timeouts remain unchanged.
