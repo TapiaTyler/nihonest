@@ -18,7 +18,7 @@ import { readLocalGuidanceCatalog } from "./local-guidance-catalog";
 import { saveLocalGuidanceContent } from "./local-guidance-writer";
 import { createRecord, creationOptions, planRecordCreation, type CreatableKind } from "./record-creator";
 import { articleCreationOptions, createArticle, planArticleCreation } from "./article-creator";
-import { refreshArticleMetadata } from "./article-metadata-sync";
+import { inspectArticleMetadata, refreshArticleMetadata } from "./article-metadata-sync";
 
 const assets = new Map<string, readonly [string, string]>([
   ["/", ["index.html", "text/html; charset=utf-8"]],
@@ -86,7 +86,19 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
   /** Article writes change metadata (status, dates, new entries); keep the generated module in step and report it. */
   async function withArticleMetadata<T extends object>(write: Promise<T>): Promise<T & { generatedMetadata: Awaited<ReturnType<typeof refreshArticleMetadata>> }> {
     const result = await write;
-    return { ...result, generatedMetadata: await refreshArticleMetadata(root) };
+    return { ...result, generatedMetadata: await regenerateArticleMetadata() };
+  }
+  // The latest regeneration failure, kept so the editor's warning survives a page reload until a refresh succeeds.
+  let articleMetadataFailure: string | undefined;
+  async function regenerateArticleMetadata() {
+    const refresh = await refreshArticleMetadata(root);
+    articleMetadataFailure = refresh.status === "failed" ? refresh.message : undefined;
+    return refresh;
+  }
+  async function articleMetadataReport() {
+    const state = await inspectArticleMetadata(root);
+    if (state.status === "current") articleMetadataFailure = undefined;
+    return { ...state, ...(articleMetadataFailure ? { lastFailure: articleMetadataFailure } : {}) };
   }
   // Snapshot the checkout before any request can write, so pre-existing changes stay separate from CMS edits.
   const gitSession = startGitSession(root);
@@ -175,6 +187,18 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
           ...(input.previousDraftRevision ? { previousDraftRevision: input.previousDraftRevision as string } : {}),
           content: input.content as { body: string; updatedAt: string } }));
         sendJson(response, 200, draft);
+        return;
+      }
+      if (pathname === "/api/generated-metadata/refresh" && request.method === "POST") {
+        if (request.headers.origin !== origin || request.headers["x-cms-token"] !== sessionToken) {
+          throw new CmsEditError("This action requires the local CMS session.", 403);
+        }
+        const payload = await readJson(request);
+        if (!payload || typeof payload !== "object" || Array.isArray(payload) || Object.keys(payload).length) {
+          throw new CmsEditError("Regeneration takes no arguments.", 400);
+        }
+        const refresh = await regenerateArticleMetadata();
+        sendJson(response, 200, { refresh, state: await articleMetadataReport() });
         return;
       }
       if (request.method === "POST" && (pathname === "/api/checks/start" || pathname === "/api/checks/cancel")) {
@@ -387,6 +411,10 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         const { details } = await readArticleCatalog(root);
         const detail = details.get(articleMatch[1]!);
         sendJson(response, detail ? 200 : 404, detail ?? { error: "Article not found." });
+        return;
+      }
+      if (pathname === "/api/generated-metadata" && request.method === "GET") {
+        sendJson(response, 200, await articleMetadataReport());
         return;
       }
       if (pathname === "/api/git") {

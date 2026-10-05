@@ -339,8 +339,74 @@ describe("local CMS foundation", { timeout: 30_000 }, () => {
           body: JSON.stringify({ expectedRevision: saved.revision, body: `${revisedBody}\nAnother sentence.\n`, updatedAt: detail.metadata.updatedAt }),
         });
         expect(response.status).toBe(200);
-        expect((await response.json()).changed).toBe(true);
+        const savedThroughServer = await response.json();
+        expect(savedThroughServer.changed).toBe(true);
         expect(await readFile(resolve(fixtureRoot, relativePath), "utf8")).toContain("Another sentence.");
+        // This fixture has no article registry, so regeneration fails; the article save still stands and reports it.
+        expect(savedThroughServer.generatedMetadata).toMatchObject({ status: "failed" });
+        const metadataState = await (await fetch(`${fixtureBase}/api/generated-metadata`)).json();
+        expect(metadataState).toMatchObject({ status: "unavailable", lastFailure: savedThroughServer.generatedMetadata.message });
+        const refreshPath = `${fixtureBase}/api/generated-metadata/refresh`;
+        expect((await fetch(refreshPath, { method: "POST", headers: { "Content-Type": "application/json", Origin: fixtureBase }, body: "{}" })).status).toBe(403);
+        expect((await fetch(refreshPath, { method: "POST", headers: { "Content-Type": "application/json", Origin: fixtureBase, "X-CMS-Token": session.token }, body: '{"path":"x"}' })).status).toBe(400);
+        const repair = await fetch(refreshPath, { method: "POST", headers: { "Content-Type": "application/json", Origin: fixtureBase, "X-CMS-Token": session.token }, body: "{}" });
+        expect(repair.status).toBe(200);
+        expect((await repair.json()).refresh).toMatchObject({ status: "failed" });
+      } finally {
+        fixtureServer.close();
+        await once(fixtureServer, "close");
+      }
+    } finally {
+      if (!resolve(fixtureRoot).startsWith(`${resolve(tmpdir())}${sep}`) || !basename(fixtureRoot).startsWith("nihonest-cms-test-")) {
+        throw new Error("Refusing to remove a fixture outside the temporary directory.");
+      }
+      await rm(fixtureRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("regenerates article metadata after every article write path", async () => {
+    const server = await readFile(resolve(root, "tools/cms/server.ts"), "utf8");
+    for (const call of ["createArticle(", "changeArticleStatus(", "approveArticleReview(", "saveArticleBody("]) {
+      const uses = server.split(call).length - 1;
+      const wrapped = server.split(`withArticleMetadata(${call}`).length - 1;
+      // Imports never contain "name(", so every call site of an article writer must be wrapped.
+      expect({ call, uses, wrapped }).toEqual({ call, uses: wrapped, wrapped: Math.max(1, wrapped) });
+    }
+  });
+
+  it("reports metadata regeneration on article status and review requests", async () => {
+    const fixtureRoot = await mkdtemp(join(tmpdir(), "nihonest-cms-test-"));
+    const id = "understanding-japan-geography-government-and-language";
+    try {
+      await mkdir(resolve(fixtureRoot, "content/articles"), { recursive: true });
+      await writeFile(resolve(fixtureRoot, "content/articles", `${id}.mdx`), await readFile(resolve(root, "content/articles", `${id}.mdx`), "utf8"));
+      for (const args of [["init", "-q"], ["config", "user.email", "cms-test@example.invalid"], ["config", "user.name", "CMS test"],
+        ["config", "core.autocrlf", "false"], ["add", "."], ["commit", "-q", "-m", "fixture"]]) {
+        execFileSync("git", args, { cwd: fixtureRoot, stdio: "ignore" });
+      }
+      const fixtureServer = createCmsServer(fixtureRoot);
+      fixtureServer.listen(0, "127.0.0.1");
+      await once(fixtureServer, "listening");
+      try {
+        const address = fixtureServer.address();
+        if (!address || typeof address === "string") throw new Error("Expected an IPv4 listener.");
+        const base = `http://127.0.0.1:${address.port}`;
+        const { token } = await (await fetch(`${base}/api/session`)).json();
+        const send = async (path: string, method: string, body: unknown) => (await fetch(`${base}${path}`, {
+          method, headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token }, body: JSON.stringify(body),
+        })).json();
+        let revision = (await readArticleCatalog(fixtureRoot)).details.get(id)!.summary.revision;
+        for (const status of ["draft", "needs-review"]) {
+          const changed = await send(`/api/articles/${id}/status`, "PUT", { expectedRevision: revision, status });
+          expect(changed.generatedMetadata).toMatchObject({ status: "failed" });
+          revision = changed.revision;
+        }
+        const approved = await send(`/api/articles/${id}/review`, "POST", {
+          expectedRevision: revision, reviewedAt: "2026-09-26", changeNote: "Checked the fixture.", approvalNote: "Approved for the test.",
+          validationPerformed: ["Focused CMS test passed."], sourceReviewIds: [], explicitHumanApproval: true,
+        });
+        expect(approved.approvalRecord).toMatch(/^content\/editorial-reviews\//);
+        expect(approved.generatedMetadata).toMatchObject({ status: "failed" });
       } finally {
         fixtureServer.close();
         await once(fixtureServer, "close");

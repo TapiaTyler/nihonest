@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { execFileSync } from "node:child_process";
-import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { generatedArticleMetadataPath, refreshArticleMetadata } from "./article-metadata-sync";
+import { generatedArticleMetadataPath, inspectArticleMetadata, refreshArticleMetadata } from "./article-metadata-sync";
 import { gitSessionReport, startGitSession } from "./git-session";
 
 const stale = "// stale\nexport const generatedArticleMetadata = [];\n";
@@ -65,5 +65,55 @@ describe("refreshArticleMetadata", () => {
       expect(await refreshArticleMetadata(root, async () => { throw new Error("unregistered MDX file"); })).toEqual({ status: "failed", message: "unregistered MDX file" });
       expect(await readFile(resolve(root, generatedArticleMetadataPath), "utf8")).toBe(stale);
     } finally { warn.mockRestore(); await rm(root, { recursive: true, force: true }); }
+  });
+
+  it("never replaces a module edited externally while the regenerated copy was being prepared", async () => {
+    const root = await fixture();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    try {
+      await startGitSession(root);
+      const target = resolve(root, generatedArticleMetadataPath);
+      const result = await refreshArticleMetadata(root, async () => fresh, () => writeFile(target, "// external edit\n"));
+      expect(result).toEqual({ status: "failed", message: expect.stringContaining("changed while it was being regenerated") });
+      expect(await readFile(target, "utf8")).toBe("// external edit\n");
+      expect((await readdir(resolve(root, ".cms"))).filter((name) => name.endsWith(".tmp"))).toEqual([]);
+    } finally { warn.mockRestore(); await rm(root, { recursive: true, force: true }); }
+  });
+
+  it("never replaces a module created externally after it was found missing", async () => {
+    const root = await fixture();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    try {
+      const target = resolve(root, generatedArticleMetadataPath);
+      await unlink(target);
+      execFileSync("git", ["-c", "user.name=CMS Fixture", "-c", "user.email=cms-fixture@example.invalid", "commit", "-qam", "remove generated module"], { cwd: root });
+      await startGitSession(root);
+      const result = await refreshArticleMetadata(root, async () => fresh, () => writeFile(target, "// created elsewhere\n"));
+      expect(result.status).toBe("failed");
+      expect(await readFile(target, "utf8")).toBe("// created elsewhere\n");
+    } finally { warn.mockRestore(); await rm(root, { recursive: true, force: true }); }
+  });
+
+  it("creates a missing module when nothing else touches it", async () => {
+    const root = await fixture();
+    try {
+      await unlink(resolve(root, generatedArticleMetadataPath));
+      execFileSync("git", ["-c", "user.name=CMS Fixture", "-c", "user.email=cms-fixture@example.invalid", "commit", "-qam", "remove generated module"], { cwd: root });
+      await startGitSession(root);
+      expect(await refreshArticleMetadata(root, async () => fresh)).toEqual({ status: "updated" });
+      expect(await readFile(resolve(root, generatedArticleMetadataPath), "utf8")).toBe(fresh);
+    } finally { await rm(root, { recursive: true, force: true }); }
+  });
+});
+
+describe("inspectArticleMetadata", () => {
+  it("reports current, stale, and unavailable without writing", async () => {
+    const root = await fixture();
+    try {
+      expect(await inspectArticleMetadata(root, async () => stale)).toEqual({ status: "current" });
+      expect(await inspectArticleMetadata(root, async () => fresh)).toEqual({ status: "stale" });
+      expect(await inspectArticleMetadata(root, async () => { throw new Error("unregistered MDX file"); })).toEqual({ status: "unavailable", message: "unregistered MDX file" });
+      expect(execFileSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" })).toBe("");
+    } finally { await rm(root, { recursive: true, force: true }); }
   });
 });

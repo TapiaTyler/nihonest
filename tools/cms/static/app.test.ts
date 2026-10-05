@@ -55,6 +55,9 @@ describe("CMS article detail", () => {
     const localGuidanceMutations: { path: string; method: string; body: string }[] = [];
     const localGuidanceDetail = () => ({ id: localGuidanceSummary.id, locationId: "jp-05201", locationName: "Akita City", articleId: "sample-article", title: localGuidanceValue.title, revision: localGuidanceRevision, source: { path: "src/data/local-guidance/locations/akita/akita.ts", sourceRevision: localGuidanceSourceRevision }, value: localGuidanceValue, sources: [{ id: "akita-address-source", title: "Akita address procedure", url: "https://example.go.jp/akita", language: "ja", lastCheckedAt: "2026-09-26" }], recheck: [{ kind: "gap", records: ["akita-address-registration"], gap: "Confirm counter hours before visiting." }], translation: "stale", generator: "codex-drafted", translationReviewState: "machine-translated" });
     const mutations: { path: string; method: string; body: string }[] = [];
+    // The first article body save reports a failed metadata regeneration; the server then reports it as stale.
+    let generatedMetadataState: Record<string, unknown> = { status: "current" };
+    const metadataRefreshes: string[] = [];
     const recoveryMutations: { path: string; method: string; body: string }[] = [];
     let savedDraft: Record<string, unknown> | null = null;
     let draftRevision = 0;
@@ -97,6 +100,8 @@ describe("CMS article detail", () => {
           currentBranch: "main", currentCommit: "c".repeat(40), cmsChanges: ["content/articles/sample-article.mdx"],
           preexistingChanges: ["src/data/faqs/work.ts"], otherChanges: ["src/data/sources/registry.ts"], status: "## main",
         }
+          : path === "/api/generated-metadata" ? generatedMetadataState
+          : path === "/api/generated-metadata/refresh" ? (metadataRefreshes.push(options?.body ?? ""), generatedMetadataState = { status: "current" }, { refresh: { status: "updated" }, state: generatedMetadataState })
           : path === "/api/session" ? { token: "test-token" }
             : path === "/api/create/options" ? creationOptions
             : path === "/api/create/faq/preview" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { kind: "faq", id: "new-faq", path: "src/data/faqs/study.ts", sourceRevision: "e".repeat(64), insertion: ',\n  defineFaq("study", { id: "new-faq" }),', line: 12, revision: "f".repeat(64) })
@@ -108,7 +113,12 @@ describe("CMS article detail", () => {
             : path === "/api/create/source" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { created: true, kind: "source", id: "new-source", path: "src/data/sources/daily-life-safety.ts" })
             : path.endsWith("/preview") ? { blocks: [{ kind: "heading", level: 2, text: "Changed heading" }] }
               : ["/body", "/status", "/review", "/content"].some((suffix) => path.endsWith(suffix))
-                ? (mutations.push({ path, method: options?.method ?? "", body: options?.body ?? "" }), { changed: true, revision: "new-revision", approvalRecord: "content/editorial-reviews/test.json" })
+                ? (mutations.push({ path, method: options?.method ?? "", body: options?.body ?? "" }), (() => {
+                  const failMetadata = path.endsWith("/body") && mutations.length === 1;
+                  if (failMetadata) generatedMetadataState = { status: "stale", lastFailure: "fixture file was dirty at startup" };
+                  return { changed: true, revision: "new-revision", approvalRecord: "content/editorial-reviews/test.json",
+                    ...(failMetadata ? { generatedMetadata: { status: "failed", message: "fixture file was dirty at startup" } } : {}) };
+                })())
                 : article,
     });
     runInNewContext(formattedScript, { window });
@@ -455,6 +465,16 @@ describe("CMS article detail", () => {
     await waitFor(() => expect(mutations).toHaveLength(1));
     expect(mutations[0].method).toBe("PUT");
     expect(JSON.parse(mutations[0].body).expectedRevision).toBe("revision");
+    // The article save stands, and the banner explains the stale generated module and offers the repair.
+    const metadataNotice = document.querySelector("#generated-metadata") as HTMLElement;
+    await waitFor(() => expect(metadataNotice.hidden).toBe(false));
+    expect(metadataNotice.textContent).toContain("Article changes are saved");
+    expect(metadataNotice.textContent).toContain("fixture file was dirty at startup");
+    expect(metadataNotice.textContent).toContain("npm run content:metadata");
+    expect(document.querySelector("#article-detail .error")).toBeNull();
+    (metadataNotice.querySelector("button") as HTMLButtonElement).click();
+    await waitFor(() => expect(metadataNotice.hidden).toBe(true));
+    expect(metadataRefreshes).toEqual(["{}"]);
     await waitFor(() => expect(recoveryMutations.some((item) => item.method === "DELETE")).toBe(true));
     await waitFor(() => expect(document.querySelector("#article-status")).not.toBeNull());
     (document.querySelector("#tab-review") as HTMLButtonElement).click();
