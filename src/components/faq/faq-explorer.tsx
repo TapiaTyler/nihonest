@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useId, useMemo, useState, useTransition } from "react";
 import { FaqResult } from "./faq-result";
+import { useViewMode, ViewModeToggle } from "@/components/navigation/view-mode-toggle";
+import { ViewModeItems } from "@/components/navigation/view-mode-items";
 import { ActivitySearchSuggestion } from "@/components/activity-cross-reference/activity-search-suggestion";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { FAQ_BROWSE_GROUP_IDS, faqBrowseGroupLabels } from "@/domain/faq/faq";
@@ -25,6 +27,8 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
   const searchId = useId();
   const [searchIsPending, startSearchTransition] = useTransition();
   const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useViewMode("faq");
+  const variant = viewMode === "list" ? "row" : "card";
   const hasQuery = Boolean(query.trim());
   const translationsById = useMemo(() => new Map(translations
     .filter(({ targetLocale }) => targetLocale === locale)
@@ -91,18 +95,27 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
       </section>
 
       <section className="mt-12" aria-labelledby="faq-results-heading" aria-busy={searchIsPending}>
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="min-w-0 flex-1 basis-72">
             <p className="eyebrow">{message("faq.knowledgebase")}</p>
             <h2 id="faq-results-heading" className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{message(query ? "faq.matchingQuestions" : "faq.browseCommon")}</h2>
           </div>
-          <p className="text-sm text-slate-500" aria-live="polite">{results.length} {message(results.length === 1 ? "faq.question" : "faq.questions")}</p>
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
+            <p className="text-sm text-slate-500" aria-live="polite">{results.length} {message(results.length === 1 ? "faq.question" : "faq.questions")}</p>
+            <ViewModeToggle mode={viewMode} onChange={setViewMode} />
+          </div>
         </div>
         {hasQuery && <ActivitySearchSuggestion query={query} returnTo={returnTo} />}
         {results.length > 0 && hasQuery ? (
-          <div className="mt-7 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            {results.map((entry) => <FaqResult key={entry.faq.id} entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} />)}
-          </div>
+          <ViewModeItems
+            mode={viewMode}
+            gridClassName="mt-7 grid items-start gap-4 md:grid-cols-2"
+            listContainerClassName="mt-7"
+            items={results.map((entry) => ({
+              key: entry.faq.id,
+              node: <FaqResult entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} variant={variant} />,
+            }))}
+          />
         ) : results.length > 0 ? (
           <div className="mt-7 space-y-4">
             {browseGroups.map(({ groupId, entries: groupedEntries }) => (
@@ -114,13 +127,15 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
                     <DisclosureChevron />
                   </span>
                 </summary>
-                <div className="space-y-4 border-t border-slate-200 bg-slate-50 p-5">
-                  {groupedEntries.map((entry) => (
-                    <div key={entry.faq.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <FaqResult entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} />
-                    </div>
-                  ))}
-                </div>
+                <ViewModeItems
+                  mode={viewMode}
+                  gridClassName="grid items-start gap-4 md:grid-cols-2 border-t border-slate-200 bg-slate-50 p-5"
+                  listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                  items={groupedEntries.map((entry) => ({
+                    key: entry.faq.id,
+                    node: <FaqResult entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} variant={variant} />,
+                  }))}
+                />
               </details>
             ))}
           </div>

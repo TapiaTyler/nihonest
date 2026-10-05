@@ -4,7 +4,7 @@ import { storedValue, type KeyValueStore } from "./key-value-store";
 export type ViewMode = "cards" | "list";
 
 /** Pages that offer the toggle. Each remembers its own choice. */
-export const viewModePages = ["explore", "residence-statuses"] as const;
+export const viewModePages = ["explore", "residence-statuses", "faq"] as const;
 export type ViewModePage = (typeof viewModePages)[number];
 
 export const viewModeStorageKey = (page: ViewModePage) => `nihonest:view-mode:${page}:v1`;

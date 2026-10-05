@@ -82,11 +82,8 @@ export function ExploreResults({
             })} />
           )}
           {faqResults.length > 0 && (
-            <ResultSection id="result-faqs" title={message("explore.frequentlyAsked")} count={faqResults.length}>
-              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} translation={index.translationsByFaqId.get(entry.faq.id)} returnTo={returnTo} />)}
-              </div>
-            </ResultSection>
+            <ResultSection id="result-faqs" title={message("explore.frequentlyAsked")} count={faqResults.length} viewMode={viewMode} gridClassName="mt-6 grid items-start gap-4 md:grid-cols-2"
+              items={faqResults.map((entry) => ({ key: entry.faq.id, node: <FaqResult entry={entry} translation={index.translationsByFaqId.get(entry.faq.id)} returnTo={returnTo} variant={variant} /> }))} />
           )}
           {articleResults.length > 0 && (
             <ResultSection id="result-guides" title={message("explore.guides")} count={articleResults.length} viewMode={viewMode} items={articleResults.map((article) => {
@@ -138,14 +135,15 @@ function ResultJumpLink({ href, label, count }: Readonly<{ href: string; label: 
   );
 }
 
-/** A titled result type. FAQs pass their own list as children; other types pass items for the chosen view. */
-function ResultSection({ id, title, count, children, items, viewMode = "cards" }: Readonly<{
+/** A titled result type, shown as cards or a list. */
+function ResultSection({ id, title, count, children, items, viewMode = "cards", gridClassName = "mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3" }: Readonly<{
   id: string;
   title: string;
   count: number;
   children?: ReactNode;
   items?: readonly Readonly<{ key: string; node: ReactNode }>[];
   viewMode?: ViewMode;
+  gridClassName?: string;
 }>) {
   const { message } = useInterfaceMessages();
   const headingId = `${id}-heading`;
@@ -156,7 +154,7 @@ function ResultSection({ id, title, count, children, items, viewMode = "cards" }
         <span className="text-sm text-slate-500">{message("explore.sectionCount").replace("{count}", String(count)).replace("{label}", message(count === 1 ? "explore.matchSingular" : "explore.matchPlural"))}</span>
       </div>
       {items
-        ? <ViewModeItems mode={viewMode} gridClassName="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3" listContainerClassName="mt-6" items={items} />
+        ? <ViewModeItems mode={viewMode} gridClassName={gridClassName} listContainerClassName="mt-6" items={items} />
         : <div className="mt-6">{children}</div>}
     </section>
   );
