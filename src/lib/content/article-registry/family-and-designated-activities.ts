@@ -3,6 +3,7 @@ import SpouseOrChildOfJapaneseNational, { metadata as spouseOrChildOfJapaneseNat
 import SpouseOrChildOfPermanentResident, { metadata as spouseOrChildOfPermanentResidentMetadata } from "../../../../content/articles/spouse-or-child-of-permanent-resident.mdx";
 import LongTermResidentStatus, { metadata as longTermResidentStatusMetadata } from "../../../../content/articles/long-term-resident-status.mdx";
 import PermanentResidenceInJapan, { metadata as permanentResidenceInJapanMetadata } from "../../../../content/articles/permanent-residence-in-japan.mdx";
+import SpecialPermanentResidentsInJapan, { metadata as specialPermanentResidentsInJapanMetadata } from "../../../../content/articles/special-permanent-residents-in-japan.mdx";
 import DesignatedActivitiesStatus, { metadata as designatedActivitiesStatusMetadata } from "../../../../content/articles/designated-activities-status.mdx";
 import WorkingHolidayInJapan, { metadata as workingHolidayInJapanMetadata } from "../../../../content/articles/working-holiday-in-japan.mdx";
 import LongStaySightseeingDesignatedActivities, { metadata as longStaySightseeingDesignatedActivitiesMetadata } from "../../../../content/articles/long-stay-sightseeing-designated-activities.mdx";
@@ -21,6 +22,7 @@ export const familyAndDesignatedActivityArticleRegistrations = [
   [spouseOrChildOfPermanentResidentMetadata, SpouseOrChildOfPermanentResident],
   [longTermResidentStatusMetadata, LongTermResidentStatus],
   [permanentResidenceInJapanMetadata, PermanentResidenceInJapan],
+  [specialPermanentResidentsInJapanMetadata, SpecialPermanentResidentsInJapan],
   [designatedActivitiesStatusMetadata, DesignatedActivitiesStatus],
   [workingHolidayInJapanMetadata, WorkingHolidayInJapan],
   [longStaySightseeingDesignatedActivitiesMetadata, LongStaySightseeingDesignatedActivities],

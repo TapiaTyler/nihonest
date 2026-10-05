@@ -9,6 +9,7 @@ export const japaneseOrganizationNames: Readonly<Record<string, string>> = {
   "Consumer Affairs Agency": "消費者庁",
   "Council of Local Authorities for International Relations": "自治体国際化協会（クレア）",
   "Digital Agency": "デジタル庁",
+  "Government of Japan": "日本国政府",
   "Electricity and Gas Market Surveillance Commission": "電力・ガス取引監視等委員会",
   "Embassy of Japan in the United States of America": "在アメリカ合衆国日本国大使館",
   "Financial Services Agency": "金融庁",

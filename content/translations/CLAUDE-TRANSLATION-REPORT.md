@@ -51,16 +51,22 @@ Do not revert these user decisions:
 - **Circular-definition fixes:** where avoiding the headword forced an odd paraphrase (ナース for 看護師, a paraphrase of the 介護 status), use the natural term or name the status in quotes instead.
 - **jumin-zei:** the English record and the Japanese both separate the prior year's income from residence information as of January 1.
 
-## Catalog status (2026-09-23)
+## Catalog status (2026-10-05)
 
-**All 236 terms translated** (glossary complete on 2026-09-23). New English terms can be drafted with `npm run glossary:draft -- --next 5 --model opus`.
+**All 238 terms translated** (glossary complete on 2026-09-23; 特別永住者 and 特別永住者証明書 added on 2026-10-05 with `npm run glossary:draft`, $0.13, and reviewed by Claude). New English terms can be drafted with `npm run glossary:draft -- --next 5 --model opus`.
 
 | Generator ID | Terms | Meaning |
 |---|---|---|
 | `codex-assisted-claude-reviewed` | 28 | Codex drafts from before the trial. Claude reviewed them and made 13 corrections: official terms, 上陸 vs 入国, a circular 都道府県 definition, and minor wording. |
 | `claude-code-codex-reviewed` | 18 | Trial Claude drafts, reviewed by Codex before the delegation. |
-| `claude-code-claude-reviewed` | 190 | Pipeline batches 1 (40 terms, $1.96), 2 (40 terms, $1.88), 3 (40 terms, $1.83), and 4 (70 terms, $2.85), drafted by Opus 5.5 and reviewed by Claude. All workforce-field terms (`*-bunya`) use one standard wording, because their English records share one template: reuse it for new field terms. |
+| `claude-code-claude-reviewed` | 192 | Pipeline batches 1 (40 terms, $1.96), 2 (40 terms, $1.88), 3 (40 terms, $1.83), and 4 (70 terms, $2.85), drafted by Opus 5.5 and reviewed by Claude. All workforce-field terms (`*-bunya`) use one standard wording, because their English records share one template: reuse it for new field terms. |
 
+
+## Special Permanent Resident and residence-card batch (2026-10-05)
+
+Codex wrote the English; Claude checked it against the official ISA pages and the Special Act before translating. Carrying from age 16, the JPY 200,000 fine, the separate presentation penalty, the April 1, 2027 cancellation amendments, the "single failure is not envisaged" guidance, ex officio change to a status other than Permanent Resident, the Special Permanent Resident carrying exemption with a presentation duty, the June 14, 2026 certificate-validity rules (renewals counted from the old certificate's expiry, other cases from the application date), and the two-year special re-entry all matched; no English change was needed. "Act No. 60 of 2024" (令和6年法律第60号) was not confirmed from a fetched page. The October 1, 2026 Permanent Residence guideline revision is flagged in the article, not rewritten.
+
+Japanese: the new `special-permanent-residents-in-japan` article (family-status module) and the changed sections of `documents-received-when-entering-japan`, `permanent-residence-in-japan`, and `long-term-resident-status` were translated by Claude; unchanged Japanese text was kept. The four artifacts use the `claude-code-claude-reviewed` generator and stay `machine-translated`. Wording to keep: the Special Act is 入管特例法; "imprisonment" is 拘禁刑; fines and amounts use 200,000円; "Act No. 60 of 2024" is 令和6年法律第60号; the ex officio change is 「職権で別の在留資格への変更」, never a guaranteed 定住者. The Residence Statuses page aside now uses the `statusesPage.specialPermanentBody` and `statusesPage.specialPermanentLink` interface messages.
 
 ## Residence statuses
 
@@ -72,7 +78,7 @@ All 8 "Can I do this?" activities are translated with `npm run activity:draft` (
 
 ## FAQs
 
-All 116 FAQs have Japanese question and summary translations: 104 Codex drafts and 12 drafted with `npm run faq:draft` on 2026-09-25 ($0.43) and reviewed by Claude. New or changed English FAQs are drafted with `npm run faq:draft`, which uses the shared overlay pipeline. Each prompt includes the FAQ's linked glossary headwords and three accepted FAQ translations from the same browse group. Review the drafts in `.glossary-drafts/faq-<run>/`, then run `npm run faq:draft -- --integrate <dir>`: it refreshes an outdated FAQ's catalog line in place and appends new ones under the `claude-code-claude-reviewed` generator. `npm run faq:coverage` lists untranslated and outdated FAQs, along with gaps in English coverage (articles no FAQ links to, likely duplicate questions, shared search terms, and long summaries).
+All 118 FAQs have Japanese question and summary translations: 104 Codex drafts, 12 drafted with `npm run faq:draft` on 2026-09-25 ($0.43), and 2 drafted on 2026-10-05 ($0.07, Special Permanent Resident and the forgotten-card question), all reviewed by Claude. New or changed English FAQs are drafted with `npm run faq:draft`, which uses the shared overlay pipeline. Each prompt includes the FAQ's linked glossary headwords and three accepted FAQ translations from the same browse group. Review the drafts in `.glossary-drafts/faq-<run>/`, then run `npm run faq:draft -- --integrate <dir>`: it refreshes an outdated FAQ's catalog line in place and appends new ones under the `claude-code-claude-reviewed` generator. `npm run faq:coverage` lists untranslated and outdated FAQs, along with gaps in English coverage (articles no FAQ links to, likely duplicate questions, shared search terms, and long summaries).
 
 ## Municipality guidance
 
@@ -100,7 +106,7 @@ The finder, prefecture map, and region map read their text from the interface me
 
 ## Source titles and organizations
 
-Japanese readers see each Japanese-language source's own Japanese page title (`src/data/sources/japanese-source-titles.ts`, 1,339 of 1,451 sources, taken from each page's title with the site name removed and reviewed by Claude on 2026-09-28) and the organization's official Japanese name (`src/data/sources/japanese-organization-names.ts`, all 146). Sources without a Japanese title are PDFs, images, unreachable pages, or pages whose title gives only the site name; they keep their English title, marked as English, as do English-language sources. When a source is added or its URL changes, add or refresh its title from the cached page in `.local-guidance/` (`npm run local-guidance -- fetch <url>`). `src/data/sources/japanese-names.test.ts` requires a Japanese name for every organization.
+Japanese readers see each Japanese-language source's own Japanese page title (`src/data/sources/japanese-source-titles.ts`, 1,413 of 1,458 Japanese-language sources, taken from each page's title with the site name removed; 1,339 reviewed by Claude on 2026-09-28 and 74 more added on 2026-10-05) and the organization's official Japanese name (`src/data/sources/japanese-organization-names.ts`, all 147). Sources without a Japanese title are PDFs, images, unreachable pages, or pages whose title gives only the site name; they keep their English title, marked as English, as do English-language sources. `npm run sources:titles` lists Japanese-language sources without a title; add `--fetch` to fetch those pages and propose titles with the site name removed (`src/lib/sources/source-title.ts`), and `--write` to add them. Review every proposal before committing. Run it whenever sources are added or a URL changes. Pages that render their title with scripts, such as the e-Gov law viewer, need the official title added by hand. The 45 still without a title (2026-10-05) are 22 files, 11 old Ministry of Justice pages titled only 「法務省」, 2 Q&A pages titled "Answer (…)", one page titled only 「外国人」, and 9 pages that returned an error or could not be fetched; those links need checking. `src/data/sources/japanese-names.test.ts` requires a Japanese name for every organization.
 
 ## How the pipeline was developed (background)
 

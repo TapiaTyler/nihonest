@@ -39,6 +39,7 @@
     "activity:draft": "tsx scripts/draft-activity-translations.ts",
     "faq:coverage": "tsx scripts/faq-coverage.ts",
     "faq:draft": "tsx scripts/draft-faq-translations.ts",
+    "sources:titles": "tsx scripts/source-titles.ts",
     "architecture:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/check-architecture.ts",
     "config:check": "tsx scripts/check-config.ts",
     "bundle:check": "tsx scripts/check-client-bundles.ts",

@@ -18,7 +18,7 @@ const faqEntries = [
 
 describe("FAQ registry assembly", () => {
   it("assembles every browse-group-owned FAQ exactly once in deterministic module order", () => {
-    expect(faqEntries).toHaveLength(116);
+    expect(faqEntries).toHaveLength(118);
     expect(faqs.map(({ id }) => id)).toEqual(faqEntries.map(({ id }) => id));
     expect(new Set(faqs.map(({ id }) => id)).size).toBe(faqs.length);
   });

@@ -16,7 +16,7 @@ describe("standalone article metadata", () => {
     expect(serializeArticleMetadataModule(produced)).toBe(await readFile(resolve("src/data/generated/article-metadata.ts"), "utf8"));
     expect(serializeArticleMetadataModule(await readOrderedArticleMetadata(process.cwd()))).toBe(serializeArticleMetadataModule(produced));
     expect(plain.getAllArticles()).toEqual(onlyMetadata(web.getAllArticles()));
-    expect(plain.getAllArticles()).toHaveLength(97);
+    expect(plain.getAllArticles()).toHaveLength(98);
     expect(plain.getAllArticles().every((article) => !Object.hasOwn(article, "Content"))).toBe(true);
   });
   it("preserves every known ID/slug lookup and unknown lookup behavior", () => {
