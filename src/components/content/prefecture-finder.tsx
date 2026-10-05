@@ -6,6 +6,7 @@ import { searchPrefectures, type FinderPrefecture } from "@/domain/geography/pre
 import { fillInterfaceMessage, type InterfaceMessageGroup } from "@/domain/localization/interface-message-lookup";
 import { groupMunicipalityOptions, tokyoAreas } from "@/domain/geography/tokyo-areas";
 import { prefectureGeneralGuides, prefectureNationalGuides, type FinderCoverage, type FinderMunicipality } from "@/lib/content/prefecture-finder-guides";
+import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 import { PrefectureMap } from "./prefecture-map";
 
 const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
@@ -39,6 +40,13 @@ export function PrefectureFinder({
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [selectedMunicipalityId, setSelectedMunicipalityId] = useState("");
+  const choosePrefecture = (id: string) => {
+    setSelectedId(id);
+    setSelectedMunicipalityId("");
+  };
+  // Input made before this lazily loaded component hydrated is applied once it can respond.
+  const searchRef = usePreHydrationInput<HTMLInputElement>(setQuery);
+  const prefectureRef = usePreHydrationInput<HTMLSelectElement>(choosePrefecture);
   // Japanese readers expect the official order by prefecture code (北海道 to 沖縄県), not English alphabetical order.
   const matches = locale === "ja"
     ? [...searchPrefectures(prefectures, query)].sort((left, right) => left.code.localeCompare(right.code))
@@ -62,21 +70,18 @@ export function PrefectureFinder({
           messages={messages}
           prefectures={prefectures}
           selectedId={selectedId}
-          onSelect={(id) => {
-            setSelectedId(id);
-            setSelectedMunicipalityId("");
-          }}
+          onSelect={choosePrefecture}
         />
         <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-700">{messages["finder.intro"]}</p>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-semibold text-slate-900" htmlFor={searchId}>{messages["finder.searchLabel"]}</label>
-            <input id={searchId} type="search" value={query} placeholder={messages["finder.searchPlaceholder"]} onChange={(event) => setQuery(event.target.value)} className={controlClass} />
+            <input ref={searchRef} id={searchId} type="search" value={query} placeholder={messages["finder.searchPlaceholder"]} onChange={(event) => setQuery(event.target.value)} className={controlClass} />
             {query && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-teal-900 underline focus:outline-2 focus:outline-offset-2 focus:outline-teal-700" onClick={() => setQuery("")}>{messages["finder.clearSearch"]}</button>}
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-900" htmlFor={selectId}>{messages["finder.selectLabel"]}</label>
-            <select id={selectId} className={`app-select ${controlClass}`} value={selectedId} onChange={(event) => { setSelectedId(event.target.value); setSelectedMunicipalityId(""); }}>
+            <select ref={prefectureRef} id={selectId} className={`app-select ${controlClass}`} value={selectedId} onChange={(event) => choosePrefecture(event.target.value)}>
               <option value="">{messages["finder.selectPlaceholder"]}</option>
               {selectedIsHidden && selected && <option value={selected.id}>{prefectureLabel(selected.names)}</option>}
               {matches.map((prefecture) => <option key={prefecture.id} value={prefecture.id}>{prefectureLabel(prefecture.names)}</option>)}

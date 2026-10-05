@@ -25,13 +25,11 @@ import {
 import { getArticleGroupSearchTranslations, getJapaneseArticleTranslation, getJourneyTranslations, getLocalizedGlossaryText } from "@/lib/content/translations";
 import { ContinueExploringList } from "@/components/content/continue-exploring-list";
 import { InterfaceText, LocalizedText } from "@/components/localization/interface-text";
-import { LocalGuidancePanel } from "@/components/local-guidance/local-guidance-panel";
 import { LinkedAnnotatedDocumentViewer, LinkedLocalGuidancePanel } from "@/components/local-guidance/linked-location";
 import { getGeneralLocalAdvice } from "@/data/local-guidance/general-advice";
 import { getLocalGuidanceForArticle, getLocalLocationAliases, getSelectableLocalGuidanceLocations } from "@/lib/content/local-guidance";
 import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields } from "@/lib/content/local-guidance-translations";
 import { renderJapaneseArticleComponents } from "@/components/content/japanese-article-components";
-import { AnnotatedDocumentViewer } from "@/components/documents/annotated-document-viewer";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
@@ -141,15 +139,11 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
         </div>
 
         {annotatedDocuments.length > 0 && (
-          <Suspense fallback={<AnnotatedDocumentViewer key="documents-saved" families={annotatedDocuments} />}>
-            <LinkedAnnotatedDocumentViewer families={annotatedDocuments} locationAliases={locationAliases} />
-          </Suspense>
+          <LinkedAnnotatedDocumentViewer families={annotatedDocuments} locationAliases={locationAliases} />
         )}
 
         {(localGuidance.length > 0 || getGeneralLocalAdvice(metadata.id)) && (
-          <Suspense fallback={<LocalGuidancePanel key="local-guidance-saved" {...localGuidancePanelProps} />}>
-            <LinkedLocalGuidancePanel {...localGuidancePanelProps} locationAliases={locationAliases} />
-          </Suspense>
+          <LinkedLocalGuidancePanel {...localGuidancePanelProps} locationAliases={locationAliases} />
         )}
 
         <div className="mt-12">
