@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { ResidenceStatusExplorer } from "./residence-status-explorer";
 import { residenceStatuses } from "@/data/residence-statuses";
+import { viewModeStorageKey } from "@/lib/storage/view-mode";
 
 describe("ResidenceStatusExplorer", () => {
   it("sorts category filters and places every status in one open category group", () => {
@@ -50,5 +51,33 @@ describe("ResidenceStatusExplorer", () => {
     fireEvent.click(screen.getByRole("button", { name: "Work" }));
     expect(screen.getByRole("link", { name: "Artist" })).toHaveTextContent("Reviewed");
     expect(screen.getByRole("link", { name: "Professor" })).toHaveTextContent("Draft");
+  });
+
+  it("shows the same statuses in the same order as a list and remembers the choice for this page", () => {
+    window.localStorage.clear();
+    window.history.replaceState(null, "", "/residence-statuses");
+    const statusLinks = () => screen.getAllByRole("link")
+      .filter((link) => link.getAttribute("href")?.startsWith("/residence-statuses/"))
+      .map((link) => link.getAttribute("aria-label"));
+    const { container, unmount } = render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
+    const toggle = screen.getByRole("group", { name: "Display as" });
+    expect(screen.getByRole("button", { name: "Cards" })).toHaveAttribute("aria-pressed", "true");
+    const cardOrder = statusLinks();
+    expect(container.querySelector("details ul")).toBeNull();
+
+    fireEvent.click(within(toggle).getByRole("button", { name: "List" }));
+    expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
+    expect(statusLinks()).toEqual(cardOrder);
+    expect(container.querySelectorAll("details ul")).toHaveLength(8);
+    expect(window.localStorage.getItem(viewModeStorageKey("residence-statuses"))).toBe("list");
+    expect(window.localStorage.getItem(viewModeStorageKey("explore"))).toBeNull();
+
+    // Filtering still works in the list, and the remembered choice applies on the next visit.
+    fireEvent.click(screen.getByRole("button", { name: "Work" }));
+    expect(screen.getByRole("link", { name: "Artist" }).closest("li")).not.toBeNull();
+    unmount();
+    render(<ResidenceStatusExplorer residenceStatuses={residenceStatuses} />);
+    expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
+    window.localStorage.clear();
   });
 });

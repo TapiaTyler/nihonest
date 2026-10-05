@@ -8,6 +8,8 @@ import type {
 import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels } from "@/domain/residence-status/residence-status";
 import { ResidenceStatusCard } from "./residence-status-card";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
+import { useViewMode, ViewModeToggle } from "@/components/navigation/view-mode-toggle";
+import { ViewModeItems } from "@/components/navigation/view-mode-items";
 import { useOptionalContentLocale } from "@/components/localization/content-locale-provider";
 import { defaultContentLocale } from "@/domain/localization/content-locale";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
@@ -23,6 +25,8 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
   const locale = useOptionalContentLocale()?.locale ?? defaultContentLocale;
   const { message } = useInterfaceMessages();
   const [activeFilter, setActiveFilter] = useState<"all" | ResidenceStatusCategory>("all");
+  const [viewMode, setViewMode] = useViewMode("residence-statuses");
+  const rowVariant = viewMode === "list" ? "row" : "card";
   const filters: readonly { id: "all" | ResidenceStatusCategory; label: string }[] = [
     { id: "all", label: message("status.all") },
     ...RESIDENCE_STATUS_CATEGORY_IDS.map((id) => ({
@@ -81,9 +85,12 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
         ))}
       </div>
 
-      <p className="mt-5 text-sm text-slate-500" aria-live="polite">
-        {visibleStatuses.length} / {residenceStatuses.length} {message("status.statuses")}
-      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <p className="min-w-0 flex-1 text-sm text-slate-500" aria-live="polite">
+          {visibleStatuses.length} / {residenceStatuses.length} {message("status.statuses")}
+        </p>
+        <div className="ml-auto"><ViewModeToggle mode={viewMode} onChange={setViewMode} /></div>
+      </div>
 
       {activeFilter === "all" ? (
         <div className="mt-6 space-y-4">
@@ -96,16 +103,28 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
                   <DisclosureChevron />
                 </span>
               </summary>
-              <div className="grid min-w-0 grid-cols-1 gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3">
-                {statuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} />)}
-              </div>
+              <ViewModeItems
+                mode={viewMode}
+                gridClassName="grid min-w-0 grid-cols-1 gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3"
+                listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                items={statuses.map((residenceStatus) => ({
+                  key: residenceStatus.id,
+                  node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} variant={rowVariant} showCategory={false} locale={locale} />,
+                }))}
+              />
             </details>
           ))}
         </div>
       ) : (
-        <div className="mt-6 grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {visibleStatuses.map((residenceStatus) => <ResidenceStatusCard key={residenceStatus.id} residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[residenceStatus.category] : residenceStatusCategoryLabels[residenceStatus.category]} returnTo={returnTo} />)}
-        </div>
+        <ViewModeItems
+          mode={viewMode}
+          gridClassName="mt-6 grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
+          listContainerClassName="mt-6"
+          items={visibleStatuses.map((residenceStatus) => ({
+            key: residenceStatus.id,
+            node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[residenceStatus.category] : residenceStatusCategoryLabels[residenceStatus.category]} returnTo={returnTo} variant={rowVariant} locale={locale} />,
+          }))}
+        />
       )}
     </div>
   );

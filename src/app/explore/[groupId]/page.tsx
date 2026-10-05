@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InterfaceFormat, InterfaceText } from "@/components/localization/interface-text";
 import { notFound } from "next/navigation";
-import { LocalizedArticleCard } from "@/components/localization/localized-article-card";
+import { GroupArticleList } from "@/components/discovery/group-article-list";
 import { LocalizedArticleGroupHeading } from "@/components/localization/localized-article-group";
 import { BackToExploreLink } from "@/components/navigation/back-to-explore-link";
 import { getAllArticleGroups, getArticleGroupById, getArticlesByGroup, getJourneysByGroup } from "@/lib/content/article-metadata";
@@ -54,9 +54,7 @@ export default async function ArticleGroupPage({ params }: PageProps<"/explore/[
 
       <section className="mt-10" aria-labelledby="group-guides-heading">
         <h2 id="group-guides-heading" className="sr-only"><InterfaceFormat id="group.guidesIn" values={{ group: group.title }} japaneseValues={{ group: groupTitle }} /></h2>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {articles.map((article) => <LocalizedArticleCard key={article.metadata.id} article={article.metadata} translations={articleTranslations} />)}
-        </div>
+        <GroupArticleList articles={articles.map(({ metadata }) => metadata)} translations={articleTranslations} />
       </section>
     </div>
   );

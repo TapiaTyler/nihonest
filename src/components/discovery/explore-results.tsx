@@ -11,6 +11,9 @@ import type { ContentLocalePreference } from "@/domain/localization/content-loca
 import type { FaqEntry } from "@/lib/content/faqs";
 import type { KnowledgebaseSearchFilters, KnowledgebaseSearchIndex, KnowledgebaseSearchResult } from "@/lib/search/knowledgebase-search";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
+import { ViewModeToggle } from "@/components/navigation/view-mode-toggle";
+import { ViewModeItems } from "@/components/navigation/view-mode-items";
+import type { ViewMode } from "@/lib/storage/view-mode";
 
 export function ExploreResults({
   results,
@@ -21,6 +24,8 @@ export function ExploreResults({
   returnTo,
   searchIsPending,
   clearSearch,
+  viewMode = "cards",
+  setViewMode,
 }: Readonly<{
   results: readonly KnowledgebaseSearchResult[];
   index: KnowledgebaseSearchIndex;
@@ -30,8 +35,11 @@ export function ExploreResults({
   returnTo: string;
   searchIsPending: boolean;
   clearSearch: () => void;
+  viewMode?: ViewMode;
+  setViewMode?: (mode: ViewMode) => void;
 }>) {
   const { message } = useInterfaceMessages();
+  const variant = viewMode === "list" ? "row" : "card";
   const groupResults = results.flatMap((result) => result.kind === "group" ? [result.group] : []);
   const faqResults = results.flatMap((result) => {
     if (result.kind !== "faq") return [];
@@ -43,12 +51,15 @@ export function ExploreResults({
 
   return (
     <section className="mt-12" aria-labelledby="search-results-heading" aria-busy={searchIsPending}>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="min-w-0 flex-1 basis-72">
           <p className="eyebrow">{message("explore.resultsEyebrow")}</p>
           <h2 id="search-results-heading" className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{message("explore.resultsHeading")}</h2>
         </div>
-        <p className="text-sm text-slate-500" aria-live="polite">{message("explore.resultCount").replace("{count}", String(results.length)).replace("{label}", message(results.length === 1 ? "explore.resultSingular" : "explore.resultPlural"))}</p>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
+          <p className="text-sm text-slate-500" aria-live="polite">{message("explore.resultCount").replace("{count}", String(results.length)).replace("{label}", message(results.length === 1 ? "explore.resultSingular" : "explore.resultPlural"))}</p>
+          {setViewMode && <ViewModeToggle mode={viewMode} onChange={setViewMode} />}
+        </div>
       </div>
       {filters.query.trim() && <ActivitySearchSuggestion query={filters.query} returnTo={returnTo} />}
       {results.length > 0 ? (
@@ -62,46 +73,41 @@ export function ExploreResults({
           </nav>
 
           {groupResults.length > 0 && (
-            <ResultSection id="result-groups" title={message("explore.contentGroups")} count={groupResults.length}>
-              {groupResults.map((group) => {
-                const translation = index.translationsByGroupId.get(group.id);
-                const presentedGroup = translation
-                  ? { ...group, title: translation.title, description: translation.description }
-                  : group;
-                return <ArticleGroupCard key={group.id} group={presentedGroup} returnTo={returnTo} contentLanguage={translation ? locale : "en"} />;
-              })}
-            </ResultSection>
+            <ResultSection id="result-groups" title={message("explore.contentGroups")} count={groupResults.length} viewMode={viewMode} items={groupResults.map((group) => {
+              const translation = index.translationsByGroupId.get(group.id);
+              const presentedGroup = translation
+                ? { ...group, title: translation.title, description: translation.description }
+                : group;
+              return { key: group.id, node: <ArticleGroupCard group={presentedGroup} returnTo={returnTo} contentLanguage={translation ? locale : "en"} variant={variant} /> };
+            })} />
           )}
           {faqResults.length > 0 && (
-            <ResultSection id="result-faqs" title={message("explore.frequentlyAsked")} count={faqResults.length} layout="list">
-              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                {faqResults.map((entry) => <FaqResult key={entry.faq.id} entry={entry} translation={index.translationsByFaqId.get(entry.faq.id)} returnTo={returnTo} />)}
-              </div>
-            </ResultSection>
+            <ResultSection id="result-faqs" title={message("explore.frequentlyAsked")} count={faqResults.length} viewMode={viewMode} gridClassName="mt-6 grid items-start gap-4 md:grid-cols-2"
+              items={faqResults.map((entry) => ({ key: entry.faq.id, node: <FaqResult entry={entry} translation={index.translationsByFaqId.get(entry.faq.id)} returnTo={returnTo} variant={variant} /> }))} />
           )}
           {articleResults.length > 0 && (
-            <ResultSection id="result-guides" title={message("explore.guides")} count={articleResults.length}>
-              {articleResults.map((article) => {
-                const translation = index.translationsByArticleId.get(article.id);
-                const presentedArticle = translation
-                  ? { ...article, title: translation.title, description: translation.description }
-                  : article;
-                return (
+            <ResultSection id="result-guides" title={message("explore.guides")} count={articleResults.length} viewMode={viewMode} items={articleResults.map((article) => {
+              const translation = index.translationsByArticleId.get(article.id);
+              const presentedArticle = translation
+                ? { ...article, title: translation.title, description: translation.description }
+                : article;
+              return {
+                key: article.id,
+                node: (
                   <ArticleCard
-                    key={article.id}
                     article={presentedArticle}
                     returnTo={returnTo}
                     notice={translation ? message("explore.japanesePilotNotice") : undefined}
                     contentLanguage={translation ? locale : "en"}
+                    variant={variant}
                   />
-                );
-              })}
-            </ResultSection>
+                ),
+              };
+            })} />
           )}
           {glossaryResults.length > 0 && (
-            <ResultSection id="result-terms" title={message("explore.glossaryTerms")} count={glossaryResults.length}>
-              {glossaryResults.map((term) => <GlossaryCard key={term.id} term={term} translation={index.translationsByGlossaryId.get(term.id)} />)}
-            </ResultSection>
+            <ResultSection id="result-terms" title={message("explore.glossaryTerms")} count={glossaryResults.length} viewMode={viewMode}
+              items={glossaryResults.map((term) => ({ key: term.id, node: <GlossaryCard term={term} translation={index.translationsByGlossaryId.get(term.id)} variant={variant} /> }))} />
           )}
         </div>
       ) : (
@@ -129,7 +135,16 @@ function ResultJumpLink({ href, label, count }: Readonly<{ href: string; label: 
   );
 }
 
-function ResultSection({ id, title, count, children, layout = "grid" }: Readonly<{ id: string; title: string; count: number; children: ReactNode; layout?: "grid" | "list" }>) {
+/** A titled result type, shown as cards or a list. */
+function ResultSection({ id, title, count, children, items, viewMode = "cards", gridClassName = "mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3" }: Readonly<{
+  id: string;
+  title: string;
+  count: number;
+  children?: ReactNode;
+  items?: readonly Readonly<{ key: string; node: ReactNode }>[];
+  viewMode?: ViewMode;
+  gridClassName?: string;
+}>) {
   const { message } = useInterfaceMessages();
   const headingId = `${id}-heading`;
   return (
@@ -138,7 +153,9 @@ function ResultSection({ id, title, count, children, layout = "grid" }: Readonly
         <h3 id={headingId} className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h3>
         <span className="text-sm text-slate-500">{message("explore.sectionCount").replace("{count}", String(count)).replace("{label}", message(count === 1 ? "explore.matchSingular" : "explore.matchPlural"))}</span>
       </div>
-      <div className={layout === "grid" ? "mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3" : "mt-6"}>{children}</div>
+      {items
+        ? <ViewModeItems mode={viewMode} gridClassName={gridClassName} listContainerClassName="mt-6" items={items} />
+        : <div className="mt-6">{children}</div>}
     </section>
   );
 }

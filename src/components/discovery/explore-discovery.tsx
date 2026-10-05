@@ -6,6 +6,7 @@ import { ExploreGroupBrowser } from "@/components/discovery/explore-group-browse
 import { ExploreResults } from "@/components/discovery/explore-results";
 import { useExploreSearchState } from "@/components/discovery/explore-search-state";
 import { useContentLocale } from "@/components/localization/content-locale-provider";
+import { useViewMode } from "@/components/navigation/view-mode-toggle";
 import type { ArticleMetadata } from "@/domain/article/article";
 import type { ArticleGroup } from "@/domain/discovery/discovery";
 import type { JapaneseTerm } from "@/domain/glossary/glossary";
@@ -29,6 +30,8 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
 }>) {
   const { locale } = useContentLocale();
   const searchState = useExploreSearchState(residenceStatuses, locale);
+  // One remembered choice for Explore, shared by the group browser and search results.
+  const [viewMode, setViewMode] = useViewMode("explore");
   const knowledgebaseIndex = useMemo(
     () => buildKnowledgebaseSearchIndex(groups, articles, terms, faqEntries.map(({ faq }) => faq), { locale, articleTranslations, groupTranslations, faqTranslations, glossaryTranslations }),
     [articleTranslations, articles, faqEntries, faqTranslations, glossaryTranslations, groupTranslations, groups, locale, terms],
@@ -59,9 +62,11 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
           returnTo={searchState.returnTo}
           searchIsPending={searchState.searchIsPending}
           clearSearch={searchState.clearSearch}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
         />
       ) : (
-        <ExploreGroupBrowser groups={groups} translations={groupTranslations} locale={locale} />
+        <ExploreGroupBrowser groups={groups} translations={groupTranslations} locale={locale} viewMode={viewMode} setViewMode={setViewMode} />
       )}
     </div>
   );
