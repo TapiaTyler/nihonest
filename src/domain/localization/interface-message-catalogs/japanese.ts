@@ -772,6 +772,8 @@ export const japaneseInterfaceMessages = {
   "view.label": "表示形式",
   "view.cards": "カード",
   "view.list": "リスト",
+  "statusesPage.specialPermanentBody": "特別永住者は、入管特例法に基づく別の法的地位で、以下に掲載している通常の在留資格には含まれません。証明書や携帯に関するルールも、「永住者」や「定住者」とは異なります。",
+  "statusesPage.specialPermanentLink": "特別永住者について読む",
   "regionMap.map": "日本の地方区分の地図",
   "regionMap.okinawaMap": "沖縄の地図",
   "regionMap.select": "地図または凡例から地方を選ぶと、その地方の都道府県が表示されます。",

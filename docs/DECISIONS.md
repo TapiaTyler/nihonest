@@ -1266,6 +1266,18 @@ The content catalog, source relationships, translations, and municipality supple
 
 ---
 
+## ADR-066 — Special Permanent Resident guidance remains separate from ordinary residence statuses
+
+Status: Accepted (2026-10-05)
+
+Decision: Explain Special Permanent Resident in its own sourced article, glossary entries, and FAQs. Link the guide visibly from Residence Statuses and the family-and-long-term-residence content group, but do not insert it into the ordinary `ResidenceStatus` catalog or offer it as an onboarding journey route.
+
+Reason: Special Permanent Resident is a legal position under the immigration Special Act. Treating it as another ordinary residence status would obscure its historical eligibility, separate certificate, carrying exemption, and re-entry rules. Long-Term Resident remains an ordinary, time-limited residence status; neither position is a generic upgrade or automatic fallback for Permanent Resident.
+
+Consequences: Discovery can cover the separate regime without changing status filters, personalization, or eligibility structures. Guidance must distinguish existing residence-card penalties from the Permanent Resident cancellation amendments effective April 1, 2027, and must not imply that a single forgotten card automatically causes cancellation.
+
+---
+
 # Future ADRs
 
 Append new decisions using:

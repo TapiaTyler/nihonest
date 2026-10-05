@@ -770,6 +770,8 @@ export const englishInterfaceMessages = {
   "view.label": "Display as",
   "view.cards": "Cards",
   "view.list": "List",
+  "statusesPage.specialPermanentBody": "Special Permanent Resident is a separate legal position under the immigration Special Act, not one of the ordinary statuses listed below. Its certificate and carrying rules differ from Permanent Resident and Long-Term Resident.",
+  "statusesPage.specialPermanentLink": "Read about Special Permanent Residents",
   "regionMap.map": "Map of Japan's regions",
   "regionMap.okinawaMap": "Map of Okinawa",
   "regionMap.select": "Select a region on the map or in the legend to see its prefectures.",

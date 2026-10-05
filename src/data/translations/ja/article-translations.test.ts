@@ -69,6 +69,7 @@ const sourcePaths: Readonly<Record<string, string>> = {
   "spouse-or-child-of-japanese-national": "content/articles/spouse-or-child-of-japanese-national.mdx",
   "spouse-or-child-of-permanent-resident": "content/articles/spouse-or-child-of-permanent-resident.mdx",
   "long-term-resident-status": "content/articles/long-term-resident-status.mdx",
+  "special-permanent-residents-in-japan": "content/articles/special-permanent-residents-in-japan.mdx",
   "choosing-a-residence-status-for-teaching-in-japan": "content/articles/choosing-a-residence-status-for-teaching-in-japan.mdx",
   "professor-status": "content/articles/professor-status.mdx",
   "instructor-status": "content/articles/instructor-status.mdx",
@@ -220,25 +221,26 @@ describe("Japanese article translation registry", () => {
     expect(currentJapaneseArticleTranslations[56].fields.body).toContain("[日本人の配偶者等](/glossary/nihonjin-no-haigusha-to)");
     expect(currentJapaneseArticleTranslations[57].fields.body).toContain("[永住者の配偶者等](/glossary/eijusha-no-haigusha-to)");
     expect(currentJapaneseArticleTranslations[58].fields.body).toContain("[定住者](/glossary/teijusha)");
-    expect(currentJapaneseArticleTranslations[59].fields.body).toContain("[外国語指導助手](/glossary/gaikokugo-shido-joshu)");
-    expect(currentJapaneseArticleTranslations[60].fields.body).toContain("[教授](/glossary/kyoju)");
-    expect(currentJapaneseArticleTranslations[61].fields.body).toContain("[教育](/glossary/kyoiku)");
-    expect(currentJapaneseArticleTranslations[62].fields.body).toContain("[技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)");
-    expect(currentJapaneseArticleTranslations[63].fields.body).toContain("[副業・兼業](/glossary/fukugyo-kengyo)");
-    expect(currentJapaneseArticleTranslations[64].fields.body).toContain("[芸術](/glossary/geijutsu)");
-    expect(currentJapaneseArticleTranslations[65].fields.body).toContain("[報道](/glossary/hodo)");
-    expect(currentJapaneseArticleTranslations[66].fields.body).toContain("[研究](/glossary/kenkyu)");
-    expect(currentJapaneseArticleTranslations[67].fields.body).toContain("[企業内転勤](/glossary/kigyonai-tenkin)");
-    expect(currentJapaneseArticleTranslations[68].fields.body).toContain("[宗教](/glossary/shukyo)");
-    expect(currentJapaneseArticleTranslations[69].fields.body).toContain("[技能実習](/glossary/gino-jisshu)");
-    expect(currentJapaneseArticleTranslations[70].fields.body).toContain("[育成就労](/glossary/ikusei-shuro)");
-    expect(currentJapaneseArticleTranslations[71].fields.body).toContain("[特定技能](/glossary/tokutei-gino)");
-    expect(currentJapaneseArticleTranslations[72].fields.body).toContain("[技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)");
-    expect(currentJapaneseArticleTranslations[73].fields.body).toContain("[興行](/glossary/kogyo)");
-    expect(currentJapaneseArticleTranslations[74].fields.body).toContain("[技能](/glossary/gino)");
-    expect(currentJapaneseArticleTranslations[75].fields.body).toContain("[文化活動](/glossary/bunka-katsudo)");
-    expect(currentJapaneseArticleTranslations[76].fields.body).toContain("[研修](/glossary/kenshu)");
-    expect(currentJapaneseArticleTranslations[77].fields.body).toContain("[特定活動](/glossary/tokutei-katsudo)");
+    expect(currentJapaneseArticleTranslations[59].fields.body).toContain("[特別永住者](/glossary/tokubetsu-eijusha)");
+    expect(currentJapaneseArticleTranslations[60].fields.body).toContain("[外国語指導助手](/glossary/gaikokugo-shido-joshu)");
+    expect(currentJapaneseArticleTranslations[61].fields.body).toContain("[教授](/glossary/kyoju)");
+    expect(currentJapaneseArticleTranslations[62].fields.body).toContain("[教育](/glossary/kyoiku)");
+    expect(currentJapaneseArticleTranslations[63].fields.body).toContain("[技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)");
+    expect(currentJapaneseArticleTranslations[64].fields.body).toContain("[副業・兼業](/glossary/fukugyo-kengyo)");
+    expect(currentJapaneseArticleTranslations[65].fields.body).toContain("[芸術](/glossary/geijutsu)");
+    expect(currentJapaneseArticleTranslations[66].fields.body).toContain("[報道](/glossary/hodo)");
+    expect(currentJapaneseArticleTranslations[67].fields.body).toContain("[研究](/glossary/kenkyu)");
+    expect(currentJapaneseArticleTranslations[68].fields.body).toContain("[企業内転勤](/glossary/kigyonai-tenkin)");
+    expect(currentJapaneseArticleTranslations[69].fields.body).toContain("[宗教](/glossary/shukyo)");
+    expect(currentJapaneseArticleTranslations[70].fields.body).toContain("[技能実習](/glossary/gino-jisshu)");
+    expect(currentJapaneseArticleTranslations[71].fields.body).toContain("[育成就労](/glossary/ikusei-shuro)");
+    expect(currentJapaneseArticleTranslations[72].fields.body).toContain("[特定技能](/glossary/tokutei-gino)");
+    expect(currentJapaneseArticleTranslations[73].fields.body).toContain("[技術・人文知識・国際業務](/glossary/gijutsu-jinbun-kokusai)");
+    expect(currentJapaneseArticleTranslations[74].fields.body).toContain("[興行](/glossary/kogyo)");
+    expect(currentJapaneseArticleTranslations[75].fields.body).toContain("[技能](/glossary/gino)");
+    expect(currentJapaneseArticleTranslations[76].fields.body).toContain("[文化活動](/glossary/bunka-katsudo)");
+    expect(currentJapaneseArticleTranslations[77].fields.body).toContain("[研修](/glossary/kenshu)");
+    expect(currentJapaneseArticleTranslations[78].fields.body).toContain("[特定活動](/glossary/tokutei-katsudo)");
     const geographyBody = currentJapaneseArticleTranslations.find(({ contentId }) => contentId === "understanding-japan-geography-government-and-language")?.fields.body;
     expect(geographyBody).toContain(":::japan-region-map");
     expect(geographyBody).toContain(":::japan-prefecture-finder");

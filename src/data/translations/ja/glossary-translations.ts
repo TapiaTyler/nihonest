@@ -25,6 +25,7 @@ const glossaryPromptRevisionBatch2 = japaneseGlossaryPromptRevisions["2026-09-23
 const pipelineBatch2GeneratedAt = "2026-09-23T15:39:53.000Z";
 const pipelineBatch3GeneratedAt = "2026-09-23T15:48:24.000Z";
 const pipelineBatch4GeneratedAt = "2026-09-23T16:02:39.000Z";
+const specialPermanentResidentGeneratedAt = "2026-10-05T14:42:35.000Z";
 
 function defineGlossaryTranslation(contentId: string, sourceRevision: string, shortDefinition: string, detailedExplanation: string, commonContext: string, artifactGenerator: TranslationArtifact["generator"] = generator, generatedAt = "2026-09-19T00:00:00.000Z", artifactPromptRevision = promptRevision) {
   return translationArtifactSchema.parse({
@@ -290,4 +291,6 @@ export const japaneseGlossaryTranslations = [
   defineGlossaryTranslation("torihiki-joken", "8cc7d78d85ef0d2e244bda1fc983f34c2d1646cded7453889c28f0623555b692", "業務の内容、期日、場所、報酬、支払いなど、事業上の契約について定められた事項です。", "対象となるフリーランスへの業務委託では、発注事業者が、必要な取引条件を書面または電磁的方法で明示する必要があります。最初に定められない事項がある場合は、正当な理由と決まる予定日を示し、決まった後に補って明示する必要があります。", "注文、業務内容を定めた書面（SOW）、注文書、メールでの確認、フリーランス法の遵守に関する場面で出てきます。", pipelineGenerator, pipelineBatch4GeneratedAt, glossaryPromptRevisionBatch2),
   defineGlossaryTranslation("gaikoku-tokuyu-seihin-seizo-shuri", "74407aaaf43d564d8f25c8fcc445c2f83f436f0a220d6ec7e94b492ab562bf2b", "定められた在留の経路で、該当する分野の仕事を判断する際に用いられる、公式の分野または職業上の区分です。", "分野名や区分名は、どの経路に当たるかを振り分ける最初の段階にすぎません。該当する在留資格について、認められる業務、技能または経験の基準、試験、雇用主または関係機関の条件、現在の運用ルールを引き続き確認する必要があります。", "出入国在留管理上の分野一覧、申請の案内、雇用計画、試験、就労のための受入れ経路の比較に出てきます。", pipelineGenerator, pipelineBatch4GeneratedAt, glossaryPromptRevisionBatch2),
   defineGlossaryTranslation("hoseki-kikinzoku-kegawa-kako", "cdbc19605bd6da376d5da4c98a4a3f3478c5fdaacab49ccc92d50037637ae6d8", "定められた在留の経路で、該当する分野の仕事を判断する際に用いられる、公式の分野または職業上の区分です。", "分野名や区分名は、どの経路に当たるかを振り分ける最初の段階にすぎません。該当する在留資格について、認められる業務、技能または経験の基準、試験、雇用主または関係機関の条件、現在の運用ルールを引き続き確認する必要があります。", "出入国在留管理上の分野一覧、申請の案内、雇用計画、試験、就労のための受入れ経路の比較に出てきます。", pipelineGenerator, pipelineBatch4GeneratedAt, glossaryPromptRevisionBatch2),
+  defineGlossaryTranslation("tokubetsu-eijusha", "85eb680677b3128033a3092961ee2a169b078359f3b6d4e767c9506ad5ced178", "入管特例法に基づき、永住に関する独自の法的地位を認められた人です。", "特別永住者は、別の法律に基づく独自の法的区分です。通常の在留資格ではなく、永住許可による「永住者」とも異なります。証明書、携帯に関するルール、更新の時期、再入国の取扱いは、通常の在留カード制度とは異なります。", "特別永住者証明書のほか、該当するための要件、再入国、別の法律に基づく制度についての案内で使われます。", pipelineGenerator, specialPermanentResidentGeneratedAt, glossaryPromptRevisionBatch2),
+  defineGlossaryTranslation("tokubetsu-eijusha-shomeisho", "9d34683c1721a08d4ae0578380a6eafab2aead01c6482f7d81d6f89fcd30e9e1", "特別永住者であることを示す証明書で、市区町村で交付されます。", "特別永住者証明書は、通常の在留カードとは別のものです。特別永住者には、原則として通常の在留カードの携帯義務は適用されません。ただし、権限のある職員から適法に提示を求められたときは、証明書を提示しなければなりません。また、該当する年齢に応じた期限に従って、証明書の有効期間を切らさないようにする必要があります。", "特別永住者制度のもとでの本人確認や出入国在留管理に関する手続きで使われます。再入国や証明書の更新も含まれます。", pipelineGenerator, specialPermanentResidentGeneratedAt, glossaryPromptRevisionBatch2),
 ] as const;

@@ -1,10 +1,13 @@
 import { defineJapaneseArticleTranslation } from "./article-translation-builder";
 
+const claudeGenerator = { id: "claude-code-claude-reviewed", model: "claude-opus-5-5" } as const;
+const specialPermanentResidentBatchGeneratedAt = "2026-10-05T15:00:00.000Z";
+
 /** Entry documents, housing, banking, and initial mobility guidance. */
 export const japaneseSettlingInArticleTranslations = [
   defineJapaneseArticleTranslation(
     "documents-received-when-entering-japan",
-    "22bbc28af358f52b5a7b1c702c78bc94cc95ee32b8800a8262618c13065ced0b",
+    "c9af67afe73fc20dfb81cd956cdec44262ebde0661e112f5d237b0c0060440eb",
     "日本へ入国するときに受け取る書類",
     "上陸許可と在留カードに記載される内容、カードを受け取る時期、確認すべき事項を理解します。",
     `> **経路の確認：** 中長期在留者として「留学」で入国する人は、以下の在留に関する記録を受け取ります。[短期滞在](/glossary/tanki-taizai)の人は、旅券に上陸許可の記録を受けますが、在留カードは交付されません。
@@ -21,7 +24,11 @@ export const japaneseSettlingInArticleTranslations = [
 
 氏名の表記、在留資格、在留期間、満了日、就労制限に関する記載を確認してください。誤りと思われる場合は、速やかに出入国在留管理庁または学校へ確認します。カードを自分で変更してはいけません。
 
-> **公式の要件：** 在留カードは、重要な公的本人確認書類であり、出入国在留管理上の書類です。携帯、適法に求められたときの提示、変更の届出について、現在の規則に従ってください。他人へ貸したり、画像を安易に共有したりしないでください。
+> **通常の在留カードを持つ人に対する公式の要件：** 16歳以上で在留カードを持っている人は、在留カードを携帯し、権限のある職員から適法に求められたときは提示しなければなりません。旅券（パスポート）は在留カードの代わりになりません。携帯していなかった場合は200,000円以下の罰金に、適法な提示の求めを拒んだ場合は、これとは別に1年以下の拘禁刑または200,000円以下の罰金に処せられることがあります。特別永住者には異なるルールが適用されます。特別永住者には[特別永住者証明書](/glossary/tokubetsu-eijusha-shomeisho)が交付され、通常の在留カードの携帯義務は適用されません。[特別永住者のガイド](/articles/special-permanent-residents-in-japan)を参照してください。
+
+### 在留カードを忘れた場合
+
+通常の在留カードを持つ人の場合、うっかり在留カードを携帯しなかったときでも、現行の罰金の規定に当たることがあります。永住者に関する新しい取消しのルールは、1回の不注意で永住許可が自動的に取り消されるという意味ではありません。出入国在留管理庁の指針では、在留カードの携帯や有効期間の更新を1回怠っただけで取り消すことは想定されていないとしています。公的な指導を繰り返し無視した場合、意図的に従わない場合、その他の重大な事実がある場合は、個別に判断されることがあります。在留カードの有効期間を切らさず、職員の適法な指示に従ってください。2027年4月1日から適用される別の取消しの変更については、[永住許可のガイド](/articles/permanent-residence-in-japan)で説明しています。
 
 ## 後のカード手続きには異なる手数料規則がある
 
@@ -36,6 +43,8 @@ export const japaneseSettlingInArticleTranslations = [
 ## 入国時の書類と、それ以前または以後の記録を混同しない
 
 COEは、日本へ入国するときに交付される書類ではありません。ビザと上陸手続きを支えるため、渡航前に交付されたものです。ビザも渡航前に取得しています。入国時には、上陸許可が認められた在留を記録し、対象となる在留者は在留カードをその場で、または上記の後日交付の経路で受け取ります。[マイナンバー](/glossary/my-number)の通知と任意のマイナンバーカードは、住民登録後の別の手続きです。`,
+    claudeGenerator,
+    specialPermanentResidentBatchGeneratedAt,
   ),
   defineJapaneseArticleTranslation(
     "finding-housing-and-moving-in",
