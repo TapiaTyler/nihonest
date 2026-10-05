@@ -18,6 +18,7 @@ import { readLocalGuidanceCatalog } from "./local-guidance-catalog";
 import { saveLocalGuidanceContent } from "./local-guidance-writer";
 import { createRecord, creationOptions, planRecordCreation, type CreatableKind } from "./record-creator";
 import { articleCreationOptions, createArticle, planArticleCreation } from "./article-creator";
+import { refreshArticleMetadata } from "./article-metadata-sync";
 
 const assets = new Map<string, readonly [string, string]>([
   ["/", ["index.html", "text/html; charset=utf-8"]],
@@ -81,6 +82,11 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
       await recordOperation(kind, error instanceof CmsEditError && error.status === 409 || error instanceof RecoveryDraftConflictError ? "conflict" : "failed", recordKind, recordId);
       throw error;
     }
+  }
+  /** Article writes change metadata (status, dates, new entries); keep the generated module in step and report it. */
+  async function withArticleMetadata<T extends object>(write: Promise<T>): Promise<T & { generatedMetadata: Awaited<ReturnType<typeof refreshArticleMetadata>> }> {
+    const result = await write;
+    return { ...result, generatedMetadata: await refreshArticleMetadata(root) };
   }
   // Snapshot the checkout before any request can write, so pre-existing changes stay separate from CMS edits.
   const gitSession = startGitSession(root);
@@ -233,7 +239,7 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
           && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test((fields as { id: string }).id) ? (fields as { id: string }).id : null;
         if (!id) throw new CmsEditError("The ID must be lowercase words separated by hyphens.", 422);
         sendJson(response, 200, await tracked<unknown>("record-create", kind, id, () => kind === "article"
-          ? createArticle(root, fields, expectedSourceRevision)
+          ? withArticleMetadata(createArticle(root, fields, expectedSourceRevision))
           : createRecord(root, kind, fields, expectedSourceRevision)));
         return;
       }
@@ -264,17 +270,17 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         } else if (statusMatch) {
           const edit = payload as StatusChange;
           if (typeof edit.expectedRevision !== "string" || typeof edit.status !== "string") throw new CmsEditError("Expected revision and status.", 400);
-          sendJson(response, 200, await tracked("article-status", "article", statusMatch[1]!, () => changeArticleStatus(root, statusMatch[1]!, edit)));
+          sendJson(response, 200, await tracked("article-status", "article", statusMatch[1]!, () => withArticleMetadata(changeArticleStatus(root, statusMatch[1]!, edit))));
         } else if (reviewMatch) {
           const approval = payload as ReviewApproval;
           if (typeof approval.expectedRevision !== "string") throw new CmsEditError("Expected article revision.", 400);
-          sendJson(response, 200, await tracked("article-review", "article", reviewMatch[1]!, () => approveArticleReview(root, reviewMatch[1]!, approval)));
+          sendJson(response, 200, await tracked("article-review", "article", reviewMatch[1]!, () => withArticleMetadata(approveArticleReview(root, reviewMatch[1]!, approval))));
         } else {
           const edit = payload as BodyEdit;
           if (typeof edit.expectedRevision !== "string" || typeof edit.body !== "string" || typeof edit.updatedAt !== "string") {
             throw new CmsEditError("Expected revision, body, and update date.", 400);
           }
-          sendJson(response, 200, await tracked("article-body", "article", saveMatch![1]!, () => saveArticleBody(root, saveMatch![1]!, edit)));
+          sendJson(response, 200, await tracked("article-body", "article", saveMatch![1]!, () => withArticleMetadata(saveArticleBody(root, saveMatch![1]!, edit))));
         }
         return;
       }

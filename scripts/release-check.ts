@@ -18,6 +18,7 @@ function steps(target: string): Step[] {
   return [
     { label: "Configuration preflight (web)", command: `npm run -s config:check -- --target ${target}` },
     { label: "Lint", command: "npm run -s lint" },
+    { label: "Article metadata freshness", command: "npm run -s content:metadata:check" },
     { label: "Unit and integration tests", command: "npx vitest run" },
     { label: "Architecture boundaries", command: "npm run -s architecture:check" },
     { label: "Editorial state audit", command: "npm run -s editorial:audit" },
