@@ -1,7 +1,7 @@
 # Stage-C review queue — 2026-10-04
 
 Current tested integration source: **`7f409a30804890e80244e6d5eb5b96546bd94993`** on
-`codex/hosting-native-integration`. Claude adopted/documentation-approved the prior N5 handoff `7596efd` as `1f63d87`. [Current completion receipt](N5-completion-integration-20261004.md). New documentation handoff review/adoption is pending.
+`codex/hosting-native-integration`. Claude adopted exact N5 completion handoff `8352af2` as `47385c4` (tree-equal) and approved its documentation for stated scope. [Current completion receipt](N5-completion-integration-20261004.md). N5 local code and documentation through that handoff have no pending review/adoption gate.
 [Format 10 approval and combined validation](N1-format-10-integration-20261004.md).
 [Latest exact receipt, fee review and combined evidence](Fee-interface-inline-integration-20261004.md).
 
@@ -27,8 +27,8 @@ N5 checkpoint 1 `6c7fb4d` and evidence `99b170a` are Claude-approved and integra
 
 ## Remaining work
 
-1. Claude reviews the new combined documentation and adopts the exact pushed integration handoff.
-2. N5 consumer/freshness implementation is complete locally. Carry forward the initial FAQ-query timeout recorded in the final browser gate; investigate with the shared search owner if it recurs. No assertion or timeout was changed.
+1. Remaining native, hosted/operator and human-review gates require their separate acceptance work; N5 local implementation and documentation through 8352af2 are complete in both branches.
+2. Carry forward the initial FAQ-query timeout recorded in the final browser gate. Claude did not reproduce it in forty visits or six full browser runs; its cause remains unproven. Capture the affected case with `--trace on` if it recurs and share it with Claude. No assertion or timeout was changed.
 3. Interface metadata remains machine-translated-only Japanese, exact IDs/key parity/non-blank values and
    placeholder subsets; current web fallback semantics remain. No shared artifact-schema relaxation.
 4. Tokyo labels remain canonical bilingual geography data with unchanged IDs/grouping. Source/license
