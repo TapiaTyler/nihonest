@@ -10,6 +10,7 @@ import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels, type Resi
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import type { KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
 import type { UpdateExploreFilter } from "@/components/discovery/explore-search-state";
+import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 
 const englishContentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
   guide: "Guide", reference: "Reference", checklist: "Checklist", glossary: "Glossary", "official-procedure": "Official procedure",
@@ -105,10 +106,11 @@ function FilterSelect<OptionId extends string>({ allLabel, label, value, onChang
   optionGroups?: readonly { label: string; options: readonly { id: OptionId; label: string }[] }[];
 }>) {
   const id = useId();
+  const selectRef = usePreHydrationInput<HTMLSelectElement>((chosen) => onChange(chosen as "all" | OptionId));
   return (
     <label htmlFor={id} className="text-sm font-semibold text-slate-800">
       {label}
-      <select id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 font-normal text-slate-800 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20">
+      <select ref={selectRef} id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 font-normal text-slate-800 outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20">
         <option value="all">{allLabel}</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
         {optionGroups.map((group) => (
