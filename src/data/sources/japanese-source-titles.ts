@@ -1424,4 +1424,6 @@ export const japaneseSourceTitles: Readonly<Record<string, string>> = {
   "emsc-energy-consumer-consultation": "相談窓口",
   "kashiwa-language-and-consultation-japanese-classes": "日本語教室",
   "matsuyama-language-and-consultation-japanese": "松山市内で日本語を学べるところはありますか",
+  "bunka-tsunahiro": "つながるひろがる にほんごでのくらし（つなひろ）",
+  "ncac-cross-border-consumer-center": "越境消費者センター",
 };
