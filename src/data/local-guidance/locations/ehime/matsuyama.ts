@@ -16,7 +16,7 @@ export const guidance = defineLocationGuidance({
     { id: "matsuyama-resident-tax-agent", title: "Tax agent declaration", url: `${base}/download/shimin/rizaibu/shikenmin/noukannninn.html`, language: "ja", lastCheckedAt: "2026-09-25" },
     { id: "matsuyama-disaster-preparation-flood-map", title: "Matsuyama flood hazard map", url: `${base}/bosai/bousai/keihatu/20-kozui_hazard_map.html`, language: "ja", lastCheckedAt: "2026-09-25" },
     { id: "matsuyama-language-and-consultation-consultation", title: "Consultation for foreign residents", url: `${base}/soudan/jinken/jinkengaikokujin.html`, language: "ja", lastCheckedAt: "2026-09-25" },
-    { id: "matsuyama-language-and-consultation-japanese", title: "Where to learn Japanese in Matsuyama (FAQ)", url: "https://info-faq.city.matsuyama.ehime.jp/faq/show/358", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "matsuyama-language-and-consultation-japanese", title: "Where to learn Japanese in Matsuyama (FAQ)", url: "https://info-faq.city.matsuyama.ehime.jp/faq/show/358", language: "ja", lastCheckedAt: "2026-10-07" },
     { id: "matsuyama-national-pension-notifications", title: "Who joins National Pension and notifications", url: `${base}/tetsuzuki/kokunen/todokede.html`, language: "ja", lastCheckedAt: "2026-09-25" },
   ],
   supplements: [

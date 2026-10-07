@@ -1418,4 +1418,10 @@ export const japaneseSourceTitles: Readonly<Record<string, string>> = {
   "kofu-address": "市外から転入したとき、住所変更の手続きを教えてください。",
   "kofu-citizens-division": "市民部市民総室市民課",
   "isa-special-permanent-residents": "日本国との平和条約に基づき日本の国籍を離脱した者等の出入国管理に関する特例法",
+  "jps-national-pension-premiums": "国民年金保険料",
+  "mhlw-national-health-insurance": "国民健康保険制度",
+  "jftc-freelance-act": "2025年公正取引委員会フリーランス法特設サイト",
+  "emsc-energy-consumer-consultation": "相談窓口",
+  "kashiwa-language-and-consultation-japanese-classes": "日本語教室",
+  "matsuyama-language-and-consultation-japanese": "松山市内で日本語を学べるところはありますか",
 };
