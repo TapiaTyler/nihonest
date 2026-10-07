@@ -14,7 +14,7 @@ export const guidance = defineLocationGuidance({
     { id: "kashiwa-resident-tax-foreign-residents", title: "Individual inhabitant tax for foreign residents", url: `${base}/shiminzei/shiseijoho/shisei/soshiki/gaikokujin2026.html`, language: "ja", lastCheckedAt: "2026-09-25" },
     { id: "kashiwa-disaster-preparation-flood-map", title: "Kashiwa flood hazard map", url: `${base}/bosaianzen/anshinanzen/disaster/disaster_ready/bosaimap/hazardmap.html`, language: "ja", lastCheckedAt: "2026-09-25" },
     { id: "kashiwa-language-and-consultation-consultation", title: "Consultation desk for foreign residents", url: `${base}/kyoseikoryu/region/shiminkatsudo/katsudojoho/2066.html`, language: "ja", lastCheckedAt: "2026-09-25" },
-    { id: "kashiwa-language-and-consultation-japanese-classes", title: "Japanese classes (FAQ)", url: "https://faq2.city.kashiwa.lg.jp/faq/show/1267", language: "ja", lastCheckedAt: "2026-09-25" },
+    { id: "kashiwa-language-and-consultation-japanese-classes", title: "Japanese classes (FAQ)", url: "https://faq2.city.kashiwa.lg.jp/faq/show/1267", language: "ja", lastCheckedAt: "2026-10-07" },
     { id: "kashiwa-national-pension-abroad", title: "National Pension when moving abroad or returning", url: `${base}/nenkin/hokennenkin/nenkin/kaigai.html`, language: "ja", lastCheckedAt: "2026-09-25" },
   ],
   supplements: [
