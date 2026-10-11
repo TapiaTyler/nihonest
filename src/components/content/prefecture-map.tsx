@@ -63,6 +63,9 @@ export function PrefectureMap({
     setViewport(selectedPath ? focusView(selectedPath.focus) : fullView);
   }
   const zoomLevel = Math.round((fullView.width / viewport.width) * 10) / 10;
+  // At rest the map owns pinch and sideways drags but lets a vertical swipe scroll the page, so it is never a trap
+  // on a phone; once zoomed in, every drag pans the map.
+  const touchAction = zoomLevel > 1 ? "touch-none" : "touch-pan-y";
   const changeView = setViewport;
   const zoom = (factor: number) => setViewport((view) => zoomAt(view, factor));
   const pan = (dx: number, dy: number) => setViewport((view) => ({
@@ -220,7 +223,7 @@ export function PrefectureMap({
             dragged.current = false;
           }
         }}
-        className="block h-auto w-full cursor-grab touch-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 active:cursor-grabbing"
+        className={`block h-auto w-full cursor-grab ${touchAction} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 active:cursor-grabbing`}
       >
         {prefectureMapPaths.filter(({ code }) => code !== "47").map(renderPrefecture)}
         {selectedPath && (
