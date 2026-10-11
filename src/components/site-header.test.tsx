@@ -64,7 +64,7 @@ describe("SiteHeader", () => {
     fireEvent.click(journeyButton);
     expect(journeyButton).toHaveAttribute("aria-expanded", "true");
     expect(within(navigation).getByRole("link", { name: /My Journey/ })).toHaveAttribute("href", "/my-journey");
-    expect(within(navigation).getByRole("link", { name: /Adjust Starting Point/ })).toHaveAttribute("href", "/onboarding");
+    expect(within(navigation).getByRole("link", { name: /Adjust my starting point/ })).toHaveAttribute("href", "/onboarding");
 
     const resourcesButton = within(navigation).getByRole("button", { name: "Resources" });
     fireEvent.click(resourcesButton);

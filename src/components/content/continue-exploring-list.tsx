@@ -28,7 +28,7 @@ export function ContinueExploringList({ cards, guides }: Readonly<{
           <button
             type="button"
             onClick={() => setVisibleCount((current) => Math.min(current + batchSize, totalCount))}
-            className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-5 text-sm font-semibold text-teal-800 transition-colors hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            className="inline-flex min-h-11 items-center rounded-full border border-brand-300 bg-surface px-5 text-sm font-semibold text-brand-link transition-colors hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {format("article.showMore", { count: nextBatchCount })}
           </button>

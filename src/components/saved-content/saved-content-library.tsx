@@ -60,15 +60,15 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
     document.getElementById("saved-glossary-review")?.scrollIntoView({ block: "start" });
   }, [isReady, savedTerms.length, studyOpen]);
 
-  if (!isReady) return <p className="mt-10 text-slate-600">{message("saved.loading")}</p>;
+  if (!isReady) return <p className="mt-10 text-ink-muted">{message("saved.loading")}</p>;
   if (!savedArticles.length && !savedStatuses.length && !savedTerms.length) {
     return (
-      <section className="mt-10 rounded-3xl border border-dashed border-slate-300 bg-white p-7 sm:p-10" aria-labelledby="saved-empty-heading">
-        <h2 id="saved-empty-heading" className="text-2xl font-semibold text-slate-950">{message("saved.emptyHeading")}</h2>
-        <p className="mt-3 leading-7 text-slate-600">{message("saved.emptyBody")}</p>
+      <section className="mt-10 rounded-3xl border border-dashed border-line-strong bg-surface p-7 sm:p-10" aria-labelledby="saved-empty-heading">
+        <h2 id="saved-empty-heading" className="text-2xl font-semibold text-ink">{message("saved.emptyHeading")}</h2>
+        <p className="mt-3 leading-7 text-ink-muted">{message("saved.emptyBody")}</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("saved.explore")}</Link>
-          <Link href="/glossary" className="inline-flex min-h-11 items-center rounded-full border border-slate-300 px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("saved.browseGlossary")}</Link>
+          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("saved.explore")}</Link>
+          <Link href="/glossary" className="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("saved.browseGlossary")}</Link>
         </div>
       </section>
     );
@@ -78,16 +78,16 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
     <div className="mt-10 space-y-12">
       {savedArticles.length > 0 && (
         <section aria-labelledby="saved-guides-heading">
-          <h2 id="saved-guides-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("saved.guides")}</h2>
+          <h2 id="saved-guides-heading" className="text-2xl font-semibold tracking-tight text-ink">{message("saved.guides")}</h2>
           <ul className="mt-5 space-y-3">
             {savedArticles.map((article) => {
               const translated = articleTranslation(article.id);
               return (
               <li key={article.id} className="relative" lang={translated ? "ja" : "en"}>
-                <Link href={{ pathname: `/articles/${article.slug}`, query: { returnTo: "/saved" } }} aria-label={translated?.title ?? article.title} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700">{translated?.title ?? article.title}</span>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{translated?.description ?? article.description}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.readGuide" /></span>
+                <Link href={{ pathname: `/articles/${article.slug}`, query: { returnTo: "/saved" } }} aria-label={translated?.title ?? article.title} className="group block rounded-2xl border border-line bg-surface p-5 pr-20 shadow-sm transition-colors hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                  <span className="text-lg font-semibold text-ink group-hover:text-brand-accent">{translated?.title ?? article.title}</span>
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink-muted">{translated?.description ?? article.description}</p>
+                  <span className="mt-4 block text-sm font-semibold text-brand-link"><InterfaceText id="content.readGuide" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="article" contentId={article.id} deferRemoval /></span>
               </li>
@@ -99,7 +99,7 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
 
       {savedStatuses.length > 0 && (
         <section aria-labelledby="saved-statuses-heading">
-          <h2 id="saved-statuses-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("saved.statuses")}</h2>
+          <h2 id="saved-statuses-heading" className="text-2xl font-semibold tracking-tight text-ink">{message("saved.statuses")}</h2>
           <ul className="mt-5 space-y-3">
             {savedStatuses.map((status) => {
               const translated = statusTranslation(status.id);
@@ -107,11 +107,11 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
               const primaryName = japanese ? status.japaneseName : status.englishName;
               return (
               <li key={status.id} className="relative">
-                <Link href={{ pathname: `/residence-statuses/${status.slug}`, query: { returnTo: "/saved" } }} aria-label={primaryName} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span lang={japanese ? "ja" : "en"} className="text-lg font-semibold text-slate-950 group-hover:text-teal-700">{primaryName}</span>
-                  <p className="mt-1 text-sm text-slate-500"><span lang={japanese ? "en" : "ja"}>{japanese ? status.englishName : status.japaneseName}</span> · <JapaneseReading kana={status.japaneseKana} romaji={status.romaji} /></p>
-                  <p lang={translated ? "ja" : "en"} className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{translated?.summary ?? status.summary}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.viewStatus" /></span>
+                <Link href={{ pathname: `/residence-statuses/${status.slug}`, query: { returnTo: "/saved" } }} aria-label={primaryName} className="group block rounded-2xl border border-line bg-surface p-5 pr-20 shadow-sm transition-colors hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                  <span lang={japanese ? "ja" : "en"} className="text-lg font-semibold text-ink group-hover:text-brand-accent">{primaryName}</span>
+                  <p className="mt-1 text-sm text-ink-subtle"><span lang={japanese ? "en" : "ja"}>{japanese ? status.englishName : status.japaneseName}</span> · <JapaneseReading kana={status.japaneseKana} romaji={status.romaji} /></p>
+                  <p lang={translated ? "ja" : "en"} className="mt-2 line-clamp-2 text-sm leading-6 text-ink-muted">{translated?.summary ?? status.summary}</p>
+                  <span className="mt-4 block text-sm font-semibold text-brand-link"><InterfaceText id="content.viewStatus" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="residence-status" contentId={status.id} deferRemoval /></span>
               </li>
@@ -124,8 +124,8 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
       {savedTerms.length > 0 && (
         <section id="saved-glossary-review" aria-labelledby="saved-terms-heading" className="scroll-mt-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-slate-950"><InterfaceText id="saved.glossaryHeading" /></h2>
-            <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review-panel" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-teal-700 bg-white px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+            <h2 id="saved-terms-heading" className="text-2xl font-semibold tracking-tight text-ink"><InterfaceText id="saved.glossaryHeading" /></h2>
+            <button type="button" aria-expanded={studyOpen} aria-controls="saved-glossary-review-panel" onClick={() => setStudyOpen((open) => !open)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-accent bg-surface px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
               <InterfaceText id={studyOpen ? "saved.hideReview" : "saved.reviewTerms"} />
               <DisclosureChevron open={studyOpen} />
             </button>
@@ -134,10 +134,10 @@ export function SavedContentLibrary({ articles, residenceStatuses, terms, transl
           <ul className="mt-5 space-y-3">
             {savedTerms.map((term) => (
               <li key={term.id} className="relative">
-                <Link href={{ pathname: `/glossary/${term.slug}`, query: { returnTo: "/saved" } }} aria-label={[term.japanese, glossaryTermGloss(term, locale)?.text].filter(Boolean).join(" — ")} className="group block rounded-2xl border border-slate-200 bg-white p-5 pr-20 shadow-sm transition-colors hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                  <span className="text-lg font-semibold text-slate-950 group-hover:text-teal-700"><span lang="ja">{term.japanese}</span><LocalizedTermGloss term={term} separator=" — " /></span>
-                  <p lang={termTranslation(term.id) ? "ja" : "en"} className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{termTranslation(term.id)?.shortDefinition ?? term.shortDefinition}</p>
-                  <span className="mt-4 block text-sm font-semibold text-teal-800"><InterfaceText id="content.viewTerm" /></span>
+                <Link href={{ pathname: `/glossary/${term.slug}`, query: { returnTo: "/saved" } }} aria-label={[term.japanese, glossaryTermGloss(term, locale)?.text].filter(Boolean).join(" — ")} className="group block rounded-2xl border border-line bg-surface p-5 pr-20 shadow-sm transition-colors hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                  <span className="text-lg font-semibold text-ink group-hover:text-brand-accent"><span lang="ja">{term.japanese}</span><LocalizedTermGloss term={term} separator=" — " /></span>
+                  <p lang={termTranslation(term.id) ? "ja" : "en"} className="mt-2 line-clamp-2 text-sm leading-6 text-ink-muted">{termTranslation(term.id)?.shortDefinition ?? term.shortDefinition}</p>
+                  <span className="mt-4 block text-sm font-semibold text-brand-link"><InterfaceText id="content.viewTerm" /></span>
                 </Link>
                 <span className="absolute right-4 top-4 z-10"><SaveContentButton kind="glossary-term" contentId={term.id} deferRemoval /></span>
               </li>

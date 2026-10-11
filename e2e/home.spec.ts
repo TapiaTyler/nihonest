@@ -143,6 +143,9 @@ test("selects and remembers an anonymous journey stage", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Explore guidance for recently arrived" })).toBeVisible();
   await page.getByRole("link", { name: "Explore guidance for recently arrived" }).click();
   await expect(page).toHaveURL(/\/explore\?stage=recently-arrived$/);
+  // An applied filter is shown as a chip; the filter panel stays closed until opened.
+  await expect(page.getByRole("button", { name: "Remove filter Journey stage: Recently arrived" })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Journey stage" })).toBeHidden();
   await page.getByText("More filters", { exact: true }).click();
   await expect(page.getByRole("combobox", { name: "Journey stage" })).toHaveValue("recently-arrived");
 });

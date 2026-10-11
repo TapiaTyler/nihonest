@@ -18,7 +18,7 @@ export default function MyJourneyPage() {
   return (
     <>
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.myJourney")} />
-      <Suspense fallback={<div className="page-shell py-12 sm:py-20"><p className="text-slate-600"><InterfaceText id="myJourney.loading" /></p></div>}>
+      <Suspense fallback={<div className="page-shell py-12 sm:py-20"><p className="text-ink-muted"><InterfaceText id="myJourney.loading" /></p></div>}>
         <MyJourney journeys={guidedJourneys} groups={articleGroups} articles={getAllArticles().map(({ metadata }) => metadata)} translations={getJourneyTranslations()} groupTranslations={getArticleGroupSearchTranslations()} articleTranslations={getArticleSearchTranslations()} />
       </Suspense>
     </>

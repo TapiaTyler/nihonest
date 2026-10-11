@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { ExploreFilterPanel } from "@/components/discovery/explore-filter-panel";
 import { ExploreGroupBrowser } from "@/components/discovery/explore-group-browser";
 import { ExploreResults } from "@/components/discovery/explore-results";
@@ -17,7 +17,7 @@ import type { GlossarySearchTranslation } from "@/lib/search/glossary-search";
 import { buildKnowledgebaseSearchIndex, searchKnowledgebaseIndex, type ArticleGroupSearchTranslation, type ArticleSearchTranslation } from "@/lib/search/knowledgebase-search";
 
 /** Coordinates the search index with independently owned state, controls, and result presentation. */
-export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [], articleTranslations = [], groupTranslations = [], faqTranslations = [], glossaryTranslations = [] }: Readonly<{
+export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, faqEntries = [], articleTranslations = [], groupTranslations = [], faqTranslations = [], glossaryTranslations = [], supplement }: Readonly<{
   groups: readonly ArticleGroup[];
   articles: readonly ArticleMetadata[];
   terms: readonly JapaneseTerm[];
@@ -27,6 +27,8 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
   groupTranslations?: readonly ArticleGroupSearchTranslation[];
   faqTranslations?: readonly FaqSearchTranslation[];
   glossaryTranslations?: readonly GlossarySearchTranslation[];
+  /** Secondary prompts shown between the search and the group browser, and hidden while searching so results follow the search directly. */
+  supplement?: ReactNode;
 }>) {
   const { locale } = useContentLocale();
   const searchState = useExploreSearchState(residenceStatuses, locale);
@@ -66,7 +68,10 @@ export function ExploreDiscovery({ groups, articles, terms, residenceStatuses, f
           setViewMode={setViewMode}
         />
       ) : (
-        <ExploreGroupBrowser groups={groups} translations={groupTranslations} locale={locale} viewMode={viewMode} setViewMode={setViewMode} />
+        <>
+          {supplement}
+          <ExploreGroupBrowser groups={groups} translations={groupTranslations} locale={locale} viewMode={viewMode} setViewMode={setViewMode} />
+        </>
       )}
     </div>
   );

@@ -31,21 +31,21 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               {locale === "ja" ? (
                 <>
-                  <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{residenceStatus.japaneseName}</h2>
-                  <span lang="en" className="text-sm text-slate-500">{residenceStatus.englishName}</span>
+                  <h2 lang="ja" className="text-lg font-semibold tracking-tight text-ink group-hover/item:text-brand-accent">{residenceStatus.japaneseName}</h2>
+                  <span lang="en" className="text-sm text-ink-subtle">{residenceStatus.englishName}</span>
                 </>
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{residenceStatus.englishName}</h2>
-                  <span lang="ja" className="text-sm text-slate-500">{residenceStatus.japaneseName}</span>
+                  <h2 className="text-lg font-semibold tracking-tight text-ink group-hover/item:text-brand-accent">{residenceStatus.englishName}</h2>
+                  <span lang="ja" className="text-sm text-ink-subtle">{residenceStatus.japaneseName}</span>
                 </>
               )}
             </div>
-            <p lang={translation ? "ja" : "en"} className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{translation?.summary ?? residenceStatus.summary}</p>
+            <p lang={translation ? "ja" : "en"} className="mt-1 line-clamp-2 text-sm leading-6 text-ink-muted sm:line-clamp-1">{translation?.summary ?? residenceStatus.summary}</p>
           </div>
           <div className={listRowDetailsClassName}>
             <LocalizedStatusBadge status={residenceStatus.status} />
-            {showCategory && <span className="text-slate-500">{categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</span>}
+            {showCategory && <span className="text-ink-subtle">{categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</span>}
           </div>
         </Link>
       </article>
@@ -56,24 +56,24 @@ export function ResidenceStatusCard({ residenceStatus, returnTo, translation, ca
       <Link
         href={href}
         aria-label={residenceStatus.englishName}
-        className="group/item flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
+        className="group/item flex h-full min-w-0 cursor-pointer flex-col rounded-2xl border border-line bg-surface p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md focus-visible:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus focus-visible:shadow-md"
       >
         <div className="flex items-start justify-between gap-4">
           <LocalizedStatusBadge status={residenceStatus.status} />
-          <span className="min-w-0 text-right text-slate-500">
+          <span className="min-w-0 text-right text-ink-subtle">
             <span lang="ja" className="block break-words text-lg font-medium">{residenceStatus.japaneseName}</span>
             <span className="mt-1 block break-words text-xs">
               <JapaneseReading kana={residenceStatus.japaneseKana} romaji={residenceStatus.romaji} />
             </span>
           </span>
         </div>
-        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">
+        <h2 className="mt-5 text-2xl font-semibold tracking-tight text-ink group-hover/item:text-brand-accent">
           {residenceStatus.englishName}
         </h2>
-        <p lang={translation ? "ja" : "en"} className="mt-4 flex-1 leading-7 text-slate-600">{translation?.summary ?? residenceStatus.summary}</p>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm">
-          <p className="text-slate-500"><InterfaceText id="status.category" /> {categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</p>
-          <span aria-hidden="true" className="select-none font-semibold text-teal-800 transition-transform group-hover/item:translate-x-0.5">
+        <p lang={translation ? "ja" : "en"} className="mt-4 flex-1 leading-7 text-ink-muted">{translation?.summary ?? residenceStatus.summary}</p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line-faint pt-4 text-sm">
+          <p className="text-ink-subtle"><InterfaceText id="status.category" /> {categoryLabel ?? residenceStatusCategoryLabels[residenceStatus.category]}</p>
+          <span aria-hidden="true" className="select-none font-semibold text-brand-link transition-transform group-hover/item:translate-x-0.5">
             <InterfaceText id="content.viewStatus" />
           </span>
         </div>

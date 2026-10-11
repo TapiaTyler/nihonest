@@ -86,7 +86,7 @@ export function PronunciationButton({
         disabled={!speechSupported}
         onClick={handlePlayback}
         aria-label={accessibleLabel}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 transition-colors hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-300 bg-surface px-4 text-sm font-semibold text-brand-link transition-colors hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint"
       >
         {playbackState === "speaking" ? (
           <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor"><rect x="5" y="5" width="10" height="10" rx="1" /></svg>
@@ -95,7 +95,7 @@ export function PronunciationButton({
         )}
         <span>{label}</span>
       </button>
-      <span className="text-sm text-slate-500" aria-live="polite">
+      <span className="text-sm text-ink-subtle" aria-live="polite">
         {announcement}
       </span>
     </div>

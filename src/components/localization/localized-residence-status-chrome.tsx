@@ -36,10 +36,10 @@ const statusMessages: Record<ResidenceStatus["status"], InterfaceMessageId> = {
 };
 
 const statusBadgeColors: Record<ResidenceStatus["status"], string> = {
-  draft: "bg-amber-50 text-amber-800",
-  "needs-review": "bg-amber-50 text-amber-800",
-  verified: "bg-teal-50 text-teal-800",
-  archived: "bg-slate-100 text-slate-700",
+  draft: "bg-caution-soft text-caution-text",
+  "needs-review": "bg-caution-soft text-caution-text",
+  verified: "bg-brand-soft text-brand-link",
+  archived: "bg-surface-muted text-ink-body",
 };
 
 export function LocalizedStatusBadge({ status }: Readonly<{ status: ResidenceStatus["status"] }>) {
@@ -59,7 +59,7 @@ export function LocalizedStatusBadges({ category, status }: Readonly<{
   return (
     <>
       <LocalizedStatusBadge status={status} />
-      <span className="text-sm text-slate-500">
+      <span className="text-sm text-ink-subtle">
         {locale === "ja" ? japaneseTaxonomyLabels.residenceStatusCategory[category] : residenceStatusCategoryLabels[category]}
       </span>
     </>
@@ -78,18 +78,18 @@ export function LocalizedStatusHeading({ status, glossaryTerm, reading }: Readon
       <span lang="ja">{status.japaneseName}</span>
     </InlineGlossaryTerm>
   );
-  const headingClass = "mt-5 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl";
+  const headingClass = "mt-5 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl";
   return locale === "ja" ? (
     <>
       <h1 className={headingClass}>{japaneseName}</h1>
-      <p lang="en" className="mt-3 text-2xl text-slate-600">{status.englishName}</p>
-      <p className="mt-2 text-sm text-slate-500">{reading}</p>
+      <p lang="en" className="mt-3 text-2xl text-ink-muted">{status.englishName}</p>
+      <p className="mt-2 text-sm text-ink-subtle">{reading}</p>
     </>
   ) : (
     <>
       <h1 className={headingClass}>{status.englishName}</h1>
-      <p className="mt-3 text-2xl text-slate-600">{japaneseName}</p>
-      <p className="mt-2 text-sm text-slate-500">{reading}</p>
+      <p className="mt-3 text-2xl text-ink-muted">{japaneseName}</p>
+      <p className="mt-2 text-sm text-ink-subtle">{reading}</p>
     </>
   );
 }
@@ -105,9 +105,9 @@ export function LocalizedStatusContext({ groups, journeys, groupTitles, journeyT
   const { locale, message } = useInterfaceMessages();
   const title = (item: ContextItem, titles: LocalizedTitles) => (locale === "ja" ? titles[item.id] : undefined) ?? item.title;
   return (
-    <section lang={locale} className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="explore-paths-heading">
-      <h2 id="explore-paths-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("status.contextHeading")}</h2>
-      <p className="mt-3 leading-7 text-slate-600">{message("status.contextIntro")}</p>
+    <section lang={locale} className="mt-12 border-t border-line pt-8" aria-labelledby="explore-paths-heading">
+      <h2 id="explore-paths-heading" className="text-2xl font-semibold tracking-tight text-ink">{message("status.contextHeading")}</h2>
+      <p className="mt-3 leading-7 text-ink-muted">{message("status.contextIntro")}</p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {groups.map((group) => <ContextLink key={`group-${group.id}`} href={group.href} eyebrow={message("content.contentGroup")} title={title(group, groupTitles)} />)}
         {journeys.map((journey) => <ContextLink key={`journey-${journey.id}`} href={journey.href} eyebrow={message("journey.guidedJourney")} title={title(journey, journeyTitles)} />)}
@@ -119,14 +119,14 @@ export function LocalizedStatusContext({ groups, journeys, groupTitles, journeyT
 export function LocalizedRelatedGuidance({ articles, articleTitles }: Readonly<{ articles: readonly ContextItem[]; articleTitles: LocalizedTitles }>) {
   const { locale, message } = useInterfaceMessages();
   return (
-    <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-guidance-heading">
-      <h2 id="related-guidance-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("status.relatedGuidance")}</h2>
+    <section className="mt-12 border-t border-line pt-8" aria-labelledby="related-guidance-heading">
+      <h2 id="related-guidance-heading" className="text-2xl font-semibold tracking-tight text-ink">{message("status.relatedGuidance")}</h2>
       <ul className="mt-4 space-y-3">
         {articles.map((article) => {
           const translated = locale === "ja" ? articleTitles[article.id] : undefined;
           return (
             <li key={article.id} lang={translated ? "ja" : "en"}>
-              <Link href={article.href} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={article.href} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {translated ?? article.title}
               </Link>
             </li>
@@ -140,14 +140,14 @@ export function LocalizedRelatedGuidance({ articles, articleTitles }: Readonly<{
 export function LocalizedLastReviewed({ date }: Readonly<{ date: string }>) {
   const { locale, message } = useInterfaceMessages();
   const formatted = new Intl.DateTimeFormat(locale === "ja" ? "ja-JP" : "en", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
-  return <p className="mt-10 text-sm text-slate-500">{message("status.lastReviewed")}{" "}<time dateTime={date}>{formatted}</time></p>;
+  return <p className="mt-10 text-sm text-ink-subtle">{message("status.lastReviewed")}{" "}<time dateTime={date}>{formatted}</time></p>;
 }
 
 function ContextLink({ href, eyebrow, title }: Readonly<{ href: string; eyebrow: string; title: string }>) {
   return (
-    <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{eyebrow}</span>
-      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{title}</span>
+    <Link href={href} className="group rounded-2xl border border-line bg-surface p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+      <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{eyebrow}</span>
+      <span className="mt-2 block font-semibold text-ink group-hover:text-brand-accent">{title}</span>
     </Link>
   );
 }

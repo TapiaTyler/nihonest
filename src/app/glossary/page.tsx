@@ -13,21 +13,21 @@ export const metadata: Metadata = {
 
 export default function GlossaryPage() {
   return (
-    <div className="page-shell py-16 sm:py-24">
+    <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.glossary")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="glossaryIndex.eyebrow" /></p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           <InterfaceText id="glossaryIndex.title" />
         </h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">
+        <p className="mt-6 text-lg leading-8 text-ink-muted">
           <InterfaceText id="glossaryIndex.description" />
         </p>
       </header>
 
-      <aside className="mt-8 max-w-3xl rounded-2xl border border-teal-200 bg-teal-50 p-5 text-sm leading-6 text-teal-950">
+      <p className="mt-4 max-w-3xl text-sm leading-6 text-ink-muted">
         <InterfaceText id="glossaryIndex.aside" />
-      </aside>
+      </p>
 
       <GlossaryExplorer terms={getAllGlossaryTerms()} translations={getGlossarySearchTranslations()} />
     </div>

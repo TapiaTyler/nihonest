@@ -23,7 +23,7 @@ export function JourneyUpdateNotice() {
 
   if (!message) return null;
   return (
-    <div role="status" aria-live="polite" className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium leading-6 text-white shadow-xl">
+    <div role="status" aria-live="polite" className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-xl bg-inverse px-4 py-3 text-sm font-medium leading-6 text-on-inverse shadow-xl">
       {message}
     </div>
   );

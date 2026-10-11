@@ -288,4 +288,42 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
     expect(screen.getByRole("group", { name: "Display as" })).toBeInTheDocument();
   });
+
+  it("shows advanced filters that arrive from the URL as chips and removes them one at a time", () => {
+    window.history.replaceState(null, "", "/explore?stage=recently-arrived&topic=banking");
+    renderDiscovery();
+
+    const activeFilters = screen.getByRole("list", { name: "Active filters" });
+    expect(activeFilters).toHaveTextContent("Journey stage: Recently arrived");
+    expect(activeFilters).toHaveTextContent("Topic: Banking");
+    // The chips are the summary, so the filter panel stays closed until the visitor opens it.
+    expect(screen.getByText("More filters").closest("details")).not.toHaveAttribute("open");
+    expect(screen.getByRole("link", { name: "Opening a bank account" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove filter Topic: Banking" }));
+    expect(screen.queryByRole("button", { name: "Remove filter Topic: Banking" })).not.toBeInTheDocument();
+    expect(window.location.search).toBe("?stage=recently-arrived");
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove filter Journey stage: Recently arrived" }));
+    expect(screen.queryByRole("list", { name: "Active filters" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
+  });
+
+  it("exposes the search controls as a search landmark with a catalog placeholder", () => {
+    renderDiscovery();
+    const landmark = screen.getByRole("search", { name: "Search every guide and term" });
+    expect(landmark).toContainElement(screen.getByRole("searchbox"));
+    expect(screen.getByRole("searchbox")).toHaveAttribute("placeholder", "Try bank account or juminhyo");
+  });
+
+  it("shows the secondary prompts only while browsing, so results follow the search directly", () => {
+    render(
+      <ContentLocaleProvider>
+        <ExploreDiscovery groups={[group]} articles={[bankArticle]} terms={glossaryTerms} residenceStatuses={residenceStatuses} supplement={<p>Secondary prompt</p>} />
+      </ContentLocaleProvider>,
+    );
+    expect(screen.getByText("Secondary prompt")).toBeInTheDocument();
+    enterSearch("bank account");
+    expect(screen.queryByText("Secondary prompt")).not.toBeInTheDocument();
+  });
 });

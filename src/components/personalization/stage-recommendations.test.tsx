@@ -54,7 +54,14 @@ describe("personalized home recommendations", () => {
     // Both the selected-guide link and that guide's card use the Japanese title.
     expect(within(section).getAllByRole("link", { name: new RegExp(focusedTitle("ja")) })).toHaveLength(2);
     expect(within(section).queryByText(focusedTitle("en"))).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: journeyTitle("ja") })).toBeInTheDocument();
+    // The phone note and the tablet-and-up card both name the saved stage and the focused guide in Japanese.
+    const labels = screen.getAllByText("あなたの開始地点");
+    expect(labels).toHaveLength(2);
+    for (const label of labels) {
+      const container = label.closest("aside") ?? label.closest("p");
+      expect(container).toHaveTextContent("準備中");
+      expect(container).toHaveTextContent(focusedTitle("ja"));
+    }
   });
 
   it("keeps the canonical English titles when English is selected", async () => {
@@ -62,5 +69,13 @@ describe("personalized home recommendations", () => {
     await screen.findAllByRole("heading", { level: 2, name: new RegExp(journeyTitle("en")) });
     expect(document.getElementById("home-recommendations-heading")).toHaveTextContent(journeyTitle("en"));
     expect(screen.getAllByText(focusedTitle("en")).length).toBeGreaterThan(0);
+  });
+
+  it("keeps Japan capitalized when a stage appears inside a sentence", async () => {
+    window.localStorage.setItem(anonymousPreferencesStorageKey, JSON.stringify({ version: 2, journeyStage: "living-in-japan", onboardingCompleted: true }));
+    renderHome();
+
+    expect(await screen.findByRole("heading", { name: "Useful while living in Japan" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore guidance for living in Japan" })).toBeInTheDocument();
   });
 });

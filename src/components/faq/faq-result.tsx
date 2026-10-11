@@ -46,17 +46,17 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
     "residence-status": message("faq.targetStatus"),
     activity: message("faq.targetActivity"),
   };
-  const statusBadge = <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">{statusLabel}</span>;
+  const statusBadge = <span className="rounded-full bg-caution-soft px-3 py-1 text-xs font-semibold uppercase tracking-wide text-caution-text">{statusLabel}</span>;
   const answer = (
     <>
-      <p className="max-w-3xl leading-7 text-slate-600">{summary}</p>
+      <p className="max-w-3xl leading-7 text-ink-muted">{summary}</p>
       <div className="mt-5" aria-label={`${message("faq.relatedFor")} ${question}`}>
-        <p className="text-sm font-semibold text-slate-900">{message("content.relatedGuidance")}</p>
+        <p className="text-sm font-semibold text-ink-strong">{message("content.relatedGuidance")}</p>
         <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-3">
           {entry.targets.map((target) => (
             <li key={`${target.kind}-${target.id}`}>
-              <Link lang={locale} href={target.kind === "activity" ? activityCrossReferenceHref(target.id, returnTo) : target.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-                <span><span lang={locale} className="font-normal text-slate-500">{targetKindLabels[target.kind]}:</span> <span lang={locale === "ja" && target.japaneseLabel ? "ja" : "en"}>{locale === "ja" ? target.japaneseLabel ?? target.label : target.label}</span></span>
+              <Link lang={locale} href={target.kind === "activity" ? activityCrossReferenceHref(target.id, returnTo) : target.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+                <span><span lang={locale} className="font-normal text-ink-subtle">{targetKindLabels[target.kind]}:</span> <span lang={locale === "ja" && target.japaneseLabel ? "ja" : "en"}>{locale === "ja" ? target.japaneseLabel ?? target.label : target.label}</span></span>
               </Link>
             </li>
           ))}
@@ -70,7 +70,7 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
     return (
       <details ref={detailsRef} id={anchor} lang={translation ? locale : "en"} onToggle={onToggle} className="scroll-mt-6">
         <summary className={`${listRowClassName} ${listRowFocusClassName} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
-          <Heading className="min-w-0 text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{question}</Heading>
+          <Heading className="min-w-0 text-lg font-semibold tracking-tight text-ink group-hover/item:text-brand-accent">{question}</Heading>
           <div className={listRowDetailsClassName}>
             <span className="flex items-center gap-3">{statusBadge}<DisclosureChevron open={open} /></span>
           </div>
@@ -81,18 +81,18 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
   }
 
   return (
-    <details ref={detailsRef} id={anchor} lang={translation ? locale : "en"} onToggle={onToggle} className="scroll-mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <summary className="group/item flex cursor-pointer list-none items-start justify-between gap-4 p-5 transition-colors hover:bg-teal-50/60 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+    <details ref={detailsRef} id={anchor} lang={translation ? locale : "en"} onToggle={onToggle} className="scroll-mt-6 overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+      <summary className="group/item flex cursor-pointer list-none items-start justify-between gap-4 p-5 transition-colors hover:bg-brand-soft/60 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("faq.label")}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("faq.label")}</span>
             {statusBadge}
           </div>
-          <Heading className="mt-3 text-xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{question}</Heading>
+          <Heading className="mt-3 text-xl font-semibold tracking-tight text-ink group-hover/item:text-brand-accent">{question}</Heading>
         </div>
         <div className="mt-1"><DisclosureChevron open={open} /></div>
       </summary>
-      <div className="border-t border-slate-100 px-5 pb-5 pt-4">{answer}</div>
+      <div className="border-t border-line-faint px-5 pb-5 pt-4">{answer}</div>
     </details>
   );
 }

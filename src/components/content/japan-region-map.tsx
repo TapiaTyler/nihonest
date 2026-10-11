@@ -26,8 +26,8 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
   const selectedRegion = selectedIndex === null ? null : regions[selectedIndex];
 
   return (
-    <div className="not-prose mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-      <p className="text-sm leading-6 text-slate-700" aria-live="polite">{showOkinawa ? messages["regionMap.okinawaScope"] : messages["regionMap.select"]}</p>
+    <div className="not-prose mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-5">
+      <p className="text-sm leading-6 text-ink-body" aria-live="polite">{showOkinawa ? messages["regionMap.okinawaScope"] : messages["regionMap.select"]}</p>
       <div className="mt-4 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_10rem]">
         <div className="relative mx-auto w-full">
           <svg viewBox={showOkinawa ? okinawaMapView : mainMapView} role="group" aria-label={showOkinawa ? messages["regionMap.okinawaMap"] : messages["regionMap.map"]} className="block h-auto w-full">
@@ -49,7 +49,7 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
                 opacity={selectedIndex === null || selectedIndex === index ? 1 : 0.45}
               >
                 {prefectureMapPaths.filter(({ code }) => (showOkinawa ? code === "47" : code !== "47") && region.prefectureIds.some((id) => id === `jp-${code}000`)).map(({ code, d }) => (
-                  <path key={code} d={d} fill={regionColors[index]} fillRule="evenodd" stroke="#ffffff" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
+                  <path key={code} d={d} fillRule="evenodd" style={{ fill: regionColors[index], stroke: "var(--map-stroke)" }} strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
                 ))}
               </g>
             ))}
@@ -60,7 +60,7 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
               setShowOkinawa((current) => !current);
               if (!showOkinawa) setSelectedIndex(7);
             }}
-            className="absolute bottom-2 left-2 min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-teal-900 shadow-sm hover:border-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            className="absolute bottom-2 left-2 min-h-11 rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-brand-deep-soft shadow-sm hover:border-brand-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {showOkinawa ? messages["regionMap.fullMap"] : messages["regionMap.viewOkinawa"]}
           </button>
@@ -75,17 +75,17 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
                 setSelectedIndex(index);
                 if (index !== 7) setShowOkinawa(false);
               }}
-              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${selectedIndex === index ? "border-teal-700 bg-teal-50 text-teal-950" : "border-slate-200 text-slate-800 hover:border-teal-500"}`}
+              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${selectedIndex === index ? "border-brand-accent bg-brand-soft text-brand-deep" : "border-line text-ink-firm hover:border-brand-500"}`}
             >
-              <span className="size-4 shrink-0 rounded-sm border border-slate-500/30" style={{ backgroundColor: regionColors[index] }} aria-hidden="true" />
+              <span className="size-4 shrink-0 rounded-sm border border-line-edge/30" style={{ backgroundColor: regionColors[index] }} aria-hidden="true" />
               {region.name[locale]}
             </button>
           ))}
         </div>
       </div>
       {selectedRegion && (
-        <p className="mt-4 leading-7 text-slate-700" role="status" aria-live="polite">
-          {messages["regionMap.region"]}<strong className="text-slate-950">{selectedRegion.name[locale]}</strong>
+        <p className="mt-4 leading-7 text-ink-body" role="status" aria-live="polite">
+          {messages["regionMap.region"]}<strong className="text-ink">{selectedRegion.name[locale]}</strong>
           <span>{messages["regionMap.prefectures"]}{selectedRegion.prefectures[locale]}</span>
         </p>
       )}

@@ -22,14 +22,14 @@ export function ContentLanguageOptions({ onSelect }: Readonly<{ onSelect?: () =>
               setLocale(option.id);
               onSelect?.();
             }}
-            className={`flex min-h-11 w-full items-center justify-between gap-4 rounded-xl px-3 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 ${selected ? "bg-teal-50 font-semibold text-teal-950" : "text-slate-700 hover:bg-slate-50"}`}
+            className={`flex min-h-11 w-full items-center justify-between gap-4 rounded-xl px-3 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus ${selected ? "bg-brand-soft font-semibold text-brand-deep" : "text-ink-body hover:bg-surface-subtle"}`}
           >
             <span>{option.label}</span>
-            <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-5 w-5 shrink-0 text-teal-700 ${selected ? "visible" : "invisible"}`} fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 10 3 3 7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-5 w-5 shrink-0 text-brand-accent ${selected ? "visible" : "invisible"}`} fill="none" stroke="currentColor" strokeWidth="2"><path d="m5 10 3 3 7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         );
       })}
-      <p className="px-3 pt-1 text-xs text-slate-500">{message("language.cycleShortcut")}</p>
+      <p className="px-3 pt-1 text-xs text-ink-subtle">{message("language.cycleShortcut")}</p>
     </div>
   );
 }

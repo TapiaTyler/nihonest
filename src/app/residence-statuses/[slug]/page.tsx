@@ -52,7 +52,7 @@ export async function generateMetadata({
   };
 }
 
-const backLinkClass = "rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700";
+const backLinkClass = "inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-brand-link hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus";
 
 export default async function ResidenceStatusPage({
   params,
@@ -98,7 +98,7 @@ export default async function ResidenceStatusPage({
           <QueryStatusBackLink className={backLinkClass} />
         </Suspense>
 
-        <header className="relative mt-8 border-b border-slate-200 pb-8">
+        <header className="relative mt-8 border-b border-line pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="residence-status" contentId={residenceStatus.id} /></div>
           <div className="flex flex-wrap items-center gap-3 pr-14">
             <LocalizedStatusBadges category={residenceStatus.category} status={residenceStatus.status} />

@@ -9,7 +9,7 @@ import { fillInterfaceMessage, type InterfaceMessageGroup } from "@/domain/local
 type Viewport = Readonly<{ x: number; y: number; width: number; height: number }>;
 const fullView: Viewport = { x: 145, y: 10, width: 510, height: 515 };
 const mapRatio = fullView.height / fullView.width;
-const controlClass = "min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-teal-900 hover:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
+const controlClass = "min-h-11 rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-brand-deep-soft hover:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
 
 function focusView(focus: readonly number[]): Viewport {
   const width = Math.min(510, Math.max(70, focus[2] * 1.8));
@@ -46,6 +46,8 @@ export function PrefectureMap({
   onSelect: (id: string) => void;
 }>) {
   const [focusedCode, setFocusedCode] = useState("");
+  // A label that names the prefecture under the pointer (or the keyboard focus); position is relative to the map frame.
+  const [hoverLabel, setHoverLabel] = useState<Readonly<{ names: FinderPrefecture["names"]; x: number; y: number; flip: boolean }> | null>(null);
   const [controlsOpen, setControlsOpen] = useState(false);
   const controlsId = useId();
   const mapRef = useRef<SVGSVGElement>(null);
@@ -63,6 +65,9 @@ export function PrefectureMap({
     setViewport(selectedPath ? focusView(selectedPath.focus) : fullView);
   }
   const zoomLevel = Math.round((fullView.width / viewport.width) * 10) / 10;
+  // At rest the map owns pinch and sideways drags but lets a vertical swipe scroll the page, so it is never a trap
+  // on a phone; once zoomed in, every drag pans the map.
+  const touchAction = zoomLevel > 1 ? "touch-none" : "touch-pan-y";
   const changeView = setViewport;
   const zoom = (factor: number) => setViewport((view) => zoomAt(view, factor));
   const pan = (dx: number, dy: number) => setViewport((view) => ({
@@ -75,6 +80,7 @@ export function PrefectureMap({
     const frame = mapFrameRef.current;
     if (!map || !frame) return;
     const onWheel = (event: WheelEvent) => {
+      setHoverLabel(null);
       event.preventDefault();
       const bounds = map.getBoundingClientRect();
       const delta = event.deltaY * (event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? bounds.height : 1);
@@ -130,6 +136,18 @@ export function PrefectureMap({
     pointerStarts.current.delete(event.pointerId);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   };
+  /** Places the label relative to the map frame that contains `from`; positions come from the event, not from refs. */
+  const showHoverLabel = (names: FinderPrefecture["names"], from: Element, clientX: number, clientY: number) => {
+    const frame = from.closest("[data-map-frame]")?.getBoundingClientRect();
+    if (!frame) return;
+    const x = clientX - frame.left;
+    setHoverLabel({ names, x, y: clientY - frame.top, flip: x > frame.width * 0.6 });
+  };
+  /** Hover is for mouse and pen only; a tap on a touch screen selects and must not leave a label behind. */
+  const onHoverPointer = (names: FinderPrefecture["names"]) => (event: React.PointerEvent) => {
+    if (event.pointerType === "touch") return;
+    showHoverLabel(names, event.currentTarget as Element, event.clientX, event.clientY);
+  };
   const okinawa = prefecturesByCode.get("47");
   const okinawaPath = prefectureMapPaths.find(({ code }) => code === "47");
   const renderPrefecture = ({ code, d }: (typeof prefectureMapPaths)[number]) => {
@@ -152,16 +170,24 @@ export function PrefectureMap({
             onSelect(prefecture.id);
           }
         }}
-        onFocus={() => setFocusedCode(code)}
-        onBlur={() => setFocusedCode("")}
+        onFocus={(event) => {
+          setFocusedCode(code);
+          if (event.currentTarget.matches(":focus-visible")) {
+            const box = event.currentTarget.getBoundingClientRect();
+            showHoverLabel(prefecture.names, event.currentTarget, box.left + box.width / 2, box.top + box.height / 2);
+          }
+        }}
+        onBlur={() => { setFocusedCode(""); setHoverLabel(null); }}
+        onPointerEnter={onHoverPointer(prefecture.names)}
+        onPointerMove={onHoverPointer(prefecture.names)}
+        onPointerLeave={() => setHoverLabel(null)}
         onMouseEnter={() => setFocusedCode(code)}
         onMouseLeave={(event) => { if (document.activeElement !== event.currentTarget) setFocusedCode(""); }}
       >
         <path
           d={d}
           fillRule="evenodd"
-          fill={isFocused ? "#14b8a6" : isSelected ? "#0f766e" : "#a7dcd6"}
-          stroke={isSelected ? "none" : "#ffffff"}
+          style={{ fill: isFocused ? "var(--map-fill-hover)" : isSelected ? "var(--map-fill-selected)" : "var(--map-fill)", stroke: isSelected ? "none" : "var(--map-stroke)" }}
           strokeWidth={1.2}
           vectorEffect="non-scaling-stroke"
           className="cursor-pointer transition-colors"
@@ -171,15 +197,15 @@ export function PrefectureMap({
   };
 
   return (
-    <details className="group rounded-xl border border-teal-200 bg-white p-3 sm:p-4">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+    <details className="group rounded-xl border border-brand-line bg-surface p-3 sm:p-4">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold text-ink-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
         <span>{messages["finder.map.summary"]}</span>
         <DisclosureChevron />
       </summary>
-      <p className="mt-1 text-xs leading-5 text-slate-600">
+      <p className="mt-1 text-xs leading-5 text-ink-muted">
         {messages["finder.map.instructions"]}
       </p>
-      <div ref={mapFrameRef} className="relative mx-auto mt-3 max-w-xl pb-24 sm:pb-0">
+      <div ref={mapFrameRef} data-map-frame className="relative mx-auto mt-3 max-w-xl pb-24 sm:pb-0">
       <svg
         ref={mapRef}
         viewBox={`${viewport.x} ${viewport.y} ${viewport.width} ${viewport.height}`}
@@ -204,6 +230,7 @@ export function PrefectureMap({
           }
         }}
         onPointerDown={(event) => {
+          setHoverLabel(null);
           if (event.pointerType === "mouse" && event.button !== 0) return;
           if (pointers.current.size === 0) dragged.current = false;
           const position = { x: event.clientX, y: event.clientY };
@@ -220,15 +247,14 @@ export function PrefectureMap({
             dragged.current = false;
           }
         }}
-        className="block h-auto w-full cursor-grab touch-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 active:cursor-grabbing"
+        className={`block h-auto w-full cursor-grab ${touchAction} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:cursor-grabbing`}
       >
         {prefectureMapPaths.filter(({ code }) => code !== "47").map(renderPrefecture)}
         {selectedPath && (
           <path
             d={selectedPath.d}
             fillRule="evenodd"
-            fill={focusedCode === selectedPath.code ? "#14b8a6" : "#0f766e"}
-            stroke={focusedCode === selectedPath.code ? "#14b8a6" : "#0f766e"}
+            style={{ fill: focusedCode === selectedPath.code ? "var(--map-fill-hover)" : "var(--map-fill-selected)", stroke: focusedCode === selectedPath.code ? "var(--map-fill-hover)" : "var(--map-fill-selected)" }}
             strokeWidth={1.5}
             vectorEffect="non-scaling-stroke"
             pointerEvents="none"
@@ -241,13 +267,13 @@ export function PrefectureMap({
         aria-expanded={controlsOpen}
         aria-controls={controlsId}
         onClick={() => setControlsOpen((open) => !open)}
-        className="absolute right-2 top-2 z-20 inline-flex min-h-11 items-center gap-2 rounded-lg border border-teal-600 bg-white px-3 text-sm font-semibold text-teal-900 shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+        className="absolute right-2 top-2 z-20 inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-600 bg-surface px-3 text-sm font-semibold text-brand-deep-soft shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-focus"
       >
         {messages["finder.map.controls"]}
         <DisclosureChevron open={controlsOpen} />
       </button>
       {controlsOpen && (
-        <div id={controlsId} role="group" aria-label={messages["finder.map.controlsLabel"]} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-teal-200 bg-white p-2 shadow-lg">
+        <div id={controlsId} role="group" aria-label={messages["finder.map.controlsLabel"]} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-brand-line bg-surface p-2 shadow-lg">
           <div className="grid grid-cols-2 gap-2">
             <button type="button" className={controlClass} onClick={() => zoom(0.75)} aria-label={messages["finder.map.zoomIn"]}>+</button>
             <button type="button" className={controlClass} onClick={() => zoom(1 / 0.75)} aria-label={messages["finder.map.zoomOut"]}>−</button>
@@ -264,32 +290,47 @@ export function PrefectureMap({
           <button type="button" className={controlClass} onClick={() => changeView(fullView)}>{messages["finder.map.fullMap"]}</button>
         </div>
       )}
+      {hoverLabel && (
+        <div
+          aria-hidden="true"
+          data-map-hover-label
+          className="pointer-events-none absolute z-30 whitespace-nowrap rounded-md bg-inverse px-2.5 py-1.5 text-xs font-medium text-on-inverse shadow-lg"
+          style={{ left: hoverLabel.x, top: hoverLabel.y, transform: hoverLabel.flip ? "translate(calc(-100% - 12px), 16px)" : "translate(12px, 16px)" }}
+        >
+          {locale === "ja"
+            ? <span lang="ja">{hoverLabel.names.ja}</span>
+            : <>{hoverLabel.names.en} · <span lang="ja">{hoverLabel.names.ja}</span></>}
+        </div>
+      )}
       {okinawa && okinawaPath && (
         <button
           type="button"
           aria-label={fillInterfaceMessage(messages["finder.map.selectInset"], okinawa.names)}
           aria-pressed={selectedId === okinawa.id}
           onClick={() => onSelect(okinawa.id)}
-          className="absolute bottom-2 left-2 z-10 block w-1/3 max-w-36 cursor-pointer rounded-lg border border-slate-200 bg-slate-50 p-2 text-left shadow-sm hover:border-teal-600 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+          onPointerEnter={onHoverPointer(okinawa.names)}
+          onPointerMove={onHoverPointer(okinawa.names)}
+          onPointerLeave={() => setHoverLabel(null)}
+          className="absolute bottom-2 left-2 z-10 block w-1/3 max-w-36 cursor-pointer rounded-lg border border-line bg-surface-subtle p-2 text-left shadow-sm hover:border-brand-600 focus:outline-2 focus:outline-offset-2 focus:outline-focus"
         >
-          <span className="text-xs font-medium text-slate-700">{messages["finder.map.insetLabel"]}</span>
+          <span className="text-xs font-medium text-ink-body">{messages["finder.map.insetLabel"]}</span>
           <svg viewBox="30 510 215 110" aria-hidden="true" className="mt-1 block h-auto w-full">
-            <path d={okinawaPath.d} fillRule="evenodd" fill={selectedId === okinawa.id ? "#0f766e" : "#a7dcd6"} stroke="#0f766e" strokeWidth="2" />
+            <path d={okinawaPath.d} fillRule="evenodd" style={{ fill: selectedId === okinawa.id ? "var(--map-fill-selected)" : "var(--map-fill)", stroke: "var(--map-fill-selected)" }} strokeWidth="2" />
           </svg>
         </button>
       )}
       </div>
-      <p className="mt-2 text-xs text-slate-600" aria-live="polite">{fillInterfaceMessage(messages["finder.map.zoomLevel"], { level: String(zoomLevel) })}</p>
-      <p className={`mt-2 text-teal-900 ${selected ? "text-lg font-semibold leading-7" : "text-sm font-medium"}`} aria-live="polite">
+      <p className="mt-2 text-xs text-ink-muted" aria-live="polite">{fillInterfaceMessage(messages["finder.map.zoomLevel"], { level: String(zoomLevel) })}</p>
+      <p className={`mt-2 text-brand-deep-soft ${selected ? "text-lg font-semibold leading-7" : "text-sm font-medium"}`} aria-live="polite">
         {selected ? fillInterfaceMessage(messages["finder.map.selected"], selected.names) : messages["finder.map.choose"]}
       </p>
-      <p className="mt-2 text-xs leading-5 text-slate-600">
+      <p className="mt-2 text-xs leading-5 text-ink-muted">
         {messages["finder.map.attribution"]}{locale === "ja" ? "" : " "}
         <a
           href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html"
           target="_blank"
           rel="noreferrer"
-          className="underline underline-offset-2 hover:text-teal-800"
+          className="underline underline-offset-2 hover:text-brand-link"
         >
           {messages["finder.map.attributionSource"]}
         </a>{locale === "ja" ? "。" : "."}

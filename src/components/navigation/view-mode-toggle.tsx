@@ -41,14 +41,14 @@ export function ViewModeToggle({ mode, onChange }: Readonly<{ mode: ViewMode; on
       type="button"
       aria-pressed={mode === value}
       onClick={() => onChange(value)}
-      className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-slate-700 transition-colors hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:bg-teal-800 aria-pressed:text-white"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-ink-body transition-colors hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:bg-brand aria-pressed:text-on-brand"
     >
       {icon}
       {label}
     </button>
   );
   return (
-    <div role="group" aria-label={message("view.label")} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-slate-300 bg-white p-1">
+    <div role="group" aria-label={message("view.label")} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-line-strong bg-surface p-1">
       {option("cards", message("view.cards"), <CardsIcon />)}
       {option("list", message("view.list"), <ListIcon />)}
     </div>

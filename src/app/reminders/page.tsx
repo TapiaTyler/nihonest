@@ -17,10 +17,10 @@ export default function RemindersPage() {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.reminders")} />
       <div className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="reminders.eyebrow" /></p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="reminders.heading" /></h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600"><InterfaceText id="reminders.intro" /></p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="reminders.heading" /></h1>
+        <p className="mt-5 text-lg leading-8 text-ink-muted"><InterfaceText id="reminders.intro" /></p>
       </div>
-      <Suspense fallback={<p className="mt-10 text-slate-600"><InterfaceText id="reminders.loading" /></p>}><ReminderManager /></Suspense>
+      <Suspense fallback={<p className="mt-10 text-ink-muted"><InterfaceText id="reminders.loading" /></p>}><ReminderManager /></Suspense>
     </div>
   );
 }

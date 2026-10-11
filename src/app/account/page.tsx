@@ -66,15 +66,15 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.account")} />
       <div className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="account.eyebrow" /></p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="account.heading" /></h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600"><InterfaceText id="account.intro" /></p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="account.heading" /></h1>
+        <p className="mt-5 text-lg leading-8 text-ink-muted"><InterfaceText id="account.intro" /></p>
       </div>
 
       <div className="mt-10">
         {!configured ? (
-          <section className="rounded-3xl border border-amber-300 bg-amber-50 p-6 sm:p-8" aria-labelledby="account-setup-heading">
-            <h2 id="account-setup-heading" className="text-2xl font-semibold text-amber-950"><InterfaceText id="account.setupHeading" /></h2>
-            <p className="mt-3 leading-7 text-amber-950"><InterfaceText id="account.setupBody" /></p>
+          <section className="rounded-3xl border border-caution-line-strong bg-caution-soft p-6 sm:p-8" aria-labelledby="account-setup-heading">
+            <h2 id="account-setup-heading" className="text-2xl font-semibold text-caution-ink"><InterfaceText id="account.setupHeading" /></h2>
+            <p className="mt-3 leading-7 text-caution-ink"><InterfaceText id="account.setupBody" /></p>
           </section>
         ) : user ? (
           <AccountDashboard userId={user.id} email={user.email} initialDisplayName={displayName} initialAccountPreferences={accountPreferences} storageAvailable={storageAvailable} />
@@ -84,17 +84,17 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       </div>
 
       {!user && (
-        <section className="mt-8 rounded-3xl border border-teal-200 bg-teal-50/70 p-6 sm:p-8" aria-labelledby="account-benefits-heading">
+        <section className="mt-8 rounded-3xl border border-brand-line bg-brand-soft/70 p-6 sm:p-8" aria-labelledby="account-benefits-heading">
           <p className="eyebrow"><InterfaceText id="account.benefitsEyebrow" /></p>
-          <h2 id="account-benefits-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><InterfaceText id="account.benefitsHeading" /></h2>
-          <ul className="mt-5 grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
-            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.saved" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.savedBody" /></span></li>
-            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.review" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.reviewBody" /></span></li>
-            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.progress" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.progressBody" /></span></li>
-            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.direction" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.directionBody" /></span></li>
-            <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.reminders" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.remindersBody" /></span></li>
+          <h2 id="account-benefits-heading" className="mt-2 text-2xl font-semibold tracking-tight text-ink"><InterfaceText id="account.benefitsHeading" /></h2>
+          <ul className="mt-5 grid gap-3 text-sm leading-6 text-ink-body sm:grid-cols-2">
+            <li className="rounded-2xl bg-surface p-4"><span className="font-semibold text-ink"><InterfaceText id="account.benefit.saved" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.savedBody" /></span></li>
+            <li className="rounded-2xl bg-surface p-4"><span className="font-semibold text-ink"><InterfaceText id="account.benefit.review" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.reviewBody" /></span></li>
+            <li className="rounded-2xl bg-surface p-4"><span className="font-semibold text-ink"><InterfaceText id="account.benefit.progress" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.progressBody" /></span></li>
+            <li className="rounded-2xl bg-surface p-4"><span className="font-semibold text-ink"><InterfaceText id="account.benefit.direction" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.directionBody" /></span></li>
+            <li className="rounded-2xl bg-surface p-4"><span className="font-semibold text-ink"><InterfaceText id="account.benefit.reminders" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.remindersBody" /></span></li>
           </ul>
-          <p className="mt-5 text-sm font-medium leading-6 text-teal-950"><InterfaceText id="account.benefitsNote" /></p>
+          <p className="mt-5 text-sm font-medium leading-6 text-brand-deep"><InterfaceText id="account.benefitsNote" /></p>
         </section>
       )}
     </div>

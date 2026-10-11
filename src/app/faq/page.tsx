@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 
 export default function FaqPage() {
   return (
-    <div className="page-shell py-16 sm:py-24">
+    <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.faq")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="faq.pageEyebrow" /></p>
-        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="faq.pageTitle" /></h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600"><InterfaceText id="faq.pageDescription" /></p>
+        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="faq.pageTitle" /></h1>
+        <p className="mt-6 text-lg leading-8 text-ink-muted"><InterfaceText id="faq.pageDescription" /></p>
       </header>
       <FaqExplorer entries={getAllFaqEntries()} translations={getFaqSearchTranslations()} />
     </div>

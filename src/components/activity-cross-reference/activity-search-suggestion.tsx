@@ -12,14 +12,14 @@ export function ActivitySearchSuggestion({ query, returnTo }: Readonly<{ query: 
   if (matches.length === 0) return null;
 
   return (
-    <aside className="mt-7 rounded-2xl border border-teal-200 bg-teal-50 p-5" aria-labelledby="activity-suggestion-heading">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-700">{message("activity.relatedCheck")}</p>
-      <h3 id="activity-suggestion-heading" className="mt-2 text-lg font-semibold text-teal-950">{message("activity.startWithGoal")}</h3>
-      <p className="mt-2 text-sm leading-6 text-teal-900">{message("activity.checkExplanation")}</p>
+    <aside className="mt-7 rounded-2xl border border-brand-line bg-brand-soft p-5" aria-labelledby="activity-suggestion-heading">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-accent">{message("activity.relatedCheck")}</p>
+      <h3 id="activity-suggestion-heading" className="mt-2 text-lg font-semibold text-brand-deep">{message("activity.startWithGoal")}</h3>
+      <p className="mt-2 text-sm leading-6 text-brand-deep-soft">{message("activity.checkExplanation")}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {matches.map((activity) => (
-          <Link key={activity.id} href={activityCrossReferenceHref(activity.id, returnTo)} className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-sm font-semibold text-teal-800 shadow-sm hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-            <span><span className="font-normal text-teal-700">{message("activity.checkPrefix")}</span> <span lang="en">{activity.shortLabel}</span></span>
+          <Link key={activity.id} href={activityCrossReferenceHref(activity.id, returnTo)} className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm font-semibold text-brand-link shadow-sm hover:bg-brand-softer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+            <span><span className="font-normal text-brand-accent">{message("activity.checkPrefix")}</span> <span lang="en">{activity.shortLabel}</span></span>
           </Link>
         ))}
       </div>

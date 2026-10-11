@@ -21,7 +21,7 @@ export function OfficialSourceMetadata({ source }: Readonly<{ source: SourcePres
   }).format(new Date(`${date}T00:00:00Z`));
 
   return (
-    <p className="mt-2 text-sm leading-6 text-slate-500">
+    <p className="mt-2 text-sm leading-6 text-ink-subtle">
       {message(authorityMessageIds[source.authorityLevel])} · {message(source.language === "en" ? "sources.language.english" : "sources.language.japanese")}
       {source.lastCheckedAt ? ` · ${message("sources.lastLinkCheck")}: ${formatDate(source.lastCheckedAt)}` : ""}
       {source.lastReviewedAt ? ` · ${message("sources.lastSubstantiveReview")}: ${formatDate(source.lastReviewedAt)}` : ""}

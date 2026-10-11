@@ -25,9 +25,9 @@ export function LocalizedArticleGroupHeading({
   return (
     <header className="mt-8 max-w-3xl" lang={translation ? locale : "en"}>
       <p className="eyebrow">{message("content.contentGroup")}</p>
-      <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">{title}</h1>
-      <p className="mt-6 text-lg leading-8 text-slate-600">{description}</p>
-      <p className="mt-4 text-sm font-medium text-slate-500">
+      <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">{title}</h1>
+      <p className="mt-6 text-lg leading-8 text-ink-muted">{description}</p>
+      <p className="mt-4 text-sm font-medium text-ink-subtle">
         {guideCount} {message(guideCount === 1 ? "content.guide" : "content.guides")}
       </p>
     </header>

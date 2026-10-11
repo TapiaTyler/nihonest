@@ -34,6 +34,9 @@ import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields } from "@
 import { renderJapaneseArticleComponents } from "@/components/content/japanese-article-components";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { ArticleOutline } from "@/components/localization/article-outline";
+import { getEnglishArticleOutline } from "@/lib/content/article-outline";
+import { articleOutline } from "@/domain/article/article-outline";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const dynamicParams = false;
@@ -118,12 +121,12 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
   return (
     <article className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={japaneseTranslation?.fields.title ? formatInterfaceMessage("ja", "pageTitle.withSite", { title: japaneseTranslation.fields.title }) : undefined} />
-      <div className="mx-auto max-w-3xl">
+      <div className="relative mx-auto max-w-3xl">
         <Suspense fallback={<BackToExploreLink />}>
           <ArticleBackLink data={journeyData} />
         </Suspense>
         <ArticleTranslationNotice translation={japaneseTranslation} />
-        <header className="relative mt-8 border-b border-slate-200 pb-8">
+        <header className="relative mt-8 border-b border-line pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="article" contentId={metadata.id} /></div>
           <ArticleHeaderBadges status={metadata.status} topicIds={metadata.topicIds} />
           <LocalizedArticleHeading
@@ -133,6 +136,11 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           />
           <ArticleHeaderStages journeyStageIds={metadata.journeyStageIds} />
         </header>
+
+        <ArticleOutline
+          english={getEnglishArticleOutline(metadata.slug)}
+          japanese={typeof japaneseTranslation?.fields.body === "string" ? articleOutline(japaneseTranslation.fields.body) : undefined}
+        />
 
         <div className="mt-8">
           <LocalizedArticleBody translation={japaneseTranslation} components={typeof japaneseTranslation?.fields.body === "string" ? renderJapaneseArticleComponents(japaneseTranslation.fields.body) : undefined}>
@@ -157,21 +165,21 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
         </Suspense>
 
         {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
-            <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
+          <section className="mt-12 border-t border-line pt-8" aria-labelledby="related-heading">
+            <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-ink">
               <InterfaceText id="content.continueExploring" />
             </h2>
-            <p className="mt-3 leading-7 text-slate-600"><InterfaceText id="article.continueIntro" /></p>
+            <p className="mt-3 leading-7 text-ink-muted"><InterfaceText id="article.continueIntro" /></p>
             <ContinueExploringList
               key={metadata.id}
               cards={[
                 ...relatedJourneys.map((journey) => {
-                  const className = "group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700";
+                  const className = "group rounded-2xl border border-line bg-surface p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
                   const defaultRouteId = getJourneyRouteForArticle(journey, metadata.id)?.id;
                   const content = (
                     <>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="journey.guidedJourney" /></span>
-                      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="journey.guidedJourney" /></span>
+                      <span className="mt-2 block font-semibold text-ink group-hover:text-brand-accent"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
                     </>
                   );
                   return (
@@ -184,17 +192,17 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
                   <Link
                     key={`group-${group.id}`}
                     href={`/explore/${group.id}`}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    className="group rounded-2xl border border-line bg-surface p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                   >
-                    <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="content.contentGroup" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="content.contentGroup" /></span>
+                    <span className="mt-2 block font-semibold text-ink group-hover:text-brand-accent"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
                   </Link>
                 )),
               ]}
               guides={[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
                   <li key={relatedArticle.id}>
-                    <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id={label} />:</span>
-                    <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                    <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-ink-subtle"><InterfaceText id={label} />:</span>
+                    <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                       <LocalizedText english={relatedArticle.title} japanese={japaneseArticleTitle(relatedArticle.id)} />
                     </Link>
                   </li>

@@ -41,7 +41,7 @@ describe("AnnotatedDocumentViewer", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Show explanation for Work restriction" })[0]);
     const explanation = document.getElementById("residence-card-issued-from-2026-06-14-work-restriction-explanation");
     await waitFor(() => expect(explanation).toHaveFocus());
-    expect(explanation).toHaveClass("bg-teal-50");
+    expect(explanation).toHaveClass("bg-brand-soft");
   });
 
   it("renders the resident-registration document examples in their canonical guides", () => {
