@@ -26,6 +26,18 @@ Updated 2026-10-12. Every row has exactly one status word in its last column. Co
 
 **Not part of the table but still to do:** merge `main` into this branch (brings in the favicon from Codex; deliberately not done yet), run `npm run test:e2e` against a clean server before merge, and a pass of the Japanese rendering of the flattened components and the not-found and error pages.
 
+## H5 plan (colour tokens)
+
+Inventory (2026-10-12, `src`, tests excluded): 1,774 palette-coloured class uses across about 90 files: slate 746 (87 files), teal 737 (81 files), white 188, amber 60, red 24, stone 5, rose 4, sky 3. Teal is used for text (230), focus outlines (180), backgrounds (163) and borders (121); the busiest shades are teal-700 (300), teal-800 (155), teal-50 (95), slate-950 (191), slate-600 (146), slate-200 (106), slate-500 (73). Outside classes there are 24 distinct literal colours (35 uses): the map fills, one SVG and the `oklch` values in `globals.css`.
+
+Proposed approach (the `impeccable` extract guidance: only extract what is clearly reusable, name by role, migrate systematically, prove parity):
+- **Tokens by role, in Tailwind v4's `@theme`** in `globals.css`, each pointing at one fixed existing shade so nothing changes visually: `brand` (teal-800: buttons, links), `brand-accent` (teal-700: eyebrows, accents), `focus` (the focus outline colour), `brand-soft` and `brand-border` (teal-50 and teal-200 tints), `ink` (slate-950 headings), `ink-body`, `ink-muted` (slate-600), `ink-subtle` (slate-500), `line` and `line-strong` (slate-200 and slate-300), `surface` (white), `surface-subtle` (slate-50), `page` (stone-50), plus `caution` and `danger` families for amber and red. About 25 tokens.
+- **Migration by (utility, shade) pair**, so each old class maps to exactly one new class, in slices: 1 brand and focus, 2 text neutrals, 3 lines and surfaces, 4 status colours, 5 the literal colours.
+- **Proof of no visual change:** a computed-style baseline of 46,376 elements across 46 page views (23 pages, English and Japanese) is captured and re-runs with zero differences; each slice must also give zero. Hover and focus colours, which a static capture cannot see, are checked by comparing the compiled CSS for every old and new class pair. Unit tests, e2e and snapshots run after each slice.
+- **Dark mode is separate.** Tokens by role are what make it possible (redefine the values per colour scheme), but it needs its own design decision and preview.
+
+Questions for the owner: (1) tokens in `globals.css` `@theme` as proposed, or a separate `src/styles/tokens.css`? (2) role names as above, or other names? (3) start with slice 1 (brand and focus, about 740 uses)? (4) any intention to ship dark mode, and roughly when?
+
 ## Home page
 
 | # | Pri | Finding | Status |
@@ -34,7 +46,7 @@ Updated 2026-10-12. Every row has exactly one status word in its last column. Co
 | H2 | P1 | Hero CTA and aside swapped after preferences loaded. Placeholder holds space; `noscript` fallback. | done |
 | H3 | P2 | Japanese hero typography (leading, tracking, size, font stack, `lang` tags). | done |
 | H4 | P2 | The dark hero aside is a policy statement for new visitors, not something to act on. Owner decision: keep as is for now; revisit suggestions when we reach it. Resolved by C2: the aside is now a one-line note. | done |
-| H5 | P2 | Light theme only; colours are hard-coded Tailwind classes (teal-800 repeated in 10+ places). Introduce semantic tokens first, dark mode after. | planned |
+| H5 | P2 | Light theme only; colours are hard-coded Tailwind palette classes. Started: inventory and plan below, not yet implemented; waiting on the owner's answers to the questions under "H5 plan". | planned |
 | H6 | P2 | Skip link text is English-only (`layout.tsx`). Now a localized `SkipLink` component. | done |
 | H7 | P3 | "What to expect" cards are plain text; Owner decision: keep as is; numbers or icons would add AI-looking UI. | dropped |
 | H8 | P3 | `py-32` hero spacing pushes content below the fold on large screens; revisit now that H1 exists. Hero padding is now `py-14 sm:py-20` with no extra large-screen increase; the stage cards start above the fold at 1440x900. | done |
