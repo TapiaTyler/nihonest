@@ -121,7 +121,7 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
   return (
     <article className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={japaneseTranslation?.fields.title ? formatInterfaceMessage("ja", "pageTitle.withSite", { title: japaneseTranslation.fields.title }) : undefined} />
-      <div className="mx-auto max-w-3xl">
+      <div className="relative mx-auto max-w-3xl">
         <Suspense fallback={<BackToExploreLink />}>
           <ArticleBackLink data={journeyData} />
         </Suspense>

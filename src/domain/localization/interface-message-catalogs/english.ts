@@ -315,6 +315,7 @@ export const englishInterfaceMessages = {
   "article.showingRecommendations": "Showing {visible} of {total} recommendations.",
   "article.continueIntro": "Continue with an ordered journey, browse the wider subject, or move to the next connected guide.",
   "article.onThisPage": "On this page",
+  "article.closeOutline": "Close",
   "article.relationship.related": "Related guide",
   "article.relationship.prerequisite": "Read first",
   "article.relationship.next-step": "Suggested follow-up",

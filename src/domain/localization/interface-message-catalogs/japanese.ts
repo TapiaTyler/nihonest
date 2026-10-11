@@ -317,6 +317,7 @@ export const japaneseInterfaceMessages = {
   "article.showingRecommendations": "{total}件中{visible}件のおすすめを表示しています。",
   "article.continueIntro": "順序立てたジャーニーに進む、より広いテーマを見る、または関連する次のガイドに進むことができます。",
   "article.onThisPage": "このページの内容",
+  "article.closeOutline": "閉じる",
   "article.relationship.related": "関連ガイド",
   "article.relationship.prerequisite": "先に読む",
   "article.relationship.next-step": "次におすすめ",
