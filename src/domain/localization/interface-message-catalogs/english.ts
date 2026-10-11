@@ -14,7 +14,7 @@ export const englishInterfaceMessages = {
   "navigation.saved": "Saved",
   "navigation.myJourney": "My Journey",
   "navigation.roadmap": "Roadmap",
-  "navigation.adjustStartingPoint": "Adjust Starting Point",
+  "navigation.adjustStartingPoint": "Adjust my starting point",
   "navigation.faq": "FAQ",
   "navigation.glossary": "Glossary",
   "navigation.residenceStatuses": "Residence Statuses",
