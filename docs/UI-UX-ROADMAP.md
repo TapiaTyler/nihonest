@@ -62,7 +62,8 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
-| B1 | P1 | The Japanese version of an article logs three React hydration mismatch errors on load (checked on `/articles/artist-status` with Japanese selected; English and the other Japanese pages are clean). The mismatch is inside `RelatedJourneyLink` and `LocalizedText` in the "continue exploring" section, code this branch has not changed apart from a back-link class in the same file, so it looks pre-existing, but it has not been checked against `main`. React recovers by re-rendering on the client; the cost is a flash and an error in the console. Needs a fix and a check on `main`. | planned |
+| B1 | P1 | The Japanese version of an article logs three React hydration mismatch errors on load (checked on `/articles/artist-status` with Japanese selected; English and the other Japanese pages are clean). The mismatch is inside `RelatedJourneyLink` and `LocalizedText` in the "continue exploring" section, code this branch has not changed apart from a back-link class in the same file, so it looks pre-existing, but it has not been checked against `main`. React recovers by re-rendering on the client; the cost is a flash and an error in the console. Needs a fix and a check on `main`. Fixed: the locale is now read per component from the store instead of through context, so a boundary that hydrates late uses the server snapshot like everything else. Verified clean on the Japanese article, home, Explore and onboarding; e2e regression test added (`e2e/hydration.spec.ts`). Whether `main` had the same bug was not checked, but the cause was in code shared with it. | done |
+| B2 | P3 | The site has no favicon or app icon (`/favicon.ico` returns 404 on the first load of every page; tabs show the browser default). Needs a mark from the owner; none was invented. | decision |
 
 ## Page review and mobile pass
 

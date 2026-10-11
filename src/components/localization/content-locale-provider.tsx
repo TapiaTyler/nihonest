@@ -21,16 +21,25 @@ type ContentLocaleContextValue = Readonly<{
 
 const ContentLocaleContext = createContext<ContentLocaleContextValue | undefined>(undefined);
 
-export function ContentLocaleProvider({ children }: Readonly<{ children: ReactNode }>) {
+/**
+ * The selected locale, read from the store by each consumer rather than passed down through context. React reads the
+ * server snapshot (English) while a component hydrates, so a Suspense boundary that hydrates after the provider has
+ * already switched to Japanese still matches the server HTML instead of raising a hydration mismatch.
+ */
+function useLocaleSnapshot(): ContentLocalePreference {
   const snapshot = useSyncExternalStore(
     subscribeToContentLocale,
     getContentLocaleSnapshot,
     () => defaultContentLocale,
   );
-  const locale = useMemo(() => {
+  return useMemo(() => {
     const parsed = contentLocalePreferenceSchema.safeParse(snapshot);
     return parsed.success ? parsed.data : readContentLocale();
   }, [snapshot]);
+}
+
+export function ContentLocaleProvider({ children }: Readonly<{ children: ReactNode }>) {
+  const locale = useLocaleSnapshot();
   const setLocale = useCallback((nextLocale: ContentLocalePreference) => writeContentLocale(nextLocale), []);
 
   // Follow the shared locale order and leave text-entry shortcuts alone.
@@ -75,11 +84,15 @@ export function ContentLocaleProvider({ children }: Readonly<{ children: ReactNo
 
 export function useContentLocale(): ContentLocaleContextValue {
   const context = useContext(ContentLocaleContext);
+  const locale = useLocaleSnapshot();
   if (!context) throw new Error("useContentLocale must be used within ContentLocaleProvider.");
-  return context;
+  return useMemo(() => ({ locale, setLocale: context.setLocale }), [locale, context.setLocale]);
 }
 
 /** Allows small reusable UI labels to retain canonical English in isolated renders and tests. */
 export function useOptionalContentLocale(): ContentLocaleContextValue | undefined {
-  return useContext(ContentLocaleContext);
+  const context = useContext(ContentLocaleContext);
+  const locale = useLocaleSnapshot();
+  const setLocale = context?.setLocale;
+  return useMemo(() => setLocale ? { locale, setLocale } : undefined, [locale, setLocale]);
 }
