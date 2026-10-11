@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { AccountContentSyncProvider } from "@/components/account/account-content-sync-provider";
 import { BrowserSchemaConfig } from "@/components/browser-schema-config";
@@ -33,10 +33,16 @@ export const metadata: Metadata = {
   },
 };
 
+/** The browser bar takes the colour at the very top of the page, which is the white header; the site is light only. */
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  colorScheme: "light",
+};
+
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className="flex min-h-screen flex-col bg-stone-50 text-slate-900 antialiased">
+      <body className="flex min-h-dvh flex-col bg-stone-50 text-slate-900 antialiased">
         <BrowserSchemaConfig />
         <ContentLocaleProvider>
           <ReadingAidProvider>
