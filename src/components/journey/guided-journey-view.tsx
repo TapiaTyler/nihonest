@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ScrollToRouteChoice, routeChoiceHash } from "@/components/journey/scroll-to-route-choice";
 import { JourneyRouteLink } from "@/components/personalization/journey-route-link";
 import { ReminderLink } from "@/components/notifications/reminder-link";
 import { JourneyChecklistControl } from "@/components/roadmap/journey-checklist-control";
@@ -60,7 +61,7 @@ export function GuidedJourneyView({
     steps.filter(({ step }) => step.requiredness === "required").map(({ article }, index) => [article.id, index + 1]),
   );
   const checklistIds = steps.map(({ article }) => article.id);
-  const changeRouteHref = mode === "personal" ? "/my-journey?changeRoute=1" : journeyHref(journey.id);
+  const changeRouteHref = `${mode === "personal" ? "/my-journey?changeRoute=1" : journeyHref(journey.id)}${routeChoiceHash}`;
 
   return (
     <>
@@ -103,13 +104,15 @@ export function GuidedJourneyView({
         {presentedJourney.phases.map((phase) => {
           const phaseSteps = steps.filter(({ step }) => step.phaseId === phase.id);
           const containsRouteChoice = phase.steps.some(({ type }) => type === "route-choice");
+          const choosingRoute = containsRouteChoice && !selectedRoute;
           if (phaseSteps.length === 0 && !containsRouteChoice) return null;
 
           return (
-            <section key={phase.id} id={`phase-${phase.id}`} className="scroll-mt-8" aria-labelledby={`phase-${phase.id}-heading`}>
+            <section key={phase.id} id={`phase-${phase.id}`} className="scroll-mt-8" aria-labelledby={`phase-${phase.id}-heading`} data-route-choice={choosingRoute || undefined}>
+              {choosingRoute && <><span id="choose-route" className="block scroll-mt-8" /><ScrollToRouteChoice /></>}
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">{message("journey.phase")}</p>
-                <h2 id={`phase-${phase.id}-heading`} className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{phase.title}</h2>
+                <h2 id={`phase-${phase.id}-heading`} tabIndex={choosingRoute ? -1 : undefined} data-route-choice-heading={choosingRoute || undefined} className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 focus:outline-none">{phase.title}</h2>
                 {phase.description && <p className="mt-3 leading-7 text-slate-600">{phase.description}</p>}
               </div>
 

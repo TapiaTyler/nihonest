@@ -100,7 +100,7 @@ export function ActivityCrossReferenceExplorer({
 
   return (
     <div className="mt-10">
-      <section aria-labelledby="activity-picker" className="rounded-3xl border border-slate-200 bg-slate-100 p-5 sm:p-7">
+      <section aria-labelledby="activity-picker">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow">{t("activity.step1")}</p>

@@ -20,7 +20,7 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
   const guidance = active ? applyGuidanceText(canonicalGuidance, active) : canonicalGuidance;
   const conditionLabel = (type: ConditionType) => message(`guidance.condition.${type}`);
   return (
-    <section lang={active ? "ja" : "en"} className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="structured-guidance-heading">
+    <section lang={active ? "ja" : "en"} className="mt-10" aria-labelledby="structured-guidance-heading">
       <div className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("guidance.pilot")}</p>
         <h2 id="structured-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">

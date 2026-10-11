@@ -331,6 +331,7 @@ export const japaneseInterfaceMessages = {
   "activityPage.heading": "日本でこれはできますか？",
   "activityPage.intro": "予定している活動から始めてください。Nihonestが確認すべき問題を分けて整理し、関連するガイドと担当の公的機関を案内します。",
   "activityPage.disclaimerStrong": "一般的な情報であり、法的助言ではありません。",
+  "activityPage.disclaimerShort": "この確認は、要件への該当や許可の有無を判断するものではありません。詳しい注意事項は下記をご覧ください。",
   "activityPage.disclaimer": "このツールは、要件への該当、許可、適法性、申請の結果を判断するものではありません。規則は個々の事情全体によって異なり、変わることもあります。重要な判断は、担当の公的機関や資格を持つ専門家に確認してください。",
   "activityPage.backFaq": "よくある質問の検索結果に戻る",
   "activityPage.backExplore": "ガイドを探すに戻る",

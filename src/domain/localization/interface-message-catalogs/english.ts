@@ -330,6 +330,7 @@ export const englishInterfaceMessages = {
   "activityPage.heading": "Can I do this in Japan?",
   "activityPage.intro": "Start with your intended activity. Nihonest separates the questions you need to investigate and points you toward focused guidance and responsible authorities.",
   "activityPage.disclaimerStrong": "General information, not legal advice.",
+  "activityPage.disclaimerShort": "This tool does not determine eligibility or permission. The full notice is below.",
   "activityPage.disclaimer": "This tool does not determine eligibility, permission, legality, or an application outcome. Rules depend on complete circumstances and can change; confirm important decisions with the responsible authority or a qualified professional.",
   "activityPage.backFaq": "Back to FAQ results",
   "activityPage.backExplore": "Back to Explore",

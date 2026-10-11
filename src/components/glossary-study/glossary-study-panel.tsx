@@ -87,7 +87,7 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
   }
 
   return (
-    <section className="mt-5 rounded-3xl border border-teal-200 bg-teal-50/60 p-5 sm:p-7" aria-labelledby="glossary-study-heading">
+    <section className="mt-8" aria-labelledby="glossary-study-heading">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("glossaryStudy.eyebrow")}</p>

@@ -126,7 +126,7 @@ export function LocalGuidancePanel({
   const municipalityRef = usePreHydrationInput<HTMLSelectElement>(chooseMunicipality);
 
   return (
-    <section className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="local-guidance-heading">
+    <section className="mt-12" aria-labelledby="local-guidance-heading">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("localGuidance.eyebrow")}</p>

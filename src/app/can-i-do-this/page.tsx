@@ -56,9 +56,10 @@ export default async function CanIDoThisPage({
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="activityPage.heading" /></h1>
         <p className="mt-6 text-lg leading-8 text-slate-600"><InterfaceText id="activityPage.intro" /></p>
       </header>
-      <aside className="mt-8 max-w-3xl rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
-        <strong><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimer" />
-      </aside>
+      {/* The short note keeps the first screen for the tool; the full notice follows it, unchanged. */}
+      <p className="mt-5 max-w-3xl text-sm leading-6 text-slate-600">
+        <strong className="font-semibold text-slate-800"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimerShort" />
+      </p>
       <ActivityCrossReferenceExplorer
         activities={activityCrossReferences}
         officialSources={sources.filter(({ id }) => referencedSourceIds.has(id))}
@@ -68,6 +69,9 @@ export default async function CanIDoThisPage({
         translations={getActivityTranslations()}
         linkTitles={linkTitles}
       />
+      <aside className="mt-12 max-w-3xl border-t border-slate-200 pt-6 text-sm leading-6 text-slate-700">
+        <strong className="font-semibold text-slate-900"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimer" />
+      </aside>
     </div>
   );
 }
