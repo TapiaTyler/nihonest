@@ -85,7 +85,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
       </div>
 
       {/* One quiet line replaces the former card: it states the public-first promise, or the saved starting point. */}
-      <p lang={locale} className={`hero-note mt-6 max-w-2xl text-sm leading-6 text-slate-600${isReady ? "" : " home-pending invisible"}`}>
+      <p lang={locale} className={`ja-prose mt-6 max-w-2xl text-sm leading-6 text-slate-600${isReady ? "" : " home-pending invisible"}`}>
         {stageLabel ? (
           <>
             <strong className="font-semibold text-slate-800">{message("home.yourStartingPoint")}</strong>{" "}

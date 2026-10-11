@@ -69,10 +69,11 @@ html[data-reading-aid="romaji"] [data-reading-aid-separator] {
   color: oklch(0.43 0.09 180);
 }
 
-/* Tight Latin display leading and negative tracking crowd kana and kanji, so Japanese hero text gets its own rhythm. */
+/* `ja-prose` is for short Japanese paragraphs on new surfaces: phrase-aware line breaks and Japanese-appropriate leading.
+   Tight Latin display leading and negative tracking crowd kana and kanji, so Japanese hero text gets its own rhythm. */
 .hero-title:lang(ja),
 .hero-lede:lang(ja),
-.hero-note:lang(ja) {
+.ja-prose:lang(ja) {
   font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Noto Sans JP", Meiryo, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: 0;
   word-break: auto-phrase;
@@ -87,7 +88,7 @@ html[data-reading-aid="romaji"] [data-reading-aid-separator] {
   line-height: 1.9;
 }
 
-.hero-note:lang(ja) {
+.ja-prose:lang(ja) {
   line-height: 1.8;
 }
 

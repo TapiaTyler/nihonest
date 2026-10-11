@@ -54,9 +54,15 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
-| X1 | P3 | Inter is the only typeface and has no Japanese glyphs. Site-wide `:lang(ja)` font stack and line-height would extend H3, but changes every page's Japanese rendering. Owner decision: leave open; show a simulated preview of the change before implementing. | parked |
+| X1 | P3 | Inter is the only typeface and has no Japanese glyphs. Site-wide `:lang(ja)` font stack and line-height would extend H3, but changes every page's Japanese rendering. Owner decision: leave open; show a simulated preview of the change before implementing. Evidence from the `typeset` pass (2026-10-11): Japanese article titles break mid-word on both phone and desktop (for example 専門的な創作活/動のための「芸/術」の在留資格 on the Artist status guide) and descriptions strand a final character (す。). New Japanese elements use `ja-prose` and `hero-title`/`hero-lede` rules; guide pages do not. | parked |
 | X2 | P3 | `border-l-4` blockquotes are flagged by the detector. They read as callouts here and are consistent; leave unless the visual direction changes. | dropped |
 | X3 | -- | `gray-on-color` flag in `onboarding-actions.tsx` is the disabled state; false positive. | dropped |
+
+## Bugs found during review
+
+| # | Pri | Finding | Status |
+|---|-----|---------|--------|
+| B1 | P1 | The Japanese version of an article logs three React hydration mismatch errors on load (checked on `/articles/artist-status` with Japanese selected; English and the other Japanese pages are clean). The mismatch is inside `RelatedJourneyLink` and `LocalizedText` in the "continue exploring" section, code this branch has not changed apart from a back-link class in the same file, so it looks pre-existing, but it has not been checked against `main`. React recovers by re-rendering on the client; the cost is a flash and an error in the console. Needs a fix and a check on `main`. | planned |
 
 ## Page review and mobile pass
 
@@ -100,7 +106,7 @@ Some early work was done without loading the UI skills (the owner called this ou
 |---|---|---|---|
 | H1 stage cards | none | critique (home) | Japanese view, phone fold now improved by C2 |
 | H2 CTA placeholder | none | critique evidence (no console or layout errors) | visual check of the loading state |
-| H3 Japanese hero typography | none (`typeset` not loaded) | none | **`typeset` pass; the Japanese hero was seen on a phone after C2 but has had no desktop check or typeset review** |
+| H3 Japanese hero typography | none (`typeset` not loaded) | none | `typeset` pass done on 2026-10-11 for the Japanese hero, stage section, outline and Explore at desktop and phone widths: hero and outline are sound; the stage description needed phrase-aware breaking (fixed with `ja-prose`); guide-page Japanese titles are the open X1 evidence |
 | H6 skip link | none | none | keyboard and focus-style check in English and Japanese |
 | H8 hero spacing | layout guidance read | critique (fold) | superseded by C2 |
 | H9 in-sentence stage names | none | none | Japanese phrasing read-through |

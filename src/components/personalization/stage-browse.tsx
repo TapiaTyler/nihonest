@@ -25,7 +25,7 @@ export function StageBrowse() {
   if (isReady && preferences.journeyStage) return null;
 
   return (
-    <section className="border-b border-slate-200 bg-white" aria-labelledby="home-stage-browse-heading">
+    <section lang={locale} className="border-b border-slate-200 bg-white" aria-labelledby="home-stage-browse-heading">
       <div className="page-shell py-14 sm:py-18">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -38,7 +38,7 @@ export function StageBrowse() {
             {message("home.browseAllGuides")}
           </Link>
         </div>
-        <p className="mt-4 max-w-3xl leading-7 text-slate-600">{message("home.stagesDescription")}</p>
+        <p className="ja-prose mt-4 max-w-3xl leading-7 text-slate-600">{message("home.stagesDescription")}</p>
         <ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {journeyStages.map(({ id, label }) => (
             <li key={id}>
