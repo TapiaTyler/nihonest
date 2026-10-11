@@ -54,7 +54,10 @@ describe("personalized home recommendations", () => {
     // Both the selected-guide link and that guide's card use the Japanese title.
     expect(within(section).getAllByRole("link", { name: new RegExp(focusedTitle("ja")) })).toHaveLength(2);
     expect(within(section).queryByText(focusedTitle("en"))).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: journeyTitle("ja") })).toBeInTheDocument();
+    // The one-line note names the saved stage and the focused guide in Japanese.
+    expect(screen.getByText("あなたの開始地点")).toBeInTheDocument();
+    expect(screen.getByText("あなたの開始地点").closest("p")).toHaveTextContent("準備中");
+    expect(screen.getByText("あなたの開始地点").closest("p")).toHaveTextContent(focusedTitle("ja"));
   });
 
   it("keeps the canonical English titles when English is selected", async () => {

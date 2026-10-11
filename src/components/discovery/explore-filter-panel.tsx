@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef } from "react";
+import { useId, useMemo } from "react";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
@@ -61,7 +61,6 @@ export function ExploreFilterPanel({
     labels: Readonly<Record<OptionId, string>>,
   ) => locale === "ja" ? options.map(({ id }) => ({ id, label: labels[id] })) : options;
 
-  const moreFiltersRef = useRef<HTMLDetailsElement>(null);
   const advancedFilters = [
     { key: "journeyStageId", label: message("explore.journeyStage"), value: filters.journeyStageId, options: optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage) },
     { key: "topicId", label: message("explore.topic"), value: filters.topicId, options: optionsFor(topics, japaneseTaxonomyLabels.topic) },
@@ -75,15 +74,6 @@ export function ExploreFilterPanel({
     const valueLabel = value === "all" ? undefined : (options as readonly { id: string; label: string }[]).find(({ id }) => id === value)?.label;
     return valueLabel ? [{ key, label, valueLabel, remove: () => updateFilter(key, "all") }] : [];
   });
-
-  // Reveal the panel once a filter applies, but never collapse it automatically while someone is still adjusting it.
-  // On a phone the open panel is a tall stack of selects that pushes the results out of view, and the chips above
-  // already show what is applied, so it stays closed there.
-  const hasActiveFilters = activeFilters.length > 0;
-  useEffect(() => {
-    const roomForPanel = window.matchMedia?.("(min-width: 40rem)").matches ?? true;
-    if (hasActiveFilters && roomForPanel && moreFiltersRef.current) moreFiltersRef.current.open = true;
-  }, [hasActiveFilters]);
 
   return (
     <section role="search" className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
@@ -108,7 +98,7 @@ export function ExploreFilterPanel({
 
       <ExploreActiveFilters filters={activeFilters} />
 
-      <details ref={moreFiltersRef} className="group mt-5 border-t border-slate-200 pt-5">
+      <details className="group mt-5 border-t border-slate-200 pt-5">
         <summary className="flex min-h-11 cursor-pointer list-none select-none items-center justify-between gap-4 font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span>{message("explore.moreFilters")}</span><DisclosureChevron /></summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <FilterSelect allLabel={message("explore.all")} label={message("explore.journeyStage")} value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage)} />

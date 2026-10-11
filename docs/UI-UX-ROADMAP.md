@@ -18,7 +18,7 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 | H1 | P1 | New visitors saw no guides until they picked a stage. Added stage-browse section linking to Explore. | done |
 | H2 | P1 | Hero CTA and aside swapped after preferences loaded. Placeholder holds space; `noscript` fallback. | done |
 | H3 | P2 | Japanese hero typography (leading, tracking, size, font stack, `lang` tags). | done |
-| H4 | P2 | The dark hero aside is a policy statement for new visitors, not something to act on. Owner decision: keep as is for now; revisit suggestions when we reach it. | parked |
+| H4 | P2 | The dark hero aside is a policy statement for new visitors, not something to act on. Owner decision: keep as is for now; revisit suggestions when we reach it. Resolved by C2: the aside is now a one-line note. | done |
 | H5 | P2 | Light theme only; colours are hard-coded Tailwind classes (teal-800 repeated in 10+ places). Introduce semantic tokens first, dark mode after. | planned |
 | H6 | P2 | Skip link text is English-only (`layout.tsx`). Now a localized `SkipLink` component. | done |
 | H7 | P3 | "What to expect" cards are plain text; Owner decision: keep as is; numbers or icons would add AI-looking UI. | dropped |
@@ -81,16 +81,36 @@ Method: two isolated sub-agents (A: design review, B: detector and browser evide
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
-| C1 | P1 | Onboarding: Save sits about 8 screens below the stage choice on a phone (7174px page; 20 journey cards in step 2). Owner decision: a sticky bottom action bar once a stage is chosen (safe-area padding, same "Save my starting point" and skip actions). The journey step is not collapsed. | next |
-| C2 | P1 | Phone fold on home: the stage cards start about 1160px down because the dark aside fills the first screen. Owner decision (resolves H4 for phones): reduce the aside to a one-line note. | next |
-| C3 | P2 | Explore (desktop): the auto-opened filter panel duplicated the chips. Owner decision: keep the panel closed everywhere and rely on the chips. No extra result count; the existing one is enough. Remove the auto-open from E1 and update its tests. | next |
+| C1 | P1 | Onboarding: Save sits about 8 screens below the stage choice on a phone (7174px page; 20 journey cards in step 2). Owner decision: a sticky bottom action bar once a stage is chosen (safe-area padding, same "Save my starting point" and skip actions). The journey step is not collapsed. Built as a bar fixed to the bottom of the viewport once a stage is chosen; Save only, the skip and remove action stays in flow below. | done |
+| C2 | P1 | Phone fold on home: the stage cards start about 1160px down because the dark aside fills the first screen. Owner decision (resolves H4 for phones): reduce the aside to a one-line note. Now one quiet line under the call-to-action; the hero is single column. | done |
+| C3 | P2 | Explore (desktop): the auto-opened filter panel duplicated the chips. Owner decision: keep the panel closed everywhere and rely on the chips. No extra result count; the existing one is enough. Remove the auto-open from E1 and update its tests. The panel never auto-opens; E1's auto-open and its tests were removed. | done |
 | C4 | P2 | Long articles lose the outline once you scroll. Owner decision: try a floating "On this page" button on phones (opens the same outline) and a sticky side rail on wide screens. Needs a preview or a visible check before it is kept. | planned |
 | C5 | P2 | "Browse this group" repeats 12 times as link text; screen readers get no context. Give each link its group name. | planned |
 | C6 | P2 | Public copy reads as unfinished. Owner decision: rewrite to describe a finished product, in English and Japanese. Rewrite scope (present tense, no "becoming", no "draft" framing): `home.description`, the three `home.principle*Description` cards, `faq.pageDescription`, `statusesPage.intro`, `statusExplorer.showing`, `guidance.intro`, and the future-tense lines in `activityPage.intro`, `roadmap.emptyBody`, `onboarding.description`. Keep as written because they are accurate status statements: machine-translation and pilot labels (`translation.*`, `language.japanesePilot`, `explore.japanesePilotNotice`), `notify.deliveryNote` (email delivery is not active yet), and the local-guidance coverage notices. These need the owner to confirm before any change. | next |
 | C7 | P3 | Search placeholders truncate on phones on the FAQ, glossary and Explore pages. | planned |
 | C8 | P3 | Residence statuses: three stacked callouts precede the first status; category chips orphan "Work" and "Visitor" on a second row (overlaps M4). | planned |
-| C9 | P3 | Verified: this is not a sign-in issue. Both pages depend only on whether a starting point is saved in this browser. With none saved, My Journey shows "Choose your journey through Japan" and Roadmap shows "Build your roadmap from a starting point", each with one button to the same onboarding page. Once a stage is saved they differ: My Journey shows suggested guides or the guided journey; Roadmap shows an overview, a progress bar, phases and checklists. The critique called the empty states dead ends because both are only a prompt. Options: leave as is; make each empty state say what that page will show; or add a clearly labelled example. | decision |
+| C9 | P3 | Verified: this is not a sign-in issue. Both pages depend only on whether a starting point is saved in this browser. With none saved, My Journey shows "Choose your journey through Japan" and Roadmap shows "Build your roadmap from a starting point", each with one button to the same onboarding page. Once a stage is saved they differ: My Journey shows suggested guides or the guided journey; Roadmap shows an overview, a progress bar, phases and checklists. The critique called the empty states dead ends because both are only a prompt. Options: leave as is; make each empty state say what that page will show; or add a clearly labelled example. Chosen: option 2. Both empty states now say what the page shows (English and Japanese). | done |
 | C10 | -- | Critique claims checked and not adopted: "32px rows on Explore results" (whole-card stretched links) and "journey stage line near contrast limit" (measured: all text passes). | dropped |
+
+## Skill coverage audit
+
+Some early work was done without loading the UI skills (the owner called this out on 2026-10-11). This table records what each item had at implementation, whether a skill-based check happened afterwards, and what is still owed. The dual-agent critique (C items) reviewed home, Explore, onboarding, long articles and the index pages in English; it did not look at any Japanese rendering.
+
+| Item | Skills at implementation | Skill check afterwards | Still owed |
+|---|---|---|---|
+| H1 stage cards | none | critique (home) | Japanese view, phone fold now improved by C2 |
+| H2 CTA placeholder | none | critique evidence (no console or layout errors) | visual check of the loading state |
+| H3 Japanese hero typography | none (`typeset` not loaded) | none | **`typeset` pass and a rendered check of the Japanese hero at phone and desktop widths; the hero has changed since (C2)** |
+| H6 skip link | none | none | keyboard and focus-style check in English and Japanese |
+| H8 hero spacing | layout guidance read | critique (fold) | superseded by C2 |
+| H9 in-sentence stage names | none | none | Japanese phrasing read-through |
+| E1 filter chips | craft floor | critique | simplified by C3 |
+| E2, E3, E4 search order, placeholder, landmark | none | critique (Explore) | C7 placeholder truncation |
+| O1, O2, O3 save hint, helper line, shared descriptions | none | critique (onboarding) | Japanese onboarding view |
+| A1 article outline | none at first; layout and polish after the rework | critique (articles) | C4; Japanese outline rendered |
+| Page review (M items) | none | critique covered Explore, onboarding, articles, index pages, My Journey, Roadmap | **not critiqued: Saved, Reminders, Account, Can I do this?, glossary and status detail pages, journey and group pages, the articles with special sections beyond measurement** |
+| Mobile pass (M items) | none at first; `mobile-native` and `adapt` for M2, M3, M8 | M8, M3, M2 verified at 375px | M9 (theme-color, `dvh`, touch-action), real-device testing (M10) |
+| C1, C2, C3, C9 | `impeccable` distill, layout, adapt, polish; `mobile-native`; craft floor | rendered check at phone and desktop widths | Japanese rendering of all four; a second critique pass after the C items land |
 
 ## Decisions
 - Eyebrow labels stay: they act as the page titles while headings summarise the page.
