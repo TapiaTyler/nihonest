@@ -30,6 +30,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
   const route = journey?.routes.find(({ id }) => id === preferences.routeId);
   const focusedArticle = articles.find(({ id }) => id === preferences.focusedArticleId);
   const japaneseJourney = locale === "ja" ? journeyTitles.find(({ contentId }) => contentId === journey?.id) : undefined;
+  const journeyTitle = japaneseJourney?.title ?? journey?.title;
   const routeTitle = japaneseJourney?.routes.find(({ id }) => id === route?.id)?.title ?? route?.title ?? "";
   const focusedArticleTitle = (locale === "ja"
     ? articleTranslations.find(({ contentId }) => contentId === focusedArticle?.id)?.title
@@ -45,7 +46,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
   );
 
   return (
-    <section className="page-shell py-14 sm:py-20">
+    <section className="page-shell grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
       <div className="max-w-3xl" lang={locale}>
         <p className="eyebrow">{message("home.eyebrow")}</p>
         <h1 className="hero-title mt-5 text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-6xl lg:text-7xl">
@@ -81,25 +82,47 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
             findStartingPointLink
           )}
         </div>
+          {/* Below the two-column layout one quiet line stands in for the card: stacked, the card would be a wide block with nothing beside it. */}
+        <p lang={locale} className={`ja-prose mt-6 max-w-2xl lg:hidden text-sm leading-6 text-ink-muted ${isReady ? "" : "home-pending invisible"}`}>
+          {stageLabel ? (
+            <>
+              <strong className="font-semibold text-ink-firm">{message("home.yourStartingPoint")}</strong>{" "}
+              {format("home.stageSavedSummary", {
+                stage: stageLabel,
+                focus: route
+                  ? format("home.route", { title: routeTitle })
+                  : focusedArticle
+                    ? format("home.focusedRoute", { title: focusedArticleTitle })
+                    : "",
+              })}
+            </>
+          ) : message("home.optionalNote")}
+        </p>
         {!isReady && <span className="sr-only" aria-live="polite">{message("home.loadingPreferences")}</span>}
       </div>
 
-      {/* One quiet line replaces the former card: it states the public-first promise, or the saved starting point. */}
-      <p lang={locale} className={`ja-prose mt-6 max-w-2xl text-sm leading-6 text-ink-muted${isReady ? "" : " home-pending invisible"}`}>
-        {stageLabel ? (
-          <>
-            <strong className="font-semibold text-ink-firm">{message("home.yourStartingPoint")}</strong>{" "}
-            {format("home.stageSavedSummary", {
-              stage: stageLabel,
-              focus: route
-                ? format("home.route", { title: routeTitle })
-                : focusedArticle
-                  ? format("home.focusedRoute", { title: focusedArticleTitle })
-                  : "",
-            })}
-          </>
-        ) : message("home.optionalNote")}
-      </p>
+
+      {/* The full card only appears where it sits beside the heading, from lg (1024px) up. */}
+      <aside lang={locale} className={`hidden rounded-3xl border border-hero-card-line/10 bg-hero-card p-7 text-on-hero-card-soft shadow-[0_24px_80px_-36px_rgba(15,23,42,0.55)] sm:p-9 lg:block ${isReady ? "" : "home-pending invisible"}`} aria-labelledby="foundation-status">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-on-hero-card-eyebrow">
+          {stageLabel ? message("home.yourStartingPoint") : message("home.builtPublicFirst")}
+        </p>
+        <h2 id="foundation-status" className="mt-4 text-2xl font-semibold tracking-tight text-on-hero-card">
+          {journeyTitle ?? stageLabel ?? message("home.personalizationOptional")}
+        </h2>
+        <p className="mt-4 leading-7 text-on-hero-card-body/80">
+          {stageLabel
+            ? format("home.stageSavedSummary", {
+                stage: stageLabel,
+                focus: route
+                  ? format("home.route", { title: routeTitle })
+                  : focusedArticle
+                    ? format("home.focusedRoute", { title: focusedArticleTitle })
+                    : "",
+              })
+            : message("home.publicSummary")}
+        </p>
+      </aside>
       {!isReady && <noscript><style>{".home-pending{visibility:visible !important}"}</style></noscript>}
     </section>
   );

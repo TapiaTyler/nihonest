@@ -54,6 +54,12 @@
   --on-inverse-soft: var(--color-slate-100); /* secondary text on an inverse surface */
   --on-inverse-muted: var(--color-slate-200); /* tertiary text on an inverse surface */
   --on-inverse-subtle: var(--color-slate-300); /* hints on an inverse surface */
+  --hero-card: var(--color-teal-950); /* the home page card: dark teal in both themes */
+  --hero-card-line: var(--color-teal-900);
+  --on-hero-card: var(--color-white);
+  --on-hero-card-soft: var(--color-teal-50);
+  --on-hero-card-eyebrow: var(--color-teal-200);
+  --on-hero-card-body: var(--color-teal-100);
 
   /* Text */
   --ink: var(--color-slate-950); /* headings */
@@ -308,6 +314,12 @@
   --color-on-inverse-soft: var(--on-inverse-soft);
   --color-on-inverse-muted: var(--on-inverse-muted);
   --color-on-inverse-subtle: var(--on-inverse-subtle);
+  --color-hero-card: var(--hero-card);
+  --color-hero-card-line: var(--hero-card-line);
+  --color-on-hero-card: var(--on-hero-card);
+  --color-on-hero-card-soft: var(--on-hero-card-soft);
+  --color-on-hero-card-eyebrow: var(--on-hero-card-eyebrow);
+  --color-on-hero-card-body: var(--on-hero-card-body);
   --color-ink: var(--ink);
   --color-ink-strong: var(--ink-strong);
   --color-ink-firm: var(--ink-firm);
