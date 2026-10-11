@@ -136,7 +136,7 @@ function ResultJumpLink({ href, label, count }: Readonly<{ href: string; label: 
 }
 
 /** A titled result type, shown as cards or a list. */
-function ResultSection({ id, title, count, children, items, viewMode = "cards", gridClassName = "mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3" }: Readonly<{
+function ResultSection({ id, title, count, children, items, viewMode = "cards", gridClassName = "mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3" }: Readonly<{
   id: string;
   title: string;
   count: number;

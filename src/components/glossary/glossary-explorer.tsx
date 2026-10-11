@@ -155,7 +155,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
       {visibleTerms.length > 0 && hasFilters ? (
         <ViewModeItems
           mode={viewMode}
-          gridClassName="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+          gridClassName="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
           listContainerClassName="mt-6"
           items={visibleTerms.map((term) => ({
             key: term.id,

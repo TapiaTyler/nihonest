@@ -19,7 +19,7 @@ export function GroupArticleList({ articles, translations }: Readonly<{
       </div>
       <ViewModeItems
         mode={viewMode}
-        gridClassName="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+        gridClassName="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
         listContainerClassName="mt-6"
         items={articles.map((article) => ({
           key: article.id,

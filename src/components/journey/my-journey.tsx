@@ -65,7 +65,7 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
       {startingPoints.length > 0 && (
         <section className="mt-12" aria-labelledby="stage-starting-points-heading">
           <h2 id="stage-starting-points-heading" className="text-3xl font-semibold tracking-tight text-ink">{message("roadmap.suggested")}</h2>
-          <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-7 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {startingPoints.map((article) => <LocalizedArticleCard key={article.id} article={article} returnTo="/my-journey" translations={articleTranslations} />)}
           </div>
         </section>

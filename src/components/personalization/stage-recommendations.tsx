@@ -93,7 +93,7 @@ export function StageRecommendations({
             )}
           </div>
         )}
-        <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-7 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {recommendations.map((article) => (
             <LocalizedArticleCard
               key={article.id}

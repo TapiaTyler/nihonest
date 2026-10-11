@@ -36,7 +36,7 @@ export function ExploreGroupBrowser({ groups, translations = [], locale = "en", 
       </div>
       <ViewModeItems
         mode={viewMode}
-        gridClassName="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+        gridClassName="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
         listContainerClassName="mt-8"
         items={sortedGroups.map((group) => ({
           key: group.id,
