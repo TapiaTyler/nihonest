@@ -78,8 +78,8 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
   }
 
   return (
-    <details id={`document-${family.id}`} open className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-slate-50">
-      <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 rounded-3xl bg-white p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden sm:p-7">
+    <details id={`document-${family.id}`} open className="group scroll-mt-24">
+      <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden sm:p-7">
         <span>
           <span className="block text-xs font-semibold uppercase tracking-wide text-teal-700">{message("documents.eyebrow")}</span>
           {locale === "ja" ? (
@@ -94,7 +94,7 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
         <DisclosureChevron />
       </summary>
 
-      <div className="border-t border-slate-200 p-5 sm:p-7">
+      <div className="pt-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p lang={content.lang} className="leading-7 text-slate-600">{content.text("description", family.description)}</p>

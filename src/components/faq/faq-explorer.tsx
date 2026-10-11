@@ -119,8 +119,8 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
         ) : results.length > 0 ? (
           <div className="mt-7 space-y-4">
             {browseGroups.map(({ groupId, entries: groupedEntries }) => (
-              <details key={groupId} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+              <details key={groupId} open className="group">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
                   <span>{locale === "ja" ? japaneseTaxonomyLabels.faqBrowseGroup[groupId] : faqBrowseGroupLabels[groupId]}</span>
                   <span className="flex items-center gap-3">
                     <span className="text-sm font-medium text-slate-500">{groupedEntries.length} {message(groupedEntries.length === 1 ? "faq.question" : "faq.questions")}</span>
@@ -129,8 +129,8 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
                 </summary>
                 <ViewModeItems
                   mode={viewMode}
-                  gridClassName="grid items-start gap-4 md:grid-cols-2 border-t border-slate-200 bg-slate-50 p-5"
-                  listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                  gridClassName="grid items-start gap-4 md:grid-cols-2 pt-5"
+                  listContainerClassName="pt-5"
                   items={groupedEntries.map((entry) => ({
                     key: entry.faq.id,
                     node: <FaqResult entry={entry} translation={translationsById.get(entry.faq.id)} headingLevel={3} returnTo={returnTo} variant={variant} />,

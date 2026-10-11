@@ -95,8 +95,8 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
       {activeFilter === "all" ? (
         <div className="mt-6 space-y-4">
           {statusGroups.map(({ filter, statuses }) => (
-            <details key={filter.id} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+            <details key={filter.id} open className="group">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
                 <span>{filter.label}</span>
                 <span className="flex items-center gap-3">
                   <span className="text-sm font-medium text-slate-500">{statuses.length} {message(statuses.length === 1 ? "status.status" : "status.statuses")}</span>
@@ -105,8 +105,8 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
               </summary>
               <ViewModeItems
                 mode={viewMode}
-                gridClassName="grid min-w-0 grid-cols-1 gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3"
-                listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                gridClassName="grid min-w-0 grid-cols-1 gap-6 pt-5 md:grid-cols-2 xl:grid-cols-3"
+                listContainerClassName="pt-5"
                 items={statuses.map((residenceStatus) => ({
                   key: residenceStatus.id,
                   node: <ResidenceStatusCard residenceStatus={residenceStatus} translation={translationsById.get(residenceStatus.id)} categoryLabel={filter.label} variant={rowVariant} showCategory={false} locale={locale} />,

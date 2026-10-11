@@ -79,7 +79,7 @@ export function GuidedJourneyView({
         <p className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">{message("journey.routeNotInJourney")}</p>
       )}
 
-      <nav className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="journey-outline-heading">
+      <nav className="mt-10" aria-labelledby="journey-outline-heading">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow">{message("journey.outline")}</p>
@@ -91,7 +91,7 @@ export function GuidedJourneyView({
         <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {presentedJourney.phases.map((phase, index) => (
             <li key={phase.id}>
-              <a href={`#phase-${phase.id}`} className="flex min-h-12 items-center gap-3 rounded-xl bg-slate-50 px-4 py-3 font-medium text-slate-800 hover:bg-teal-50 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <a href={`#phase-${phase.id}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-medium text-slate-800 hover:border-teal-300 hover:bg-teal-50 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                 <span className="text-sm font-semibold text-teal-700">{index + 1}</span><span>{phase.title}</span>
               </a>
             </li>

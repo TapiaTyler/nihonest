@@ -165,8 +165,8 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
       ) : visibleTerms.length > 0 ? (
         <div className="mt-6 space-y-4">
           {browseGroups.map(({ topic, terms: groupedTerms }) => (
-            <details key={topic.id} open className="group overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 bg-white px-5 py-4 font-semibold text-slate-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+            <details key={topic.id} open className="group">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
                 <span>{locale === "ja" ? japaneseTaxonomyLabels.topic[topic.id] : topic.label}</span>
                 <span className="flex items-center gap-3">
                   <span className="text-sm font-medium text-slate-500">{locale === "ja"
@@ -179,8 +179,8 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
               </summary>
               <ViewModeItems
                 mode={viewMode}
-                gridClassName="grid gap-6 border-t border-slate-200 bg-slate-50 p-5 md:grid-cols-2 xl:grid-cols-3"
-                listContainerClassName="border-t border-slate-200 bg-slate-50 p-5"
+                gridClassName="grid gap-6 pt-5 md:grid-cols-2 xl:grid-cols-3"
+                listContainerClassName="pt-5"
                 items={groupedTerms.map((term) => ({ key: term.id, node: <GlossaryCard term={term} translation={translationsById.get(term.id)} variant={variant} /> }))}
               />
             </details>

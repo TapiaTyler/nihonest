@@ -61,7 +61,7 @@ export function PrefectureFinder({
   const municipalityCoverage = localCoverage?.municipalities.find(({ id }) => id === selectedMunicipality?.id);
 
   return (
-    <section className="not-prose mt-8 rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby={`${searchId}-heading`} lang={locale}>
+    <section className="not-prose mt-8 border-t border-slate-200 pt-8" aria-labelledby={`${searchId}-heading`} lang={locale}>
       <h3 id={`${searchId}-heading`} className="text-xl font-semibold text-slate-950">{messages["finder.heading"]}</h3>
 
       <div className="mt-4">

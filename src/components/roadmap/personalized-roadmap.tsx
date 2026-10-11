@@ -127,7 +127,7 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys, jo
 
       {journey && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="phase-roadmap-heading">
+          <section aria-labelledby="phase-roadmap-heading">
             <h2 id="phase-roadmap-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("roadmap.phasesHeading")}</h2>
             <p className="mt-2 leading-7 text-slate-600">{message("roadmap.phasesIntro")}</p>
             <ol className="mt-6 space-y-3">
@@ -135,7 +135,7 @@ export function PersonalizedRoadmap({ definitions, rules, articles, journeys, jo
                 const phaseComplete = phase.complete === phase.total;
                 return (
                   <li key={phase.id}>
-                    <Link href={`/my-journey#phase-${phase.id}`} className="group flex min-h-16 items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 hover:border-teal-400 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                    <Link href={`/my-journey#phase-${phase.id}`} className="group flex min-h-16 items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 hover:border-teal-400 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                       <span className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${phaseComplete ? "bg-teal-700 text-white" : "bg-white text-teal-800"}`}>{phaseComplete ? "✓" : index + 1}</span>
                       <span className="min-w-0 flex-1"><span className="block font-semibold text-slate-950 group-hover:text-teal-800">{phase.title}</span><span className="mt-1 block text-sm text-slate-500">{format("roadmap.phaseProgress", { complete: phase.complete, total: phase.total })}{phase.inProgress ? format("roadmap.inProgressSuffix", { count: phase.inProgress }) : ""}</span></span>
                     </Link>

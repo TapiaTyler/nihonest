@@ -14,11 +14,11 @@ export function ArticleTerminology({ terms, localized = {} }: Readonly<{
   if (terms.length === 0) return null;
 
   return (
-    <aside className="rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:p-6" aria-labelledby="article-terminology-heading">
-      <h2 id="article-terminology-heading" className="text-lg font-semibold tracking-tight text-teal-950">
+    <aside className="border-t border-slate-200 pt-8" aria-labelledby="article-terminology-heading">
+      <h2 id="article-terminology-heading" className="text-lg font-semibold tracking-tight text-slate-950">
         {message("article.terminologyHeading")}
       </h2>
-      <p className="mt-2 text-sm leading-6 text-teal-950/80">{message("article.terminologyHint")}</p>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{message("article.terminologyHint")}</p>
       <ul className="mt-4 flex flex-wrap gap-3">
         {terms.map((term) => {
           const gloss = glossaryTermGloss(term, locale, localized[term.id]?.[locale]?.name);
