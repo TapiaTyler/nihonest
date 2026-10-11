@@ -23,8 +23,8 @@ export function OnboardingStageSelector({ selectedStage, onSelect }: Readonly<{
       <p className="mt-1 leading-7 text-slate-600">{message("onboarding.stageSaveNote")}</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         {journeyStages.map((stage) => (
-          <label key={stage.id} className="has-checked:border-teal-700 has-checked:bg-teal-50 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-teal-700 flex min-h-32 cursor-pointer items-start gap-4 rounded-2xl border border-slate-300 bg-white p-5 shadow-sm transition-colors hover:border-teal-500">
-            <input type="radio" name="journey-stage" value={stage.id} checked={selectedStage === stage.id} onChange={() => onSelect(stage.id)} className="mt-1 size-5 shrink-0 accent-teal-800" />
+          <label key={stage.id} className="has-checked:border-brand-accent has-checked:bg-brand-soft has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus flex min-h-32 cursor-pointer items-start gap-4 rounded-2xl border border-slate-300 bg-white p-5 shadow-sm transition-colors hover:border-brand-500">
+            <input type="radio" name="journey-stage" value={stage.id} checked={selectedStage === stage.id} onChange={() => onSelect(stage.id)} className="mt-1 size-5 shrink-0 accent-brand" />
             <span>
               <span className="block text-lg font-semibold text-slate-950">{locale === "ja" ? japaneseTaxonomyLabels.journeyStage[stage.id] : stage.label}</span>
               <span className="mt-2 block leading-7 text-slate-600">{message(stageDescriptions[stage.id])}</span>

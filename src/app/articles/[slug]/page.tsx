@@ -174,12 +174,12 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
               key={metadata.id}
               cards={[
                 ...relatedJourneys.map((journey) => {
-                  const className = "group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700";
+                  const className = "group rounded-2xl border border-slate-200 bg-white p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
                   const defaultRouteId = getJourneyRouteForArticle(journey, metadata.id)?.id;
                   const content = (
                     <>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="journey.guidedJourney" /></span>
-                      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="journey.guidedJourney" /></span>
+                      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-brand-accent"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
                     </>
                   );
                   return (
@@ -192,17 +192,17 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
                   <Link
                     key={`group-${group.id}`}
                     href={`/explore/${group.id}`}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                   >
-                    <span className="text-xs font-semibold uppercase tracking-wide text-teal-700"><InterfaceText id="content.contentGroup" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="content.contentGroup" /></span>
+                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-brand-accent"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
                   </Link>
                 )),
               ]}
               guides={[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
                   <li key={relatedArticle.id}>
                     <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id={label} />:</span>
-                    <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                    <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                       <LocalizedText english={relatedArticle.title} japanese={japaneseArticleTitle(relatedArticle.id)} />
                     </Link>
                   </li>

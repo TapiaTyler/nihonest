@@ -14,7 +14,7 @@ import {
   type SiteDestinationHref,
 } from "@/components/navigation/site-navigation-config";
 
-const mobileLinkClass = "inline-flex min-h-12 w-full items-center rounded-xl px-3 text-base font-medium text-teal-900 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-[current=page]:bg-teal-50 aria-[current=page]:font-semibold";
+const mobileLinkClass = "inline-flex min-h-12 w-full items-center rounded-xl px-3 text-base font-medium text-brand-deep-soft hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-[current=page]:bg-brand-soft aria-[current=page]:font-semibold";
 
 export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
   pathname: string;
@@ -109,7 +109,7 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
 
   return (
     <>
-      <button ref={menuButtonRef} type="button" aria-expanded={menuOpen} aria-controls="mobile-primary-navigation" aria-label={message(menuOpen ? "navigation.close" : "navigation.open")} onClick={() => setMenuOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 text-teal-900 hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 lg:hidden">
+      <button ref={menuButtonRef} type="button" aria-expanded={menuOpen} aria-controls="mobile-primary-navigation" aria-label={message(menuOpen ? "navigation.close" : "navigation.open")} onClick={() => setMenuOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 text-brand-deep-soft hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus lg:hidden">
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" /></svg>
       </button>
 
@@ -117,7 +117,7 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
         <div className={`mobile-nav-panel flex w-[min(85vw,22rem)] flex-col overflow-y-auto border-l border-slate-200 bg-white shadow-2xl transition-transform ${menuClosing ? "duration-[180ms] ease-in" : "duration-200 ease-out"} ${panelVisible ? "translate-x-0" : "translate-x-full"}`}>
           <div className="sticky top-0 z-10 flex min-h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur">
             <h2 id="mobile-navigation-heading" className="text-lg font-semibold tracking-tight text-slate-950">{message("navigation.heading")}</h2>
-            <button type="button" onClick={closeMenu} aria-label={message("navigation.closeMobile")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-teal-900 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+            <button type="button" onClick={closeMenu} aria-label={message("navigation.closeMobile")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-brand-deep-soft hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" /></svg>
             </button>
           </div>

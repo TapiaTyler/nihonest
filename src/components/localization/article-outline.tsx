@@ -61,7 +61,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
     <>
       <nav ref={inlineRef} aria-label={label} lang={lang} className="mt-2 xl:hidden">
         <details className="group border-b border-slate-200">
-          <summary className="flex min-h-12 cursor-pointer list-none select-none items-center gap-2 font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+          <summary className="flex min-h-12 cursor-pointer list-none select-none items-center gap-2 font-semibold text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
             <span lang={uiLang}>{label}</span>
             <DisclosureChevron />
           </summary>
@@ -82,7 +82,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
           aria-haspopup="dialog"
           lang={uiLang}
           onClick={() => sheetRef.current?.showModal()}
-          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 min-h-12 rounded-full bg-teal-800 px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.45)] hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 xl:hidden"
+          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 min-h-12 rounded-full bg-brand px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.45)] hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus xl:hidden"
         >
           {label}
         </button>
@@ -96,7 +96,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
       >
         <div className="sticky top-0 flex min-h-14 items-center justify-between gap-4 border-b border-slate-200 bg-white px-5">
           <h2 id="article-outline-sheet-title" lang={uiLang} className="text-lg font-semibold tracking-tight text-slate-950">{label}</h2>
-          <button type="button" lang={uiLang} onClick={() => sheetRef.current?.close()} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+          <button type="button" lang={uiLang} onClick={() => sheetRef.current?.close()} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
             {message("article.closeOutline")}
           </button>
         </div>
@@ -179,12 +179,12 @@ function OutlineList({ groups, activeId, dense = false, className }: Readonly<{
 function OutlineLink({ entry: { level, id, text }, activeId, dense }: Readonly<{ entry: ArticleOutlineEntry; activeId?: string; dense: boolean }>) {
   const current = id === activeId;
   const size = dense ? "min-h-8 py-0.5 text-sm" : "min-h-11 sm:min-h-9";
-  const tone = current ? "font-semibold text-teal-800" : level === 3 ? "text-slate-600" : "font-medium text-slate-700";
+  const tone = current ? "font-semibold text-brand-link" : level === 3 ? "text-slate-600" : "font-medium text-slate-700";
   return (
     <a
       href={`#${id}`}
       aria-current={current ? "location" : undefined}
-      className={`flex items-center rounded-sm leading-6 hover:text-teal-800 hover:underline hover:decoration-teal-300 hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${size} ${tone} ${level === 3 ? "pl-4" : ""} ${level === 3 && !dense ? "text-[0.9375rem]" : ""}`}
+      className={`flex items-center rounded-sm leading-6 hover:text-brand-link hover:underline hover:decoration-brand-300 hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${size} ${tone} ${level === 3 ? "pl-4" : ""} ${level === 3 && !dense ? "text-[0.9375rem]" : ""}`}
     >
       {text}
     </a>

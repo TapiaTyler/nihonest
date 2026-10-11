@@ -78,7 +78,7 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
             type="button"
             aria-pressed={activeFilter === filter.id}
             onClick={() => updateFilter(filter.id)}
-            className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:border-teal-800 aria-pressed:bg-teal-800 aria-pressed:text-white"
+            className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white"
           >
             {filter.label}
           </button>
@@ -96,7 +96,7 @@ export function ResidenceStatusExplorer({ residenceStatuses, translations = [] }
         <div className="mt-6 space-y-4">
           {statusGroups.map(({ filter, statuses }) => (
             <details key={filter.id} open className="group">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
                 <span>{filter.label}</span>
                 <span className="flex items-center gap-3">
                   <span className="text-sm font-medium text-slate-500">{statuses.length} {message(statuses.length === 1 ? "status.status" : "status.statuses")}</span>

@@ -14,7 +14,7 @@ export function ReadingAidOptions() {
           role="radio"
           aria-checked={readingAid === option.id}
           onClick={() => setReadingAid(option.id)}
-          className={`min-h-10 rounded-lg px-2 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-teal-700 ${readingAid === option.id ? "bg-white text-teal-900 shadow-sm" : "text-slate-600 hover:bg-white/70 hover:text-slate-900"}`}
+          className={`min-h-10 rounded-lg px-2 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus ${readingAid === option.id ? "bg-white text-brand-deep-soft shadow-sm" : "text-slate-600 hover:bg-white/70 hover:text-slate-900"}`}
         >
           {option.label}
         </button>

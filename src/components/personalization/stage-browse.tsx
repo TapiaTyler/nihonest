@@ -34,7 +34,7 @@ export function StageBrowse() {
               {message("home.stagesTitle")}
             </h2>
           </div>
-          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
             {message("home.browseAllGuides")}
           </Link>
         </div>
@@ -44,7 +44,7 @@ export function StageBrowse() {
             <li key={id}>
               <Link
                 href={`/explore?stage=${id}`}
-                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-stone-50 p-5 transition-colors hover:border-teal-300 hover:bg-teal-50/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-stone-50 p-5 transition-colors hover:border-brand-300 hover:bg-brand-soft/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
                 <span className="text-lg font-semibold tracking-tight text-slate-950">
                   {locale === "ja" ? japaneseTaxonomyLabels.journeyStage[id] : label}

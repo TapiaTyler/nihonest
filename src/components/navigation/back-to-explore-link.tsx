@@ -24,7 +24,7 @@ export function BackToExploreLink() {
   return (
     <Link
       href={href}
-      className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
+      className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-brand-link hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
     >
       {message(href === "/saved" ? "back.saved" : href === "/roadmap" ? "back.roadmap" : href === "/my-journey" ? "back.myJourney" : "back.explore")}
     </Link>

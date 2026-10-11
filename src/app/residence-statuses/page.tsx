@@ -25,7 +25,7 @@ export default function ResidenceStatusesPage() {
       </header>
       <p className="mt-5 max-w-3xl leading-7 text-slate-600">
         <InterfaceText id="statusesPage.activityPrompt" />{" "}
-        <Link href="/can-i-do-this" className="inline-flex min-h-11 items-center font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><InterfaceText id="statusesPage.activityLink" /></Link>
+        <Link href="/can-i-do-this" className="inline-flex min-h-11 items-center font-semibold text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"><InterfaceText id="statusesPage.activityLink" /></Link>
       </p>
 
       <ResidenceStatusExplorer residenceStatuses={residenceStatuses} translations={getResidenceStatusTranslations()} />
@@ -33,7 +33,7 @@ export default function ResidenceStatusesPage() {
       {/* Special Permanent Resident belongs to a separate statute, not the selectable ordinary-status catalog. */}
       <aside className="mt-12 max-w-3xl border-t border-slate-200 pt-6 text-sm leading-6 text-slate-700">
         <p><InterfaceText id="statusesPage.specialPermanentBody" /></p>
-        <Link href="/articles/special-permanent-residents-in-japan" className="mt-2 inline-flex min-h-11 items-center font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+        <Link href="/articles/special-permanent-residents-in-japan" className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
           <InterfaceText id="statusesPage.specialPermanentLink" />
         </Link>
       </aside>

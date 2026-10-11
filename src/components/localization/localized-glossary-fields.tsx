@@ -63,14 +63,14 @@ export function LocalizedGlossaryDetailSections({
   return <>
     {journeyStageIds.length > 0 && <p className="mt-6 text-sm text-slate-500">{message("glossary.journeyStages")} {journeyStageIds.map((id) => locale === "ja" ? japaneseTaxonomyLabels.journeyStage[id] : journeyStages.find((stage) => stage.id === id)?.label ?? id).join(locale === "ja" ? "、" : ", ")}</p>}
     {documents.length > 0 && <section className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="document-example-heading">
-      <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("glossary.visualReference")}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("glossary.visualReference")}</p>
       <h2 id="document-example-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">{message("glossary.annotatedDocumentExample")}</h2>
       <p className="mt-3 leading-7 text-slate-600">{message("glossary.annotatedDocumentIntro")}</p>
-      <ul className="mt-4 space-y-3">{documents.map(({ id, title, japaneseTitle, href }) => <li key={id}><Link href={href} className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("glossary.viewDocumentExample").replace("{title}", locale === "ja" ? japaneseTitle ?? title : title)}</Link></li>)}</ul>
+      <ul className="mt-4 space-y-3">{documents.map(({ id, title, japaneseTitle, href }) => <li key={id}><Link href={href} className="inline-flex min-h-11 items-center rounded-full border border-brand-300 bg-white px-4 text-sm font-semibold text-brand-link hover:border-brand-600 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("glossary.viewDocumentExample").replace("{title}", locale === "ja" ? japaneseTitle ?? title : title)}</Link></li>)}</ul>
     </section>}
     {articles.length > 0 && <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="term-articles-heading">
       <h2 id="term-articles-heading" className="text-2xl font-semibold tracking-tight text-slate-950">{message("glossary.guidesUsingTerm")}</h2>
-      <ul className="mt-4 space-y-3">{articles.map(({ id, title, slug }) => <li key={id}><Link href={`/articles/${slug}`} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{locale === "ja" ? japaneseArticleTitles[id] ?? title : title}</Link></li>)}</ul>
+      <ul className="mt-4 space-y-3">{articles.map(({ id, title, slug }) => <li key={id}><Link href={`/articles/${slug}`} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{locale === "ja" ? japaneseArticleTitles[id] ?? title : title}</Link></li>)}</ul>
     </section>}
   </>;
 }
@@ -78,6 +78,6 @@ export function LocalizedGlossaryDetailSections({
 export function LocalizedGlossaryTopics({ topicIds }: Readonly<{ topicIds: readonly TopicId[] }>) {
   const { locale } = useInterfaceMessages();
   return <div className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
-    {topicIds.map((id) => <span key={id} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">{locale === "ja" ? japaneseTaxonomyLabels.topic[id] : topics.find((topic) => topic.id === id)?.label ?? id}</span>)}
+    {topicIds.map((id) => <span key={id} className="rounded-full bg-brand-soft px-3 py-1 text-brand-link">{locale === "ja" ? japaneseTaxonomyLabels.topic[id] : topics.find((topic) => topic.id === id)?.label ?? id}</span>)}
   </div>;
 }

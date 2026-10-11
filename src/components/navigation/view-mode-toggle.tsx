@@ -41,7 +41,7 @@ export function ViewModeToggle({ mode, onChange }: Readonly<{ mode: ViewMode; on
       type="button"
       aria-pressed={mode === value}
       onClick={() => onChange(value)}
-      className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-slate-700 transition-colors hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:bg-teal-800 aria-pressed:text-white"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-slate-700 transition-colors hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:bg-brand aria-pressed:text-white"
     >
       {icon}
       {label}

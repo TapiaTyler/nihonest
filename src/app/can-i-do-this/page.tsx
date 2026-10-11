@@ -50,7 +50,7 @@ export default async function CanIDoThisPage({
   return (
     <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.canIDoThis")} />
-      <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">← <InterfaceText id={returnLabel} /></Link>
+      <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-link hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">← <InterfaceText id={returnLabel} /></Link>
       <header className="mt-5 max-w-3xl">
         <p className="eyebrow"><InterfaceText id="activityPage.eyebrow" /></p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="activityPage.heading" /></h1>

@@ -106,7 +106,7 @@ export function ActivityCrossReferenceExplorer({
             <p className="eyebrow">{t("activity.step1")}</p>
             <h2 id="activity-picker" tabIndex={-1} className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("activity.pickHeading")}</h2>
           </div>
-          {activity && <button type="button" onClick={reset} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("activity.startOver")}</button>}
+          {activity && <button type="button" onClick={reset} className="min-h-11 rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("activity.startOver")}</button>}
         </div>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {presentedActivities.map((option) => {
@@ -117,16 +117,16 @@ export function ActivityCrossReferenceExplorer({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => chooseActivity(option.id)}
-                className="min-h-36 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-teal-500 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:border-teal-700 aria-pressed:ring-2 aria-pressed:ring-teal-700/20"
+                className="min-h-36 rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:border-brand-500 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand-accent aria-pressed:ring-2 aria-pressed:ring-brand-accent/20"
               >
                 <span className="flex items-center justify-between gap-3">
                   <span className="font-semibold text-slate-950">{option.shortLabel}</span>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${option.mode === "guided" ? "bg-teal-50 text-teal-800" : "bg-slate-100 text-slate-600"}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${option.mode === "guided" ? "bg-brand-soft text-brand-link" : "bg-slate-100 text-slate-600"}`}>
                     {t(option.mode === "guided" ? "activity.guided" : "activity.focused")}
                   </span>
                 </span>
                 <span className="mt-3 block text-sm leading-6 text-slate-600">{option.description}</span>
-                <span className="mt-4 block text-sm font-semibold text-teal-800">{t(selected ? "activity.selected" : "activity.exploreThis")}</span>
+                <span className="mt-4 block text-sm font-semibold text-brand-link">{t(selected ? "activity.selected" : "activity.exploreThis")}</span>
               </button>
             );
           })}
@@ -141,11 +141,11 @@ export function ActivityCrossReferenceExplorer({
           <div className="mt-7 space-y-8">
             {activity.questions.map((question, questionIndex) => (
               <fieldset key={question.id}>
-                <legend className="font-semibold text-slate-950"><span className="text-teal-700">{questionIndex + 1}.</span> {question.prompt}</legend>
+                <legend className="font-semibold text-slate-950"><span className="text-brand-accent">{questionIndex + 1}.</span> {question.prompt}</legend>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {question.choices.map((choice) => (
-                    <label key={choice.id} className="flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-stone-50 px-4 py-3 hover:border-teal-500 has-[:checked]:border-teal-700 has-[:checked]:bg-teal-50 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-teal-700">
-                      <input type="radio" name={question.id} value={choice.id} checked={answers[question.id] === choice.id} onChange={() => answerQuestion(question.id, choice.id)} className="mt-1 accent-teal-800" />
+                    <label key={choice.id} className="flex min-h-12 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-stone-50 px-4 py-3 hover:border-brand-500 has-[:checked]:border-brand-accent has-[:checked]:bg-brand-soft has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus">
+                      <input type="radio" name={question.id} value={choice.id} checked={answers[question.id] === choice.id} onChange={() => answerQuestion(question.id, choice.id)} className="mt-1 accent-brand" />
                       <span className="text-sm font-medium leading-6 text-slate-800">{choice.label}</span>
                     </label>
                   ))}
@@ -182,19 +182,19 @@ export function ActivityCrossReferenceExplorer({
               return (
                 <article key={rule.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-700">{t(`activity.layer.${rule.layer}`)}</p>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${approved ? "bg-teal-50 text-teal-800" : "bg-amber-50 text-amber-800"}`}>{t(approved ? "activity.reviewed" : "activity.authorityCheck")}</span>
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-accent">{t(`activity.layer.${rule.layer}`)}</p>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${approved ? "bg-brand-soft text-brand-link" : "bg-amber-50 text-amber-800"}`}>{t(approved ? "activity.reviewed" : "activity.authorityCheck")}</span>
                   </div>
                   <h3 className="mt-3 text-xl font-semibold tracking-tight text-slate-950">{rule.title}</h3>
                   <p className="mt-3 leading-7 text-slate-600">{rule.orientation}</p>
-                  {approved && rule.assertion && <p className="mt-3 rounded-xl bg-teal-50 p-4 text-sm leading-6 text-teal-950">{rule.assertion.statement}</p>}
+                  {approved && rule.assertion && <p className="mt-3 rounded-xl bg-brand-soft p-4 text-sm leading-6 text-brand-deep">{rule.assertion.statement}</p>}
                   {!approved && rule.assertion && <p className="mt-3 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-950">{t("activity.awaitingApproval")}</p>}
                   <h4 className="mt-5 text-sm font-semibold text-slate-950">{t("activity.factsToVerify")}</h4>
-                  <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-600">{rule.verify.map((item) => <li key={item} className="flex gap-2"><span aria-hidden="true" className="text-teal-700">•</span><span>{item}</span></li>)}</ul>
+                  <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-600">{rule.verify.map((item) => <li key={item} className="flex gap-2"><span aria-hidden="true" className="text-brand-accent">•</span><span>{item}</span></li>)}</ul>
                   <div className="mt-5 border-t border-slate-200 pt-4">
                     <p className="text-sm font-semibold text-slate-950">{t("activity.readNext")}</p>
-                    <ul className="mt-2 space-y-1">{rule.links.map((link) => <li key={`${link.kind}-${link.id}`}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{(japanese ? linkTitles[`${link.kind}:${link.id}`] : undefined) ?? link.label}</Link></li>)}</ul>
-                    {sourceRecords.length > 0 && <><p className="mt-3 text-sm font-semibold text-slate-950">{t("sources.heading")}</p><ul className="mt-2 space-y-1">{sourceRecords.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span><LocalizedSourceName source={source} order="organization-first" /></span><span className="sr-only">{t("sources.openNewTab")}</span></a></li>)}</ul></>}
+                    <ul className="mt-2 space-y-1">{rule.links.map((link) => <li key={`${link.kind}-${link.id}`}><Link href={link.href} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{(japanese ? linkTitles[`${link.kind}:${link.id}`] : undefined) ?? link.label}</Link></li>)}</ul>
+                    {sourceRecords.length > 0 && <><p className="mt-3 text-sm font-semibold text-slate-950">{t("sources.heading")}</p><ul className="mt-2 space-y-1">{sourceRecords.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-brand-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"><span><LocalizedSourceName source={source} order="organization-first" /></span><span className="sr-only">{t("sources.openNewTab")}</span></a></li>)}</ul></>}
                   </div>
                 </article>
               );

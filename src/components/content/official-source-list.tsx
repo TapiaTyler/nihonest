@@ -26,7 +26,7 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
               href={source.url}
               target="_blank"
               rel="noreferrer"
-              className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+              className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               {/* Japanese readers see the page's own Japanese title and the organization's Japanese name where recorded. */}
               <LocalizedSourceName source={source} />

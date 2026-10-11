@@ -89,8 +89,8 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
         <h2 id="faq-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("faq.searchHeading")}</h2>
         <label htmlFor={searchId} className="mt-4 block text-sm font-semibold text-slate-900">{message("faq.searchPrompt")}</label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder={message("faq.searchPlaceholder")} className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" />
-          {query && <button type="button" onClick={() => updateQuery("")} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("faq.clearSearch")}</button>}
+          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder={message("faq.searchPlaceholder")} className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+          {query && <button type="button" onClick={() => updateQuery("")} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("faq.clearSearch")}</button>}
         </div>
       </section>
 
@@ -120,7 +120,7 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
           <div className="mt-7 space-y-4">
             {browseGroups.map(({ groupId, entries: groupedEntries }) => (
               <details key={groupId} open className="group">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
                   <span>{locale === "ja" ? japaneseTaxonomyLabels.faqBrowseGroup[groupId] : faqBrowseGroupLabels[groupId]}</span>
                   <span className="flex items-center gap-3">
                     <span className="text-sm font-medium text-slate-500">{groupedEntries.length} {message(groupedEntries.length === 1 ? "faq.question" : "faq.questions")}</span>
@@ -144,10 +144,10 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
             <h3 className="text-xl font-semibold text-slate-950">{message("faq.noMatch")}</h3>
             <p className="mt-2 text-slate-600">{message("faq.noMatchHelp")}</p>
             <div className="mt-5 flex flex-col items-center justify-center gap-2 sm:flex-row">
-              <Link href={{ pathname: "/explore", query: { q: query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={{ pathname: "/explore", query: { q: query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {message("faq.searchAll")}
               </Link>
-              <button type="button" onClick={() => updateQuery("")} className="min-h-11 rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("faq.browseAll")}</button>
+              <button type="button" onClick={() => updateQuery("")} className="min-h-11 rounded-full px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("faq.browseAll")}</button>
             </div>
           </div>
         )}

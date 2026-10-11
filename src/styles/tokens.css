@@ -1,0 +1,61 @@
+/*
+ * Colour tokens, named by role.
+ *
+ * Three layers, as in the design-system guidance:
+ *   1. Primitives are Tailwind's own palette variables (`--color-teal-800` and so on).
+ *   2. Semantic roles below point at one primitive each, under `:root`. Changing a theme means redefining these
+ *      variables, never editing components. Dark mode will do that under `[data-theme="dark"]`.
+ *   3. `@theme inline` exposes each role to Tailwind as a utility (`bg-brand`, `text-brand-link`,
+ *      `outline-focus`, ...). `inline` makes a utility read the role variable at use time, which is what lets a
+ *      theme override it.
+ *
+ * Phase 1 keeps every light value identical to the palette class it replaced, so nothing changes visually.
+ * Slice 1 (this file so far): the brand (teal) roles. Neutrals, surfaces and status colours follow.
+ */
+
+:root {
+  /* Brand fills */
+  --brand: var(--color-teal-800); /* primary action fill; selected borders; checkbox accent */
+  --brand-hover: var(--color-teal-700); /* primary action fill on hover */
+  --brand-soft: var(--color-teal-50); /* quiet brand wash behind notes and selected rows */
+  --brand-softer: var(--color-teal-100); /* the wash on hover */
+
+  /* Brand text */
+  --brand-link: var(--color-teal-800); /* links and secondary actions */
+  --brand-link-hover: var(--color-teal-600); /* the same on hover */
+  --brand-accent: var(--color-teal-700); /* eyebrows, small accents, strong borders, focus rings on fields */
+  --brand-deep: var(--color-teal-950); /* headings on a brand wash */
+  --brand-deep-soft: var(--color-teal-900); /* body text on a brand wash */
+  --brand-on-dark-hover: var(--color-teal-300); /* link hover on the dark footer */
+
+  /* Brand lines, graded from quiet to strong (borders and underlines) */
+  --brand-line: var(--color-teal-200);
+  --brand-300: var(--color-teal-300);
+  --brand-400: var(--color-teal-400);
+  --brand-500: var(--color-teal-500);
+  --brand-600: var(--color-teal-600);
+
+  /* Keyboard focus outline */
+  --focus: var(--color-teal-700);
+  --focus-on-dark: var(--color-teal-300); /* on the dark footer and similar surfaces */
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-softer: var(--brand-softer);
+  --color-brand-link: var(--brand-link);
+  --color-brand-link-hover: var(--brand-link-hover);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-deep-soft: var(--brand-deep-soft);
+  --color-brand-on-dark-hover: var(--brand-on-dark-hover);
+  --color-brand-line: var(--brand-line);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-focus: var(--focus);
+  --color-focus-on-dark: var(--focus-on-dark);
+}

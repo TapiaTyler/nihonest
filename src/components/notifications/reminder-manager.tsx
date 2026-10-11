@@ -117,10 +117,10 @@ export function ReminderManager() {
 
   if (accountSession.status !== "signed-in") {
     return (
-      <section className="mt-10 rounded-3xl border border-teal-200 bg-teal-50/60 p-7 sm:p-9">
+      <section className="mt-10 rounded-3xl border border-brand-line bg-brand-soft/60 p-7 sm:p-9">
         <h2 className="text-2xl font-semibold text-slate-950">{t("reminders.signInHeading")}</h2>
         <p className="mt-3 max-w-2xl leading-7 text-slate-600">{t("reminders.signInBody")}</p>
-        <Link href="/account" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("reminders.signInLink")}</Link>
+        <Link href="/account" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("reminders.signInLink")}</Link>
       </section>
     );
   }
@@ -132,16 +132,16 @@ export function ReminderManager() {
       <section className="self-start rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="schedule-reminder-heading">
         <p className="eyebrow">{t("reminders.newEyebrow")}</p>
         <h2 id="schedule-reminder-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("reminders.chooseWhen")}</h2>
-        {requestedTarget.kind !== "custom" && <p className="mt-4 rounded-xl bg-teal-50 p-4 text-sm font-medium leading-6 text-teal-950">{format("reminders.stepSelected", { title: requestedTitle })}</p>}
+        {requestedTarget.kind !== "custom" && <p className="mt-4 rounded-xl bg-brand-soft p-4 text-sm font-medium leading-6 text-brand-deep">{format("reminders.stepSelected", { title: requestedTitle })}</p>}
         <form onSubmit={submit} className="mt-6 space-y-5">
-          <div><label htmlFor="reminder-title" className="text-sm font-semibold text-slate-900">{t("reminders.title")}</label><input id="reminder-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" /></div>
-          <div><label htmlFor="reminder-time" className="text-sm font-semibold text-slate-900">{t("reminders.dateTime")}</label><input id="reminder-time" required type="datetime-local" value={localDateTime} onChange={(event) => setLocalDateTime(event.target.value)} className="mt-2 min-h-12 w-full cursor-pointer rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" /></div>
-          <p className="rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">{t("reminders.timeZone")} <span className="font-semibold text-slate-900">{preferences?.timeZone ?? browserTimeZone()}</span>. <Link href="/account#notification-preferences" className="font-semibold text-teal-800 hover:text-teal-600">{t("reminders.changeInAccount")}</Link>.</p>
+          <div><label htmlFor="reminder-title" className="text-sm font-semibold text-slate-900">{t("reminders.title")}</label><input id="reminder-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
+          <div><label htmlFor="reminder-time" className="text-sm font-semibold text-slate-900">{t("reminders.dateTime")}</label><input id="reminder-time" required type="datetime-local" value={localDateTime} onChange={(event) => setLocalDateTime(event.target.value)} className="mt-2 min-h-12 w-full cursor-pointer rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
+          <p className="rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">{t("reminders.timeZone")} <span className="font-semibold text-slate-900">{preferences?.timeZone ?? browserTimeZone()}</span>. <Link href="/account#notification-preferences" className="font-semibold text-brand-link hover:text-brand-link-hover">{t("reminders.changeInAccount")}</Link>.</p>
           {deliveryPaused && <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">{t("reminders.deliveryPaused")}</p>}
-          <button type="submit" disabled={pendingId === "create"} className="min-h-11 cursor-pointer rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-60">{pendingId === "create" ? t("reminders.scheduling") : t("reminders.schedule")}</button>
-          {safeReturnTo && <button type="button" onClick={returnToSource} className="ml-3 inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50">{t("reminders.returnToJourney")}</button>}
+          <button type="submit" disabled={pendingId === "create"} className="min-h-11 cursor-pointer rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{pendingId === "create" ? t("reminders.scheduling") : t("reminders.schedule")}</button>
+          {safeReturnTo && <button type="button" onClick={returnToSource} className="ml-3 inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft">{t("reminders.returnToJourney")}</button>}
         </form>
-        <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-red-700" : "text-teal-800"}`}>{serviceMessage(message)}</p>
+        <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-red-700" : "text-brand-link"}`}>{serviceMessage(message)}</p>
       </section>
 
       <section className="self-start rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="upcoming-reminders-heading">

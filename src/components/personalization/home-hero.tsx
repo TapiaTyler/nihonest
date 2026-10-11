@@ -38,7 +38,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
   const findStartingPointLink = (
     <Link
       href="/onboarding"
-      className="inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
+      className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
     >
       {message("home.findStartingPoint")}
     </Link>
@@ -65,7 +65,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
             <>
               <Link
                 href={journey ? journeyHref(journey.id, route?.id) : focusedArticle ? `/articles/${focusedArticle.slug}` : `/explore?stage=${stage}`}
-                className="inline-flex min-h-12 items-center rounded-full bg-teal-800 px-6 font-semibold text-white transition-colors hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
+                className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
               >
                 {journey
                   ? message("home.continueJourney")
@@ -73,7 +73,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
                     ? message("home.openFocusedGuide")
                     : message("home.exploreForStage").replace("{stage}", message(stageSentenceMessageIds[stage]))}
               </Link>
-              <Link href="/onboarding" className="inline-flex min-h-12 items-center rounded-full px-5 font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href="/onboarding" className="inline-flex min-h-12 items-center rounded-full px-5 font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {message("home.adjustStartingPoint")}
               </Link>
             </>

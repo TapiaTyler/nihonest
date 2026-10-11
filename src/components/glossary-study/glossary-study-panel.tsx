@@ -90,45 +90,45 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
     <section className="mt-8" aria-labelledby="glossary-study-heading">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("glossaryStudy.eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("glossaryStudy.eyebrow")}</p>
           <h3 id="glossary-study-heading" className="mt-2 text-xl font-semibold tracking-tight text-slate-950">{message("glossaryStudy.heading")}</h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{message("glossaryStudy.description")}</p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
           <span className="rounded-full bg-white px-3 py-2 text-slate-700">{message("glossaryStudy.stateNew")} {counts.new}</span>
           <span className="rounded-full bg-white px-3 py-2 text-amber-800">{message("glossaryStudy.stateLearning")} {counts.learning}</span>
-          <span className="rounded-full bg-white px-3 py-2 text-teal-800">{message("glossaryStudy.stateReviewed")} {counts.reviewed}</span>
+          <span className="rounded-full bg-white px-3 py-2 text-brand-link">{message("glossaryStudy.stateReviewed")} {counts.reviewed}</span>
         </div>
       </div>
 
-      <fieldset className="mt-5 flex flex-wrap gap-x-6 gap-y-3 rounded-2xl border border-teal-200 bg-white px-4 py-3">
+      <fieldset className="mt-5 flex flex-wrap gap-x-6 gap-y-3 rounded-2xl border border-brand-line bg-white px-4 py-3">
         <legend className="px-1 text-sm font-semibold text-slate-900">{message("glossaryStudy.readingAids")}</legend>
         <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700">
-          <input type="checkbox" checked={showKana} onChange={(event) => setShowKana(event.target.checked)} className="size-4 accent-teal-700" />
+          <input type="checkbox" checked={showKana} onChange={(event) => setShowKana(event.target.checked)} className="size-4 accent-brand-accent" />
           {message("glossaryStudy.showKana")}
         </label>
         <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-slate-700">
-          <input type="checkbox" checked={showRomaji} onChange={(event) => setShowRomaji(event.target.checked)} className="size-4 accent-teal-700" />
+          <input type="checkbox" checked={showRomaji} onChange={(event) => setShowRomaji(event.target.checked)} className="size-4 accent-brand-accent" />
           {message("glossaryStudy.showRomaji")}
         </label>
       </fieldset>
 
-      <div className="mt-4 grid gap-4 rounded-2xl border border-teal-200 bg-white p-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 rounded-2xl border border-brand-line bg-white p-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-slate-900">
           {message("glossaryStudy.promptSide")}
-          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
+          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
             {promptModes.map((value) => <option key={value} value={value}>{message(promptModeMessageIds[value])}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-slate-900">
           {message("glossaryStudy.jumpToTerm")}
-          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700">
+          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
             {orderedTerms.map((term) => <option key={term.id} value={term.id}>{termPromptLabel(term, promptMode)}</option>)}
           </select>
         </label>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-6">
+      <div className="mt-6 rounded-2xl border border-brand-line bg-white p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-slate-500">
           <span>{message("glossaryStudy.termPosition").replace("{current}", String(currentIndex + 1)).replace("{total}", String(terms.length))}</span>
           <label className="flex items-center gap-2 font-semibold text-slate-700">
@@ -137,7 +137,7 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
               value={activeState}
               disabled={!isReady}
               onChange={(event) => setReviewState(activeTerm.id, event.target.value as typeof reviewStates[number])}
-              className="app-select min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-wait disabled:opacity-50"
+              className="app-select min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-wait disabled:opacity-50"
             >
               {reviewStates.map((value) => <option key={value} value={value}>{message(reviewStateMessageIds[value])}</option>)}
             </select>
@@ -170,16 +170,16 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
             <p className="mt-2 leading-7 text-slate-600">{activeTerm.shortDefinition}</p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <button type="button" disabled={!isReady} onClick={() => completeReview("again")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 hover:border-amber-500 hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-wait disabled:opacity-50">{message("glossaryStudy.reviewAgain")}</button>
-              <button type="button" disabled={!isReady} onClick={() => completeReview("understood")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-50">{message("glossaryStudy.understood")}</button>
+              <button type="button" disabled={!isReady} onClick={() => completeReview("understood")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-50">{message("glossaryStudy.understood")}</button>
             </div>
           </div>
         ) : (
-          <button type="button" onClick={() => setAnswerVisible(true)} className="mx-auto mt-6 flex min-h-11 items-center justify-center rounded-full bg-teal-800 px-6 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("glossaryStudy.showMeaning")}</button>
+          <button type="button" onClick={() => setAnswerVisible(true)} className="mx-auto mt-6 flex min-h-11 items-center justify-center rounded-full bg-brand px-6 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("glossaryStudy.showMeaning")}</button>
         )}
 
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-200 pt-4">
-          <button type="button" onClick={() => move(-1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.previous")}</button>
-          <button type="button" onClick={() => move(1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.next")}</button>
+          <button type="button" onClick={() => move(-1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.previous")}</button>
+          <button type="button" onClick={() => move(1)} disabled={orderedTerms.length < 2} className="min-h-11 rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-40">{message("glossaryStudy.next")}</button>
         </div>
         <p className="sr-only" aria-live="polite">{announcement}</p>
       </div>

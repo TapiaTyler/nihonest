@@ -66,33 +66,33 @@ export function NotificationPreferencesForm({ userId }: Readonly<{ userId: strin
       {loadState === "loading" && <p className="mt-5 text-sm text-slate-600">{t("notify.loading")}</p>}
       {preferences && (
         <form onSubmit={submit} className="mt-6 space-y-5">
-          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-4 hover:border-teal-300">
-            <input type="checkbox" checked={preferences.emailEnabled} onChange={(event) => updatePreference("emailEnabled", event.target.checked)} className="mt-1 size-5 accent-teal-700" />
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 p-4 hover:border-brand-300">
+            <input type="checkbox" checked={preferences.emailEnabled} onChange={(event) => updatePreference("emailEnabled", event.target.checked)} className="mt-1 size-5 accent-brand-accent" />
             <span><span className="block font-semibold text-slate-950">{t("notify.emailTitle")}</span><span className="mt-1 block text-sm leading-6 text-slate-600">{t("notify.emailBody")}</span></span>
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-slate-50 p-4">
-              <input type="checkbox" checked={preferences.deadlineRemindersEnabled} onChange={(event) => updatePreference("deadlineRemindersEnabled", event.target.checked)} className="mt-1 size-5 accent-teal-700" />
+              <input type="checkbox" checked={preferences.deadlineRemindersEnabled} onChange={(event) => updatePreference("deadlineRemindersEnabled", event.target.checked)} className="mt-1 size-5 accent-brand-accent" />
               <span><span className="block font-semibold text-slate-950">{t("notify.deadlineTitle")}</span><span className="mt-1 block text-sm leading-6 text-slate-600">{t("notify.deadlineBody")}</span></span>
             </label>
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-slate-50 p-4">
-              <input type="checkbox" checked={preferences.criticalUpdatesEnabled} onChange={(event) => updatePreference("criticalUpdatesEnabled", event.target.checked)} className="mt-1 size-5 accent-teal-700" />
+              <input type="checkbox" checked={preferences.criticalUpdatesEnabled} onChange={(event) => updatePreference("criticalUpdatesEnabled", event.target.checked)} className="mt-1 size-5 accent-brand-accent" />
               <span><span className="block font-semibold text-slate-950">{t("notify.criticalTitle")}</span><span className="mt-1 block text-sm leading-6 text-slate-600">{t("notify.criticalBody")}</span></span>
             </label>
           </div>
           <div>
             <label htmlFor="notification-time-zone" className="text-sm font-semibold text-slate-900">{t("notify.timeZone")}</label>
-            <input id="notification-time-zone" value={preferences.timeZone} onChange={(event) => updatePreference("timeZone", event.target.value)} placeholder="Asia/Tokyo" autoComplete="off" className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" />
+            <input id="notification-time-zone" value={preferences.timeZone} onChange={(event) => updatePreference("timeZone", event.target.value)} placeholder="Asia/Tokyo" autoComplete="off" className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
             <p className="mt-2 text-xs leading-5 text-slate-500">{t("notify.timeZoneHelp")}</p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <button type="submit" disabled={saving} className="min-h-11 cursor-pointer rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-60">{saving ? t("notify.saving") : t("notify.save")}</button>
-            <Link href="/reminders" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("notify.manage")}</Link>
+            <button type="submit" disabled={saving} className="min-h-11 cursor-pointer rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{saving ? t("notify.saving") : t("notify.save")}</button>
+            <Link href="/reminders" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("notify.manage")}</Link>
           </div>
         </form>
       )}
-      {loadState === "error" && <button type="button" onClick={() => window.location.reload()} className="mt-4 min-h-11 cursor-pointer rounded-full border border-teal-700 px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50">{t("notify.retry")}</button>}
-      <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-red-700" : "text-teal-800"}`}>{serviceMessage(message)}</p>
+      {loadState === "error" && <button type="button" onClick={() => window.location.reload()} className="mt-4 min-h-11 cursor-pointer rounded-full border border-brand-accent px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft">{t("notify.retry")}</button>}
+      <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-red-700" : "text-brand-link"}`}>{serviceMessage(message)}</p>
       <p className="mt-3 text-xs leading-5 text-slate-500">{t("notify.deliveryNote")}</p>
     </section>
   );

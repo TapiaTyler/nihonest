@@ -27,11 +27,11 @@ export function GlossaryCard({ term, translation, returnTo, variant = "card" }: 
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               {name ? (
                 <>
-                  <h2 lang={name.lang} className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{name.text}</h2>
+                  <h2 lang={name.lang} className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-brand-accent">{name.text}</h2>
                   <span lang="ja" className="text-base font-medium text-slate-700">{term.japanese}</span>
                 </>
               ) : (
-                <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{term.japanese}</h2>
+                <h2 lang="ja" className="text-lg font-semibold tracking-tight text-slate-950 group-hover/item:text-brand-accent">{term.japanese}</h2>
               )}
             </div>
             <p lang={translation ? "ja" : "en"} className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600 sm:line-clamp-1">{translation?.shortDefinition ?? term.shortDefinition}</p>
@@ -48,12 +48,12 @@ export function GlossaryCard({ term, translation, returnTo, variant = "card" }: 
       <Link
         href={href}
         aria-label={name?.text ?? term.japanese}
-        className="group/item flex h-full cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md focus-visible:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 focus-visible:shadow-md"
+        className="group/item flex h-full cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md focus-visible:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus focus-visible:shadow-md"
       >
         {name ? (
           <p lang="ja" className="text-3xl font-semibold tracking-tight text-slate-950">{term.japanese}</p>
         ) : (
-          <h2 lang="ja" className="text-3xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">{term.japanese}</h2>
+          <h2 lang="ja" className="text-3xl font-semibold tracking-tight text-slate-950 group-hover/item:text-brand-accent">{term.japanese}</h2>
         )}
         {(term.kana || term.romaji) && (
           <p className="mt-2 text-sm text-slate-500">
@@ -61,13 +61,13 @@ export function GlossaryCard({ term, translation, returnTo, variant = "card" }: 
           </p>
         )}
         {name && (
-          <h2 lang={name.lang} className="mt-5 text-xl font-semibold tracking-tight text-slate-950 group-hover/item:text-teal-700">
+          <h2 lang={name.lang} className="mt-5 text-xl font-semibold tracking-tight text-slate-950 group-hover/item:text-brand-accent">
             {name.text}
           </h2>
         )}
         <p lang={translation ? "ja" : "en"} className="mt-3 flex-1 leading-7 text-slate-600">{translation?.shortDefinition ?? term.shortDefinition}</p>
         <div className="mt-6 border-t border-slate-100 pt-4">
-          <span aria-hidden="true" className="inline-flex min-h-11 select-none items-center text-sm font-semibold text-teal-800 transition-transform group-hover/item:translate-x-0.5">
+          <span aria-hidden="true" className="inline-flex min-h-11 select-none items-center text-sm font-semibold text-brand-link transition-transform group-hover/item:translate-x-0.5">
             <InterfaceText id="content.viewTerm" />
           </span>
         </div>

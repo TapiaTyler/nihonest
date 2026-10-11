@@ -23,7 +23,7 @@ export function ArticleTerminology({ terms, localized = {} }: Readonly<{
         {terms.map((term) => {
           const gloss = glossaryTermGloss(term, locale, localized[term.id]?.[locale]?.name);
           return (
-            <li key={term.id} className="rounded-xl border border-teal-200 bg-white px-4 py-3 text-sm shadow-sm">
+            <li key={term.id} className="rounded-xl border border-brand-line bg-white px-4 py-3 text-sm shadow-sm">
               <InlineGlossaryTerm term={term} className="text-base" localized={localized[term.id]}>
                 <span lang="ja">{term.japanese}</span>
               </InlineGlossaryTerm>

@@ -47,7 +47,7 @@ export default function Home() {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {principles.map(({ label, title, description }) => (
               <article key={title} className="rounded-2xl border border-slate-200 bg-stone-50 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-teal-700"><InterfaceText id={label} /></p>
+                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-accent"><InterfaceText id={label} /></p>
                 <h3 className="mt-4 text-xl font-semibold tracking-tight text-slate-950"><InterfaceText id={title} /></h3>
                 <p className="mt-3 leading-7 text-slate-600"><InterfaceText id={description} /></p>
               </article>

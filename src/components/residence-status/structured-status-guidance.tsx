@@ -22,7 +22,7 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
   return (
     <section lang={active ? "ja" : "en"} className="mt-10" aria-labelledby="structured-guidance-heading">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("guidance.pilot")}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("guidance.pilot")}</p>
         <h2 id="structured-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
           {message("guidance.heading")}
         </h2>
@@ -85,9 +85,9 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
         <div className="mt-6"><GuidanceList title={message("guidance.organization")} items={guidance.organizationConditions} /></div>
       )}
 
-      <div className="mt-6 rounded-2xl border border-teal-200 bg-teal-50 p-5">
-        <h3 className="font-semibold text-teal-950">{message("guidance.outsideWork")}</h3>
-        <p className="mt-2 text-sm leading-6 text-teal-950">{guidance.workAuthorization.outsideActivityNote}</p>
+      <div className="mt-6 rounded-2xl border border-brand-line bg-brand-soft p-5">
+        <h3 className="font-semibold text-brand-deep">{message("guidance.outsideWork")}</h3>
+        <p className="mt-2 text-sm leading-6 text-brand-deep">{guidance.workAuthorization.outsideActivityNote}</p>
       </div>
 
       {(guidance.transitions.length > 0 || guidance.evidenceCategories.length > 0) && (
@@ -100,7 +100,7 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
                   <li key={`${transition.label}-${transition.summary}`}>
                     <strong>{transition.label}:</strong> {transition.summary}{" "}
                     {transition.targetStatusId && (
-                      <Link className="font-semibold text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-600" href={`/residence-statuses/${transition.targetStatusId}`}>
+                      <Link className="font-semibold text-brand-link underline decoration-brand-300 underline-offset-2 hover:text-brand-link-hover" href={`/residence-statuses/${transition.targetStatusId}`}>
                         {message("guidance.viewStatus")}
                       </Link>
                     )}

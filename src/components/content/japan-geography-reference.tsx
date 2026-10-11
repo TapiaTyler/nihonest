@@ -47,7 +47,7 @@ function practicalInline(nodes: readonly ArticleInline[]): ReactNode[] {
       case "strong": return <strong key={index}>{practicalInline(node.children)}</strong>;
       case "emphasis": return <em key={index}>{practicalInline(node.children)}</em>;
       case "code": return <code key={index}>{node.text}</code>;
-      case "link": return <Link key={index} className="font-semibold text-teal-900 underline" href={node.href}>{practicalInline(node.children)}</Link>;
+      case "link": return <Link key={index} className="font-semibold text-brand-deep-soft underline" href={node.href}>{practicalInline(node.children)}</Link>;
       case "protected": throw new Error("Practical component contains unsupported inline markup.");
     }
   });

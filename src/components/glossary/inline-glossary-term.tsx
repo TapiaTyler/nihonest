@@ -86,7 +86,7 @@ export function InlineGlossaryTerm({
         aria-describedby={tooltipId}
         aria-expanded={isOpen}
         onClick={handleClick}
-        className={`cursor-pointer rounded-sm font-semibold text-teal-800 underline decoration-dotted decoration-teal-500 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${className}`}
+        className={`cursor-pointer rounded-sm font-semibold text-brand-link underline decoration-dotted decoration-brand-500 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${className}`}
       >
         {children ?? <span lang="ja">{term.japanese}</span>}
       </Link>

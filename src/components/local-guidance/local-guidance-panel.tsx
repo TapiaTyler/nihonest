@@ -129,7 +129,7 @@ export function LocalGuidancePanel({
     <section className="mt-12" aria-labelledby="local-guidance-heading">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{message("localGuidance.eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("localGuidance.eyebrow")}</p>
           <h2 id="local-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{message("localGuidance.heading")}</h2>
           <p className="mt-2 max-w-xl leading-7 text-slate-600">{message("localGuidance.intro")}</p>
         </div>
@@ -138,7 +138,7 @@ export function LocalGuidancePanel({
             {message("localGuidance.prefecture")}
             <select
               id="local-guidance-prefecture"
-              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus"
               value={selectedPrefectureId}
               ref={prefectureRef}
               onChange={(event) => choosePrefecture(event.target.value)}
@@ -152,7 +152,7 @@ export function LocalGuidancePanel({
               {message("localGuidance.municipality")}
               <select
                 id="local-guidance-location"
-                className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
+                className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
                 value={prefectureWideOnly ? "" : municipalityValue}
                 disabled={!selectedPrefectureId || prefectureWideOnly}
                 aria-describedby={selectedPrefectureId ? "local-guidance-municipality-note" : undefined}
@@ -194,10 +194,10 @@ export function LocalGuidancePanel({
       ) : !selected ? (
         <p className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm leading-6 text-slate-600">{message("localGuidance.noResearch")}</p>
       ) : (
-        <div className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-6">
+        <div className="mt-6 rounded-2xl border border-brand-line bg-white p-5 sm:p-6">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">
                 {message(geographyTypeLabels[selected.geography.type])}{selected.parentName ? ` · ${placeName(selected.parentName, selected.parentJapaneseName)}` : ""}
               </p>
               <h3 className="mt-2 text-xl font-semibold text-slate-950">{text("title", selected.supplement.title)}</h3>
@@ -228,7 +228,7 @@ export function LocalGuidancePanel({
             <ul className="mt-3 space-y-2 text-sm">
               {selected.sources.map((source) => (
                 <li key={source.id}>
-                  <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+                  <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                     <LocalizedSourceName source={source} order="organization-first" />
                   </a>
                   <span className="ml-2 text-slate-500">({message(source.language === "en" ? "localGuidance.sourceEnglish" : "localGuidance.sourceJapanese")})</span>

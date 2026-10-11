@@ -58,7 +58,7 @@ export function StageRecommendations({
       className={location === "home" ? "border-b border-slate-200 bg-white" : "mt-10"}
       aria-labelledby={`${location}-recommendations-heading`}
     >
-      <div className={location === "home" ? "page-shell py-14 sm:py-18" : "rounded-3xl border border-teal-200 bg-teal-50/70 p-5 sm:p-7"}>
+      <div className={location === "home" ? "page-shell py-14 sm:py-18" : "rounded-3xl border border-brand-line bg-brand-soft/70 p-5 sm:p-7"}>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{message("home.recommendationsEyebrow")}</p>
@@ -70,7 +70,7 @@ export function StageRecommendations({
                   : format("home.recommendationsForStage", { stage: message(stageSentenceMessageIds[stage]) })}
             </h2>
           </div>
-          <Link href="/onboarding" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+          <Link href="/onboarding" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-softer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
             {message("home.adjustStartingPoint")}
           </Link>
         </div>
@@ -82,12 +82,12 @@ export function StageRecommendations({
         {(journey || focusedArticle) && (
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
             {journey && (
-              <Link href={journeyHref(journey.id, route?.id)} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-4 font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={journeyHref(journey.id, route?.id)} className="inline-flex min-h-11 items-center rounded-full bg-brand px-4 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {message("home.openFullJourney")}
               </Link>
             )}
             {focusedArticle && (
-              <Link href={journey ? articleJourneyHref(focusedArticle.slug, journey.id, route?.id) : `/articles/${focusedArticle.slug}`} className="inline-flex min-h-11 items-center rounded-full px-4 font-semibold text-teal-800 hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={journey ? articleJourneyHref(focusedArticle.slug, journey.id, route?.id) : `/articles/${focusedArticle.slug}`} className="inline-flex min-h-11 items-center rounded-full px-4 font-semibold text-brand-link hover:bg-brand-softer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {format("home.focusedRouteLink", { title: focusedArticleTitle })}
               </Link>
             )}

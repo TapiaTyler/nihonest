@@ -81,7 +81,7 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
 
   function directLink(href: SiteDestinationHref, labelId: InterfaceMessageId) {
     return (
-      <Link href={href} aria-current={isActive(href) ? "page" : undefined} onClick={closeDisclosure} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-[current=page]:bg-teal-50 aria-[current=page]:font-semibold">
+      <Link href={href} aria-current={isActive(href) ? "page" : undefined} onClick={closeDisclosure} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-brand-link transition-colors hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-[current=page]:bg-brand-soft aria-[current=page]:font-semibold">
         {message(labelId)}
       </Link>
     );
@@ -94,7 +94,7 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
 
     return (
       <li className="relative">
-        <button ref={buttonRef} type="button" aria-expanded={open} aria-controls={`desktop-${name}-navigation`} onClick={() => toggleDisclosure(name)} onKeyDown={(event) => { if (event.key === "ArrowDown") { event.preventDefault(); openAndFocusFirstLink(name); } }} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${active ? "bg-teal-50 font-semibold" : ""}`}>
+        <button ref={buttonRef} type="button" aria-expanded={open} aria-controls={`desktop-${name}-navigation`} onClick={() => toggleDisclosure(name)} onKeyDown={(event) => { if (event.key === "ArrowDown") { event.preventDefault(); openAndFocusFirstLink(name); } }} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium text-brand-link transition-colors hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${active ? "bg-brand-soft font-semibold" : ""}`}>
           {message(labelId)}
           <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
@@ -103,7 +103,7 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
             <ul>
               {links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} aria-current={isActive(link.href) ? "page" : undefined} onClick={closeDisclosure} className="block rounded-xl px-4 py-3 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700 aria-[current=page]:bg-teal-50">
+                  <Link href={link.href} aria-current={isActive(link.href) ? "page" : undefined} onClick={closeDisclosure} className="block rounded-xl px-4 py-3 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">
                     <span className="block text-sm font-semibold text-slate-950">{message(link.labelId)}</span>
                     <span className="mt-1 block text-xs leading-5 text-slate-500">{message(link.descriptionId)}</span>
                   </Link>
@@ -128,7 +128,7 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
         {linkDisclosure("resources", "navigation.resources", resourceNavigationLinks)}
         <li>{directLink("/saved", "navigation.saved")}</li>
         <li className="relative">
-          <button ref={languageButtonRef} type="button" aria-label={`${message("language.guideLanguage")}: ${languageName}`} aria-expanded={languageOpen} aria-controls="desktop-language-options" onClick={() => toggleDisclosure("language")} className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-teal-800 transition-colors hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${languageOpen || locale !== "en" ? "bg-teal-50" : ""}`}>
+          <button ref={languageButtonRef} type="button" aria-label={`${message("language.guideLanguage")}: ${languageName}`} aria-expanded={languageOpen} aria-controls="desktop-language-options" onClick={() => toggleDisclosure("language")} className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-brand-link transition-colors hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${languageOpen || locale !== "en" ? "bg-brand-soft" : ""}`}>
             <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" strokeLinecap="round" /></svg>
             <span>{locale.toUpperCase()}</span>
             <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${languageOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>

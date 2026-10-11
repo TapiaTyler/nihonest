@@ -84,7 +84,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       </div>
 
       {!user && (
-        <section className="mt-8 rounded-3xl border border-teal-200 bg-teal-50/70 p-6 sm:p-8" aria-labelledby="account-benefits-heading">
+        <section className="mt-8 rounded-3xl border border-brand-line bg-brand-soft/70 p-6 sm:p-8" aria-labelledby="account-benefits-heading">
           <p className="eyebrow"><InterfaceText id="account.benefitsEyebrow" /></p>
           <h2 id="account-benefits-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950"><InterfaceText id="account.benefitsHeading" /></h2>
           <ul className="mt-5 grid gap-3 text-sm leading-6 text-slate-700 sm:grid-cols-2">
@@ -94,7 +94,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
             <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.direction" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.directionBody" /></span></li>
             <li className="rounded-2xl bg-white p-4"><span className="font-semibold text-slate-950"><InterfaceText id="account.benefit.reminders" /></span><span className="mt-1 block"><InterfaceText id="account.benefit.remindersBody" /></span></li>
           </ul>
-          <p className="mt-5 text-sm font-medium leading-6 text-teal-950"><InterfaceText id="account.benefitsNote" /></p>
+          <p className="mt-5 text-sm font-medium leading-6 text-brand-deep"><InterfaceText id="account.benefitsNote" /></p>
         </section>
       )}
     </div>

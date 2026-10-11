@@ -35,7 +35,7 @@ const components = {
   ul: ({ children }) => <ul className="mt-4 list-disc space-y-2 pl-6 text-slate-700">{children}</ul>,
   ol: ({ children }) => <ol className="mt-4 list-decimal space-y-2 pl-6 text-slate-700">{children}</ol>,
   blockquote: ({ children }) => (
-    <blockquote className="mt-6 rounded-r-xl border-l-4 border-teal-600 bg-teal-50 px-5 py-1 text-slate-800">
+    <blockquote className="mt-6 rounded-r-xl border-l-4 border-brand-600 bg-brand-soft px-5 py-1 text-slate-800">
       {children}
     </blockquote>
   ),
@@ -47,7 +47,7 @@ const components = {
     return (
       <a
         href={href}
-        className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+        className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         {children}
       </a>

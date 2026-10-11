@@ -52,14 +52,14 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
 
   return (
     <div className="page-shell py-12 sm:py-20">
-      <Link href="/" className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">{message("onboarding.backHome")}</Link>
+      <Link href="/" className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-brand-link hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus">{message("onboarding.backHome")}</Link>
       <header className="mt-8 max-w-3xl">
         <p className="eyebrow">{message("journey.myJourney")}</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">{stageLabel ? format("myJourney.stageHeading", { stage: stageLabel }) : message("myJourney.chooseHeading")}</h1>
         <p className="mt-6 text-lg leading-8 text-slate-600">{message(stageLabel ? "myJourney.stageIntro" : "myJourney.chooseIntro")}</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href={{ pathname: "/onboarding", query: { returnTo: "/my-journey" } }} className="inline-flex min-h-11 items-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message(stageLabel ? "roadmap.chooseJourney" : "roadmap.findStart")}</Link>
-          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("myJourney.exploreAll")}</Link>
+          <Link href={{ pathname: "/onboarding", query: { returnTo: "/my-journey" } }} className="inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message(stageLabel ? "roadmap.chooseJourney" : "roadmap.findStart")}</Link>
+          <Link href="/explore" className="inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("myJourney.exploreAll")}</Link>
         </div>
       </header>
       {startingPoints.length > 0 && (

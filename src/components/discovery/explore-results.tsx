@@ -114,9 +114,9 @@ export function ExploreResults({
         <div className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
           <h3 className="text-xl font-semibold text-slate-950">{message("explore.noResultsTitle")}</h3>
           <p className="mt-2 text-slate-600">{message("explore.noResultsHelp")}</p>
-          <button type="button" onClick={clearSearch} className="mt-5 min-h-11 rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("explore.browseAllGroups")}</button>
+          <button type="button" onClick={clearSearch} className="mt-5 min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("explore.browseAllGroups")}</button>
           {filters.query.trim() && (
-            <Link href={{ pathname: "/faq", query: { q: filters.query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="mt-3 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+            <Link href={{ pathname: "/faq", query: { q: filters.query, ...(locale !== "en" ? { lang: locale } : {}) } }} className="mt-3 inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
               {message("explore.searchFaqForQuestion")}
             </Link>
           )}
@@ -129,7 +129,7 @@ export function ExploreResults({
 function ResultJumpLink({ href, label, count }: Readonly<{ href: string; label: string; count: number }>) {
   const { message } = useInterfaceMessages();
   return (
-    <a href={href} className="inline-flex min-h-11 items-center rounded-full border border-teal-200 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+    <a href={href} className="inline-flex min-h-11 items-center rounded-full border border-brand-line bg-white px-4 text-sm font-semibold text-brand-link hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
       {message("explore.jumpItemCount").replace("{label}", label).replace("{count}", String(count))}
     </a>
   );

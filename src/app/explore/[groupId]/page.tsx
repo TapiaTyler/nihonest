@@ -39,12 +39,12 @@ export default async function ArticleGroupPage({ params }: PageProps<"/explore/[
       <LocalizedArticleGroupHeading group={group} guideCount={articles.length} translations={getArticleGroupSearchTranslations()} />
 
       {journeys.length > 0 && (
-        <section className="mt-10 rounded-2xl border border-teal-200 bg-teal-50 p-6" aria-labelledby="guided-journeys-heading">
-          <h2 id="guided-journeys-heading" className="text-lg font-semibold text-teal-950"><InterfaceText id="group.orderedHeading" /></h2>
-          <p className="mt-1 leading-7 text-teal-900/80"><InterfaceText id="group.orderedBody" /></p>
+        <section className="mt-10 rounded-2xl border border-brand-line bg-brand-soft p-6" aria-labelledby="guided-journeys-heading">
+          <h2 id="guided-journeys-heading" className="text-lg font-semibold text-brand-deep"><InterfaceText id="group.orderedHeading" /></h2>
+          <p className="mt-1 leading-7 text-brand-deep-soft/80"><InterfaceText id="group.orderedBody" /></p>
           <div className="mt-5 flex flex-wrap gap-3">
             {journeys.map((journey) => (
-              <Link key={journey.id} href={`/explore/journeys/${journey.id}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link key={journey.id} href={`/explore/journeys/${journey.id}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 <InterfaceFormat id="group.openJourney" values={{ journey: journey.title }} japaneseValues={{ journey: journeyTitles.get(journey.id) }} />
               </Link>
             ))}

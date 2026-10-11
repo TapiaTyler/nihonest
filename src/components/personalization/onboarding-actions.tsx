@@ -31,10 +31,10 @@ export function OnboardingActions({
             other label is display:none there, so the accessible name is always the text that is shown. */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* aria-disabled keeps the button focusable so assistive technology can reach the reason it cannot save yet. */}
-          <button type="button" aria-disabled={!canSave} aria-describedby={canSave ? undefined : saveHintId} onClick={() => { if (canSave) onSave(); }} className="min-h-12 flex-1 rounded-full bg-teal-800 px-5 font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700 aria-disabled:cursor-not-allowed aria-disabled:bg-slate-300 aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-300 sm:flex-none sm:px-6">
+          <button type="button" aria-disabled={!canSave} aria-describedby={canSave ? undefined : saveHintId} onClick={() => { if (canSave) onSave(); }} className="min-h-12 flex-1 rounded-full bg-brand px-5 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus aria-disabled:cursor-not-allowed aria-disabled:bg-slate-300 aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-300 sm:flex-none sm:px-6">
             <ResponsiveLabel short={message("onboarding.saveShort")} full={message("onboarding.save")} />
           </button>
-          <button type="button" onClick={onClearOrSkip} className="min-h-12 rounded-full px-4 font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:px-5">
+          <button type="button" onClick={onClearOrSkip} className="min-h-12 rounded-full px-4 font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:px-5">
             <ResponsiveLabel short={message(hasPersonalization ? "onboarding.removeShort" : "onboarding.skipShort")} full={message(hasPersonalization ? "onboarding.remove" : "onboarding.skip")} />
           </button>
         </div>

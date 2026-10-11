@@ -37,7 +37,7 @@ export function ArticleCardBadges({ status, topicIds, stacked = false }: Pick<Ar
       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">
         {message(articleStatusMessage[status])}
       </span>
-      <span className="text-teal-700">
+      <span className="text-brand-accent">
         {topicIds.map((id) => topicLabel(id, locale)).join(topicSeparator)}
       </span>
     </div>
@@ -50,7 +50,7 @@ export function ArticleHeaderBadges({ status, topicIds }: Pick<ArticleMetadata, 
   return (
     <div lang={locale} className="flex flex-wrap gap-2 pr-14 text-xs font-semibold uppercase tracking-wide">
       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">{message(articleStatusMessage[status])}</span>
-      {topicIds.map((id) => <span key={id} className="rounded-full bg-teal-50 px-3 py-1 text-teal-800">{topicLabel(id, locale)}</span>)}
+      {topicIds.map((id) => <span key={id} className="rounded-full bg-brand-soft px-3 py-1 text-brand-link">{topicLabel(id, locale)}</span>)}
     </div>
   );
 }

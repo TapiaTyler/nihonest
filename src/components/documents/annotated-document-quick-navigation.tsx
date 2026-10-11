@@ -19,7 +19,7 @@ export function AnnotatedDocumentQuickNavigation({ families }: Readonly<{
               const target = document.getElementById(`document-${family.id}`) as HTMLDetailsElement | null;
               if (target) target.open = true;
             }}
-            className="inline-flex min-h-11 items-center rounded-full border border-teal-300 bg-white px-4 text-sm font-semibold text-teal-800 hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            className="inline-flex min-h-11 items-center rounded-full border border-brand-300 bg-white px-4 text-sm font-semibold text-brand-link hover:border-brand-600 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {locale === "ja" ? <span lang="ja">{family.japaneseName}</span> : family.title}
           </a>

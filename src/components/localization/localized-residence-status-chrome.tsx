@@ -38,7 +38,7 @@ const statusMessages: Record<ResidenceStatus["status"], InterfaceMessageId> = {
 const statusBadgeColors: Record<ResidenceStatus["status"], string> = {
   draft: "bg-amber-50 text-amber-800",
   "needs-review": "bg-amber-50 text-amber-800",
-  verified: "bg-teal-50 text-teal-800",
+  verified: "bg-brand-soft text-brand-link",
   archived: "bg-slate-100 text-slate-700",
 };
 
@@ -126,7 +126,7 @@ export function LocalizedRelatedGuidance({ articles, articleTitles }: Readonly<{
           const translated = locale === "ja" ? articleTitles[article.id] : undefined;
           return (
             <li key={article.id} lang={translated ? "ja" : "en"}>
-              <Link href={article.href} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+              <Link href={article.href} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 {translated ?? article.title}
               </Link>
             </li>
@@ -145,9 +145,9 @@ export function LocalizedLastReviewed({ date }: Readonly<{ date: string }>) {
 
 function ContextLink({ href, eyebrow, title }: Readonly<{ href: string; eyebrow: string; title: string }>) {
   return (
-    <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-teal-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">{eyebrow}</span>
-      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-teal-700">{title}</span>
+    <Link href={href} className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+      <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{eyebrow}</span>
+      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-brand-accent">{title}</span>
     </Link>
   );
 }

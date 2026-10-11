@@ -39,7 +39,7 @@ function inlineNodes(nodes: readonly ArticleInline[]): ReactNode[] {
     else if (node.kind === "strong") rendered.push(<strong key={index} className="font-semibold text-slate-950">{inlineNodes(node.children)}</strong>);
     else if (node.kind === "emphasis") rendered.push(<em key={index}>{inlineNodes(node.children)}</em>);
     else if (node.kind === "link") {
-      const className = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600";
+      const className = "font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover";
       const label = inlineNodes(node.children);
       rendered.push(node.href.startsWith("/")
         ? <Link key={index} href={node.href} className={className}>{label}</Link>
@@ -71,7 +71,7 @@ export function TranslatedArticleBody({ markdown, components = {} }: Readonly<{ 
         : <h3 key={index} id={headingId(headingPlainText(block.text))} className="mt-8 scroll-mt-24 text-xl font-semibold tracking-tight text-slate-950 lg:scroll-mt-6"><InlineMarkdown>{block.text}</InlineMarkdown></h3>;
     }
     if (block.kind === "blockquote") {
-      return <blockquote key={index} className="mt-6 rounded-r-xl border-l-4 border-teal-600 bg-teal-50 px-5 py-1 text-slate-800"><p className="my-4 leading-8"><InlineMarkdown>{block.text}</InlineMarkdown></p></blockquote>;
+      return <blockquote key={index} className="mt-6 rounded-r-xl border-l-4 border-brand-600 bg-brand-soft px-5 py-1 text-slate-800"><p className="my-4 leading-8"><InlineMarkdown>{block.text}</InlineMarkdown></p></blockquote>;
     }
     if (block.kind === "unordered-list" || block.kind === "ordered-list") {
       const List = block.kind === "unordered-list" ? "ul" : "ol";
@@ -95,7 +95,7 @@ export function ArticleTranslationNotice({ translation }: Readonly<{ translation
           ? message("translation.machineBody")
           : message("translation.unavailableBody")}
       </p>
-      <button type="button" onClick={() => setLocale("en")} className="mt-1 inline-flex min-h-11 items-center rounded-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+      <button type="button" onClick={() => setLocale("en")} className="mt-1 inline-flex min-h-11 items-center rounded-sm font-semibold text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus">
         {message("translation.readEnglish")}
       </button>
     </aside>

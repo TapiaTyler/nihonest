@@ -29,7 +29,7 @@ export function TrainingRouteComparisonTable({ locale = "en" }: Readonly<{ local
               <tr key={row.id}>
                 <th scope="row" className="px-4 py-3 font-medium text-slate-950">{activity}</th>
                 <td className="px-4 py-3">
-                  <a href={row.href} className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{route}</a>{suffix}
+                  <a href={row.href} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{route}</a>{suffix}
                 </td>
               </tr>
             );

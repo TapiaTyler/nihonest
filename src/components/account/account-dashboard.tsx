@@ -33,7 +33,7 @@ type Feedback = Readonly<{
 function ActionFeedback({ feedback, scope }: Readonly<{ feedback?: Feedback; scope: Feedback["scope"] }>) {
   const { serviceMessage } = useInterfaceMessages();
   if (feedback?.scope !== scope) return null;
-  return <p role="status" aria-live="polite" className={`mt-4 text-sm font-medium ${feedback.isError ? "text-red-700" : "text-teal-800"}`}>{serviceMessage(feedback.text)}</p>;
+  return <p role="status" aria-live="polite" className={`mt-4 text-sm font-medium ${feedback.isError ? "text-red-700" : "text-brand-link"}`}>{serviceMessage(feedback.text)}</p>;
 }
 
 export function AccountDashboard({
@@ -116,13 +116,13 @@ export function AccountDashboard({
             <h2 id="profile-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("dashboard.detailsHeading")}</h2>
             <p className="mt-2 break-all text-sm text-slate-500">{format("dashboard.signedInAs", { email: email ?? t("account.emailUnavailable") })}</p>
           </div>
-          <button type="button" disabled={Boolean(pendingAction)} onClick={endSession} className="min-h-11 self-start rounded-full border border-slate-300 px-5 text-sm font-semibold text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50">{t("dashboard.signOut")}</button>
+          <button type="button" disabled={Boolean(pendingAction)} onClick={endSession} className="min-h-11 self-start rounded-full border border-slate-300 px-5 text-sm font-semibold text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50">{t("dashboard.signOut")}</button>
         </div>
         <form onSubmit={updateProfile} className="mt-6">
           <label htmlFor="display-name" className="text-sm font-semibold text-slate-900">{t("dashboard.displayName")} <span className="font-normal text-slate-500">{t("dashboard.optional")}</span></label>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-            <input id="display-name" maxLength={80} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20" />
-            <button type="submit" disabled={Boolean(pendingAction) || !storageAvailable} className="min-h-12 rounded-xl bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50">{t("dashboard.saveDisplayName")}</button>
+            <input id="display-name" maxLength={80} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+            <button type="submit" disabled={Boolean(pendingAction) || !storageAvailable} className="min-h-12 rounded-xl bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50">{t("dashboard.saveDisplayName")}</button>
           </div>
           <ActionFeedback feedback={feedback} scope="profile" />
         </form>
@@ -137,7 +137,7 @@ export function AccountDashboard({
           <div><dt className="font-semibold text-slate-900">{t("dashboard.savedStage")}</dt><dd className="mt-1 text-slate-600">{accountPreferences?.journeyStage ? stageLabel(accountPreferences.journeyStage) : t("dashboard.notSaved")}</dd></div>
           <div><dt className="font-semibold text-slate-900">{t("dashboard.savedJourney")}</dt><dd className="mt-1 break-words text-slate-600">{accountPreferences?.journeyId ?? t("dashboard.notSaved")}</dd></div>
         </dl>
-        <button type="button" disabled={Boolean(pendingAction) || !storageAvailable} onClick={importThisDevice} className="mt-5 min-h-11 rounded-full border border-teal-700 px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:opacity-50">{t("dashboard.import")}</button>
+        <button type="button" disabled={Boolean(pendingAction) || !storageAvailable} onClick={importThisDevice} className="mt-5 min-h-11 rounded-full border border-brand-accent px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50">{t("dashboard.import")}</button>
         <ActionFeedback feedback={feedback} scope="preferences" />
       </section>
 
@@ -146,10 +146,10 @@ export function AccountDashboard({
         <h2 id="content-sync-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("dashboard.syncHeading")}</h2>
         <p className="mt-3 leading-7 text-slate-600">{t("dashboard.syncBody")}</p>
         <div className="mt-5 flex flex-wrap items-center gap-3" aria-live="polite">
-          <span className={`rounded-full px-4 py-2 text-sm font-semibold ${accountContentSync.status === "error" ? "bg-red-50 text-red-800" : "bg-teal-50 text-teal-800"}`}>
+          <span className={`rounded-full px-4 py-2 text-sm font-semibold ${accountContentSync.status === "error" ? "bg-red-50 text-red-800" : "bg-brand-soft text-brand-link"}`}>
             {t(accountContentSync.status === "synchronizing" ? "dashboard.synchronizing" : accountContentSync.status === "synchronized" ? "dashboard.synchronized" : accountContentSync.status === "error" ? "dashboard.syncError" : "dashboard.syncWaiting")}
           </span>
-          {accountContentSync.status === "error" && <button type="button" onClick={accountContentSync.retry} className="min-h-11 rounded-full border border-teal-700 px-5 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("notify.retry")}</button>}
+          {accountContentSync.status === "error" && <button type="button" onClick={accountContentSync.retry} className="min-h-11 rounded-full border border-brand-accent px-5 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("notify.retry")}</button>}
         </div>
         {accountContentSync.errorMessage && <p role="status" className="mt-3 text-sm font-medium text-red-700">{serviceMessage(accountContentSync.errorMessage)}</p>}
       </section>
@@ -157,12 +157,12 @@ export function AccountDashboard({
       <NotificationPreferencesForm userId={userId} />
 
       <details className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span>{t("dashboard.privacy")}</span><DisclosureChevron /></summary>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden"><span>{t("dashboard.privacy")}</span><DisclosureChevron /></summary>
         <div className="mt-6 space-y-8 border-t border-slate-100 pt-6">
           <section aria-labelledby="data-heading">
             <h2 id="data-heading" className="text-lg font-semibold text-slate-950">{t("dashboard.downloadHeading")}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">{t("dashboard.downloadBody")}</p>
-            <a href="/api/account/export" download className="mt-3 inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{t("dashboard.download")}</a>
+            <a href="/api/account/export" download className="mt-3 inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("dashboard.download")}</a>
           </section>
 
           <section className="rounded-2xl border border-red-200 bg-red-50 p-5" aria-labelledby="delete-heading">

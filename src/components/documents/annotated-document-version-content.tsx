@@ -47,7 +47,7 @@ export function AnnotatedDocumentVersionContent({
   return (
     <>
       <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
-        <span className={version.lifecycle === "current" ? "rounded-full bg-teal-100 px-3 py-1 text-teal-800" : "rounded-full bg-slate-200 px-3 py-1 text-slate-700"}>{message(documentLifecycleMessageIds[version.lifecycle])}</span>
+        <span className={version.lifecycle === "current" ? "rounded-full bg-brand-softer px-3 py-1 text-brand-link" : "rounded-full bg-slate-200 px-3 py-1 text-slate-700"}>{message(documentLifecycleMessageIds[version.lifecycle])}</span>
         <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">{message(documentReviewMessageIds[version.reviewStatus])}</span>
         {variantLabel && <span lang={content.lang} className="rounded-full bg-white px-3 py-1 text-slate-600">{variantLabel}</span>}
         <span lang={content.lang} className="rounded-full bg-white px-3 py-1 text-slate-600">{versionLabel}</span>
@@ -67,13 +67,13 @@ export function AnnotatedDocumentVersionContent({
           <div className="mt-4 grid gap-5">
             {version.officialVisuals.map((visual) => visual.source && visual.rightsSource ? (
               <figure key={visual.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="block bg-slate-100 p-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal-700">
+                <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="block bg-slate-100 p-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus">
                   {/* A definite width (natural size, capped by the frame and a 34rem height) plus the aspect ratio lets the browser reserve the space before the lazy image loads. */}
                   <Image src={visual.assetUrl} width={visual.width} height={visual.height} alt={text(`visuals.${visual.id}.alt`, visual.alt)} unoptimized className="mx-auto block h-auto"
                     style={{ aspectRatio: `${visual.width} / ${visual.height}`, width: `min(100%, ${visual.width}px, calc(34rem * ${visual.width} / ${visual.height}))` }} />
                 </a>
                 <figcaption className="border-t border-slate-200 p-4 text-xs leading-5 text-slate-600">
-                  <span lang={content.lang}>{text(`visuals.${visual.id}.caption`, visual.caption)}</span> {message("documents.visualSource")} <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-600">{format("documents.officialImage", { organization: sourceNameParts(visual.source, locale).organization.text })}<span className="sr-only">{message("sources.openNewTab")}</span></a>{locale === "ja" ? "。" : "."} {visual.presentation === "unmodified" ? message("documents.displayedUnmodified") : <span lang={content.lang}>{text(`visuals.${visual.id}.modification-note`, visual.modificationNote ?? "")}</span>} {message("documents.reuseBasis")} <a href={visual.rightsSource.url} target="_blank" rel="noreferrer" className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-2 hover:text-teal-600"><LocalizedSourceName source={visual.rightsSource} part="title" /><span className="sr-only">{message("sources.openNewTab")}</span></a>{locale === "ja" ? "。" : "."}
+                  <span lang={content.lang}>{text(`visuals.${visual.id}.caption`, visual.caption)}</span> {message("documents.visualSource")} <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="font-medium text-brand-link underline decoration-brand-300 underline-offset-2 hover:text-brand-link-hover">{format("documents.officialImage", { organization: sourceNameParts(visual.source, locale).organization.text })}<span className="sr-only">{message("sources.openNewTab")}</span></a>{locale === "ja" ? "。" : "."} {visual.presentation === "unmodified" ? message("documents.displayedUnmodified") : <span lang={content.lang}>{text(`visuals.${visual.id}.modification-note`, visual.modificationNote ?? "")}</span>} {message("documents.reuseBasis")} <a href={visual.rightsSource.url} target="_blank" rel="noreferrer" className="font-medium text-brand-link underline decoration-brand-300 underline-offset-2 hover:text-brand-link-hover"><LocalizedSourceName source={visual.rightsSource} part="title" /><span className="sr-only">{message("sources.openNewTab")}</span></a>{locale === "ja" ? "。" : "."}
                 </figcaption>
               </figure>
             ) : null)}
@@ -95,8 +95,8 @@ export function AnnotatedDocumentVersionContent({
                 {section.fields.map((field) => {
                   const localized = fieldText(section.id, field);
                   return (
-                  <button key={field.id} type="button" aria-pressed={activeFieldId === field.id} aria-label={format("documents.showExplanation", { label: localized.label })} aria-controls={`${documentVersionKey}-${field.id}-explanation`} onClick={() => onSelectField(field.id, localized.label)} className={`group flex min-h-14 items-start gap-3 rounded-xl border p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${activeFieldId === field.id ? "border-teal-600 bg-teal-50" : "border-slate-200 bg-slate-50 hover:border-teal-400"}`}>
-                    <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-800 text-xs font-bold text-white">{field.number}</span>
+                  <button key={field.id} type="button" aria-pressed={activeFieldId === field.id} aria-label={format("documents.showExplanation", { label: localized.label })} aria-controls={`${documentVersionKey}-${field.id}-explanation`} onClick={() => onSelectField(field.id, localized.label)} className={`group flex min-h-14 items-start gap-3 rounded-xl border p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${activeFieldId === field.id ? "border-brand-600 bg-brand-soft" : "border-slate-200 bg-slate-50 hover:border-brand-400"}`}>
+                    <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">{field.number}</span>
                     <span><span lang="ja" className="block text-xs font-semibold text-slate-500">{field.japaneseLabel}</span><span lang={content.lang} className="mt-1 block text-sm font-medium text-slate-950">{localized.exampleValue}</span></span>
                   </button>
                   );
@@ -112,9 +112,9 @@ export function AnnotatedDocumentVersionContent({
         {fields.map(({ field, section }) => {
           const localized = fieldText(section.id, field);
           return (
-          <li key={field.id} id={`${documentVersionKey}-${field.id}-explanation`} tabIndex={-1} className={`rounded-2xl border p-4 outline-none ${activeFieldId === field.id ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white"}`}>
+          <li key={field.id} id={`${documentVersionKey}-${field.id}-explanation`} tabIndex={-1} className={`rounded-2xl border p-4 outline-none ${activeFieldId === field.id ? "border-brand-500 bg-brand-soft" : "border-slate-200 bg-white"}`}>
             <div className="flex gap-3">
-              <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-800 text-xs font-bold text-white">{field.number}</span>
+              <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">{field.number}</span>
               <div>
                 <h5 className="font-semibold text-slate-950"><span lang={content.lang}>{localized.label}</span>{localized.label !== field.japaneseLabel && <span lang="ja" className="font-normal text-slate-500"> · {field.japaneseLabel}</span>}</h5>
                 <p lang={content.lang} className="mt-2 leading-7 text-slate-600">{localized.explanation}</p>
@@ -131,7 +131,7 @@ export function AnnotatedDocumentVersionContent({
         <ul className="mt-3 space-y-2 text-sm">
           {version.sources.map((source) => (
             <li key={source.id}>
-              <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><LocalizedSourceName source={source} /><span className="sr-only">{message("sources.openNewTab")}</span></a>
+              <a href={source.url} target="_blank" rel="noreferrer" className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"><LocalizedSourceName source={source} /><span className="sr-only">{message("sources.openNewTab")}</span></a>
               <span className="ml-2 text-slate-500">{locale === "ja" ? `（${sourceLanguage(source.language)}）` : `(${sourceLanguage(source.language)})`}</span>
             </li>
           ))}

@@ -36,7 +36,7 @@ export function ResidenceApplicationFeeSection({ locale = "en" }: Readonly<{ loc
         {text("current-schedule")}
       </p>
 
-      <div role="region" aria-label={text("caption")} tabIndex={0} className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+      <div role="region" aria-label={text("caption")} tabIndex={0} className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
         <table className="min-w-full border-collapse text-left text-sm">
           <caption className="sr-only">
             {text("caption")}
@@ -70,7 +70,7 @@ export function ResidenceApplicationFeeSection({ locale = "en" }: Readonly<{ loc
         {text("schedule-rule")}
       </p>
 
-      <blockquote className="mt-6 rounded-r-xl border-l-4 border-teal-600 bg-teal-50 px-5 py-1 text-slate-800">
+      <blockquote className="mt-6 rounded-r-xl border-l-4 border-brand-600 bg-brand-soft px-5 py-1 text-slate-800">
         <p className="my-4 leading-8">
           <strong className="font-semibold text-slate-950">{text("fraud-label")}</strong>{" "}
           {text("fraud-body")}

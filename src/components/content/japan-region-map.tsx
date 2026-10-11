@@ -60,7 +60,7 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
               setShowOkinawa((current) => !current);
               if (!showOkinawa) setSelectedIndex(7);
             }}
-            className="absolute bottom-2 left-2 min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-teal-900 shadow-sm hover:border-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            className="absolute bottom-2 left-2 min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-brand-deep-soft shadow-sm hover:border-brand-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {showOkinawa ? messages["regionMap.fullMap"] : messages["regionMap.viewOkinawa"]}
           </button>
@@ -75,7 +75,7 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
                 setSelectedIndex(index);
                 if (index !== 7) setShowOkinawa(false);
               }}
-              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${selectedIndex === index ? "border-teal-700 bg-teal-50 text-teal-950" : "border-slate-200 text-slate-800 hover:border-teal-500"}`}
+              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${selectedIndex === index ? "border-brand-accent bg-brand-soft text-brand-deep" : "border-slate-200 text-slate-800 hover:border-brand-500"}`}
             >
               <span className="size-4 shrink-0 rounded-sm border border-slate-500/30" style={{ backgroundColor: regionColors[index] }} aria-hidden="true" />
               {region.name[locale]}

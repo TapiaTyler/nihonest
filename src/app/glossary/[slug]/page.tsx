@@ -81,7 +81,7 @@ export default async function GlossaryTermPage({ params }: PageProps<"/glossary/
             <h2 id="related-terms-heading" className="text-xl font-semibold tracking-tight text-slate-950"><InterfaceText id="glossary.relatedTerms" /></h2>
             <ul className="mt-4 flex flex-wrap gap-2">
               {relatedTerms.map((relatedTerm) => (
-                <li key={relatedTerm.id}><Link href={`/glossary/${relatedTerm.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"><span lang="ja">{relatedTerm.japanese}</span><LocalizedTermGloss term={relatedTerm} className="ml-2 text-slate-500" /></Link></li>
+                <li key={relatedTerm.id}><Link href={`/glossary/${relatedTerm.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"><span lang="ja">{relatedTerm.japanese}</span><LocalizedTermGloss term={relatedTerm} className="ml-2 text-slate-500" /></Link></li>
               ))}
             </ul>
           </section>

@@ -114,13 +114,13 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
             onChange={(event) => updateFilters({ query: event.target.value })}
             aria-describedby={`${searchId}-hint`}
             placeholder={message("glossaryIndex.searchPlaceholder")}
-            className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
+            className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
           {hasFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+              className="min-h-12 rounded-xl px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               {message("glossaryIndex.clear")}
             </button>
@@ -137,7 +137,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
               type="button"
               aria-pressed={topicId === topic.id}
               onClick={() => updateFilters({ topicId: topic.id })}
-              className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-teal-600 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 aria-pressed:border-teal-800 aria-pressed:bg-teal-800 aria-pressed:text-white"
+              className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white"
             >
               {topic.label}
             </button>
@@ -166,7 +166,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
         <div className="mt-6 space-y-4">
           {browseGroups.map(({ topic, terms: groupedTerms }) => (
             <details key={topic.id} open className="group">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
                 <span>{locale === "ja" ? japaneseTaxonomyLabels.topic[topic.id] : topic.label}</span>
                 <span className="flex items-center gap-3">
                   <span className="text-sm font-medium text-slate-500">{locale === "ja"
@@ -193,7 +193,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
           <button
             type="button"
             onClick={clearFilters}
-            className="mt-5 min-h-11 rounded-full bg-teal-800 px-5 text-sm font-semibold text-white hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            className="mt-5 min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {message("glossaryIndex.showAll")}
           </button>

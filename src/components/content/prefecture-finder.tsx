@@ -9,8 +9,8 @@ import { prefectureGeneralGuides, prefectureNationalGuides, type FinderCoverage,
 import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 import { PrefectureMap } from "./prefecture-map";
 
-const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-teal-700 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
-const linkClass = "font-medium text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700";
+const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
+const linkClass = "font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus";
 
 export function PrefectureFinder({
   locale,
@@ -77,7 +77,7 @@ export function PrefectureFinder({
           <div>
             <label className="block text-sm font-semibold text-slate-900" htmlFor={searchId}>{messages["finder.searchLabel"]}</label>
             <input ref={searchRef} id={searchId} type="search" value={query} placeholder={messages["finder.searchPlaceholder"]} onChange={(event) => setQuery(event.target.value)} className={controlClass} />
-            {query && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-teal-900 underline focus:outline-2 focus:outline-offset-2 focus:outline-teal-700" onClick={() => setQuery("")}>{messages["finder.clearSearch"]}</button>}
+            {query && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-brand-deep-soft underline focus:outline-2 focus:outline-offset-2 focus:outline-focus" onClick={() => setQuery("")}>{messages["finder.clearSearch"]}</button>}
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-900" htmlFor={selectId}>{messages["finder.selectLabel"]}</label>
@@ -86,14 +86,14 @@ export function PrefectureFinder({
               {selectedIsHidden && selected && <option value={selected.id}>{prefectureLabel(selected.names)}</option>}
               {matches.map((prefecture) => <option key={prefecture.id} value={prefecture.id}>{prefectureLabel(prefecture.names)}</option>)}
             </select>
-            {selected && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-teal-900 underline focus:outline-2 focus:outline-offset-2 focus:outline-teal-700" onClick={() => { setSelectedId(""); setSelectedMunicipalityId(""); }}>{messages["finder.clearSelection"]}</button>}
+            {selected && <button type="button" className="mt-2 min-h-11 text-sm font-medium text-brand-deep-soft underline focus:outline-2 focus:outline-offset-2 focus:outline-focus" onClick={() => { setSelectedId(""); setSelectedMunicipalityId(""); }}>{messages["finder.clearSelection"]}</button>}
           </div>
           {matches.length === 0 && <p className="text-sm text-slate-700 sm:col-span-2" role="status" aria-live="polite">{messages["finder.empty"]}</p>}
         </div>
       </div>
 
       {selected && (
-        <div className="mt-5 rounded-xl border border-teal-200 bg-white p-4">
+        <div className="mt-5 rounded-xl border border-brand-line bg-white p-4">
           <h4 className="text-lg font-semibold text-slate-950">{messages["finder.selected"]}{japanese ? "：" : ": "}{japanese ? selected.names.ja : <>{selected.names.en} <span lang="ja">{selected.names.ja}</span></>}</h4>
           {selectedIsHidden && <p className="mt-1 text-sm text-slate-600">{messages["finder.filteredSelection"]}</p>}
           {municipalityOptions.length > 0 && <>

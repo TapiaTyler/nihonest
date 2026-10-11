@@ -79,9 +79,9 @@ function DocumentFamilyViewer({ family, linkedLocationId }: Readonly<{ family: A
 
   return (
     <details id={`document-${family.id}`} open className="group scroll-mt-24">
-      <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden sm:p-7">
+      <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden sm:p-7">
         <span>
-          <span className="block text-xs font-semibold uppercase tracking-wide text-teal-700">{message("documents.eyebrow")}</span>
+          <span className="block text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("documents.eyebrow")}</span>
           {locale === "ja" ? (
             <span role="heading" aria-level={3} lang="ja" className="mt-2 block text-2xl font-semibold tracking-tight text-slate-950">{family.japaneseName}</span>
           ) : (
