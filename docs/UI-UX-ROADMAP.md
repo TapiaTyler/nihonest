@@ -122,6 +122,19 @@ Some early work was done without loading the UI skills (the owner called this ou
 | Mobile pass (M items) | none at first; `mobile-native` and `adapt` for M2, M3, M8 | M8, M3, M2 verified at 375px | M9 (theme-color, `dvh`, touch-action), real-device testing (M10) |
 | C1, C2, C3, C9 | `impeccable` distill, layout, adapt, polish; `mobile-native`; craft floor | rendered check at phone and desktop widths | Japanese rendering of C1 and C2 now checked on a phone (onboarding bar, home hero note, stage heading; fixed two bad line breaks); C3 and C9 Japanese still unchecked; a second critique pass after the C items land |
 
+## Second critique (pages the first pass missed)
+
+Method: degraded single-context (sub-agents were approved for the first critique only; design review and measurements were run in sequence by one session). Pages: Saved, Reminders, Account, Can I do this?, glossary term, residence status detail, content group, guided journey, and the not-found page, at 1280px and 375px. Measurements (36 page-views in English and Japanese): no contrast, overflow, tap-target or tiny-text findings; no repeated link names. Detector findings: none new. Overlay injection is blocked by the site's Content Security Policy.
+
+| # | Pri | Finding | Status |
+|---|-----|---------|--------|
+| D1 | P2 | There was no custom not-found page: an unknown address showed the framework's white 404 with tiny text and no way back. Added `src/app/not-found.tsx` (eyebrow, plain explanation, "Search the guides" and "Go to the home page"), English and Japanese, still HTTP 404; e2e test added. | done |
+| D2 | P2 | No `error.tsx` or `global-error.tsx`: a runtime failure would show the framework's default error screen. Add a branded error page with a retry and a way home, English and Japanese. | planned |
+| D3 | P2 | Residence status detail pages nest cards in a card: the "How this route is assessed" panel (`rounded-3xl border bg-slate-50`) holds many `rounded-2xl border bg-white` cards (`structured-status-guidance.tsx` lines 23, 40, 66, 88, 96, 127, 136). Nested cards are on the craft floor's refuse list. Proposed fix: drop the outer panel's border and fill and keep one level of cards, or turn the small label and value pairs into plain rows. Owner call on which. | decision |
+| D4 | P3 | Can I do this?: the yellow disclaimer box takes most of the first phone screen, so Step 1 starts at the bottom edge. The disclaimer is legally useful and should stay; a shorter wording or a one-line note above Step 1 with the full text below would keep it without pushing the tool down. | decision |
+| D5 | P3 | Guided journey pages open with two stacked introduction paragraphs that say related things, and use the wide layout while articles, terms and statuses use a narrow reading column. Not a defect; consider merging the two paragraphs. | decision |
+| D6 | -- | Reviewed with no change needed: glossary term page (clear hierarchy, the Japanese term as the anchor), content group page (the ordered-path callout is well placed), Saved, Reminders and Account empty and sign-in states, activity cards (distinct link names). | done |
+
 ## Decisions
 - Eyebrow labels stay: they act as the page titles while headings summarise the page.
 
