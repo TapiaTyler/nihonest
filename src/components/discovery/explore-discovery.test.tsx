@@ -288,4 +288,25 @@ describe("ExploreDiscovery", () => {
     expect(screen.getByRole("heading", { name: "No matching guidance found" })).toBeInTheDocument();
     expect(screen.getByRole("group", { name: "Display as" })).toBeInTheDocument();
   });
+
+  it("shows and opens advanced filters that arrive from the URL, and removes them one at a time", () => {
+    window.history.replaceState(null, "", "/explore?stage=recently-arrived&topic=banking");
+    renderDiscovery();
+
+    const activeFilters = screen.getByRole("list", { name: "Active filters" });
+    expect(activeFilters).toHaveTextContent("Journey stage: Recently arrived");
+    expect(activeFilters).toHaveTextContent("Topic: Banking");
+    expect(screen.getByText("More filters").closest("details")).toHaveAttribute("open");
+    expect(screen.getByRole("link", { name: "Opening a bank account" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove filter Topic: Banking" }));
+    expect(screen.queryByRole("button", { name: "Remove filter Topic: Banking" })).not.toBeInTheDocument();
+    expect(window.location.search).toBe("?stage=recently-arrived");
+    // The panel stays open so a visitor adjusting filters does not lose their place.
+    expect(screen.getByText("More filters").closest("details")).toHaveAttribute("open");
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove filter Journey stage: Recently arrived" }));
+    expect(screen.queryByRole("list", { name: "Active filters" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
+  });
 });

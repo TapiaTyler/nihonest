@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useEffect, useId, useMemo, useRef } from "react";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { DisclosureChevron } from "@/components/navigation/disclosure-chevron";
 import { DebouncedSearchInput } from "@/components/search/debounced-search-input";
@@ -10,6 +10,7 @@ import { RESIDENCE_STATUS_CATEGORY_IDS, residenceStatusCategoryLabels, type Resi
 import { audiences, CONTENT_TYPE_IDS, geographicScopes, IMPORTANCE_IDS, journeyStages, topics } from "@/domain/taxonomy/taxonomy";
 import type { KnowledgebaseSearchFilters } from "@/lib/search/knowledgebase-search";
 import type { UpdateExploreFilter } from "@/components/discovery/explore-search-state";
+import { ExploreActiveFilters, type ActiveExploreFilter } from "@/components/discovery/explore-active-filters";
 import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 
 const englishContentTypeLabels: Record<(typeof CONTENT_TYPE_IDS)[number], string> = {
@@ -60,6 +61,27 @@ export function ExploreFilterPanel({
     labels: Readonly<Record<OptionId, string>>,
   ) => locale === "ja" ? options.map(({ id }) => ({ id, label: labels[id] })) : options;
 
+  const moreFiltersRef = useRef<HTMLDetailsElement>(null);
+  const advancedFilters = [
+    { key: "journeyStageId", label: message("explore.journeyStage"), value: filters.journeyStageId, options: optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage) },
+    { key: "topicId", label: message("explore.topic"), value: filters.topicId, options: optionsFor(topics, japaneseTaxonomyLabels.topic) },
+    { key: "audienceId", label: message("explore.audience"), value: filters.audienceId, options: optionsFor(audiences, japaneseTaxonomyLabels.audience) },
+    { key: "geographicScopeId", label: message("explore.geographicScope"), value: filters.geographicScopeId, options: optionsFor(geographicScopes, japaneseTaxonomyLabels.geographicScope) },
+    { key: "contentType", label: message("explore.contentType"), value: filters.contentType, options: CONTENT_TYPE_IDS.map((id) => ({ id, label: locale === "ja" ? japaneseTaxonomyLabels.contentType[id] : englishContentTypeLabels[id] })) },
+    { key: "importance", label: message("explore.importance"), value: filters.importance, options: IMPORTANCE_IDS.map((id) => ({ id, label: locale === "ja" ? japaneseTaxonomyLabels.importance[id] : englishImportanceLabels[id] })) },
+    { key: "residenceStatusId", label: message("explore.residenceStatus"), value: filters.residenceStatusId, options: residenceStatusOptionGroups.flatMap(({ options }) => options) },
+  ] as const;
+  const activeFilters: ActiveExploreFilter[] = advancedFilters.flatMap(({ key, label, value, options }) => {
+    const valueLabel = value === "all" ? undefined : (options as readonly { id: string; label: string }[]).find(({ id }) => id === value)?.label;
+    return valueLabel ? [{ key, label, valueLabel, remove: () => updateFilter(key, "all") }] : [];
+  });
+
+  // Reveal the panel once a filter applies, but never collapse it automatically while someone is still adjusting it.
+  const hasActiveFilters = activeFilters.length > 0;
+  useEffect(() => {
+    if (hasActiveFilters && moreFiltersRef.current) moreFiltersRef.current.open = true;
+  }, [hasActiveFilters]);
+
   return (
     <section className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
       <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("explore.searchHeading")}</h2>
@@ -81,7 +103,9 @@ export function ExploreFilterPanel({
         ))}
       </div>
 
-      <details className="group mt-5 border-t border-slate-200 pt-5">
+      <ExploreActiveFilters filters={activeFilters} />
+
+      <details ref={moreFiltersRef} className="group mt-5 border-t border-slate-200 pt-5">
         <summary className="flex min-h-11 cursor-pointer list-none select-none items-center justify-between gap-4 font-semibold text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 [&::-webkit-details-marker]:hidden"><span>{message("explore.moreFilters")}</span><DisclosureChevron /></summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <FilterSelect allLabel={message("explore.all")} label={message("explore.journeyStage")} value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage)} />
