@@ -13,7 +13,7 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 ## Status at a glance
 
-Updated 2026-10-12. Every row has exactly one status word in its last column. Counts: done 48, dropped 8, planned 0, decision 0, open 2 (58 rows).
+Updated 2026-10-12. Every row has exactly one status word in its last column. Counts: done 49, dropped 8, planned 0, decision 0, open 2 (59 rows).
 
 **Still open**
 
@@ -23,7 +23,7 @@ Updated 2026-10-12. Every row has exactly one status word in its last column. Co
 | M14 | The prefecture map is about 17% larger on phones since the nested-card flatten removed the panel padding | the owner's call, on a real phone: keep or restore |
 | (dark mode) | Review dark mode on a real phone and in real light and dark OS settings, in particular the items listed under H10 | the owner, after deployment |
 
-**Not part of the table but still to do:** merge `main` into this branch (brings in the favicon from Codex; deliberately not done yet), run `npm run test:e2e` against a clean server before merge, and a pass of the Japanese rendering of the flattened components, the not-found and error pages and the new theme control.
+**Not part of the table but still to do:** merge `main` into this branch (brings in the favicon from Codex; deliberately not done yet), and re-run the e2e suite once more after that merge. Done on 2026-10-12: the e2e suite against a clean production build (separate worktree, `next build` and `next start`, so the real CSP and the pre-paint theme script ran): 64 passed, 5 skipped (Supabase), 0 failed; and the Japanese pass over the hero card, theme menu, drawer, FAQ and status groups, 404 and error pages in both themes.
 
 ## H5 plan (colour tokens)
 
@@ -83,6 +83,7 @@ Made with the `impeccable` colorize guidance (design dark surface elevation and 
 | H8 | P3 | `py-32` hero spacing pushes content below the fold on large screens; revisit now that H1 exists. Hero padding is now `py-14 sm:py-20` with no extra large-screen increase; the stage cards start above the fold at 1440x900. | done |
 | H9 | P3 | Stage labels lowercased with `.toLowerCase()` inside sentences; English-only habit, and it produced "living in japan". Stage names in sentences now come from `stage.inSentence.*` catalog messages; also stopped lowercasing journey titles on group pages. | done |
 | H10 | P1 | Dark mode. Owner decisions: OS setting as the default, a manual override next to the language menu, the proposed dark decisions, and the form-border fix in light mode too. Done: dark values for every role (two generated blocks, one for the device and one for a manual choice, plus a manual light choice that switches the device block off); a Theme control (System, Light, Dark) as a header button beside the language menu and as a section in the phone drawer, English and Japanese; the choice is stored per viewer and applied before the first paint by a small inline script (no flash; hydration test added); per-scheme `theme-color` with a manual choice replacing both; `color-scheme: light dark`; text selection, eyebrow labels, skip link, select arrows and both maps now read role variables; tooltips, the hover label and the toast invert; the footer takes a deeper black; official-document frames stay light (`paper` role); status colours have dark pairs. Checks: contrast, overflow and tap-target scan of 19 pages in dark (desktop and phone, English and Japanese, 76 page views): no failures; unit tests (storage, options, Japanese); e2e for device default, manual override, reload before paint, browser-bar colour, hydration and the drawer. | done |
+| H12 | P3 | Japanese pass on the newest work (2026-10-12): hero card, theme menu and drawer section, flattened FAQ and status groups, 404 and error pages, light and dark. Everything read cleanly except two headings that broke before a lone character on phones ("見つかりませんでし / た。" and "読み込めませんでし / た。"), because the verb phrase was wider than the column. Reworded to "お探しのページは見つかりません。" and "ページを開けませんでした。"; both now break cleanly. | done |
 | H11 | P2 | Form field borders measured 1.5:1 on white, below the 3:1 WCAG asks for the only visible boundary of an input. Owner decision: fix in light mode as well. New `field` role (slate-500, 4.8:1 on white, 3.7:1 on a dark card) applied to the 20 input, select and search-box borders; buttons, chips and cards keep their borders because their labels identify them. Verified from the computed-style capture: the only differences are INPUT and SELECT border colours (92 elements). | done |
 
 ## Explore
