@@ -36,7 +36,7 @@ export function ResidenceApplicationFeeSection({ locale = "en" }: Readonly<{ loc
         {text("current-schedule")}
       </p>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200">
+      <div role="region" aria-label={text("caption")} tabIndex={0} className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
         <table className="min-w-full border-collapse text-left text-sm">
           <caption className="sr-only">
             {text("caption")}

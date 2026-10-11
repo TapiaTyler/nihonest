@@ -20,7 +20,7 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
   return (
     <div className="page-shell py-12 sm:py-20">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.onboarding")} />
-      <Link href={returnTo} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+      <Link href={returnTo} className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
         <InterfaceText id={returnTo === "/roadmap" ? "onboarding.backRoadmap" : returnTo === "/my-journey" ? "onboarding.backMyJourney" : "onboarding.backHome"} />
       </Link>
       <header className="mt-8 max-w-3xl">

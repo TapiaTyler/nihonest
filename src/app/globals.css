@@ -24,6 +24,16 @@ select:not(:disabled),
   cursor: pointer;
 }
 
+/* iOS Safari zooms the page, and does not zoom back, when a focused field is under 16px. Fixing the size, not
+   disabling zoom, keeps pinch-zoom available; the rule is unlayered so it wins over Tailwind utility font sizes. */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 .app-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%23475569' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");

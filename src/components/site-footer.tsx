@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="border-t border-slate-200 bg-slate-950 text-slate-300">
       <div className="page-shell grid gap-10 py-10 text-sm sm:grid-cols-[minmax(12rem,1fr)_auto_auto] sm:gap-8 lg:gap-16">
         <div className="max-w-sm">
-          <Link href="/" className="text-base font-semibold text-white hover:text-teal-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300">Nihonest</Link>
+          <Link href="/" className="inline-flex min-h-11 items-center text-base font-semibold text-white hover:text-teal-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-300">Nihonest</Link>
           <p className="mt-3 leading-6"><InterfaceText id="footer.productDescription" /></p>
           <p className="mt-3 leading-6 text-slate-400"><InterfaceText id="footer.publicAccess" /></p>
           <p className="mt-3 leading-6 text-slate-400"><InterfaceText id="footer.legalDisclaimer" /></p>

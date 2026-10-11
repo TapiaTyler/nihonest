@@ -64,7 +64,7 @@ export function GuidedJourneyView({
 
   return (
     <>
-      <Link href={mode === "personal" ? "/" : `/explore/${group.id}`} className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+      <Link href={mode === "personal" ? "/" : `/explore/${group.id}`} className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
         {locale === "ja" ? `← ${mode === "personal" ? "ホーム" : presentedGroupTitle}に戻る` : `← Back to ${mode === "personal" ? "Home" : presentedGroupTitle}`}
       </Link>
       <header className="mt-8 max-w-3xl">

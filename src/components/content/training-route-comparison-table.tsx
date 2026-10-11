@@ -16,8 +16,8 @@ export function TrainingRouteComparisonTable({ locale = "en" }: Readonly<{ local
         </caption>
         <thead className="bg-slate-100 text-slate-950">
           <tr>
-            <th scope="col" className="min-w-64 px-4 py-3 font-semibold">{text("headers.0", trainingRouteComparisonComponent.headers[0])}</th>
-            <th scope="col" className="min-w-56 px-4 py-3 font-semibold">{text("headers.1", trainingRouteComparisonComponent.headers[1])}</th>
+            <th scope="col" className="px-4 sm:min-w-64 py-3 font-semibold">{text("headers.0", trainingRouteComparisonComponent.headers[0])}</th>
+            <th scope="col" className="px-4 sm:min-w-56 py-3 font-semibold">{text("headers.1", trainingRouteComparisonComponent.headers[1])}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white text-slate-700">

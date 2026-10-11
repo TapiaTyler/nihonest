@@ -20,7 +20,7 @@ function useArticleJourneyContext(data: ArticleJourneyData) {
   return resolveArticleJourneyContext(data, singleQueryValue(query, "journey"), singleQueryValue(query, "route"));
 }
 
-const backLinkClass = "rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700";
+const backLinkClass = "inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700";
 
 export function ArticleBackLink({ data }: Readonly<{ data: ArticleJourneyData }>) {
   const query = useSearchParams();

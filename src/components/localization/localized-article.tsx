@@ -95,7 +95,7 @@ export function ArticleTranslationNotice({ translation }: Readonly<{ translation
           ? message("translation.machineBody")
           : message("translation.unavailableBody")}
       </p>
-      <button type="button" onClick={() => setLocale("en")} className="mt-2 rounded-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
+      <button type="button" onClick={() => setLocale("en")} className="mt-1 inline-flex min-h-11 items-center rounded-sm font-semibold text-teal-800 underline decoration-teal-300 underline-offset-4 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">
         {message("translation.readEnglish")}
       </button>
     </aside>

@@ -17,8 +17,8 @@ export function TaxResidenceScopeTable({ locale = "en" }: Readonly<{ locale?: Su
         </caption>
         <thead className="bg-slate-100 text-slate-950">
           <tr>
-            <th scope="col" className="min-w-56 px-4 py-3 font-semibold">{text("headers.0", taxResidenceScopeComponent.headers[0])}</th>
-            <th scope="col" className="min-w-80 px-4 py-3 font-semibold">{text("headers.1", taxResidenceScopeComponent.headers[1])}</th>
+            <th scope="col" className="px-4 sm:min-w-56 py-3 font-semibold">{text("headers.0", taxResidenceScopeComponent.headers[0])}</th>
+            <th scope="col" className="px-4 sm:min-w-80 py-3 font-semibold">{text("headers.1", taxResidenceScopeComponent.headers[1])}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white text-slate-700">

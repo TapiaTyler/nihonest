@@ -52,7 +52,7 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
 
   return (
     <div className="page-shell py-12 sm:py-20">
-      <Link href="/" className="rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">{message("onboarding.backHome")}</Link>
+      <Link href="/" className="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700">{message("onboarding.backHome")}</Link>
       <header className="mt-8 max-w-3xl">
         <p className="eyebrow">{message("journey.myJourney")}</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">{stageLabel ? format("myJourney.stageHeading", { stage: stageLabel }) : message("myJourney.chooseHeading")}</h1>
