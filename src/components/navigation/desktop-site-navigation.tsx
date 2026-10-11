@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { ContentLanguageOptions } from "@/components/localization/content-language-options";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { ReadingAidOptions } from "@/components/localization/reading-aid-options";
+import { ThemeOptions, themeLabelIds } from "@/components/theme/theme-options";
+import { useThemePreference } from "@/components/theme/use-theme-preference";
 import { DesktopAccountControl } from "@/components/navigation/site-account-controls";
 import type { SiteAccountNavigationState } from "@/components/navigation/site-account-navigation";
 import {
@@ -15,8 +17,8 @@ import {
 } from "@/components/navigation/site-navigation-config";
 import type { InterfaceMessageId } from "@/domain/localization/interface-messages";
 
-type DesktopDisclosure = "journey" | "resources" | "language" | "account";
-type DesktopLinkDisclosure = Exclude<DesktopDisclosure, "language" | "account">;
+type DesktopDisclosure = "journey" | "resources" | "language" | "theme" | "account";
+type DesktopLinkDisclosure = Exclude<DesktopDisclosure, "language" | "theme" | "account">;
 type DescribedNavigationLink = Readonly<{ href: SiteDestinationHref; labelId: InterfaceMessageId; descriptionId: InterfaceMessageId }>;
 
 export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<{
@@ -29,6 +31,8 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
   const journeyButtonRef = useRef<HTMLButtonElement>(null);
   const resourcesButtonRef = useRef<HTMLButtonElement>(null);
   const languageButtonRef = useRef<HTMLButtonElement>(null);
+  const themeButtonRef = useRef<HTMLButtonElement>(null);
+  const { preference: themePreference } = useThemePreference();
   const accountButtonRef = useRef<HTMLButtonElement>(null);
 
   function isActive(href: SiteDestinationHref) {
@@ -39,6 +43,7 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
     if (name === "journey") return journeyButtonRef;
     if (name === "resources") return resourcesButtonRef;
     if (name === "language") return languageButtonRef;
+    if (name === "theme") return themeButtonRef;
     return accountButtonRef;
   }
 
@@ -118,6 +123,8 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
 
   const languageOpen = disclosure === "language";
   const languageName = message(locale === "ja" ? "language.japanesePilot" : "language.english");
+  const themeOpen = disclosure === "theme";
+  const themeName = message(themeLabelIds[themePreference]);
 
   return (
     <nav ref={navigationRef} aria-label={message("navigation.primary")} className="hidden lg:block">
@@ -142,6 +149,17 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.japaneseReadings")}</p>
                 <ReadingAidOptions />
               </div>
+            </div>
+          )}
+        </li>
+        <li className="relative">
+          <button ref={themeButtonRef} type="button" aria-label={`${message("theme.label")}: ${themeName}`} aria-expanded={themeOpen} aria-controls="desktop-theme-options" onClick={() => toggleDisclosure("theme")} className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-brand-link transition-colors hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${themeOpen || themePreference !== "system" ? "bg-brand-soft" : ""}`}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" /></svg>
+          </button>
+          {themeOpen && (
+            <div id="desktop-theme-options" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-2xl border border-line bg-surface p-3 shadow-xl">
+              <p className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("theme.label")}</p>
+              <div className="mt-2"><ThemeOptions onSelect={closeDisclosure} /></div>
             </div>
           )}
         </li>

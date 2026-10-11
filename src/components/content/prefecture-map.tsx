@@ -187,8 +187,7 @@ export function PrefectureMap({
         <path
           d={d}
           fillRule="evenodd"
-          fill={isFocused ? "#14b8a6" : isSelected ? "#0f766e" : "#a7dcd6"}
-          stroke={isSelected ? "none" : "#ffffff"}
+          style={{ fill: isFocused ? "var(--map-fill-hover)" : isSelected ? "var(--map-fill-selected)" : "var(--map-fill)", stroke: isSelected ? "none" : "var(--map-stroke)" }}
           strokeWidth={1.2}
           vectorEffect="non-scaling-stroke"
           className="cursor-pointer transition-colors"
@@ -255,8 +254,7 @@ export function PrefectureMap({
           <path
             d={selectedPath.d}
             fillRule="evenodd"
-            fill={focusedCode === selectedPath.code ? "#14b8a6" : "#0f766e"}
-            stroke={focusedCode === selectedPath.code ? "#14b8a6" : "#0f766e"}
+            style={{ fill: focusedCode === selectedPath.code ? "var(--map-fill-hover)" : "var(--map-fill-selected)", stroke: focusedCode === selectedPath.code ? "var(--map-fill-hover)" : "var(--map-fill-selected)" }}
             strokeWidth={1.5}
             vectorEffect="non-scaling-stroke"
             pointerEvents="none"
@@ -317,7 +315,7 @@ export function PrefectureMap({
         >
           <span className="text-xs font-medium text-ink-body">{messages["finder.map.insetLabel"]}</span>
           <svg viewBox="30 510 215 110" aria-hidden="true" className="mt-1 block h-auto w-full">
-            <path d={okinawaPath.d} fillRule="evenodd" fill={selectedId === okinawa.id ? "#0f766e" : "#a7dcd6"} stroke="#0f766e" strokeWidth="2" />
+            <path d={okinawaPath.d} fillRule="evenodd" style={{ fill: selectedId === okinawa.id ? "var(--map-fill-selected)" : "var(--map-fill)", stroke: "var(--map-fill-selected)" }} strokeWidth="2" />
           </svg>
         </button>
       )}

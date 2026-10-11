@@ -10,8 +10,15 @@
  *      theme override it.
  *
  * Light values are identical to the palette class each role replaced, so the migration changed nothing visually.
+ *
+ * Dark values are defined twice, once for a device set to dark with no manual choice (`prefers-color-scheme`) and
+ * once for a manual choice (`data-theme="dark"`). CSS cannot share one block between a media query and an
+ * attribute selector, so both blocks are generated from the same table and must be edited together. A manual
+ * "light" choice (`data-theme="light"`) switches the media block off. Dark surfaces step up in lightness: page
+ * slate-950, cards slate-900, raised things slate-800.
  */
 :root {
+  color-scheme: light;
   /* Brand (teal) */
   --brand: var(--color-teal-800); /* primary action fill; selected borders; checkbox accent */
   --brand-hover: var(--color-teal-700); /* primary action fill on hover */
@@ -37,6 +44,7 @@
   --surface: var(--color-white); /* cards and panels */
   --surface-subtle: var(--color-slate-50); /* inset panels and hover washes */
   --surface-muted: var(--color-slate-100); /* chips and quiet fills */
+  --paper: var(--color-slate-100); /* the frame around scanned official documents; stays light in both themes */
   --surface-strong: var(--color-slate-200); /* tracks and stronger fills */
   --surface-disabled: var(--color-slate-300); /* disabled controls */
   --scrim: var(--color-slate-900); /* backdrop behind dialogs */
@@ -95,6 +103,176 @@
   --favorite-line-strong: var(--color-pink-500); /* saved-item hover border */
   --favorite-text: var(--color-pink-600); /* saved-item icon colour */
   --favorite-focus: var(--color-pink-600); /* saved-item focus outline */
+  /* Roles used by plain CSS and SVG rather than utility classes */
+  --eyebrow: oklch(0.43 0.09 180); /* the small uppercase labels above headings */
+  --selection-bg: oklch(0.91 0.07 180);
+  --selection-fg: oklch(0.2 0.04 190);
+  --skip-link-ink: oklch(0.25 0.05 190);
+  --map-fill: #a7dcd6; /* prefecture shape at rest */
+  --map-fill-hover: #14b8a6; /* hovered or focused */
+  --map-fill-selected: #0f766e; /* the chosen prefecture */
+  --map-stroke: #ffffff; /* outlines between shapes: the card colour */
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%23475569' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --brand: var(--color-teal-700);
+    --brand-hover: var(--color-teal-800);
+    --brand-soft: var(--color-teal-950);
+    --brand-softer: var(--color-teal-900);
+    --brand-link: var(--color-teal-300);
+    --brand-link-hover: var(--color-teal-200);
+    --brand-accent: var(--color-teal-300);
+    --brand-deep: var(--color-teal-100);
+    --brand-deep-soft: var(--color-teal-200);
+    --brand-line: var(--color-teal-800);
+    --brand-300: var(--color-teal-800);
+    --brand-400: var(--color-teal-700);
+    --brand-500: var(--color-teal-600);
+    --brand-600: var(--color-teal-500);
+    --focus: var(--color-teal-300);
+    --page: var(--color-slate-950);
+    --surface: var(--color-slate-900);
+    --surface-subtle: var(--color-slate-800);
+    --surface-muted: var(--color-slate-800);
+    --surface-strong: var(--color-slate-700);
+    --surface-disabled: var(--color-slate-700);
+    --scrim: var(--color-black);
+    --footer: var(--color-black);
+    --inverse: var(--color-slate-100);
+    --on-inverse: var(--color-slate-950);
+    --on-inverse-soft: var(--color-slate-800);
+    --on-inverse-muted: var(--color-slate-700);
+    --on-inverse-subtle: var(--color-slate-600);
+    --ink: var(--color-slate-50);
+    --ink-strong: var(--color-slate-100);
+    --ink-firm: var(--color-slate-200);
+    --ink-body: var(--color-slate-200);
+    --ink-muted: var(--color-slate-300);
+    --ink-subtle: var(--color-slate-400);
+    --line-faint: var(--color-slate-800);
+    --line: var(--color-slate-800);
+    --line-strong: var(--color-slate-700);
+    --caution-soft: var(--color-amber-950);
+    --caution-softer: var(--color-amber-900);
+    --caution-line: var(--color-amber-800);
+    --caution-line-strong: var(--color-amber-700);
+    --caution-text: var(--color-amber-200);
+    --caution-ink-soft: var(--color-amber-100);
+    --caution-ink: var(--color-amber-50);
+    --caution-focus: var(--color-amber-400);
+    --danger-soft: var(--color-red-950);
+    --danger-line: var(--color-red-800);
+    --danger-line-strong: var(--color-red-700);
+    --danger: var(--color-red-700);
+    --danger-hover: var(--color-red-600);
+    --danger-accent: var(--color-red-400);
+    --danger-strong: var(--color-red-300);
+    --danger-deep: var(--color-red-200);
+    --danger-ink: var(--color-red-100);
+    --specimen-soft: var(--color-rose-950);
+    --specimen-line: var(--color-rose-800);
+    --specimen-text: var(--color-rose-300);
+    --specimen-ink: var(--color-rose-100);
+    --info-soft: var(--color-sky-950);
+    --info-line: var(--color-sky-800);
+    --info-ink: var(--color-sky-100);
+    --favorite-soft: var(--color-pink-950);
+    --favorite-line: var(--color-pink-800);
+    --favorite-line-strong: var(--color-pink-600);
+    --favorite-text: var(--color-pink-400);
+    --favorite-focus: var(--color-pink-400);
+    --eyebrow: var(--color-teal-300);
+    --selection-bg: var(--color-teal-700);
+    --selection-fg: var(--color-white);
+    --skip-link-ink: var(--color-slate-50);
+    --map-fill: var(--color-teal-700);
+    --map-fill-hover: var(--color-teal-500);
+    --map-fill-selected: var(--color-teal-300);
+    --map-stroke: var(--color-slate-900);
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --brand: var(--color-teal-700);
+  --brand-hover: var(--color-teal-800);
+  --brand-soft: var(--color-teal-950);
+  --brand-softer: var(--color-teal-900);
+  --brand-link: var(--color-teal-300);
+  --brand-link-hover: var(--color-teal-200);
+  --brand-accent: var(--color-teal-300);
+  --brand-deep: var(--color-teal-100);
+  --brand-deep-soft: var(--color-teal-200);
+  --brand-line: var(--color-teal-800);
+  --brand-300: var(--color-teal-800);
+  --brand-400: var(--color-teal-700);
+  --brand-500: var(--color-teal-600);
+  --brand-600: var(--color-teal-500);
+  --focus: var(--color-teal-300);
+  --page: var(--color-slate-950);
+  --surface: var(--color-slate-900);
+  --surface-subtle: var(--color-slate-800);
+  --surface-muted: var(--color-slate-800);
+  --surface-strong: var(--color-slate-700);
+  --surface-disabled: var(--color-slate-700);
+  --scrim: var(--color-black);
+  --footer: var(--color-black);
+  --inverse: var(--color-slate-100);
+  --on-inverse: var(--color-slate-950);
+  --on-inverse-soft: var(--color-slate-800);
+  --on-inverse-muted: var(--color-slate-700);
+  --on-inverse-subtle: var(--color-slate-600);
+  --ink: var(--color-slate-50);
+  --ink-strong: var(--color-slate-100);
+  --ink-firm: var(--color-slate-200);
+  --ink-body: var(--color-slate-200);
+  --ink-muted: var(--color-slate-300);
+  --ink-subtle: var(--color-slate-400);
+  --line-faint: var(--color-slate-800);
+  --line: var(--color-slate-800);
+  --line-strong: var(--color-slate-700);
+  --caution-soft: var(--color-amber-950);
+  --caution-softer: var(--color-amber-900);
+  --caution-line: var(--color-amber-800);
+  --caution-line-strong: var(--color-amber-700);
+  --caution-text: var(--color-amber-200);
+  --caution-ink-soft: var(--color-amber-100);
+  --caution-ink: var(--color-amber-50);
+  --caution-focus: var(--color-amber-400);
+  --danger-soft: var(--color-red-950);
+  --danger-line: var(--color-red-800);
+  --danger-line-strong: var(--color-red-700);
+  --danger: var(--color-red-700);
+  --danger-hover: var(--color-red-600);
+  --danger-accent: var(--color-red-400);
+  --danger-strong: var(--color-red-300);
+  --danger-deep: var(--color-red-200);
+  --danger-ink: var(--color-red-100);
+  --specimen-soft: var(--color-rose-950);
+  --specimen-line: var(--color-rose-800);
+  --specimen-text: var(--color-rose-300);
+  --specimen-ink: var(--color-rose-100);
+  --info-soft: var(--color-sky-950);
+  --info-line: var(--color-sky-800);
+  --info-ink: var(--color-sky-100);
+  --favorite-soft: var(--color-pink-950);
+  --favorite-line: var(--color-pink-800);
+  --favorite-line-strong: var(--color-pink-600);
+  --favorite-text: var(--color-pink-400);
+  --favorite-focus: var(--color-pink-400);
+  --eyebrow: var(--color-teal-300);
+  --selection-bg: var(--color-teal-700);
+  --selection-fg: var(--color-white);
+  --skip-link-ink: var(--color-slate-50);
+  --map-fill: var(--color-teal-700);
+  --map-fill-hover: var(--color-teal-500);
+  --map-fill-selected: var(--color-teal-300);
+  --map-stroke: var(--color-slate-900);
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 @theme inline {
@@ -120,6 +298,7 @@
   --color-surface: var(--surface);
   --color-surface-subtle: var(--surface-subtle);
   --color-surface-muted: var(--surface-muted);
+  --color-paper: var(--paper);
   --color-surface-strong: var(--surface-strong);
   --color-surface-disabled: var(--surface-disabled);
   --color-scrim: var(--scrim);

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ContentLanguageOptions } from "@/components/localization/content-language-options";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { ReadingAidOptions } from "@/components/localization/reading-aid-options";
+import { ThemeOptions } from "@/components/theme/theme-options";
 import { MobileAccountControl } from "@/components/navigation/site-account-controls";
 import type { SiteAccountNavigationState } from "@/components/navigation/site-account-navigation";
 import {
@@ -149,6 +150,10 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.japaneseReadings")}</p>
                 <ReadingAidOptions />
               </div>
+            </section>
+            <section aria-labelledby="mobile-navigation-theme" className="mt-6 px-3">
+              <h3 id="mobile-navigation-theme" className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("theme.label")}</h3>
+              <div className="mt-2"><ThemeOptions /></div>
             </section>
           </nav>
           <p className="border-t border-line px-5 py-4 text-xs leading-5 text-ink-subtle">{message("navigation.publicWithoutAccount")}</p>

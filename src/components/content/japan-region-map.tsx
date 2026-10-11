@@ -49,7 +49,7 @@ export function JapanRegionMapView({ regions, messages, locale = "en" }: Readonl
                 opacity={selectedIndex === null || selectedIndex === index ? 1 : 0.45}
               >
                 {prefectureMapPaths.filter(({ code }) => (showOkinawa ? code === "47" : code !== "47") && region.prefectureIds.some((id) => id === `jp-${code}000`)).map(({ code, d }) => (
-                  <path key={code} d={d} fill={regionColors[index]} fillRule="evenodd" stroke="#ffffff" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
+                  <path key={code} d={d} fillRule="evenodd" style={{ fill: regionColors[index], stroke: "var(--map-stroke)" }} strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
                 ))}
               </g>
             ))}

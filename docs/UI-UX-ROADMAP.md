@@ -13,18 +13,17 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 ## Status at a glance
 
-Updated 2026-10-12. Every row has exactly one status word in its last column. Counts: done 44, dropped 8, planned 1, decision 1, open 1 (55 rows).
+Updated 2026-10-12. Every row has exactly one status word in its last column. Counts: done 48, dropped 8, planned 0, decision 0, open 2 (58 rows).
 
 **Still open**
 
 | # | What | Needs |
 |---|------|-------|
-| H5 | Replace the repeated Tailwind teal and slate classes with named colour tokens (dark mode comes after) | agreed, not started; a code-structure change with no visible difference |
-| M6 | Title case versus sentence case for labels (the drawer's "Adjust Starting Point" and others) | the owner's list or rule; no record of it exists |
 | M10 | Sticky hover, tap delay, scroll bounce and the on-screen keyboard cannot be checked in emulation | a real phone, after the branch is deployed |
-| (M13 caveat) | The prefecture map is about 17% larger on phones since the D8 flatten removed the panel padding | the owner's call: keep or restore the old size |
+| M14 | The prefecture map is about 17% larger on phones since the nested-card flatten removed the panel padding | the owner's call, on a real phone: keep or restore |
+| (dark mode) | Review dark mode on a real phone and in real light and dark OS settings, in particular the items listed under H10 | the owner, after deployment |
 
-**Not part of the table but still to do:** merge `main` into this branch (brings in the favicon from Codex; deliberately not done yet), run `npm run test:e2e` against a clean server before merge, and a pass of the Japanese rendering of the flattened components and the not-found and error pages.
+**Not part of the table but still to do:** merge `main` into this branch (brings in the favicon from Codex; deliberately not done yet), run `npm run test:e2e` against a clean server before merge, and a pass of the Japanese rendering of the flattened components, the not-found and error pages and the new theme control.
 
 ## H5 plan (colour tokens)
 
@@ -78,11 +77,12 @@ Made with the `impeccable` colorize guidance (design dark surface elevation and 
 | H2 | P1 | Hero CTA and aside swapped after preferences loaded. Placeholder holds space; `noscript` fallback. | done |
 | H3 | P2 | Japanese hero typography (leading, tracking, size, font stack, `lang` tags). | done |
 | H4 | P2 | The dark hero aside is a policy statement for new visitors, not something to act on. Owner decision: keep as is for now; revisit suggestions when we reach it. Resolved by C2: the aside is now a one-line note. | done |
-| H5 | P2 | Light theme only; colours were hard-coded Tailwind palette classes. Owner decisions: tokens in a separate `src/styles/tokens.css`, semantic roles, dark mode wanted (OS default plus a manual switch next to the language menu), form-border contrast fixed in light mode too, and the proposed dark decisions approved. Phase 1 done: every palette class (brand, neutrals, surfaces, lines and status colours: 1,716 uses across about 100 files) now uses one of 74 role tokens with identical light values; `text-white` became `on-brand` or `on-inverse` where it sits on a brand fill or an inverse surface; the always-dark footer keeps fixed light-on-dark colours apart from its fill and top border. Proof: 46,376 computed elements across 46 page views unchanged, the compiled CSS of every migrated rule resolves to the same colours, snapshot changes verified to be renames only, all tests pass. Next: the light form-border contrast fix, then the dark values, the header switch and the rest of the dark decisions. | planned |
+| H5 | P2 | Light theme only; colours were hard-coded Tailwind palette classes. Done: every palette class (1,716 uses across about 100 files) now uses one of 74 role tokens in `src/styles/tokens.css`, with identical light values; proved by an unchanged computed-style capture of 46,376 elements, compiled-CSS comparison of every migrated rule, snapshot diffs verified to be renames only, and the test suites. | done |
 | H6 | P2 | Skip link text is English-only (`layout.tsx`). Now a localized `SkipLink` component. | done |
 | H7 | P3 | "What to expect" cards are plain text; Owner decision: keep as is; numbers or icons would add AI-looking UI. | dropped |
 | H8 | P3 | `py-32` hero spacing pushes content below the fold on large screens; revisit now that H1 exists. Hero padding is now `py-14 sm:py-20` with no extra large-screen increase; the stage cards start above the fold at 1440x900. | done |
 | H9 | P3 | Stage labels lowercased with `.toLowerCase()` inside sentences; English-only habit, and it produced "living in japan". Stage names in sentences now come from `stage.inSentence.*` catalog messages; also stopped lowercasing journey titles on group pages. | done |
+| H10 | P1 | Dark mode. Owner decisions: OS setting as the default, a manual override next to the language menu, the proposed dark decisions, and the form-border fix in light mode too. Done: dark values for every role (two generated blocks, one for the device and one for a manual choice, plus a manual light choice that switches the device block off); a Theme control (System, Light, Dark) as a header button beside the language menu and as a section in the phone drawer, English and Japanese; the choice is stored per viewer and applied before the first paint by a small inline script (no flash; hydration test added); per-scheme `theme-color` with a manual choice replacing both; `color-scheme: light dark`; text selection, eyebrow labels, skip link, select arrows and both maps now read role variables; tooltips, the hover label and the toast invert; the footer takes a deeper black; official-document frames stay light (`paper` role); status colours have dark pairs. Checks: contrast, overflow and tap-target scan of 19 pages in dark (desktop and phone, English and Japanese, 76 page views): no failures; unit tests (storage, options, Japanese); e2e for device default, manual override, reload before paint, browser-bar colour, hydration and the drawer. | done |
 | H11 | P2 | Form field borders measured 1.5:1 on white, below the 3:1 WCAG asks for the only visible boundary of an input. Owner decision: fix in light mode as well. New `field` role (slate-500, 4.8:1 on white, 3.7:1 on a dark card) applied to the 20 input, select and search-box borders; buttons, chips and cards keep their borders because their labels identify them. Verified from the computed-style capture: the only differences are INPUT and SELECT border colours (92 elements). | done |
 
 ## Explore

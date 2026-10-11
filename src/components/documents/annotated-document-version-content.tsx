@@ -67,7 +67,7 @@ export function AnnotatedDocumentVersionContent({
           <div className="mt-4 grid gap-5">
             {version.officialVisuals.map((visual) => visual.source && visual.rightsSource ? (
               <figure key={visual.id} className="overflow-hidden rounded-2xl border border-line bg-surface">
-                <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="block bg-surface-muted p-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus">
+                <a href={visual.assetUrl} target="_blank" rel="noreferrer" className="block bg-paper p-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus">
                   {/* A definite width (natural size, capped by the frame and a 34rem height) plus the aspect ratio lets the browser reserve the space before the lazy image loads. */}
                   <Image src={visual.assetUrl} width={visual.width} height={visual.height} alt={text(`visuals.${visual.id}.alt`, visual.alt)} unoptimized className="mx-auto block h-auto"
                     style={{ aspectRatio: `${visual.width} / ${visual.height}`, width: `min(100%, ${visual.width}px, calc(34rem * ${visual.width} / ${visual.height}))` }} />
