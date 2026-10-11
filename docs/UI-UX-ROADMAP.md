@@ -60,7 +60,7 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 ## Page review and mobile pass
 
-Measured with a script across 19 pages (plus the four articles with special content sections) at 1280px and 375px, in English and Japanese: contrast, tap-target size, horizontal overflow and tiny text. Results: no contrast failures, no page-level horizontal overflow, no text under 12px. Card titles that use a stretched link (`before:absolute before:inset-0`) are whole-card targets and were ignored.
+Measured with a script across 19 pages (plus the four articles with special content sections) at 1280px and 375px, in English and Japanese: contrast, tap-target size, horizontal overflow and tiny text. Results: no contrast failures, no page-level horizontal overflow, no text under 12px. The first pass did not follow the `mobile-native` checklist; M8 to M10 come from applying it afterwards. Card titles that use a stretched link (`before:absolute before:inset-0`) are whole-card targets and were ignored.
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
@@ -70,6 +70,9 @@ Measured with a script across 19 pages (plus the four articles with special cont
 | M4 | P3 | Index pages (Residence statuses, Glossary, FAQ) put one or two callout boxes before the main control, and their top padding (`py-16 sm:py-24`) pushes the list below the fold at 1280x800, the same pattern as H8 and E2. Candidate fix: tighter top padding and the callouts after the control. | planned |
 | M5 | P3 | My Journey and Roadmap have near-identical empty states with the same "Find my starting point" button. Consider a single clearer difference in purpose, or merging. | decision |
 | M6 | P3 | The mobile drawer label "Adjust Starting Point" uses title case; the rest of the interface uses sentence case ("Adjust my starting point"). | planned |
+| M8 | P2 | iOS Safari zooms the page when a form field under 16px gets focus and does not zoom back. Measured at 375px: all seven Explore filter selects, the prefecture finder's search input and select on the geography article, and the selects in articles with local guidance or annotated documents are 14px. Fix: 16px font size on form controls on touch devices (`pointer: coarse`), never `maximum-scale`. | planned |
+| M9 | P3 | Platform-layer gaps from the `mobile-native` checklist: no `theme-color` meta (browser bar does not match the page), body uses `min-h-screen` (`100vh`, slightly taller than the visible area on phones with the URL bar showing; use `min-h-dvh`), no `touch-action: manipulation` on links and buttons, no tap-highlight handling. Hover styles are already gated by Tailwind v4. | planned |
+| M10 | -- | Not verifiable here: sticky hover, tap delay, rubber-banding and the on-screen keyboard do not reproduce in emulation. Needs a pass on a real phone. | open |
 | M7 | -- | Reviewed with no change needed: Saved, Reminders and Account empty and sign-in states, the mobile drawer, the geography article (the region map has legend buttons as a full-size alternative to the small map regions), glossary term and status pages. | done |
 
 ## Decisions
