@@ -1,4 +1,5 @@
 import { HomeHero } from "@/components/personalization/home-hero";
+import { StageBrowse } from "@/components/personalization/stage-browse";
 import { StageRecommendations } from "@/components/personalization/stage-recommendations";
 import { InterfaceText } from "@/components/localization/interface-text";
 import { getAllArticles, getAllGuidedJourneys } from "@/lib/content/article-metadata";
@@ -34,6 +35,7 @@ export default function Home() {
     <>
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.home")} />
       <HomeHero journeys={journeys} articles={articles} articleTranslations={articleTranslations} journeyTitles={journeyTitles} />
+      <StageBrowse />
       <StageRecommendations articles={articles} journeys={journeys} location="home" articleTranslations={articleTranslations} journeyTitles={journeyTitles} />
 
       <section className="border-y border-slate-200 bg-white" aria-labelledby="what-to-expect">
