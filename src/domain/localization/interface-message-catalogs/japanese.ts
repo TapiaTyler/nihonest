@@ -3,6 +3,7 @@ import type { InterfaceMessageId } from "./english";
 /** Japanese interface messages, loaded on the client only when Japanese is selected. */
 export const japaneseInterfaceMessages = {
   "navigation.primary": "メインナビゲーション",
+  "navigation.skipToContent": "メインコンテンツへ移動",
   "navigation.mobile": "モバイルナビゲーション",
   "navigation.open": "ナビゲーションメニューを開く",
   "navigation.close": "ナビゲーションメニューを閉じる",
@@ -159,6 +160,10 @@ export const japaneseInterfaceMessages = {
   "home.legalDisclaimerBody": "必要な手続きは個々の状況によって異なり、変更されることがあります。重要な判断の前に、担当機関または資格を持つ専門家に確認してください。",
   "home.recommendationsEyebrow": "あなたに役立つ情報",
   "home.recommendationsForStage": "{stage}に役立つ情報",
+  "stage.inSentence.planning": "計画中",
+  "stage.inSentence.preparing": "準備中",
+  "stage.inSentence.recentlyArrived": "来日直後",
+  "stage.inSentence.livingInJapan": "日本で生活中",
   "home.recommendationsForJourney": "{title}の関連情報",
   "home.recommendationsForGuide": "{title}から始める",
   "home.recommendationsJourneyNote": "選択中の段階：{stage}。このジャーニーは関連情報を整理するもので、在留資格などの要件を満たすかどうかを判断するものではありません。",

@@ -9,6 +9,7 @@ import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { usePersonalization } from "./personalization-provider";
+import { stageSentenceMessageIds } from "@/domain/taxonomy/stage-sentence-messages";
 import { journeyHref } from "@/lib/navigation/journey-context";
 
 export function HomeHero({ journeys, articles, articleTranslations = [], journeyTitles = [] }: Readonly<{
@@ -71,7 +72,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
                   ? message("home.continueJourney")
                   : focusedArticle
                     ? message("home.openFocusedGuide")
-                    : message("home.exploreForStage").replace("{stage}", stageLabel.toLowerCase())}
+                    : message("home.exploreForStage").replace("{stage}", message(stageSentenceMessageIds[stage]))}
               </Link>
               <Link href="/onboarding" className="inline-flex min-h-12 items-center rounded-full px-5 font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
                 {message("home.adjustStartingPoint")}

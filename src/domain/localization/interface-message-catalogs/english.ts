@@ -1,6 +1,7 @@
 /** Canonical English interface messages. Every key here is an `InterfaceMessageId`; other locales must supply all of them. */
 export const englishInterfaceMessages = {
   "navigation.primary": "Primary navigation",
+  "navigation.skipToContent": "Skip to main content",
   "navigation.mobile": "Mobile navigation",
   "navigation.open": "Open navigation menu",
   "navigation.close": "Close navigation menu",
@@ -157,6 +158,10 @@ export const englishInterfaceMessages = {
   "home.legalDisclaimerBody": "Requirements depend on complete circumstances and can change. Confirm important decisions with the responsible authority or a qualified professional.",
   "home.recommendationsEyebrow": "Your starting points",
   "home.recommendationsForStage": "Useful while {stage}",
+  "stage.inSentence.planning": "planning",
+  "stage.inSentence.preparing": "preparing",
+  "stage.inSentence.recentlyArrived": "recently arrived",
+  "stage.inSentence.livingInJapan": "living in Japan",
   "home.recommendationsForJourney": "{title} starting points",
   "home.recommendationsForGuide": "{title} starting points",
   "home.recommendationsJourneyNote": "Selected stage: {stage}. This journey organizes relevant guidance but does not determine your eligibility.",

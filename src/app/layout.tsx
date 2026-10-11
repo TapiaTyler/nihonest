@@ -11,6 +11,7 @@ import { ChecklistProgressProvider } from "@/components/roadmap/checklist-progre
 import { ContentLocaleProvider } from "@/components/localization/content-locale-provider";
 import { ReadingAidProvider } from "@/components/localization/reading-aid-provider";
 import { SiteFooter } from "@/components/site-footer";
+import { SkipLink } from "@/components/navigation/skip-link";
 import { SiteHeader } from "@/components/site-header";
 import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -45,9 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               <ChecklistProgressProvider>
                 <AccountSessionProvider>
                   <AccountContentSyncProvider>
-            <a className="skip-link" href="#main-content">
-              Skip to main content
-            </a>
+            <SkipLink />
             <SiteHeader />
             <JourneyUpdateNotice />
             <main id="main-content" className="flex-1">

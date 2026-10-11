@@ -11,6 +11,7 @@ import { journeyStages } from "@/domain/taxonomy/taxonomy";
 import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { usePersonalization } from "./personalization-provider";
+import { stageSentenceMessageIds } from "@/domain/taxonomy/stage-sentence-messages";
 import { articleJourneyHref, journeyHref } from "@/lib/navigation/journey-context";
 
 export function StageRecommendations({
@@ -66,7 +67,7 @@ export function StageRecommendations({
                 ? format("home.recommendationsForJourney", { title: journeyTitle })
                 : focusedArticle
                   ? format("home.recommendationsForGuide", { title: focusedArticleTitle })
-                  : format("home.recommendationsForStage", { stage: stageLabel.toLowerCase() })}
+                  : format("home.recommendationsForStage", { stage: message(stageSentenceMessageIds[stage]) })}
             </h2>
           </div>
           <Link href="/onboarding" className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">

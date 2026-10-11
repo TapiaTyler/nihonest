@@ -63,4 +63,12 @@ describe("personalized home recommendations", () => {
     expect(document.getElementById("home-recommendations-heading")).toHaveTextContent(journeyTitle("en"));
     expect(screen.getAllByText(focusedTitle("en")).length).toBeGreaterThan(0);
   });
+
+  it("keeps Japan capitalized when a stage appears inside a sentence", async () => {
+    window.localStorage.setItem(anonymousPreferencesStorageKey, JSON.stringify({ version: 2, journeyStage: "living-in-japan", onboardingCompleted: true }));
+    renderHome();
+
+    expect(await screen.findByRole("heading", { name: "Useful while living in Japan" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Explore guidance for living in Japan" })).toBeInTheDocument();
+  });
 });

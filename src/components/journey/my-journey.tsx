@@ -9,9 +9,8 @@ import type { ArticleMetadata } from "@/domain/article/article";
 import type { ArticleGroup, GuidedJourney } from "@/domain/discovery/discovery";
 import { getJourneyRouteById, resolveJourneySteps } from "@/domain/discovery/discovery";
 import { recommendationsForStage } from "@/domain/personalization/preferences";
-import { journeyStages } from "@/domain/taxonomy/taxonomy";
+import { stageSentenceMessageIds } from "@/domain/taxonomy/stage-sentence-messages";
 import { useInterfaceMessages } from "@/components/localization/interface-text";
-import { japaneseTaxonomyLabels } from "@/data/translations/ja/taxonomy-labels";
 import { GuidedJourneyView } from "./guided-journey-view";
 import type { JourneyTranslation } from "@/domain/localization/journey-presentation";
 import type { ArticleGroupSearchTranslation } from "@/lib/search/knowledgebase-search";
@@ -26,7 +25,7 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
 }>) {
   const searchParams = useSearchParams();
   const { isReady, preferences } = usePersonalization();
-  const { locale, message, format } = useInterfaceMessages();
+  const { message, format } = useInterfaceMessages();
   if (!isReady) return <div className="page-shell py-12 sm:py-20"><p className="text-slate-600">{message("myJourney.loading")}</p></div>;
 
   const journey = journeys.find(({ id }) => id === preferences.journeyId);
@@ -48,8 +47,7 @@ export function MyJourney({ journeys, groups, articles, translations = [], group
   }
 
   const stage = preferences.journeyStage;
-  const englishStageLabel = journeyStages.find(({ id }) => id === stage)?.label;
-  const stageLabel = stage && locale === "ja" ? japaneseTaxonomyLabels.journeyStage[stage] : englishStageLabel?.toLowerCase();
+  const stageLabel = stage ? message(stageSentenceMessageIds[stage]) : undefined;
   const startingPoints = stage ? recommendationsForStage(stage, articles) : [];
 
   return (
