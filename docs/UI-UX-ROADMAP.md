@@ -39,9 +39,9 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
-| O1 | P2 | "Save my starting point" is disabled with no explanation. Add an `aria-describedby` hint. | planned |
-| O2 | P2 | Save is far below the only required choice (stage). Add a helper line, or a sticky save bar on mobile. | planned |
-| O3 | P3 | Stage descriptions are duplicated between onboarding (inline strings) and the home stage-browse section (catalog) with different wording. Consolidate into the catalog. | planned |
+| O1 | P2 | "Save my starting point" is disabled with no explanation. The button is now `aria-disabled` (still focusable) with a visible, associated hint. | done |
+| O2 | P2 | Save is far below the only required choice (stage). Add a helper line, or a sticky save bar on mobile. Added a helper line under the stage options; no sticky bar. | done |
+| O3 | P3 | Stage descriptions are duplicated between onboarding (inline strings) and the home stage-browse section (catalog) with different wording. Consolidated: both pages use the `onboarding.stage*Description` catalog messages. | done |
 
 ## Article page
 

@@ -39,6 +39,21 @@ describe("OnboardingForm", () => {
     push.mockClear();
   });
 
+  it("explains why saving is unavailable until a stage is chosen, without making the button unreachable", () => {
+    renderForm();
+
+    const save = screen.getByRole("button", { name: "Save my starting point" });
+    expect(save).toHaveAttribute("aria-disabled", "true");
+    expect(save).toHaveAccessibleDescription("Choose a stage above to save your starting point.");
+    fireEvent.click(save);
+    expect(push).not.toHaveBeenCalled();
+    expect(localStorage.getItem(anonymousPreferencesStorageKey)).toBeNull();
+
+    fireEvent.click(screen.getByRole("radio", { name: /Recently arrived/ }));
+    expect(save).toHaveAttribute("aria-disabled", "false");
+    expect(save).not.toHaveAccessibleDescription("Choose a stage above to save your starting point.");
+  });
+
   it("returns to the roadmap after saving an adjustment made from there", () => {
     renderForm("/roadmap");
 

@@ -9,10 +9,10 @@ import { useInterfaceMessages } from "@/components/localization/interface-text";
 import { usePersonalization } from "./personalization-provider";
 
 const stageDescriptions: Record<JourneyStageId, InterfaceMessageId> = {
-  planning: "home.stagePlanningDescription",
-  preparing: "home.stagePreparingDescription",
-  "recently-arrived": "home.stageRecentlyArrivedDescription",
-  "living-in-japan": "home.stageLivingInJapanDescription",
+  planning: "onboarding.stagePlanningDescription",
+  preparing: "onboarding.stagePreparingDescription",
+  "recently-arrived": "onboarding.stageRecentlyArrivedDescription",
+  "living-in-japan": "onboarding.stageLivingInJapanDescription",
 };
 
 /**
