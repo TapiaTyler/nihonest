@@ -121,7 +121,7 @@ export function AccountDashboard({
         <form onSubmit={updateProfile} className="mt-6">
           <label htmlFor="display-name" className="text-sm font-semibold text-ink-strong">{t("dashboard.displayName")} <span className="font-normal text-ink-subtle">{t("dashboard.optional")}</span></label>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-            <input id="display-name" maxLength={80} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-line-strong px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+            <input id="display-name" maxLength={80} value={displayName} onChange={(event) => setDisplayName(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-field px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
             <button type="submit" disabled={Boolean(pendingAction) || !storageAvailable} className="min-h-12 rounded-xl bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50">{t("dashboard.saveDisplayName")}</button>
           </div>
           <ActionFeedback feedback={feedback} scope="profile" />

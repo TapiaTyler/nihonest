@@ -138,7 +138,7 @@ export function LocalGuidancePanel({
             {message("localGuidance.prefecture")}
             <select
               id="local-guidance-prefecture"
-              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus"
+              className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus"
               value={selectedPrefectureId}
               ref={prefectureRef}
               onChange={(event) => choosePrefecture(event.target.value)}
@@ -152,7 +152,7 @@ export function LocalGuidancePanel({
               {message("localGuidance.municipality")}
               <select
                 id="local-guidance-location"
-                className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-ink-subtle"
+                className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-ink-subtle"
                 value={prefectureWideOnly ? "" : municipalityValue}
                 disabled={!selectedPrefectureId || prefectureWideOnly}
                 aria-describedby={selectedPrefectureId ? "local-guidance-municipality-note" : undefined}

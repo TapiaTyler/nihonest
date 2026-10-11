@@ -116,13 +116,13 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
       <div className="mt-4 grid gap-4 rounded-2xl border border-brand-line bg-surface p-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-ink-strong">
           {message("glossaryStudy.promptSide")}
-          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+          <select value={promptMode} onChange={(event) => changePromptMode(event.target.value as PromptMode)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
             {promptModes.map((value) => <option key={value} value={value}>{message(promptModeMessageIds[value])}</option>)}
           </select>
         </label>
         <label className="text-sm font-semibold text-ink-strong">
           {message("glossaryStudy.jumpToTerm")}
-          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
+          <select value={activeTerm.id} onChange={(event) => { setActiveTermId(event.target.value); setAnswerVisible(false); setAnnouncement(""); }} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus">
             {orderedTerms.map((term) => <option key={term.id} value={term.id}>{termPromptLabel(term, promptMode)}</option>)}
           </select>
         </label>
@@ -137,7 +137,7 @@ export function GlossaryStudyPanel({ terms }: Readonly<{ terms: readonly Japanes
               value={activeState}
               disabled={!isReady}
               onChange={(event) => setReviewState(activeTerm.id, event.target.value as typeof reviewStates[number])}
-              className="app-select min-h-11 rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-wait disabled:opacity-50"
+              className="app-select min-h-11 rounded-xl border border-field bg-surface px-3 text-sm text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-wait disabled:opacity-50"
             >
               {reviewStates.map((value) => <option key={value} value={value}>{message(reviewStateMessageIds[value])}</option>)}
             </select>

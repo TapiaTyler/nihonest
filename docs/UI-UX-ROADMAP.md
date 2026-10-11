@@ -83,6 +83,7 @@ Made with the `impeccable` colorize guidance (design dark surface elevation and 
 | H7 | P3 | "What to expect" cards are plain text; Owner decision: keep as is; numbers or icons would add AI-looking UI. | dropped |
 | H8 | P3 | `py-32` hero spacing pushes content below the fold on large screens; revisit now that H1 exists. Hero padding is now `py-14 sm:py-20` with no extra large-screen increase; the stage cards start above the fold at 1440x900. | done |
 | H9 | P3 | Stage labels lowercased with `.toLowerCase()` inside sentences; English-only habit, and it produced "living in japan". Stage names in sentences now come from `stage.inSentence.*` catalog messages; also stopped lowercasing journey titles on group pages. | done |
+| H11 | P2 | Form field borders measured 1.5:1 on white, below the 3:1 WCAG asks for the only visible boundary of an input. Owner decision: fix in light mode as well. New `field` role (slate-500, 4.8:1 on white, 3.7:1 on a dark card) applied to the 20 input, select and search-box borders; buttons, chips and cards keep their borders because their labels identify them. Verified from the computed-style capture: the only differences are INPUT and SELECT border colours (92 elements). | done |
 
 ## Explore
 

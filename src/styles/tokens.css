@@ -61,6 +61,7 @@
   --line: var(--color-slate-200); /* borders and dividers */
   --line-strong: var(--color-slate-300); /* stronger borders */
   --line-edge: var(--color-slate-500); /* firm edge */
+  --field: var(--color-slate-500); /* border of an input, select or textarea: its only visible boundary, 3:1 against the surface */
 
   /* Status colours */
   --caution-soft: var(--color-amber-50); /* caution wash */
@@ -139,6 +140,7 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-line-edge: var(--line-edge);
+  --color-field: var(--field);
   --color-caution-soft: var(--caution-soft);
   --color-caution-softer: var(--caution-softer);
   --color-caution-line: var(--caution-line);

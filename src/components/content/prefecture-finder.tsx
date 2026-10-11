@@ -9,7 +9,7 @@ import { prefectureGeneralGuides, prefectureNationalGuides, type FinderCoverage,
 import { usePreHydrationInput } from "@/components/navigation/use-pre-hydration-input";
 import { PrefectureMap } from "./prefecture-map";
 
-const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
+const controlClass = "mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
 const linkClass = "font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus:outline-2 focus:outline-offset-2 focus:outline-focus";
 
 export function PrefectureFinder({

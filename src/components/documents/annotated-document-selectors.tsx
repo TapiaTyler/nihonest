@@ -39,13 +39,13 @@ export function AnnotatedDocumentSelectors({
         <>
           <label className="text-sm font-semibold text-ink-firm" htmlFor={`${familyId}-prefecture`}>
             {message("documents.prefecture")}
-            <select id={`${familyId}-prefecture`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVariant?.parentGeography.id ?? ""} onChange={(event) => onSelectVariant(sortedVariants.find(({ parentGeography }) => parentGeography.id === event.target.value))}>
+            <select id={`${familyId}-prefecture`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVariant?.parentGeography.id ?? ""} onChange={(event) => onSelectVariant(sortedVariants.find(({ parentGeography }) => parentGeography.id === event.target.value))}>
               {prefectures.map(({ parentGeography }) => <option key={parentGeography.id} value={parentGeography.id}>{placeName(parentGeography)}</option>)}
             </select>
           </label>
           <label className="text-sm font-semibold text-ink-firm" htmlFor={`${familyId}-jurisdiction`}>
             {message("documents.municipality")}
-            <select id={`${familyId}-jurisdiction`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVariant?.geographyId ?? ""} onChange={(event) => onSelectVariant(sortedVariants.find(({ geographyId }) => geographyId === event.target.value))}>
+            <select id={`${familyId}-jurisdiction`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVariant?.geographyId ?? ""} onChange={(event) => onSelectVariant(sortedVariants.find(({ geographyId }) => geographyId === event.target.value))}>
               {municipalityOptions.map((option) => <option key={option.id} value={option.geographyId}>{content.japanese ? content.text(`variants.${option.id}.label`, option.label) : locale === "ja" ? placeName(option.geography) : option.label}</option>)}
             </select>
           </label>
@@ -54,7 +54,7 @@ export function AnnotatedDocumentSelectors({
       {availableVersions.length > 1 && (
         <label className="text-sm font-semibold text-ink-firm" htmlFor={`${familyId}-${selectionKey}-version`}>
           {message("documents.version")}
-          <select id={`${familyId}-${selectionKey}-version`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVersion.id} onChange={(event) => onSelectVersion(availableVersions.find(({ id }) => id === event.target.value) ?? selectedVersion)}>
+          <select id={`${familyId}-${selectionKey}-version`} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 text-sm font-normal text-ink-strong focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus" value={selectedVersion.id} onChange={(event) => onSelectVersion(availableVersions.find(({ id }) => id === event.target.value) ?? selectedVersion)}>
             {availableVersions.map((option) => <option key={option.id} value={option.id}>{content.text(`${content.versionPath(option, selectedVariant)}.label`, option.label)} — {message(documentLifecycleMessageIds[option.lifecycle])}</option>)}
           </select>
         </label>

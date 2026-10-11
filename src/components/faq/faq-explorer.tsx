@@ -89,7 +89,7 @@ export function FaqExplorer({ entries, translations = [] }: Readonly<{
         <h2 id="faq-search-heading" className="text-xl font-semibold tracking-tight text-ink">{message("faq.searchHeading")}</h2>
         <label htmlFor={searchId} className="mt-4 block text-sm font-semibold text-ink-strong">{message("faq.searchPrompt")}</label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder={message("faq.searchPlaceholder")} className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+          <DebouncedSearchInput id={searchId} value={query} onCommit={updateQuery} placeholder={message("faq.searchPlaceholder")} className="min-h-12 flex-1 rounded-xl border border-field bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
           {query && <button type="button" onClick={() => updateQuery("")} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("faq.clearSearch")}</button>}
         </div>
       </section>

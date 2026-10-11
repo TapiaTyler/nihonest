@@ -82,7 +82,7 @@ export function NotificationPreferencesForm({ userId }: Readonly<{ userId: strin
           </div>
           <div>
             <label htmlFor="notification-time-zone" className="text-sm font-semibold text-ink-strong">{t("notify.timeZone")}</label>
-            <input id="notification-time-zone" value={preferences.timeZone} onChange={(event) => updatePreference("timeZone", event.target.value)} placeholder="Asia/Tokyo" autoComplete="off" className="mt-2 min-h-12 w-full rounded-xl border border-line-strong bg-surface px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+            <input id="notification-time-zone" value={preferences.timeZone} onChange={(event) => updatePreference("timeZone", event.target.value)} placeholder="Asia/Tokyo" autoComplete="off" className="mt-2 min-h-12 w-full rounded-xl border border-field bg-surface px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
             <p className="mt-2 text-xs leading-5 text-ink-subtle">{t("notify.timeZoneHelp")}</p>
           </div>
           <div className="flex flex-wrap items-center gap-4">

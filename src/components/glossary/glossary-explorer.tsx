@@ -114,7 +114,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
             onChange={(event) => updateFilters({ query: event.target.value })}
             aria-describedby={`${searchId}-hint`}
             placeholder={message("glossaryIndex.searchPlaceholder")}
-            className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+            className="min-h-12 flex-1 rounded-xl border border-field bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
           {hasFilters && (
             <button

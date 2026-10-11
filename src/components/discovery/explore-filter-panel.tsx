@@ -85,7 +85,7 @@ export function ExploreFilterPanel({
           value={filters.query}
           onCommit={commitQuery}
           placeholder={message("explore.searchPlaceholder")}
-          className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          className="min-h-12 flex-1 rounded-xl border border-field bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
         />
         {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("explore.clearSearch")}</button>}
       </div>
@@ -127,7 +127,7 @@ function FilterSelect<OptionId extends string>({ allLabel, label, value, onChang
   return (
     <label htmlFor={id} className="text-sm font-semibold text-ink-firm">
       {label}
-      <select ref={selectRef} id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 font-normal text-ink-firm outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20">
+      <select ref={selectRef} id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-field bg-surface px-3 font-normal text-ink-firm outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20">
         <option value="all">{allLabel}</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
         {optionGroups.map((group) => (

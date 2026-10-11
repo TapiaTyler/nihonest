@@ -66,7 +66,7 @@ export function AuthPanel({ googleEnabled, appleEnabled, initialMessageId, initi
       <form onSubmit={submitEmail} className="mt-6">
         <label htmlFor="account-email" className="text-sm font-semibold text-ink-strong">{t("auth.email")}</label>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <input id="account-email" name="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
+          <input id="account-email" name="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="min-h-12 flex-1 rounded-xl border border-field bg-surface px-4 text-base text-ink shadow-sm outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" />
           <button type="submit" disabled={pending} className="min-h-12 rounded-xl bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">
             {pending ? t("auth.pleaseWait") : t(intent === "sign-in" ? "auth.sendSignIn" : "auth.sendCreate")}
           </button>
