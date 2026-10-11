@@ -23,10 +23,10 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
     <section lang={active ? "ja" : "en"} className="mt-10" aria-labelledby="structured-guidance-heading">
       <div className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("guidance.pilot")}</p>
-        <h2 id="structured-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+        <h2 id="structured-guidance-heading" className="mt-2 text-2xl font-semibold tracking-tight text-ink">
           {message("guidance.heading")}
         </h2>
-        <p className="mt-3 leading-7 text-slate-600">
+        <p className="mt-3 leading-7 text-ink-muted">
           {message("guidance.intro")}
         </p>
       </div>
@@ -37,17 +37,17 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
         <OverviewCard label={message("guidance.renewal")} value={guidance.renewal.summary} />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
-        <h3 className="font-semibold text-slate-950">{message("guidance.periods")}</h3>
-        <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-700">
+      <div className="mt-6 rounded-2xl border border-line bg-surface p-5">
+        <h3 className="font-semibold text-ink">{message("guidance.periods")}</h3>
+        <ul className="mt-3 space-y-3 text-sm leading-6 text-ink-body">
           {guidance.periodsOfStay.map((period) => (
             <li key={`${period.label}-${period.duration}`}>
               <strong>{period.label}:</strong> {period.duration}
-              {period.note && <span className="block text-slate-500">{period.note}</span>}
+              {period.note && <span className="block text-ink-subtle">{period.note}</span>}
             </li>
           ))}
         </ul>
-        <p className="mt-4 text-sm leading-6 text-slate-500">
+        <p className="mt-4 text-sm leading-6 text-ink-subtle">
           {message("guidance.periodsNote")}
         </p>
       </div>
@@ -59,18 +59,18 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
 
       {guidance.qualificationPathways.length > 0 && (
         <div className="mt-8">
-          <h3 className="text-xl font-semibold tracking-tight text-slate-950">{message("guidance.pathways")}</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{message("guidance.pathwaysNote")}</p>
+          <h3 className="text-xl font-semibold tracking-tight text-ink">{message("guidance.pathways")}</h3>
+          <p className="mt-2 text-sm leading-6 text-ink-muted">{message("guidance.pathwaysNote")}</p>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {guidance.qualificationPathways.map((pathway) => (
-              <article key={pathway.id} className="rounded-2xl border border-slate-200 bg-white p-5">
-                <h4 className="font-semibold text-slate-950">{pathway.label}</h4>
+              <article key={pathway.id} className="rounded-2xl border border-line bg-surface p-5">
+                <h4 className="font-semibold text-ink">{pathway.label}</h4>
                 {pathway.allOf.length > 0 && <ConditionList label={message("guidance.allOf")} conditions={pathway.allOf} conditionLabel={conditionLabel} />}
                 {pathway.anyOf.length > 0 && <ConditionList label={message("guidance.anyOf")} conditions={pathway.anyOf} conditionLabel={conditionLabel} />}
                 {pathway.exceptions.length > 0 && (
-                  <div className="mt-4 border-t border-slate-100 pt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">{message("guidance.exceptions")}</p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-600">
+                  <div className="mt-4 border-t border-line-faint pt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-caution-text">{message("guidance.exceptions")}</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-ink-muted">
                       {pathway.exceptions.map((exception) => <li key={exception}>{exception}</li>)}
                     </ul>
                   </div>
@@ -93,9 +93,9 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
       {(guidance.transitions.length > 0 || guidance.evidenceCategories.length > 0) && (
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           {guidance.transitions.length > 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 className="font-semibold text-slate-950">{message("guidance.transitions")}</h3>
-              <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-700">
+            <div className="rounded-2xl border border-line bg-surface p-5">
+              <h3 className="font-semibold text-ink">{message("guidance.transitions")}</h3>
+              <ul className="mt-3 space-y-3 text-sm leading-6 text-ink-body">
                 {guidance.transitions.map((transition) => (
                   <li key={`${transition.label}-${transition.summary}`}>
                     <strong>{transition.label}:</strong> {transition.summary}{" "}
@@ -114,7 +114,7 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
       )}
 
       {guidance.sourceAssertions.some(({ effectiveFrom }) => effectiveFrom) && (
-        <p className="mt-6 rounded-xl bg-amber-100 px-4 py-3 text-sm leading-6 text-amber-950">
+        <p className="mt-6 rounded-xl bg-caution-softer px-4 py-3 text-sm leading-6 text-caution-ink">
           {message("guidance.timeSensitive")}
         </p>
       )}
@@ -124,18 +124,18 @@ export function StructuredStatusGuidance({ guidance: canonicalGuidance, translat
 
 function OverviewCard({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-sm leading-6 text-slate-800">{value}</p>
+    <div className="rounded-2xl border border-line bg-surface p-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-ink-firm">{value}</p>
     </div>
   );
 }
 
 function GuidanceList({ title, items, tone = "default" }: Readonly<{ title: string; items: readonly string[]; tone?: "default" | "caution" }>) {
   return (
-    <div className={`rounded-2xl border p-5 ${tone === "caution" ? "border-amber-200 bg-amber-50" : "border-slate-200 bg-white"}`}>
-      <h3 className={tone === "caution" ? "font-semibold text-amber-950" : "font-semibold text-slate-950"}>{title}</h3>
-      <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-6 ${tone === "caution" ? "text-amber-950" : "text-slate-700"}`}>
+    <div className={`rounded-2xl border p-5 ${tone === "caution" ? "border-caution-line bg-caution-soft" : "border-line bg-surface"}`}>
+      <h3 className={tone === "caution" ? "font-semibold text-caution-ink" : "font-semibold text-ink"}>{title}</h3>
+      <ul className={`mt-3 list-disc space-y-2 pl-5 text-sm leading-6 ${tone === "caution" ? "text-caution-ink" : "text-ink-body"}`}>
         {items.map((item) => <li key={item}>{item}</li>)}
       </ul>
     </div>
@@ -149,11 +149,11 @@ function ConditionList({ label, conditions, conditionLabel }: Readonly<{
 }>) {
   return (
     <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">{label}</p>
+      <ul className="mt-2 space-y-2 text-sm leading-6 text-ink-body">
         {conditions.map((condition) => (
           <li key={`${condition.type}-${condition.summary}`}>
-            <span className="font-semibold text-slate-900">{conditionLabel(condition.type)}:</span> {condition.summary}
+            <span className="font-semibold text-ink-strong">{conditionLabel(condition.type)}:</span> {condition.summary}
           </li>
         ))}
       </ul>

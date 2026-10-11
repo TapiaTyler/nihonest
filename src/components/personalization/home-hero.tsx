@@ -38,7 +38,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
   const findStartingPointLink = (
     <Link
       href="/onboarding"
-      className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
+      className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-on-brand transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
     >
       {message("home.findStartingPoint")}
     </Link>
@@ -48,24 +48,24 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
     <section className="page-shell py-14 sm:py-20">
       <div className="max-w-3xl" lang={locale}>
         <p className="eyebrow">{message("home.eyebrow")}</p>
-        <h1 className="hero-title mt-5 text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-7xl">
+        <h1 className="hero-title mt-5 text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-6xl lg:text-7xl">
           {message("home.title")}
         </h1>
-        <p className="hero-lede mt-7 max-w-2xl text-pretty text-lg leading-8 text-slate-600 sm:text-xl">
+        <p className="hero-lede mt-7 max-w-2xl text-pretty text-lg leading-8 text-ink-muted sm:text-xl">
           {message("home.description")}
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           {!isReady ? (
             <>
               {/* Holds the button's space until saved preferences load, so a returning visitor never sees the generic button swap out. */}
-              <span className="h-12 w-60 max-w-full rounded-full bg-slate-200" aria-hidden="true" />
+              <span className="h-12 w-60 max-w-full rounded-full bg-surface-strong" aria-hidden="true" />
               <noscript>{findStartingPointLink}</noscript>
             </>
           ) : stage && stageLabel ? (
             <>
               <Link
                 href={journey ? journeyHref(journey.id, route?.id) : focusedArticle ? `/articles/${focusedArticle.slug}` : `/explore?stage=${stage}`}
-                className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-white transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
+                className="inline-flex min-h-12 items-center rounded-full bg-brand px-6 font-semibold text-on-brand transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus"
               >
                 {journey
                   ? message("home.continueJourney")
@@ -85,10 +85,10 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
       </div>
 
       {/* One quiet line replaces the former card: it states the public-first promise, or the saved starting point. */}
-      <p lang={locale} className={`ja-prose mt-6 max-w-2xl text-sm leading-6 text-slate-600${isReady ? "" : " home-pending invisible"}`}>
+      <p lang={locale} className={`ja-prose mt-6 max-w-2xl text-sm leading-6 text-ink-muted${isReady ? "" : " home-pending invisible"}`}>
         {stageLabel ? (
           <>
-            <strong className="font-semibold text-slate-800">{message("home.yourStartingPoint")}</strong>{" "}
+            <strong className="font-semibold text-ink-firm">{message("home.yourStartingPoint")}</strong>{" "}
             {format("home.stageSavedSummary", {
               stage: stageLabel,
               focus: route

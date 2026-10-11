@@ -99,13 +99,13 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
           <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
         {open && (
-          <div id={`desktop-${name}-navigation`} className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-80 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+          <div id={`desktop-${name}-navigation`} className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-80 rounded-2xl border border-line bg-surface p-2 shadow-xl">
             <ul>
               {links.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} aria-current={isActive(link.href) ? "page" : undefined} onClick={closeDisclosure} className="block rounded-xl px-4 py-3 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">
-                    <span className="block text-sm font-semibold text-slate-950">{message(link.labelId)}</span>
-                    <span className="mt-1 block text-xs leading-5 text-slate-500">{message(link.descriptionId)}</span>
+                    <span className="block text-sm font-semibold text-ink">{message(link.labelId)}</span>
+                    <span className="mt-1 block text-xs leading-5 text-ink-subtle">{message(link.descriptionId)}</span>
                   </Link>
                 </li>
               ))}
@@ -134,12 +134,12 @@ export function DesktopSiteNavigation({ pathname, accountNavigation }: Readonly<
             <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${languageOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           {languageOpen && (
-            <div id="desktop-language-options" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
-              <p className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message("language.guideLanguage")}</p>
+            <div id="desktop-language-options" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-64 rounded-2xl border border-line bg-surface p-3 shadow-xl">
+              <p className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.guideLanguage")}</p>
               <div className="mt-2"><ContentLanguageOptions onSelect={closeDisclosure} /></div>
-              <p className="mt-2 border-t border-slate-100 px-3 pt-3 text-xs leading-5 text-slate-500">{message("language.pilotAvailability")}</p>
-              <div className="mt-3 border-t border-slate-100 px-3 pt-3">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message("language.japaneseReadings")}</p>
+              <p className="mt-2 border-t border-line-faint px-3 pt-3 text-xs leading-5 text-ink-subtle">{message("language.pilotAvailability")}</p>
+              <div className="mt-3 border-t border-line-faint px-3 pt-3">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.japaneseReadings")}</p>
                 <ReadingAidOptions />
               </div>
             </div>

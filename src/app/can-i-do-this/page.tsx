@@ -53,12 +53,12 @@ export default async function CanIDoThisPage({
       <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-link hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">← <InterfaceText id={returnLabel} /></Link>
       <header className="mt-5 max-w-3xl">
         <p className="eyebrow"><InterfaceText id="activityPage.eyebrow" /></p>
-        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="activityPage.heading" /></h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600"><InterfaceText id="activityPage.intro" /></p>
+        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="activityPage.heading" /></h1>
+        <p className="mt-6 text-lg leading-8 text-ink-muted"><InterfaceText id="activityPage.intro" /></p>
       </header>
       {/* The short note keeps the first screen for the tool; the full notice follows it, unchanged. */}
-      <p className="mt-5 max-w-3xl text-sm leading-6 text-slate-600">
-        <strong className="font-semibold text-slate-800"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimerShort" />
+      <p className="mt-5 max-w-3xl text-sm leading-6 text-ink-muted">
+        <strong className="font-semibold text-ink-firm"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimerShort" />
       </p>
       <ActivityCrossReferenceExplorer
         activities={activityCrossReferences}
@@ -69,8 +69,8 @@ export default async function CanIDoThisPage({
         translations={getActivityTranslations()}
         linkTitles={linkTitles}
       />
-      <aside className="mt-12 max-w-3xl border-t border-slate-200 pt-6 text-sm leading-6 text-slate-700">
-        <strong className="font-semibold text-slate-900"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimer" />
+      <aside className="mt-12 max-w-3xl border-t border-line pt-6 text-sm leading-6 text-ink-body">
+        <strong className="font-semibold text-ink-strong"><InterfaceText id="activityPage.disclaimerStrong" /></strong> <InterfaceText id="activityPage.disclaimer" />
       </aside>
     </div>
   );

@@ -99,11 +99,11 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
 
   return (
     <div className="mt-10">
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
-        <label htmlFor={searchId} className="block text-sm font-semibold text-slate-900">
+      <div className="rounded-2xl border border-line bg-surface-subtle p-5 sm:p-6">
+        <label htmlFor={searchId} className="block text-sm font-semibold text-ink-strong">
           {message("glossaryIndex.searchLabel")}
         </label>
-        <p id={`${searchId}-hint`} className="mt-1 text-sm leading-6 text-slate-600">
+        <p id={`${searchId}-hint`} className="mt-1 text-sm leading-6 text-ink-muted">
           {message("glossaryIndex.searchHint")}
         </p>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
@@ -114,7 +114,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
             onChange={(event) => updateFilters({ query: event.target.value })}
             aria-describedby={`${searchId}-hint`}
             placeholder={message("glossaryIndex.searchPlaceholder")}
-            className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+            className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
           {hasFilters && (
             <button
@@ -137,7 +137,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
               type="button"
               aria-pressed={topicId === topic.id}
               onClick={() => updateFilters({ topicId: topic.id })}
-              className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white"
+              className="min-h-11 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink-body transition-colors hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
             >
               {topic.label}
             </button>
@@ -146,7 +146,7 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <p className="min-w-0 flex-1 text-sm text-slate-500" aria-live="polite">
+        <p className="min-w-0 flex-1 text-sm text-ink-subtle" aria-live="polite">
           {message("glossaryIndex.resultCount").replace("{count}", String(visibleTerms.length)).replace("{total}", String(terms.length))}
         </p>
         <div className="ml-auto"><ViewModeToggle mode={viewMode} onChange={setViewMode} /></div>
@@ -166,10 +166,10 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
         <div className="mt-6 space-y-4">
           {browseGroups.map(({ topic, terms: groupedTerms }) => (
             <details key={topic.id} open className="group">
-              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-slate-200 px-1 py-4 font-semibold text-slate-950 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 border-b border-line px-1 py-4 font-semibold text-ink hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
                 <span>{locale === "ja" ? japaneseTaxonomyLabels.topic[topic.id] : topic.label}</span>
                 <span className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-500">{locale === "ja"
+                  <span className="text-sm font-medium text-ink-subtle">{locale === "ja"
                     ? message("glossaryIndex.groupCount").replace("{count}", String(groupedTerms.length))
                     : message("glossaryIndex.groupCount")
                       .replace("{count}", String(groupedTerms.length))
@@ -187,13 +187,13 @@ export function GlossaryExplorer({ terms, translations = [] }: Readonly<{
           ))}
         </div>
       ) : (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
-          <h2 className="text-xl font-semibold text-slate-950">{message("glossaryIndex.noResults")}</h2>
-          <p className="mt-2 text-slate-600">{message("glossaryIndex.noResultsHelp")}</p>
+        <div className="mt-6 rounded-2xl border border-dashed border-line-strong bg-surface p-8 text-center">
+          <h2 className="text-xl font-semibold text-ink">{message("glossaryIndex.noResults")}</h2>
+          <p className="mt-2 text-ink-muted">{message("glossaryIndex.noResultsHelp")}</p>
           <button
             type="button"
             onClick={clearFilters}
-            className="mt-5 min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            className="mt-5 min-h-11 rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {message("glossaryIndex.showAll")}
           </button>

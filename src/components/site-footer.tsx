@@ -3,7 +3,7 @@ import { InterfaceText } from "@/components/localization/interface-text";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-950 text-slate-300">
+    <footer className="border-t border-line bg-footer text-slate-300">
       <div className="page-shell grid gap-10 py-10 text-sm sm:grid-cols-[minmax(12rem,1fr)_auto_auto] sm:gap-8 lg:gap-16">
         <div className="max-w-sm">
           <Link href="/" className="inline-flex min-h-11 items-center text-base font-semibold text-white hover:text-brand-on-dark-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-on-dark">Nihonest</Link>

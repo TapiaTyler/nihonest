@@ -17,15 +17,15 @@ export default function GlossaryPage() {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.glossary")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="glossaryIndex.eyebrow" /></p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           <InterfaceText id="glossaryIndex.title" />
         </h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">
+        <p className="mt-6 text-lg leading-8 text-ink-muted">
           <InterfaceText id="glossaryIndex.description" />
         </p>
       </header>
 
-      <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-600">
+      <p className="mt-4 max-w-3xl text-sm leading-6 text-ink-muted">
         <InterfaceText id="glossaryIndex.aside" />
       </p>
 

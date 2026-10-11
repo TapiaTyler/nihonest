@@ -9,7 +9,7 @@ import { fillInterfaceMessage, type InterfaceMessageGroup } from "@/domain/local
 type Viewport = Readonly<{ x: number; y: number; width: number; height: number }>;
 const fullView: Viewport = { x: 145, y: 10, width: 510, height: 515 };
 const mapRatio = fullView.height / fullView.width;
-const controlClass = "min-h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-brand-deep-soft hover:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
+const controlClass = "min-h-11 rounded-lg border border-line-strong bg-surface px-3 text-sm font-medium text-brand-deep-soft hover:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus";
 
 function focusView(focus: readonly number[]): Viewport {
   const width = Math.min(510, Math.max(70, focus[2] * 1.8));
@@ -198,12 +198,12 @@ export function PrefectureMap({
   };
 
   return (
-    <details className="group rounded-xl border border-brand-line bg-white p-3 sm:p-4">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
+    <details className="group rounded-xl border border-brand-line bg-surface p-3 sm:p-4">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold text-ink-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
         <span>{messages["finder.map.summary"]}</span>
         <DisclosureChevron />
       </summary>
-      <p className="mt-1 text-xs leading-5 text-slate-600">
+      <p className="mt-1 text-xs leading-5 text-ink-muted">
         {messages["finder.map.instructions"]}
       </p>
       <div ref={mapFrameRef} data-map-frame className="relative mx-auto mt-3 max-w-xl pb-24 sm:pb-0">
@@ -269,13 +269,13 @@ export function PrefectureMap({
         aria-expanded={controlsOpen}
         aria-controls={controlsId}
         onClick={() => setControlsOpen((open) => !open)}
-        className="absolute right-2 top-2 z-20 inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-600 bg-white px-3 text-sm font-semibold text-brand-deep-soft shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-focus"
+        className="absolute right-2 top-2 z-20 inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-600 bg-surface px-3 text-sm font-semibold text-brand-deep-soft shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-focus"
       >
         {messages["finder.map.controls"]}
         <DisclosureChevron open={controlsOpen} />
       </button>
       {controlsOpen && (
-        <div id={controlsId} role="group" aria-label={messages["finder.map.controlsLabel"]} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-brand-line bg-white p-2 shadow-lg">
+        <div id={controlsId} role="group" aria-label={messages["finder.map.controlsLabel"]} data-map-controls className="absolute right-2 top-16 z-20 grid w-44 max-w-[calc(100%-1rem)] gap-2 rounded-xl border border-brand-line bg-surface p-2 shadow-lg">
           <div className="grid grid-cols-2 gap-2">
             <button type="button" className={controlClass} onClick={() => zoom(0.75)} aria-label={messages["finder.map.zoomIn"]}>+</button>
             <button type="button" className={controlClass} onClick={() => zoom(1 / 0.75)} aria-label={messages["finder.map.zoomOut"]}>−</button>
@@ -296,7 +296,7 @@ export function PrefectureMap({
         <div
           aria-hidden="true"
           data-map-hover-label
-          className="pointer-events-none absolute z-30 whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg"
+          className="pointer-events-none absolute z-30 whitespace-nowrap rounded-md bg-inverse px-2.5 py-1.5 text-xs font-medium text-on-inverse shadow-lg"
           style={{ left: hoverLabel.x, top: hoverLabel.y, transform: hoverLabel.flip ? "translate(calc(-100% - 12px), 16px)" : "translate(12px, 16px)" }}
         >
           {locale === "ja"
@@ -313,20 +313,20 @@ export function PrefectureMap({
           onPointerEnter={onHoverPointer(okinawa.names)}
           onPointerMove={onHoverPointer(okinawa.names)}
           onPointerLeave={() => setHoverLabel(null)}
-          className="absolute bottom-2 left-2 z-10 block w-1/3 max-w-36 cursor-pointer rounded-lg border border-slate-200 bg-slate-50 p-2 text-left shadow-sm hover:border-brand-600 focus:outline-2 focus:outline-offset-2 focus:outline-focus"
+          className="absolute bottom-2 left-2 z-10 block w-1/3 max-w-36 cursor-pointer rounded-lg border border-line bg-surface-subtle p-2 text-left shadow-sm hover:border-brand-600 focus:outline-2 focus:outline-offset-2 focus:outline-focus"
         >
-          <span className="text-xs font-medium text-slate-700">{messages["finder.map.insetLabel"]}</span>
+          <span className="text-xs font-medium text-ink-body">{messages["finder.map.insetLabel"]}</span>
           <svg viewBox="30 510 215 110" aria-hidden="true" className="mt-1 block h-auto w-full">
             <path d={okinawaPath.d} fillRule="evenodd" fill={selectedId === okinawa.id ? "#0f766e" : "#a7dcd6"} stroke="#0f766e" strokeWidth="2" />
           </svg>
         </button>
       )}
       </div>
-      <p className="mt-2 text-xs text-slate-600" aria-live="polite">{fillInterfaceMessage(messages["finder.map.zoomLevel"], { level: String(zoomLevel) })}</p>
+      <p className="mt-2 text-xs text-ink-muted" aria-live="polite">{fillInterfaceMessage(messages["finder.map.zoomLevel"], { level: String(zoomLevel) })}</p>
       <p className={`mt-2 text-brand-deep-soft ${selected ? "text-lg font-semibold leading-7" : "text-sm font-medium"}`} aria-live="polite">
         {selected ? fillInterfaceMessage(messages["finder.map.selected"], selected.names) : messages["finder.map.choose"]}
       </p>
-      <p className="mt-2 text-xs leading-5 text-slate-600">
+      <p className="mt-2 text-xs leading-5 text-ink-muted">
         {messages["finder.map.attribution"]}{locale === "ja" ? "" : " "}
         <a
           href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html"

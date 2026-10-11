@@ -44,7 +44,7 @@ export default async function ArticleGroupPage({ params }: PageProps<"/explore/[
           <p className="mt-1 leading-7 text-brand-deep-soft/80"><InterfaceText id="group.orderedBody" /></p>
           <div className="mt-5 flex flex-wrap gap-3">
             {journeys.map((journey) => (
-              <Link key={journey.id} href={`/explore/journeys/${journey.id}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+              <Link key={journey.id} href={`/explore/journeys/${journey.id}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 <InterfaceFormat id="group.openJourney" values={{ journey: journey.title }} japaneseValues={{ journey: journeyTitles.get(journey.id) }} />
               </Link>
             ))}

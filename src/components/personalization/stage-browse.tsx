@@ -25,12 +25,12 @@ export function StageBrowse() {
   if (isReady && preferences.journeyStage) return null;
 
   return (
-    <section lang={locale} className="border-b border-slate-200 bg-white" aria-labelledby="home-stage-browse-heading">
+    <section lang={locale} className="border-b border-line bg-surface" aria-labelledby="home-stage-browse-heading">
       <div className="page-shell py-14 sm:py-18">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{message("home.stagesEyebrow")}</p>
-            <h2 id="home-stage-browse-heading" className="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-950">
+            <h2 id="home-stage-browse-heading" className="mt-3 text-balance text-3xl font-semibold tracking-tight text-ink">
               {message("home.stagesTitle")}
             </h2>
           </div>
@@ -38,18 +38,18 @@ export function StageBrowse() {
             {message("home.browseAllGuides")}
           </Link>
         </div>
-        <p className="ja-prose mt-4 max-w-3xl leading-7 text-slate-600">{message("home.stagesDescription")}</p>
+        <p className="ja-prose mt-4 max-w-3xl leading-7 text-ink-muted">{message("home.stagesDescription")}</p>
         <ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {journeyStages.map(({ id, label }) => (
             <li key={id}>
               <Link
                 href={`/explore?stage=${id}`}
-                className="flex h-full flex-col rounded-2xl border border-slate-200 bg-stone-50 p-5 transition-colors hover:border-brand-300 hover:bg-brand-soft/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                className="flex h-full flex-col rounded-2xl border border-line bg-page p-5 transition-colors hover:border-brand-300 hover:bg-brand-soft/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
-                <span className="text-lg font-semibold tracking-tight text-slate-950">
+                <span className="text-lg font-semibold tracking-tight text-ink">
                   {locale === "ja" ? japaneseTaxonomyLabels.journeyStage[id] : label}
                 </span>
-                <span className="mt-2 leading-7 text-slate-600">{message(stageDescriptions[id])}</span>
+                <span className="mt-2 leading-7 text-ink-muted">{message(stageDescriptions[id])}</span>
               </Link>
             </li>
           ))}

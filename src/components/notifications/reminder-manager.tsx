@@ -113,14 +113,14 @@ export function ReminderManager() {
     setMessage(result.ok ? t("reminders.cancelled") : result.message);
   }
 
-  if (accountSession.status === "loading" || (accountSession.status === "signed-in" && loadedUserId !== accountSession.userId)) return <p className="mt-10 text-slate-600">{t("reminders.loading")}</p>;
+  if (accountSession.status === "loading" || (accountSession.status === "signed-in" && loadedUserId !== accountSession.userId)) return <p className="mt-10 text-ink-muted">{t("reminders.loading")}</p>;
 
   if (accountSession.status !== "signed-in") {
     return (
       <section className="mt-10 rounded-3xl border border-brand-line bg-brand-soft/60 p-7 sm:p-9">
-        <h2 className="text-2xl font-semibold text-slate-950">{t("reminders.signInHeading")}</h2>
-        <p className="mt-3 max-w-2xl leading-7 text-slate-600">{t("reminders.signInBody")}</p>
-        <Link href="/account" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("reminders.signInLink")}</Link>
+        <h2 className="text-2xl font-semibold text-ink">{t("reminders.signInHeading")}</h2>
+        <p className="mt-3 max-w-2xl leading-7 text-ink-muted">{t("reminders.signInBody")}</p>
+        <Link href="/account" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{t("reminders.signInLink")}</Link>
       </section>
     );
   }
@@ -129,35 +129,35 @@ export function ReminderManager() {
 
   return (
     <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(22rem,1.15fr)]">
-      <section className="self-start rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="schedule-reminder-heading">
+      <section className="self-start rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8" aria-labelledby="schedule-reminder-heading">
         <p className="eyebrow">{t("reminders.newEyebrow")}</p>
-        <h2 id="schedule-reminder-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("reminders.chooseWhen")}</h2>
+        <h2 id="schedule-reminder-heading" className="mt-2 text-2xl font-semibold tracking-tight text-ink">{t("reminders.chooseWhen")}</h2>
         {requestedTarget.kind !== "custom" && <p className="mt-4 rounded-xl bg-brand-soft p-4 text-sm font-medium leading-6 text-brand-deep">{format("reminders.stepSelected", { title: requestedTitle })}</p>}
         <form onSubmit={submit} className="mt-6 space-y-5">
-          <div><label htmlFor="reminder-title" className="text-sm font-semibold text-slate-900">{t("reminders.title")}</label><input id="reminder-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
-          <div><label htmlFor="reminder-time" className="text-sm font-semibold text-slate-900">{t("reminders.dateTime")}</label><input id="reminder-time" required type="datetime-local" value={localDateTime} onChange={(event) => setLocalDateTime(event.target.value)} className="mt-2 min-h-12 w-full cursor-pointer rounded-xl border border-slate-300 px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
-          <p className="rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">{t("reminders.timeZone")} <span className="font-semibold text-slate-900">{preferences?.timeZone ?? browserTimeZone()}</span>. <Link href="/account#notification-preferences" className="font-semibold text-brand-link hover:text-brand-link-hover">{t("reminders.changeInAccount")}</Link>.</p>
-          {deliveryPaused && <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">{t("reminders.deliveryPaused")}</p>}
-          <button type="submit" disabled={pendingId === "create"} className="min-h-11 cursor-pointer rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{pendingId === "create" ? t("reminders.scheduling") : t("reminders.schedule")}</button>
+          <div><label htmlFor="reminder-title" className="text-sm font-semibold text-ink-strong">{t("reminders.title")}</label><input id="reminder-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line-strong px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
+          <div><label htmlFor="reminder-time" className="text-sm font-semibold text-ink-strong">{t("reminders.dateTime")}</label><input id="reminder-time" required type="datetime-local" value={localDateTime} onChange={(event) => setLocalDateTime(event.target.value)} className="mt-2 min-h-12 w-full cursor-pointer rounded-xl border border-line-strong px-4 text-base outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20" /></div>
+          <p className="rounded-xl bg-surface-subtle p-4 text-sm leading-6 text-ink-muted">{t("reminders.timeZone")} <span className="font-semibold text-ink-strong">{preferences?.timeZone ?? browserTimeZone()}</span>. <Link href="/account#notification-preferences" className="font-semibold text-brand-link hover:text-brand-link-hover">{t("reminders.changeInAccount")}</Link>.</p>
+          {deliveryPaused && <p className="rounded-xl border border-caution-line bg-caution-soft p-4 text-sm leading-6 text-caution-ink">{t("reminders.deliveryPaused")}</p>}
+          <button type="submit" disabled={pendingId === "create"} className="min-h-11 cursor-pointer rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{pendingId === "create" ? t("reminders.scheduling") : t("reminders.schedule")}</button>
           {safeReturnTo && <button type="button" onClick={returnToSource} className="ml-3 inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft">{t("reminders.returnToJourney")}</button>}
         </form>
-        <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-red-700" : "text-brand-link"}`}>{serviceMessage(message)}</p>
+        <p role="status" aria-live="polite" className={`mt-4 min-h-5 text-sm font-medium ${isError ? "text-danger-accent" : "text-brand-link"}`}>{serviceMessage(message)}</p>
       </section>
 
-      <section className="self-start rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="upcoming-reminders-heading">
+      <section className="self-start rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8" aria-labelledby="upcoming-reminders-heading">
         <p className="eyebrow">{t("reminders.scheduledEyebrow")}</p>
-        <h2 id="upcoming-reminders-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{t("reminders.upcoming")}</h2>
+        <h2 id="upcoming-reminders-heading" className="mt-2 text-2xl font-semibold tracking-tight text-ink">{t("reminders.upcoming")}</h2>
         {reminders.length ? (
-          <ul className="mt-6 divide-y divide-slate-200">
+          <ul className="mt-6 divide-y divide-line">
             {reminders.map((reminder) => (
               <li key={reminder.id} className="flex flex-col gap-4 py-5 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
-                <div><p className="font-semibold text-slate-950">{reminder.title}</p><p className="mt-1 text-sm text-slate-600">{formatReminderTime(reminder)} · {reminder.timeZone}</p></div>
-                <button type="button" disabled={Boolean(pendingId)} onClick={() => void cancel(reminder.id)} className="min-h-11 cursor-pointer self-start rounded-full border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:border-red-300 hover:bg-red-50 hover:text-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:cursor-wait disabled:opacity-60">{pendingId === reminder.id ? t("reminders.cancelling") : t("reminders.cancel")}</button>
+                <div><p className="font-semibold text-ink">{reminder.title}</p><p className="mt-1 text-sm text-ink-muted">{formatReminderTime(reminder)} · {reminder.timeZone}</p></div>
+                <button type="button" disabled={Boolean(pendingId)} onClick={() => void cancel(reminder.id)} className="min-h-11 cursor-pointer self-start rounded-full border border-line-strong px-4 text-sm font-semibold text-ink-body hover:border-danger-line-strong hover:bg-danger-soft hover:text-danger-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger-accent disabled:cursor-wait disabled:opacity-60">{pendingId === reminder.id ? t("reminders.cancelling") : t("reminders.cancel")}</button>
               </li>
             ))}
           </ul>
-        ) : <p className="mt-5 rounded-2xl bg-slate-50 p-5 leading-7 text-slate-600">{t("reminders.none")}</p>}
-        <p className="mt-5 text-xs leading-5 text-slate-500">{t("reminders.deliveryNote")}</p>
+        ) : <p className="mt-5 rounded-2xl bg-surface-subtle p-5 leading-7 text-ink-muted">{t("reminders.none")}</p>}
+        <p className="mt-5 text-xs leading-5 text-ink-subtle">{t("reminders.deliveryNote")}</p>
       </section>
     </div>
   );

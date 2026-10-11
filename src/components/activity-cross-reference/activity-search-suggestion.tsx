@@ -18,7 +18,7 @@ export function ActivitySearchSuggestion({ query, returnTo }: Readonly<{ query: 
       <p className="mt-2 text-sm leading-6 text-brand-deep-soft">{message("activity.checkExplanation")}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {matches.map((activity) => (
-          <Link key={activity.id} href={activityCrossReferenceHref(activity.id, returnTo)} className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-sm font-semibold text-brand-link shadow-sm hover:bg-brand-softer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+          <Link key={activity.id} href={activityCrossReferenceHref(activity.id, returnTo)} className="inline-flex min-h-11 items-center rounded-full bg-surface px-4 text-sm font-semibold text-brand-link shadow-sm hover:bg-brand-softer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
             <span><span className="font-normal text-brand-accent">{message("activity.checkPrefix")}</span> <span lang="en">{activity.shortLabel}</span></span>
           </Link>
         ))}

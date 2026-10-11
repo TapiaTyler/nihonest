@@ -14,14 +14,14 @@ export function OfficialSourceList({ sources }: OfficialSourceListProps) {
   }
 
   return (
-    <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="sources-heading">
-      <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
+    <section className="mt-12 border-t border-line pt-8" aria-labelledby="sources-heading">
+      <h2 id="sources-heading" className="text-2xl font-semibold tracking-tight text-ink">
         <InterfaceText id="sources.heading" />
       </h2>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><InterfaceText id="sources.description" /></p>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-muted"><InterfaceText id="sources.description" /></p>
       <OfficialSourceItems>
         {sources.map((source) => (
-          <li key={source.id} className="rounded-xl border border-slate-200 bg-white p-4">
+          <li key={source.id} className="rounded-xl border border-line bg-surface p-4">
             <a
               href={source.url}
               target="_blank"

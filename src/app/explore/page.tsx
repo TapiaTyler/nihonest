@@ -24,10 +24,10 @@ export default function ExplorePage() {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.explore")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="explore.eyebrow" /></p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           <InterfaceText id="explore.title" />
         </h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">
+        <p className="mt-6 text-lg leading-8 text-ink-muted">
           <InterfaceText id="explore.description" />
         </p>
       </header>
@@ -51,7 +51,7 @@ export default function ExplorePage() {
                 <p className="font-semibold text-brand-deep"><InterfaceText id="explore.activityPrompt" /></p>
                 <p className="mt-1 text-sm leading-6 text-brand-deep-soft"><InterfaceText id="explore.activityDescription" /></p>
               </div>
-              <Link href="/can-i-do-this" className="mt-4 inline-flex min-h-11 shrink-0 items-center rounded-full bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:mt-0"><InterfaceText id="explore.activityLink" /></Link>
+              <Link href="/can-i-do-this" className="mt-4 inline-flex min-h-11 shrink-0 items-center rounded-full bg-brand px-5 text-sm font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:mt-0"><InterfaceText id="explore.activityLink" /></Link>
             </aside>
             <StageRecommendations articles={articles} journeys={getAllGuidedJourneys()} location="explore" articleTranslations={getArticleSearchTranslations()} journeyTitles={getJourneyTitleTranslations()} />
           </>

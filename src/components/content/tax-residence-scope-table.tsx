@@ -10,24 +10,24 @@ export function TaxResidenceScopeTable({ locale = "en" }: Readonly<{ locale?: Su
   const text = (key: string, english: string) => translated?.[key] ?? english;
 
   return (
-    <div lang={language} className="mt-6 overflow-x-auto rounded-2xl border border-slate-200">
+    <div lang={language} className="mt-6 overflow-x-auto rounded-2xl border border-line">
       <table className="min-w-full border-collapse text-left text-sm">
         <caption className="sr-only">
           {text("caption", taxResidenceScopeComponent.caption)}
         </caption>
-        <thead className="bg-slate-100 text-slate-950">
+        <thead className="bg-surface-muted text-ink">
           <tr>
             <th scope="col" className="px-4 sm:min-w-56 py-3 font-semibold">{text("headers.0", taxResidenceScopeComponent.headers[0])}</th>
             <th scope="col" className="px-4 sm:min-w-80 py-3 font-semibold">{text("headers.1", taxResidenceScopeComponent.headers[1])}</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
+        <tbody className="divide-y divide-line bg-surface text-ink-body">
           {taxResidenceScopeComponent.rows.map((row) => {
             const classification = text(`rows.${row.id}.0`, row.cells[0]);
             const scope = text(`rows.${row.id}.1`, row.cells[1]);
             return (
               <tr key={row.id}>
-                <th scope="row" className="px-4 py-3 font-medium text-slate-950">{classification}</th>
+                <th scope="row" className="px-4 py-3 font-medium text-ink">{classification}</th>
                 <td className="px-4 py-3">{scope}</td>
               </tr>
             );

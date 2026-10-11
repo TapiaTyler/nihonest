@@ -20,8 +20,8 @@ export default function SavedPage() {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.saved")} />
       <div className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="saved.eyebrow" /></p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="saved.heading" /></h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600"><InterfaceText id="saved.intro" /></p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="saved.heading" /></h1>
+        <p className="mt-5 text-lg leading-8 text-ink-muted"><InterfaceText id="saved.intro" /></p>
       </div>
       <SavedContentLibrary articles={getAllArticles().map(({ metadata: article }) => article)} residenceStatuses={residenceStatuses} terms={getAllGlossaryTerms()} translations={{ articles: getArticleSearchTranslations(), statuses: getResidenceStatusTranslations(), terms: getGlossarySearchTranslations() }} />
     </div>

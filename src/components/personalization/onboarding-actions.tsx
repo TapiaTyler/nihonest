@@ -24,25 +24,25 @@ export function OnboardingActions({
     <div className="contents">
       <div
         className={`mt-12 ${canSave
-          ? "sticky bottom-0 z-30 -mx-4 border-t border-slate-200 bg-stone-50 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:-mx-6 sm:px-6"
+          ? "sticky bottom-0 z-30 -mx-4 border-t border-line bg-page px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:-mx-6 sm:px-6"
           : ""}`}
       >
         {/* Save leads and skip follows on the same line. Phones show shorter labels so both fit on one line; the
             other label is display:none there, so the accessible name is always the text that is shown. */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* aria-disabled keeps the button focusable so assistive technology can reach the reason it cannot save yet. */}
-          <button type="button" aria-disabled={!canSave} aria-describedby={canSave ? undefined : saveHintId} onClick={() => { if (canSave) onSave(); }} className="min-h-12 flex-1 rounded-full bg-brand px-5 font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus aria-disabled:cursor-not-allowed aria-disabled:bg-slate-300 aria-disabled:text-slate-600 aria-disabled:hover:bg-slate-300 sm:flex-none sm:px-6">
+          <button type="button" aria-disabled={!canSave} aria-describedby={canSave ? undefined : saveHintId} onClick={() => { if (canSave) onSave(); }} className="min-h-12 flex-1 rounded-full bg-brand px-5 font-semibold text-on-brand hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus aria-disabled:cursor-not-allowed aria-disabled:bg-surface-disabled aria-disabled:text-ink-muted aria-disabled:hover:bg-surface-disabled sm:flex-none sm:px-6">
             <ResponsiveLabel short={message("onboarding.saveShort")} full={message("onboarding.save")} />
           </button>
           <button type="button" onClick={onClearOrSkip} className="min-h-12 rounded-full px-4 font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:px-5">
             <ResponsiveLabel short={message(hasPersonalization ? "onboarding.removeShort" : "onboarding.skipShort")} full={message(hasPersonalization ? "onboarding.remove" : "onboarding.skip")} />
           </button>
         </div>
-        {!canSave && <p id={saveHintId} className="mt-3 text-sm leading-6 text-slate-600">{message("onboarding.saveNeedsStage")}</p>}
+        {!canSave && <p id={saveHintId} className="mt-3 text-sm leading-6 text-ink-muted">{message("onboarding.saveNeedsStage")}</p>}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-        <p className="font-semibold text-slate-900">{message("onboarding.privateTitle")}</p>
+      <div className="mt-10 rounded-2xl border border-line bg-surface-subtle p-5 text-sm leading-6 text-ink-muted">
+        <p className="font-semibold text-ink-strong">{message("onboarding.privateTitle")}</p>
         <p className="mt-2">{message("onboarding.privateBody")}</p>
       </div>
     </div>

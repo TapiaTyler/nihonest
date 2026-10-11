@@ -70,28 +70,28 @@ export function GuidedJourneyView({
       </Link>
       <header className="mt-8 max-w-3xl">
         <p className="eyebrow">{message(mode === "personal" ? "journey.myJourney" : "journey.guidedJourney")}</p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.title}</h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.description}</p>
-        <p className="mt-4 leading-7 text-slate-600" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.introduction}</p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-ink sm:text-5xl" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.title}</h1>
+        <p className="mt-6 text-lg leading-8 text-ink-muted" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.description}</p>
+        <p className="mt-4 leading-7 text-ink-muted" lang={locale === "ja" && translation ? "ja" : "en"}>{presentedJourney.introduction}</p>
       </header>
 
       {requestedRouteId && !selectedRoute && mode === "catalog" && (
-        <p className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">{message("journey.routeNotInJourney")}</p>
+        <p className="mt-8 rounded-2xl border border-caution-line bg-caution-soft p-5 text-caution-ink">{message("journey.routeNotInJourney")}</p>
       )}
 
       <nav className="mt-10" aria-labelledby="journey-outline-heading">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="eyebrow">{message("journey.outline")}</p>
-            <h2 id="journey-outline-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{presentedRoute ? (locale === "ja" ? `${presentedRoute.title}の経路` : `${presentedRoute.title} route`) : message("journey.focusedPath")}</h2>
+            <h2 id="journey-outline-heading" className="mt-2 text-2xl font-semibold tracking-tight text-ink">{presentedRoute ? (locale === "ja" ? `${presentedRoute.title}の経路` : `${presentedRoute.title} route`) : message("journey.focusedPath")}</h2>
           </div>
           {selectedRoute && <Link href={changeRouteHref} scroll={false} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("journey.changeRoute")}</Link>}
         </div>
-        {!selectedRoute && presentedJourney.routes.length > 0 && <p className="mt-3 text-sm leading-6 text-slate-600">{locale === "ja" ? "経路を選ぶと、比較部分がその経路に合うガイドに置き換わります。選ばなかった経路は後の手順には表示されません。" : "Choose a route to replace the comparison point with one relevant guide. Unselected alternatives will not appear as later steps."}</p>}
+        {!selectedRoute && presentedJourney.routes.length > 0 && <p className="mt-3 text-sm leading-6 text-ink-muted">{locale === "ja" ? "経路を選ぶと、比較部分がその経路に合うガイドに置き換わります。選ばなかった経路は後の手順には表示されません。" : "Choose a route to replace the comparison point with one relevant guide. Unselected alternatives will not appear as later steps."}</p>}
         <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {presentedJourney.phases.map((phase, index) => (
             <li key={phase.id}>
-              <a href={`#phase-${phase.id}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-medium text-slate-800 hover:border-brand-300 hover:bg-brand-soft hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+              <a href={`#phase-${phase.id}`} className="flex min-h-12 items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 font-medium text-ink-firm hover:border-brand-300 hover:bg-brand-soft hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                 <span className="text-sm font-semibold text-brand-accent">{index + 1}</span><span>{phase.title}</span>
               </a>
             </li>
@@ -112,8 +112,8 @@ export function GuidedJourneyView({
               {choosingRoute && <><span id="choose-route" className="block scroll-mt-8" /><ScrollToRouteChoice /></>}
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-wide text-brand-accent">{message("journey.phase")}</p>
-                <h2 id={`phase-${phase.id}-heading`} tabIndex={choosingRoute ? -1 : undefined} data-route-choice-heading={choosingRoute || undefined} className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 focus:outline-none">{phase.title}</h2>
-                {phase.description && <p className="mt-3 leading-7 text-slate-600">{phase.description}</p>}
+                <h2 id={`phase-${phase.id}-heading`} tabIndex={choosingRoute ? -1 : undefined} data-route-choice-heading={choosingRoute || undefined} className="mt-2 text-3xl font-semibold tracking-tight text-ink focus:outline-none">{phase.title}</h2>
+                {phase.description && <p className="mt-3 leading-7 text-ink-muted">{phase.description}</p>}
               </div>
 
               {containsRouteChoice && !selectedRoute && (
@@ -121,8 +121,8 @@ export function GuidedJourneyView({
                   {presentedJourney.routes.map((route) => (
                     <JourneyRouteLink key={route.id} href={mode === "personal" ? "/my-journey" : journeyHref(journey.id, route.id)} journeyId={journey.id} routeId={route.id} focusedArticleId={route.articleId} className="group rounded-2xl border border-brand-line bg-brand-soft/50 p-6 hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                       <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent">{message("journey.chooseRoute")}</span>
-                      <span className="mt-2 block text-xl font-semibold text-slate-950 group-hover:text-brand-link">{route.title}</span>
-                      <span className="mt-3 block leading-7 text-slate-600">{route.description}</span>
+                      <span className="mt-2 block text-xl font-semibold text-ink group-hover:text-brand-link">{route.title}</span>
+                      <span className="mt-3 block leading-7 text-ink-muted">{route.description}</span>
                     </JourneyRouteLink>
                   ))}
                 </div>
@@ -132,7 +132,7 @@ export function GuidedJourneyView({
                 <div className="mt-6 grid gap-6 md:grid-cols-2">
                   {phaseSteps.map(({ article, step }) => (
                     <div id={`journey-step-${article.id}`} key={article.id} className={`relative h-full scroll-mt-24 ${step.requiredness === "required" ? "pt-5" : ""}`}>
-                      {step.requiredness === "required" && <div className="pointer-events-none absolute left-5 top-0 z-10"><span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">{locale === "ja" ? "ステップ" : "Step"} {requiredStepNumbers.get(article.id)}</span></div>}
+                      {step.requiredness === "required" && <div className="pointer-events-none absolute left-5 top-0 z-10"><span className="rounded-full bg-brand px-3 py-1 text-xs font-semibold text-on-brand">{locale === "ja" ? "ステップ" : "Step"} {requiredStepNumbers.get(article.id)}</span></div>}
                       <LocalizedArticleCard
                         article={article}
                         translations={articleTranslations}

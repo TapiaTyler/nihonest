@@ -42,7 +42,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className="flex min-h-dvh flex-col bg-stone-50 text-slate-900 antialiased">
+      <body className="flex min-h-dvh flex-col bg-page text-ink-strong antialiased">
         <BrowserSchemaConfig />
         <ContentLocaleProvider>
           <ReadingAidProvider>

@@ -126,7 +126,7 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           <ArticleBackLink data={journeyData} />
         </Suspense>
         <ArticleTranslationNotice translation={japaneseTranslation} />
-        <header className="relative mt-8 border-b border-slate-200 pb-8">
+        <header className="relative mt-8 border-b border-line pb-8">
           <div className="absolute right-0 top-0"><SaveContentButton kind="article" contentId={metadata.id} /></div>
           <ArticleHeaderBadges status={metadata.status} topicIds={metadata.topicIds} />
           <LocalizedArticleHeading
@@ -165,21 +165,21 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
         </Suspense>
 
         {(relatedGroups.length > 0 || relatedJourneys.length > 0 || continueGuides.size > 0) && (
-          <section className="mt-12 border-t border-slate-200 pt-8" aria-labelledby="related-heading">
-            <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-slate-950">
+          <section className="mt-12 border-t border-line pt-8" aria-labelledby="related-heading">
+            <h2 id="related-heading" className="text-2xl font-semibold tracking-tight text-ink">
               <InterfaceText id="content.continueExploring" />
             </h2>
-            <p className="mt-3 leading-7 text-slate-600"><InterfaceText id="article.continueIntro" /></p>
+            <p className="mt-3 leading-7 text-ink-muted"><InterfaceText id="article.continueIntro" /></p>
             <ContinueExploringList
               key={metadata.id}
               cards={[
                 ...relatedJourneys.map((journey) => {
-                  const className = "group rounded-2xl border border-slate-200 bg-white p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+                  const className = "group rounded-2xl border border-line bg-surface p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
                   const defaultRouteId = getJourneyRouteForArticle(journey, metadata.id)?.id;
                   const content = (
                     <>
                       <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="journey.guidedJourney" /></span>
-                      <span className="mt-2 block font-semibold text-slate-950 group-hover:text-brand-accent"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
+                      <span className="mt-2 block font-semibold text-ink group-hover:text-brand-accent"><LocalizedText english={journey.title} japanese={japaneseJourney(journey).title} /></span>
                     </>
                   );
                   return (
@@ -192,16 +192,16 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
                   <Link
                     key={`group-${group.id}`}
                     href={`/explore/${group.id}`}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                    className="group rounded-2xl border border-line bg-surface p-5 hover:border-brand-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                   >
                     <span className="text-xs font-semibold uppercase tracking-wide text-brand-accent"><InterfaceText id="content.contentGroup" /></span>
-                    <span className="mt-2 block font-semibold text-slate-950 group-hover:text-brand-accent"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
+                    <span className="mt-2 block font-semibold text-ink group-hover:text-brand-accent"><LocalizedText english={group.title} japanese={groupTranslations.find(({ contentId }) => contentId === group.id)?.title} /></span>
                   </Link>
                 )),
               ]}
               guides={[...continueGuides.values()].map(({ article: relatedArticle, label }) => (
                   <li key={relatedArticle.id}>
-                    <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-slate-500"><InterfaceText id={label} />:</span>
+                    <span className="mr-2 text-sm font-semibold uppercase tracking-wide text-ink-subtle"><InterfaceText id={label} />:</span>
                     <Link href={`/articles/${relatedArticle.slug}`} className="font-medium text-brand-link underline decoration-brand-300 underline-offset-4 hover:text-brand-link-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
                       <LocalizedText english={relatedArticle.title} japanese={japaneseArticleTitle(relatedArticle.id)} />
                     </Link>

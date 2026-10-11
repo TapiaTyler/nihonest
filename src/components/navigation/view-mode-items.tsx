@@ -26,7 +26,7 @@ export function ViewModeItems({ mode, gridClassName, listContainerClassName, ite
   // Cards render exactly as before the toggle existed: the grid's direct children are the cards.
   if (mode === "cards") return <div className={gridClassName}>{items.map(({ key, node }) => <Fragment key={key}>{node}</Fragment>)}</div>;
   const list = (
-    <ul aria-label={label} className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <ul aria-label={label} className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
       {items.map(({ key, node }) => <li key={key} className="min-w-0">{node}</li>)}
     </ul>
   );

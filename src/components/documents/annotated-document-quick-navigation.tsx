@@ -8,8 +8,8 @@ export function AnnotatedDocumentQuickNavigation({ families }: Readonly<{
 }>) {
   const { locale, message } = useInterfaceMessages();
   return (
-    <nav className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4" aria-label={message("documents.jumpLabel")}>
-      <p className="text-sm font-semibold text-slate-950">{message("documents.jumpHeading")}</p>
+    <nav className="mt-5 rounded-2xl border border-line bg-surface-subtle p-4" aria-label={message("documents.jumpLabel")}>
+      <p className="text-sm font-semibold text-ink">{message("documents.jumpHeading")}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {families.map((family) => (
           <a
@@ -19,7 +19,7 @@ export function AnnotatedDocumentQuickNavigation({ families }: Readonly<{
               const target = document.getElementById(`document-${family.id}`) as HTMLDetailsElement | null;
               if (target) target.open = true;
             }}
-            className="inline-flex min-h-11 items-center rounded-full border border-brand-300 bg-white px-4 text-sm font-semibold text-brand-link hover:border-brand-600 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            className="inline-flex min-h-11 items-center rounded-full border border-brand-300 bg-surface px-4 text-sm font-semibold text-brand-link hover:border-brand-600 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             {locale === "ja" ? <span lang="ja">{family.japaneseName}</span> : family.title}
           </a>

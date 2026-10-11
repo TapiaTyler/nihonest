@@ -59,11 +59,11 @@ export function DesktopAccountControl({
         <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m6 8 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
       {open && (
-        <div id="desktop-account-navigation" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-60 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-          <Link href="/account" aria-current={isActive("/account") ? "page" : undefined} onClick={onNavigate} className="block rounded-xl px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">{message("navigation.accountSettings")}</Link>
-          <Link href="/reminders" aria-current={isActive("/reminders") ? "page" : undefined} onClick={onNavigate} className="mt-1 block rounded-xl px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">{message("navigation.reminders")}</Link>
-          <button type="button" disabled={signOutPending} onClick={() => void signOut().then((successful) => { if (successful) onNavigate(); })} className="mt-1 flex min-h-11 w-full cursor-pointer items-center rounded-xl px-4 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{message(signOutPending ? "navigation.signingOut" : "navigation.signOut")}</button>
-          {signOutError && <p role="status" className="px-4 py-2 text-xs leading-5 text-red-700">{signOutError}</p>}
+        <div id="desktop-account-navigation" className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-60 rounded-2xl border border-line bg-surface p-2 shadow-xl">
+          <Link href="/account" aria-current={isActive("/account") ? "page" : undefined} onClick={onNavigate} className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">{message("navigation.accountSettings")}</Link>
+          <Link href="/reminders" aria-current={isActive("/reminders") ? "page" : undefined} onClick={onNavigate} className="mt-1 block rounded-xl px-4 py-3 text-sm font-semibold text-ink hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus aria-[current=page]:bg-brand-soft">{message("navigation.reminders")}</Link>
+          <button type="button" disabled={signOutPending} onClick={() => void signOut().then((successful) => { if (successful) onNavigate(); })} className="mt-1 flex min-h-11 w-full cursor-pointer items-center rounded-xl px-4 text-left text-sm font-semibold text-ink-body hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{message(signOutPending ? "navigation.signingOut" : "navigation.signOut")}</button>
+          {signOutError && <p role="status" className="px-4 py-2 text-xs leading-5 text-danger-accent">{signOutError}</p>}
         </div>
       )}
     </li>
@@ -84,12 +84,12 @@ export function MobileAccountControl({ accountNavigation, isActive, onNavigate }
 
   return (
     <section aria-labelledby="mobile-navigation-personal" className="mt-6">
-      <h3 id="mobile-navigation-personal" className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message("navigation.personal")}</h3>
+      <h3 id="mobile-navigation-personal" className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("navigation.personal")}</h3>
       <ul className="mt-2 space-y-1">
         <li><Link href="/saved" aria-current={isActive("/saved") ? "page" : undefined} onClick={onNavigate} className={mobileLinkClass}>{message("navigation.saved")}</Link></li>
         {session.status === "signed-in" ? (
           <>
-            <li><Link href="/account" aria-current={isActive("/account") ? "page" : undefined} onClick={onNavigate} className={mobileLinkClass}>{message("navigation.accountSettings")}{session.displayName ? <span className="ml-2 truncate text-sm font-normal text-slate-500">({session.displayName})</span> : null}</Link></li>
+            <li><Link href="/account" aria-current={isActive("/account") ? "page" : undefined} onClick={onNavigate} className={mobileLinkClass}>{message("navigation.accountSettings")}{session.displayName ? <span className="ml-2 truncate text-sm font-normal text-ink-subtle">({session.displayName})</span> : null}</Link></li>
             <li><Link href="/reminders" aria-current={isActive("/reminders") ? "page" : undefined} onClick={onNavigate} className={mobileLinkClass}>{message("navigation.reminders")}</Link></li>
             <li><button type="button" disabled={signOutPending} onClick={() => void signOut().then((successful) => { if (successful) onNavigate(); })} className="inline-flex min-h-12 w-full cursor-pointer items-center rounded-xl px-3 text-left text-base font-medium text-brand-deep-soft hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-wait disabled:opacity-60">{message(signOutPending ? "navigation.signingOut" : "navigation.signOut")}</button></li>
           </>
@@ -97,7 +97,7 @@ export function MobileAccountControl({ accountNavigation, isActive, onNavigate }
           <li><Link href="/account" aria-current={isActive("/account") ? "page" : undefined} onClick={onNavigate} className={mobileLinkClass}>{message("navigation.login")}</Link></li>
         )}
       </ul>
-      {signOutError && <p role="status" className="px-3 pt-2 text-sm text-red-700">{signOutError}</p>}
+      {signOutError && <p role="status" className="px-3 pt-2 text-sm text-danger-accent">{signOutError}</p>}
     </section>
   );
 }

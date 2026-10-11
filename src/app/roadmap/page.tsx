@@ -21,8 +21,8 @@ export default function RoadmapPage() {
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.roadmap")} />
       <div className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="roadmap.eyebrow" /></p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl"><InterfaceText id="roadmap.heading" /></h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600"><InterfaceText id="roadmap.intro" /></p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-ink sm:text-5xl"><InterfaceText id="roadmap.heading" /></h1>
+        <p className="mt-5 text-lg leading-8 text-ink-muted"><InterfaceText id="roadmap.intro" /></p>
       </div>
       <PersonalizedRoadmap
         definitions={getAllChecklistDefinitions()}

@@ -93,14 +93,14 @@ export function InlineGlossaryTerm({
       <span
         id={tooltipId}
         role="tooltip"
-        className={`${isOpen ? "visible translate-y-0 opacity-100" : "invisible translate-y-1 opacity-0"} pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 w-64 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl bg-slate-950 px-4 py-3 text-left text-sm font-normal leading-5 text-white shadow-xl transition max-sm:fixed max-sm:bottom-4 max-sm:left-4 max-sm:right-4 max-sm:mb-0 max-sm:w-auto max-sm:max-w-none max-sm:translate-x-0`}
+        className={`${isOpen ? "visible translate-y-0 opacity-100" : "invisible translate-y-1 opacity-0"} pointer-events-none absolute bottom-full left-1/2 z-30 mb-3 w-64 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl bg-inverse px-4 py-3 text-left text-sm font-normal leading-5 text-on-inverse shadow-xl transition max-sm:fixed max-sm:bottom-4 max-sm:left-4 max-sm:right-4 max-sm:mb-0 max-sm:w-auto max-sm:max-w-none max-sm:translate-x-0`}
       >
         <span className="block font-semibold" lang={name?.lang}>{name?.text}</span>
-        <span className="mt-1 block text-slate-200">
+        <span className="mt-1 block text-on-inverse-muted">
           <JapaneseReading kana={term.kana} romaji={term.romaji} />
         </span>
-        {definition && <span className="mt-2 block text-slate-100">{definition}</span>}
-        <span className="mt-2 block text-xs text-slate-300">{message("glossary.inlineHint")}</span>
+        {definition && <span className="mt-2 block text-on-inverse-soft">{definition}</span>}
+        <span className="mt-2 block text-xs text-on-inverse-subtle">{message("glossary.inlineHint")}</span>
       </span>
     </span>
   );

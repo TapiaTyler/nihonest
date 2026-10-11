@@ -76,29 +76,29 @@ export function ExploreFilterPanel({
   });
 
   return (
-    <section role="search" className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
-      <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("explore.searchHeading")}</h2>
-      <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-slate-900">{message("explore.searchQuestion")}</label>
+    <section role="search" className="rounded-3xl border border-line bg-surface-subtle p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
+      <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-ink">{message("explore.searchHeading")}</h2>
+      <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-ink-strong">{message("explore.searchQuestion")}</label>
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
         <DebouncedSearchInput
           id={searchId}
           value={filters.query}
           onCommit={commitQuery}
           placeholder={message("explore.searchPlaceholder")}
-          className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          className="min-h-12 flex-1 rounded-xl border border-line-strong bg-surface px-4 text-base text-ink shadow-sm outline-none placeholder:text-ink-faint focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
         />
         {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">{message("explore.clearSearch")}</button>}
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label={message("explore.filterByKind")}>
         {kindOptions.map((option) => (
-          <button key={option.id} type="button" aria-pressed={filters.kind === option.id} onClick={() => updateFilter("kind", option.id)} className="min-h-11 rounded-full border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-white">{option.label}</button>
+          <button key={option.id} type="button" aria-pressed={filters.kind === option.id} onClick={() => updateFilter("kind", option.id)} className="min-h-11 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink-body hover:border-brand-600 hover:text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand">{option.label}</button>
         ))}
       </div>
 
       <ExploreActiveFilters filters={activeFilters} />
 
-      <details className="group mt-5 border-t border-slate-200 pt-5">
+      <details className="group mt-5 border-t border-line pt-5">
         <summary className="flex min-h-11 cursor-pointer list-none select-none items-center justify-between gap-4 font-semibold text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden"><span>{message("explore.moreFilters")}</span><DisclosureChevron /></summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <FilterSelect allLabel={message("explore.all")} label={message("explore.journeyStage")} value={filters.journeyStageId} onChange={(value) => updateFilter("journeyStageId", value)} options={optionsFor(journeyStages, japaneseTaxonomyLabels.journeyStage)} />
@@ -125,9 +125,9 @@ function FilterSelect<OptionId extends string>({ allLabel, label, value, onChang
   const id = useId();
   const selectRef = usePreHydrationInput<HTMLSelectElement>((chosen) => onChange(chosen as "all" | OptionId));
   return (
-    <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+    <label htmlFor={id} className="text-sm font-semibold text-ink-firm">
       {label}
-      <select ref={selectRef} id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 font-normal text-slate-800 outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20">
+      <select ref={selectRef} id={id} value={value} onChange={(event) => onChange(event.target.value as "all" | OptionId)} className="app-select mt-2 block min-h-11 w-full rounded-xl border border-line-strong bg-surface px-3 font-normal text-ink-firm outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20">
         <option value="all">{allLabel}</option>
         {options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
         {optionGroups.map((group) => (

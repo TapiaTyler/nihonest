@@ -53,14 +53,14 @@ export function SaveContentButton({ kind, contentId, deferRemoval = false }: Sav
         aria-label={format(saved ? "save.remove" : "save.save", { item: contentLabel })}
         disabled={!isReady || removalPending}
         onClick={toggleSaved}
-        className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-pink-300 bg-white text-pink-600 shadow-sm transition-colors hover:border-pink-500 hover:bg-pink-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600 disabled:cursor-wait disabled:opacity-50 aria-pressed:border-pink-600 aria-pressed:bg-pink-600 aria-pressed:text-white"
+        className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-favorite-line bg-surface text-favorite-text shadow-sm transition-colors hover:border-favorite-line-strong hover:bg-favorite-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-favorite-focus disabled:cursor-wait disabled:opacity-50 aria-pressed:border-favorite aria-pressed:bg-favorite aria-pressed:text-white"
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" className="size-6" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8">
           <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
         </svg>
       </button>
       {feedback && (
-        <span role="status" className="absolute right-0 top-full z-20 mt-2 whitespace-nowrap rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white shadow-lg">
+        <span role="status" className="absolute right-0 top-full z-20 mt-2 whitespace-nowrap rounded-lg bg-inverse px-3 py-2 text-xs font-semibold text-on-inverse shadow-lg">
           {feedback}
         </span>
       )}

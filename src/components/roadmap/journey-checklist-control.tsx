@@ -19,7 +19,7 @@ export function JourneyChecklistControl({ checklistId }: Readonly<{ checklistId:
         value={state}
         disabled={!isReady}
         onChange={(event) => setProgress(checklistId, event.target.value as ChecklistProgress["state"])}
-        className="app-select min-h-11 max-w-40 rounded-xl border border-slate-300 bg-slate-50 px-3 text-sm font-semibold text-slate-800 shadow-sm focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-wait disabled:opacity-50"
+        className="app-select min-h-11 max-w-40 rounded-xl border border-line-strong bg-surface-subtle px-3 text-sm font-semibold text-ink-firm shadow-sm focus:border-brand-accent focus:outline-2 focus:outline-offset-2 focus:outline-focus disabled:cursor-wait disabled:opacity-50"
       >
         {progressStates.map((value) => <option key={value} value={value}>{message(`progress.${value}`)}</option>)}
       </select>

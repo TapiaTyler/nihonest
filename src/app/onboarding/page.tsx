@@ -25,10 +25,10 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
       </Link>
       <header className="mt-8 max-w-3xl">
         <p className="eyebrow"><InterfaceText id="onboarding.eyebrow" /></p>
-        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+        <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
           <InterfaceText id="onboarding.title" />
         </h1>
-        <p className="mt-6 text-lg leading-8 text-slate-600">
+        <p className="mt-6 text-lg leading-8 text-ink-muted">
           <InterfaceText id="onboarding.description" />
         </p>
       </header>

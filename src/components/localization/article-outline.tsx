@@ -60,7 +60,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
   return (
     <>
       <nav ref={inlineRef} aria-label={label} lang={lang} className="mt-2 xl:hidden">
-        <details className="group border-b border-slate-200">
+        <details className="group border-b border-line">
           <summary className="flex min-h-12 cursor-pointer list-none select-none items-center gap-2 font-semibold text-brand-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus [&::-webkit-details-marker]:hidden">
             <span lang={uiLang}>{label}</span>
             <DisclosureChevron />
@@ -71,7 +71,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
 
       <nav aria-label={label} lang={lang} className="absolute bottom-0 left-full top-0 ml-8 hidden w-48 xl:block">
         <div className="sticky top-8 max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain pb-4">
-          <p lang={uiLang} className="text-sm font-semibold text-slate-950">{label}</p>
+          <p lang={uiLang} className="text-sm font-semibold text-ink">{label}</p>
           <OutlineList groups={groups} activeId={activeId} dense className="mt-2" />
         </div>
       </nav>
@@ -82,7 +82,7 @@ export function ArticleOutline({ english, japanese }: Readonly<{
           aria-haspopup="dialog"
           lang={uiLang}
           onClick={() => sheetRef.current?.showModal()}
-          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 min-h-12 rounded-full bg-brand px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.45)] hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus xl:hidden"
+          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 min-h-12 rounded-full bg-brand px-5 text-sm font-semibold text-on-brand shadow-[0_8px_24px_-8px_rgba(15,23,42,0.45)] hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus xl:hidden"
         >
           {label}
         </button>
@@ -92,10 +92,10 @@ export function ArticleOutline({ english, japanese }: Readonly<{
         ref={sheetRef}
         aria-labelledby="article-outline-sheet-title"
         onClick={(event) => { if (event.target === event.currentTarget) event.currentTarget.close(); }}
-        className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[75dvh] w-full max-w-none overflow-y-auto overscroll-contain rounded-t-3xl border-0 bg-white p-0 text-slate-900 backdrop:bg-slate-900/40 xl:hidden"
+        className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[75dvh] w-full max-w-none overflow-y-auto overscroll-contain rounded-t-3xl border-0 bg-surface p-0 text-ink-strong backdrop:bg-scrim/40 xl:hidden"
       >
-        <div className="sticky top-0 flex min-h-14 items-center justify-between gap-4 border-b border-slate-200 bg-white px-5">
-          <h2 id="article-outline-sheet-title" lang={uiLang} className="text-lg font-semibold tracking-tight text-slate-950">{label}</h2>
+        <div className="sticky top-0 flex min-h-14 items-center justify-between gap-4 border-b border-line bg-surface px-5">
+          <h2 id="article-outline-sheet-title" lang={uiLang} className="text-lg font-semibold tracking-tight text-ink">{label}</h2>
           <button type="button" lang={uiLang} onClick={() => sheetRef.current?.close()} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-brand-link hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
             {message("article.closeOutline")}
           </button>
@@ -179,7 +179,7 @@ function OutlineList({ groups, activeId, dense = false, className }: Readonly<{
 function OutlineLink({ entry: { level, id, text }, activeId, dense }: Readonly<{ entry: ArticleOutlineEntry; activeId?: string; dense: boolean }>) {
   const current = id === activeId;
   const size = dense ? "min-h-8 py-0.5 text-sm" : "min-h-11 sm:min-h-9";
-  const tone = current ? "font-semibold text-brand-link" : level === 3 ? "text-slate-600" : "font-medium text-slate-700";
+  const tone = current ? "font-semibold text-brand-link" : level === 3 ? "text-ink-muted" : "font-medium text-ink-body";
   return (
     <a
       href={`#${id}`}

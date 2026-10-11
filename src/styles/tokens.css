@@ -4,40 +4,96 @@
  * Three layers, as in the design-system guidance:
  *   1. Primitives are Tailwind's own palette variables (`--color-teal-800` and so on).
  *   2. Semantic roles below point at one primitive each, under `:root`. Changing a theme means redefining these
- *      variables, never editing components. Dark mode will do that under `[data-theme="dark"]`.
- *   3. `@theme inline` exposes each role to Tailwind as a utility (`bg-brand`, `text-brand-link`,
+ *      variables, never editing components.
+ *   3. `@theme inline` exposes each role to Tailwind as a utility (`bg-surface`, `text-ink-muted`,
  *      `outline-focus`, ...). `inline` makes a utility read the role variable at use time, which is what lets a
  *      theme override it.
  *
- * Phase 1 keeps every light value identical to the palette class it replaced, so nothing changes visually.
- * Slice 1 (this file so far): the brand (teal) roles. Neutrals, surfaces and status colours follow.
+ * Light values are identical to the palette class each role replaced, so the migration changed nothing visually.
  */
-
 :root {
-  /* Brand fills */
+  /* Brand (teal) */
   --brand: var(--color-teal-800); /* primary action fill; selected borders; checkbox accent */
   --brand-hover: var(--color-teal-700); /* primary action fill on hover */
   --brand-soft: var(--color-teal-50); /* quiet brand wash behind notes and selected rows */
   --brand-softer: var(--color-teal-100); /* the wash on hover */
-
-  /* Brand text */
   --brand-link: var(--color-teal-800); /* links and secondary actions */
   --brand-link-hover: var(--color-teal-600); /* the same on hover */
   --brand-accent: var(--color-teal-700); /* eyebrows, small accents, strong borders, focus rings on fields */
   --brand-deep: var(--color-teal-950); /* headings on a brand wash */
   --brand-deep-soft: var(--color-teal-900); /* body text on a brand wash */
   --brand-on-dark-hover: var(--color-teal-300); /* link hover on the dark footer */
+  --brand-line: var(--color-teal-200); /* quiet brand border */
+  --brand-300: var(--color-teal-300); /* brand border or underline, graded */
+  --brand-400: var(--color-teal-400); /* brand border, graded */
+  --brand-500: var(--color-teal-500); /* brand border, graded */
+  --brand-600: var(--color-teal-600); /* brand border, graded */
+  --focus: var(--color-teal-700); /* keyboard focus outline */
+  --focus-on-dark: var(--color-teal-300); /* focus outline on always-dark surfaces */
+  --on-brand: var(--color-white); /* text on a brand fill */
 
-  /* Brand lines, graded from quiet to strong (borders and underlines) */
-  --brand-line: var(--color-teal-200);
-  --brand-300: var(--color-teal-300);
-  --brand-400: var(--color-teal-400);
-  --brand-500: var(--color-teal-500);
-  --brand-600: var(--color-teal-600);
+  /* Surfaces */
+  --page: var(--color-stone-50); /* the page background */
+  --surface: var(--color-white); /* cards and panels */
+  --surface-subtle: var(--color-slate-50); /* inset panels and hover washes */
+  --surface-muted: var(--color-slate-100); /* chips and quiet fills */
+  --surface-strong: var(--color-slate-200); /* tracks and stronger fills */
+  --surface-disabled: var(--color-slate-300); /* disabled controls */
+  --scrim: var(--color-slate-900); /* backdrop behind dialogs */
+  --footer: var(--color-slate-950); /* the always-dark footer */
+  --inverse: var(--color-slate-950); /* tooltips and toasts: dark on light, light on dark */
+  --on-inverse: var(--color-white); /* text on an inverse surface */
+  --on-inverse-soft: var(--color-slate-100); /* secondary text on an inverse surface */
+  --on-inverse-muted: var(--color-slate-200); /* tertiary text on an inverse surface */
+  --on-inverse-subtle: var(--color-slate-300); /* hints on an inverse surface */
 
-  /* Keyboard focus outline */
-  --focus: var(--color-teal-700);
-  --focus-on-dark: var(--color-teal-300); /* on the dark footer and similar surfaces */
+  /* Text */
+  --ink: var(--color-slate-950); /* headings */
+  --ink-strong: var(--color-slate-900); /* strong text */
+  --ink-firm: var(--color-slate-800); /* firm body text */
+  --ink-body: var(--color-slate-700); /* body text */
+  --ink-muted: var(--color-slate-600); /* secondary text */
+  --ink-subtle: var(--color-slate-500); /* captions and metadata */
+  --ink-faint: var(--color-slate-400); /* placeholders and disabled text */
+
+  /* Lines */
+  --line-faint: var(--color-slate-100); /* faintest divider */
+  --line: var(--color-slate-200); /* borders and dividers */
+  --line-strong: var(--color-slate-300); /* stronger borders */
+  --line-edge: var(--color-slate-500); /* firm edge */
+
+  /* Status colours */
+  --caution-soft: var(--color-amber-50); /* caution wash */
+  --caution-softer: var(--color-amber-100); /* caution wash, stronger */
+  --caution-line: var(--color-amber-200); /* caution border */
+  --caution-line-strong: var(--color-amber-300); /* caution border, stronger */
+  --caution-edge: var(--color-amber-500); /* caution hover border */
+  --caution-text: var(--color-amber-800); /* caution text */
+  --caution-ink-soft: var(--color-amber-900); /* caution text, darker */
+  --caution-ink: var(--color-amber-950); /* caution text, darkest */
+  --caution-focus: var(--color-amber-600); /* caution focus outline */
+  --danger-soft: var(--color-red-50); /* danger wash */
+  --danger-line: var(--color-red-200); /* danger border */
+  --danger-line-strong: var(--color-red-300); /* danger border, stronger */
+  --danger: var(--color-red-800); /* destructive action fill */
+  --danger-hover: var(--color-red-700); /* destructive action fill on hover */
+  --danger-accent: var(--color-red-700); /* danger text, border, outline, ring */
+  --danger-strong: var(--color-red-800); /* danger text, stronger */
+  --danger-deep: var(--color-red-900); /* danger text, deeper */
+  --danger-ink: var(--color-red-950); /* danger text, darkest */
+  --specimen-soft: var(--color-rose-50); /* fictional-example wash */
+  --specimen-line: var(--color-rose-200); /* fictional-example border */
+  --specimen-text: var(--color-rose-700); /* fictional-example text */
+  --specimen-ink: var(--color-rose-950); /* fictional-example text, darkest */
+  --info-soft: var(--color-sky-50); /* information wash */
+  --info-line: var(--color-sky-200); /* information border */
+  --info-ink: var(--color-sky-950); /* information text */
+  --favorite-soft: var(--color-pink-50); /* saved-item wash */
+  --favorite: var(--color-pink-600); /* saved-item fill and border */
+  --favorite-line: var(--color-pink-300); /* saved-item border */
+  --favorite-line-strong: var(--color-pink-500); /* saved-item hover border */
+  --favorite-text: var(--color-pink-600); /* saved-item icon colour */
+  --favorite-focus: var(--color-pink-600); /* saved-item focus outline */
 }
 
 @theme inline {
@@ -58,4 +114,60 @@
   --color-brand-600: var(--brand-600);
   --color-focus: var(--focus);
   --color-focus-on-dark: var(--focus-on-dark);
+  --color-on-brand: var(--on-brand);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-disabled: var(--surface-disabled);
+  --color-scrim: var(--scrim);
+  --color-footer: var(--footer);
+  --color-inverse: var(--inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-on-inverse-soft: var(--on-inverse-soft);
+  --color-on-inverse-muted: var(--on-inverse-muted);
+  --color-on-inverse-subtle: var(--on-inverse-subtle);
+  --color-ink: var(--ink);
+  --color-ink-strong: var(--ink-strong);
+  --color-ink-firm: var(--ink-firm);
+  --color-ink-body: var(--ink-body);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-faint: var(--ink-faint);
+  --color-line-faint: var(--line-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-edge: var(--line-edge);
+  --color-caution-soft: var(--caution-soft);
+  --color-caution-softer: var(--caution-softer);
+  --color-caution-line: var(--caution-line);
+  --color-caution-line-strong: var(--caution-line-strong);
+  --color-caution-edge: var(--caution-edge);
+  --color-caution-text: var(--caution-text);
+  --color-caution-ink-soft: var(--caution-ink-soft);
+  --color-caution-ink: var(--caution-ink);
+  --color-caution-focus: var(--caution-focus);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+  --color-danger-line-strong: var(--danger-line-strong);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-accent: var(--danger-accent);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-deep: var(--danger-deep);
+  --color-danger-ink: var(--danger-ink);
+  --color-specimen-soft: var(--specimen-soft);
+  --color-specimen-line: var(--specimen-line);
+  --color-specimen-text: var(--specimen-text);
+  --color-specimen-ink: var(--specimen-ink);
+  --color-info-soft: var(--info-soft);
+  --color-info-line: var(--info-line);
+  --color-info-ink: var(--info-ink);
+  --color-favorite-soft: var(--favorite-soft);
+  --color-favorite: var(--favorite);
+  --color-favorite-line: var(--favorite-line);
+  --color-favorite-line-strong: var(--favorite-line-strong);
+  --color-favorite-text: var(--favorite-text);
+  --color-favorite-focus: var(--favorite-focus);
 }

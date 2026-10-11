@@ -57,7 +57,7 @@ function practicalInline(nodes: readonly ArticleInline[]): ReactNode[] {
 export function JapanPracticalBasics({ locale = "en" }: Readonly<{ locale?: Locale }>) {
   const translated = locale === "ja" ? selectArticleComponentTranslation(japanPracticalBasicsComponent) : undefined;
   return (
-    <div lang={locale === "ja" && !translated ? "en" : undefined} className="not-prose mt-4 space-y-4 text-slate-700">
+    <div lang={locale === "ja" && !translated ? "en" : undefined} className="not-prose mt-4 space-y-4 text-ink-body">
       {japanPracticalBasicsComponent.paragraphs.map((paragraph) => (
         <p key={paragraph.id} className="leading-8">{practicalInline(parseArticleInline(translated?.[`paragraphs.${paragraph.id}`] ?? paragraph.text))}</p>
       ))}

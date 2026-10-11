@@ -109,14 +109,14 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
 
   return (
     <>
-      <button ref={menuButtonRef} type="button" aria-expanded={menuOpen} aria-controls="mobile-primary-navigation" aria-label={message(menuOpen ? "navigation.close" : "navigation.open")} onClick={() => setMenuOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-slate-300 text-brand-deep-soft hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus lg:hidden">
+      <button ref={menuButtonRef} type="button" aria-expanded={menuOpen} aria-controls="mobile-primary-navigation" aria-label={message(menuOpen ? "navigation.close" : "navigation.open")} onClick={() => setMenuOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-line-strong text-brand-deep-soft hover:border-brand-500 hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus lg:hidden">
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" /></svg>
       </button>
 
       <dialog ref={dialogRef} tabIndex={-1} aria-labelledby="mobile-navigation-heading" data-visible={panelVisible || undefined} onCancel={(event) => { event.preventDefault(); closeMenu(); }} onClick={(event) => { if (event.target === event.currentTarget) closeMenu(); }} className="mobile-nav-dialog lg:hidden">
-        <div className={`mobile-nav-panel flex w-[min(85vw,22rem)] flex-col overflow-y-auto border-l border-slate-200 bg-white shadow-2xl transition-transform ${menuClosing ? "duration-[180ms] ease-in" : "duration-200 ease-out"} ${panelVisible ? "translate-x-0" : "translate-x-full"}`}>
-          <div className="sticky top-0 z-10 flex min-h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur">
-            <h2 id="mobile-navigation-heading" className="text-lg font-semibold tracking-tight text-slate-950">{message("navigation.heading")}</h2>
+        <div className={`mobile-nav-panel flex w-[min(85vw,22rem)] flex-col overflow-y-auto border-l border-line bg-surface shadow-2xl transition-transform ${menuClosing ? "duration-[180ms] ease-in" : "duration-200 ease-out"} ${panelVisible ? "translate-x-0" : "translate-x-full"}`}>
+          <div className="sticky top-0 z-10 flex min-h-16 shrink-0 items-center justify-between border-b border-line bg-surface/95 px-5 backdrop-blur">
+            <h2 id="mobile-navigation-heading" className="text-lg font-semibold tracking-tight text-ink">{message("navigation.heading")}</h2>
             <button type="button" onClick={closeMenu} aria-label={message("navigation.closeMobile")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-brand-deep-soft hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" /></svg>
             </button>
@@ -131,7 +131,7 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
               const headingId = `mobile-navigation-${group.id}`;
               return (
                 <section key={group.id} aria-labelledby={headingId} className="mt-6">
-                  <h3 id={headingId} className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message(group.labelId)}</h3>
+                  <h3 id={headingId} className="px-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message(group.labelId)}</h3>
                   <ul className="mt-2 space-y-1">
                     {group.links.map((destination) => (
                       <li key={destination.href}><Link href={destination.href} aria-current={isActive(destination.href) ? "page" : undefined} onClick={closeMenu} className={mobileLinkClass}>{message(destination.labelId)}</Link></li>
@@ -142,16 +142,16 @@ export function MobileSiteNavigation({ pathname, accountNavigation }: Readonly<{
             })}
             <MobileAccountControl accountNavigation={accountNavigation} isActive={(href) => isActive(href)} onNavigate={closeMenu} />
             <section aria-labelledby="mobile-navigation-language" className="mt-6 px-3">
-              <h3 id="mobile-navigation-language" className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message("language.guideLanguage")}</h3>
+              <h3 id="mobile-navigation-language" className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.guideLanguage")}</h3>
               <div className="mt-2"><ContentLanguageOptions /></div>
-              <p className="mt-2 px-3 text-xs leading-5 text-slate-500">{message("language.pilotAvailability")}</p>
-              <div className="mt-4 border-t border-slate-200 pt-4">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{message("language.japaneseReadings")}</p>
+              <p className="mt-2 px-3 text-xs leading-5 text-ink-subtle">{message("language.pilotAvailability")}</p>
+              <div className="mt-4 border-t border-line pt-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">{message("language.japaneseReadings")}</p>
                 <ReadingAidOptions />
               </div>
             </section>
           </nav>
-          <p className="border-t border-slate-200 px-5 py-4 text-xs leading-5 text-slate-500">{message("navigation.publicWithoutAccount")}</p>
+          <p className="border-t border-line px-5 py-4 text-xs leading-5 text-ink-subtle">{message("navigation.publicWithoutAccount")}</p>
         </div>
       </dialog>
     </>
