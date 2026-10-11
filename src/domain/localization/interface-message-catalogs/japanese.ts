@@ -72,6 +72,7 @@ export const japaneseInterfaceMessages = {
   "article.relevantTo": "関連する段階：",
   "explore.searchHeading": "すべてのガイドと用語を検索",
   "explore.searchQuestion": "何について知りたいですか？",
+  "explore.searchPlaceholder": "例：在留資格、ビザ、日本へ入国",
   "explore.clearSearch": "検索と絞り込みを解除",
   "explore.filterByKind": "コンテンツの種類で絞り込む",
   "explore.everything": "すべて",

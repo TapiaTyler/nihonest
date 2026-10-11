@@ -83,7 +83,7 @@ export function ExploreFilterPanel({
   }, [hasActiveFilters]);
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
+    <section role="search" className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-7" aria-labelledby="knowledgebase-search-heading">
       <h2 id="knowledgebase-search-heading" className="text-xl font-semibold tracking-tight text-slate-950">{message("explore.searchHeading")}</h2>
       <label htmlFor={searchId} className="mt-5 block text-sm font-semibold text-slate-900">{message("explore.searchQuestion")}</label>
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -91,7 +91,7 @@ export function ExploreFilterPanel({
           id={searchId}
           value={filters.query}
           onCommit={commitQuery}
-          placeholder={locale === "ja" ? "例：在留資格、ビザ、日本へ入国" : "Try bank account, Student status, or juminhyo"}
+          placeholder={message("explore.searchPlaceholder")}
           className="min-h-12 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
         />
         {isSearching && <button type="button" onClick={clearSearch} className="min-h-12 rounded-xl px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("explore.clearSearch")}</button>}

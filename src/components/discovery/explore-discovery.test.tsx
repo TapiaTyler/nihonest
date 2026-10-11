@@ -309,4 +309,22 @@ describe("ExploreDiscovery", () => {
     expect(screen.queryByRole("list", { name: "Active filters" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Explore Arrival essentials" })).toBeInTheDocument();
   });
+
+  it("exposes the search controls as a search landmark with a catalog placeholder", () => {
+    renderDiscovery();
+    const landmark = screen.getByRole("search", { name: "Search every guide and term" });
+    expect(landmark).toContainElement(screen.getByRole("searchbox"));
+    expect(screen.getByRole("searchbox")).toHaveAttribute("placeholder", "Try bank account, Student status, or juminhyo");
+  });
+
+  it("shows the secondary prompts only while browsing, so results follow the search directly", () => {
+    render(
+      <ContentLocaleProvider>
+        <ExploreDiscovery groups={[group]} articles={[bankArticle]} terms={glossaryTerms} residenceStatuses={residenceStatuses} supplement={<p>Secondary prompt</p>} />
+      </ContentLocaleProvider>,
+    );
+    expect(screen.getByText("Secondary prompt")).toBeInTheDocument();
+    enterSearch("bank account");
+    expect(screen.queryByText("Secondary prompt")).not.toBeInTheDocument();
+  });
 });

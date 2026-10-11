@@ -30,9 +30,9 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
 | E1 | P1 | Advanced filters (stage, topic, audience, scope, type, importance, status) are hidden in a closed "More filters" section even when active, so links such as `/explore?stage=…` land on invisible filters. Open it when any is active and show removable filter chips. The panel opens when a filter applies and is never closed automatically. | done |
-| E2 | P2 | Search sits below three competing prompts (country basics, "can I do this?" panel, recommendations). Put search first and demote the rest. | planned |
-| E3 | P3 | Search placeholder is a hard-coded `locale === "ja"` ternary instead of a catalog message. | planned |
-| E4 | P3 | Search area has no `role="search"` landmark. | planned |
+| E2 | P2 | Search sits below three competing prompts (country basics, "can I do this?" panel, recommendations). Put search first and demote the rest. Search now follows the heading; the prompts sit between search and the group browser and hide while searching. | done |
+| E3 | P3 | Search placeholder is a hard-coded `locale === "ja"` ternary instead of a catalog message. | done |
+| E4 | P3 | Search area has no `role="search"` landmark. | done |
 | E5 | P3 | No obvious reset for a filter-only state (covered by E1 chips). | done |
 
 ## Onboarding
@@ -57,6 +57,9 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 | X1 | P3 | Inter is the only typeface and has no Japanese glyphs. Site-wide `:lang(ja)` font stack and line-height would extend H3, but changes every page's Japanese rendering. Owner decision: leave open; show a simulated preview of the change before implementing. | parked |
 | X2 | P3 | `border-l-4` blockquotes are flagged by the detector. They read as callouts here and are consistent; leave unless the visual direction changes. | dropped |
 | X3 | -- | `gray-on-color` flag in `onboarding-actions.tsx` is the disabled state; false positive. | dropped |
+
+## Decisions
+- Eyebrow labels stay: they act as the page titles while headings summarise the page.
 
 ## Not yet reviewed
 My Journey, Roadmap, FAQ, Glossary, Residence statuses, Can I do this?, Saved, Reminders, Account, header and footer interaction states (keyboard, mobile drawer).

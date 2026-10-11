@@ -70,6 +70,7 @@ export const englishInterfaceMessages = {
   "article.relevantTo": "Relevant to:",
   "explore.searchHeading": "Search every guide and term",
   "explore.searchQuestion": "What do you need help with?",
+  "explore.searchPlaceholder": "Try bank account, Student status, or juminhyo",
   "explore.clearSearch": "Clear search and filters",
   "explore.filterByKind": "Filter by content kind",
   "explore.everything": "Everything",
