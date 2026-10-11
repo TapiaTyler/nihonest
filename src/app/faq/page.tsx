@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function FaqPage() {
   return (
-    <div className="page-shell py-16 sm:py-24">
+    <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.faq")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="faq.pageEyebrow" /></p>

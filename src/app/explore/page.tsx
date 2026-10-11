@@ -20,7 +20,7 @@ export default function ExplorePage() {
   const articles = getAllArticles().map(({ metadata }) => metadata);
 
   return (
-    <div className="page-shell py-16 sm:py-24">
+    <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.explore")} />
       <header className="max-w-3xl">
         <p className="eyebrow"><InterfaceText id="explore.eyebrow" /></p>

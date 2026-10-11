@@ -48,7 +48,7 @@ export default async function CanIDoThisPage({
   const referencedSourceIds = new Set(activityCrossReferences.flatMap((activity) => activity.rules.flatMap((rule) => rule.assertion?.sourceIds ?? [])));
 
   return (
-    <div className="page-shell py-16 sm:py-24">
+    <div className="page-shell py-12 sm:py-16">
       <LocalizedDocumentTitle japanese={getInterfaceMessage("ja", "pageTitle.canIDoThis")} />
       <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-semibold text-teal-800 hover:text-teal-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">← <InterfaceText id={returnLabel} /></Link>
       <header className="mt-5 max-w-3xl">
