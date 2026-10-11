@@ -58,6 +58,20 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 | X2 | P3 | `border-l-4` blockquotes are flagged by the detector. They read as callouts here and are consistent; leave unless the visual direction changes. | dropped |
 | X3 | -- | `gray-on-color` flag in `onboarding-actions.tsx` is the disabled state; false positive. | dropped |
 
+## Page review and mobile pass
+
+Measured with a script across 19 pages (plus the four articles with special content sections) at 1280px and 375px, in English and Japanese: contrast, tap-target size, horizontal overflow and tiny text. Results: no contrast failures, no page-level horizontal overflow, no text under 12px. Card titles that use a stretched link (`before:absolute before:inset-0`) are whole-card targets and were ignored.
+
+| # | Pri | Finding | Status |
+|---|-----|---------|--------|
+| M1 | P1 | Regression from E1: on phones, arriving with a filter (for example from a home stage card) auto-opened the filter panel, a tall stack of seven selects that pushed results out of view. The panel now stays closed below 640px; the chips already show what is applied. | done |
+| M2 | P2 | Wide article tables force sideways scrolling on phones even with two columns (tax scope: `min-w-56` plus `min-w-80` is about 576px against a 343px column). Relax the minimum widths below `sm` so two-column tables wrap, and for the wider ones (renewal 596px, route comparison 497px) make the scroll area keyboard-focusable with an accessible name and a visible hint. Check the application-fee section too. | planned |
+| M3 | P2 | Small touch targets on phones: "Back to ..." links are 19px tall on onboarding, My Journey, articles, glossary terms, statuses, journeys; the header logo is 28px and the footer logo 21px; the Japanese translation notice button "英語で読む" is 24px. Pad them to 44px without changing how they look. | planned |
+| M4 | P3 | Index pages (Residence statuses, Glossary, FAQ) put one or two callout boxes before the main control, and their top padding (`py-16 sm:py-24`) pushes the list below the fold at 1280x800, the same pattern as H8 and E2. Candidate fix: tighter top padding and the callouts after the control. | planned |
+| M5 | P3 | My Journey and Roadmap have near-identical empty states with the same "Find my starting point" button. Consider a single clearer difference in purpose, or merging. | decision |
+| M6 | P3 | The mobile drawer label "Adjust Starting Point" uses title case; the rest of the interface uses sentence case ("Adjust my starting point"). | planned |
+| M7 | -- | Reviewed with no change needed: Saved, Reminders and Account empty and sign-in states, the mobile drawer, the geography article (the region map has legend buttons as a full-size alternative to the small map regions), glossary term and status pages. | done |
+
 ## Decisions
 - Eyebrow labels stay: they act as the page titles while headings summarise the page.
 

@@ -77,9 +77,12 @@ export function ExploreFilterPanel({
   });
 
   // Reveal the panel once a filter applies, but never collapse it automatically while someone is still adjusting it.
+  // On a phone the open panel is a tall stack of selects that pushes the results out of view, and the chips above
+  // already show what is applied, so it stays closed there.
   const hasActiveFilters = activeFilters.length > 0;
   useEffect(() => {
-    if (hasActiveFilters && moreFiltersRef.current) moreFiltersRef.current.open = true;
+    const roomForPanel = window.matchMedia?.("(min-width: 40rem)").matches ?? true;
+    if (hasActiveFilters && roomForPanel && moreFiltersRef.current) moreFiltersRef.current.open = true;
   }, [hasActiveFilters]);
 
   return (
