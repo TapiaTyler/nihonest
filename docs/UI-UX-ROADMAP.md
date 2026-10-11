@@ -38,6 +38,38 @@ Proposed approach (the `impeccable` extract guidance: only extract what is clear
 
 Questions for the owner: (1) tokens in `globals.css` `@theme` as proposed, or a separate `src/styles/tokens.css`? (2) role names as above, or other names? (3) start with slice 1 (brand and focus, about 740 uses)? (4) any intention to ship dark mode, and roughly when?
 
+## Dark mode decisions (proposed, with contrast evidence)
+
+Made with the `impeccable` colorize guidance (design dark surface elevation and contrast explicitly; do not invert the light theme mechanically) and measured WCAG ratios from Tailwind's own palette values (script kept outside the repo). The owner wants dark mode with the OS setting as default and a manual override. Nothing below is implemented; slices 2 to 5 of H5 introduce the role tokens first with light values only, then the dark values go in as one reviewable change with a preview.
+
+**Surfaces (elevation by lightness).** Page `slate-950`, cards `slate-900`, raised things (popovers, menus) `slate-800`. Light stays: page `stone-50`, cards white, subtle panels `slate-50`. Roles: `page`, `surface`, `surface-subtle`, `surface-raised`.
+
+**Text.** Dark ink scale on `slate-900` cards (ratios): headings `slate-50` 17.1, body `slate-200`, muted `slate-300`, subtle `slate-400` 6.8. Today's light `slate-500` for subtle text does not carry over: in dark it measures only 3.7 on cards and 4.2 on the page, so subtle text moves up to `slate-400`.
+
+**Brand.** Link and accent text become `teal-300` in dark (12.1 on cards); the focus ring `teal-300` (12.1, needs 3). Primary button keeps a deep teal fill: `teal-700` with white text measures 5.4, but today's light hover colour logic does not carry over because `teal-600` with white text is only 3.7, so in dark the hover fill goes to `teal-800` (7.5). Needs a new `on-brand` role (white in both themes today) so button text is a token.
+
+**Status colours.** Text on cards: amber `amber-200` 14.3, red and rose `300` 9.3, sky `sky-300` 10.7; fills are the same hue at `950` with low opacity and an `800` border. New roles `caution`, `danger`, `info`.
+
+**Prefecture map.** Default fill `teal-700` (3.3 against the card), hover `teal-500`, selected `teal-300` (3.7 against the default). The order flips against light (where selected is darkest) so selected stays the most prominent. Outlines use the surface colour instead of white. Shape sizes and drawing are untouched.
+
+**Region map (8 categorical fills).** The existing mid-tone hexes already measure 4.3 to 6.1 against a dark card, so the fills stay as they are in both themes; only the white outline becomes the surface colour. Legend text follows the text roles.
+
+**Tooltips and the hover label.** Today `bg-slate-950 text-white` would vanish on a `slate-950` page. They become an `inverse` role: dark on light today, light on dark in dark mode (the usual inversion for tooltips). Roles `inverse` and `on-inverse`.
+
+**Footer.** Already dark. In dark mode the page is the same colour, so the footer takes a deeper near-black fill (role `footer`) with its top border, and its link colours stay light.
+
+**Cards (`bg-white`, 188 uses) and shadows.** `bg-white` becomes `surface`. Light-theme card shadows do nothing on dark, so in dark elevation comes from the lighter surface plus a line, and the card shadow role is set to none there. The two custom shadows (hero card style and the floating outline button) get a shadow role too.
+
+**Official document images** (the only `Image` use, the annotated documents). Left exactly as they are, shown on a light "paper" frame with a border in dark mode. They are official specimens, so recolouring them would misrepresent the document, and a bordered light frame is the normal treatment.
+
+**Browser bar.** `theme-color` becomes two values by colour scheme: white for light (what it is today) and `slate-950` for dark. Next's viewport export takes an array with media queries.
+
+**Native controls and selection.** `color-scheme: light dark` on the root (switched by the manual override) so selects, checkboxes, scrollbars and autofill adapt. Text selection becomes a role (`selection-bg`, `selection-fg`); dark uses `teal-700` with white text (5.4).
+
+**Found on the way (separate decision, affects light mode too).** Form field borders are `slate-300` on white, which measures 1.5, below the 3:1 WCAG asks for the boundary of an input. In dark I would use `slate-500` (3.7 on cards). For light, the same fix would be `slate-500` or `slate-400` (4.8 or 2.6). It changes how every field looks, so it is the owner's call; not changed.
+
+**Switching.** The OS setting sets the default through `@media (prefers-color-scheme: dark)`; a manual choice sets `data-theme` on `<html>` and is remembered per viewer, applied before the page paints (a small inline script) so there is no flash. It will get its own hydration test, given the earlier locale bug. The control's place is an owner decision (the language menu in the header is the natural neighbour).
+
 ## Home page
 
 | # | Pri | Finding | Status |
