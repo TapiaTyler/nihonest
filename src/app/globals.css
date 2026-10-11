@@ -71,7 +71,8 @@ html[data-reading-aid="romaji"] [data-reading-aid-separator] {
 
 /* Tight Latin display leading and negative tracking crowd kana and kanji, so Japanese hero text gets its own rhythm. */
 .hero-title:lang(ja),
-.hero-lede:lang(ja) {
+.hero-lede:lang(ja),
+.hero-note:lang(ja) {
   font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Noto Sans JP", Meiryo, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: 0;
   word-break: auto-phrase;
@@ -84,6 +85,10 @@ html[data-reading-aid="romaji"] [data-reading-aid-separator] {
 
 .hero-lede:lang(ja) {
   line-height: 1.9;
+}
+
+.hero-note:lang(ja) {
+  line-height: 1.8;
 }
 
 .skip-link {

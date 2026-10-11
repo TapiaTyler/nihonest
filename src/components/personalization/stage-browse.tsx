@@ -30,7 +30,7 @@ export function StageBrowse() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{message("home.stagesEyebrow")}</p>
-            <h2 id="home-stage-browse-heading" className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
+            <h2 id="home-stage-browse-heading" className="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-950">
               {message("home.stagesTitle")}
             </h2>
           </div>
