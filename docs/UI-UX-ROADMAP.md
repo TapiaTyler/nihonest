@@ -47,7 +47,7 @@ This is a working checklist, separate from the product roadmap in `ROADMAP.md`. 
 
 | # | Pri | Finding | Status |
 |---|-----|---------|--------|
-| A1 | P2 | Long guides have no "On this page" outline. Add a collapsed contents list from the headings, including translated headings. | planned |
+| A1 | P2 | Long guides have no "On this page" outline. Add a collapsed contents list from the headings, including translated headings. Built from the portable body parser for both languages; shown for guides with 4+ headings; every rendered heading has a matching anchor (verified against all articles). | done |
 | A2 | -- | Save button placement was reviewed and is fine. | dropped |
 
 ## Cross-cutting

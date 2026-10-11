@@ -3,6 +3,7 @@
 import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
 import { parseArticleMarkdown, type ArticleComponentBlockKind } from "@/domain/article/article-blocks";
+import { headingId, headingPlainText } from "@/domain/article/article-outline";
 import { parseArticleInline, type ArticleInline } from "@/domain/article/article-inline";
 import type { TranslationArtifact } from "@/domain/translation/translation";
 import { useContentLocale } from "./content-locale-provider";
@@ -66,8 +67,8 @@ export function TranslatedArticleBody({ markdown, components = {} }: Readonly<{ 
     }
     if (block.kind === "heading") {
       return block.level === 2
-        ? <h2 key={index} className="mt-10 text-2xl font-semibold tracking-tight text-slate-950"><InlineMarkdown>{block.text}</InlineMarkdown></h2>
-        : <h3 key={index} className="mt-8 text-xl font-semibold tracking-tight text-slate-950"><InlineMarkdown>{block.text}</InlineMarkdown></h3>;
+        ? <h2 key={index} id={headingId(headingPlainText(block.text))} className="mt-10 scroll-mt-24 text-2xl font-semibold tracking-tight text-slate-950 lg:scroll-mt-6"><InlineMarkdown>{block.text}</InlineMarkdown></h2>
+        : <h3 key={index} id={headingId(headingPlainText(block.text))} className="mt-8 scroll-mt-24 text-xl font-semibold tracking-tight text-slate-950 lg:scroll-mt-6"><InlineMarkdown>{block.text}</InlineMarkdown></h3>;
     }
     if (block.kind === "blockquote") {
       return <blockquote key={index} className="mt-6 rounded-r-xl border-l-4 border-teal-600 bg-teal-50 px-5 py-1 text-slate-800"><p className="my-4 leading-8"><InlineMarkdown>{block.text}</InlineMarkdown></p></blockquote>;

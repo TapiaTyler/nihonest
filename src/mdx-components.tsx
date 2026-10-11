@@ -1,4 +1,6 @@
+import { isValidElement, type ReactNode } from "react";
 import type { MDXComponents } from "mdx/types";
+import { headingId } from "@/domain/article/article-outline";
 import { InlineGlossaryTerm } from "@/components/glossary/inline-glossary-term";
 import { ResidenceApplicationFeeSection } from "@/components/content/residence-application-fee-section";
 import { TaxResidenceScopeTable } from "@/components/content/tax-residence-scope-table";
@@ -6,6 +8,13 @@ import { TrainingRouteComparisonTable } from "@/components/content/training-rout
 import { JapanPrefectureFinder, JapanPrefectureRegionCards, JapanPrefectureRegionGrid, JapanPracticalBasics, JapanRegionMap } from "@/components/content/japan-geography-reference";
 import { getGlossaryTermBySlug } from "@/lib/content/glossary";
 import { getLocalizedGlossaryText } from "@/lib/content/translations";
+
+/** The visible text of rendered MDX children, so a heading's id matches the one the article outline derives. */
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  return isValidElement<{ children?: ReactNode }>(node) ? textOf(node.props.children) : "";
+}
 
 const components = {
   ResidenceApplicationFeeSection,
@@ -17,10 +26,10 @@ const components = {
   JapanRegionMap,
   JapanPracticalBasics,
   h2: ({ children }) => (
-    <h2 className="mt-10 text-2xl font-semibold tracking-tight text-slate-950">{children}</h2>
+    <h2 id={headingId(textOf(children).replace(/\s+/g, " ").trim())} className="mt-10 scroll-mt-24 text-2xl font-semibold tracking-tight text-slate-950 lg:scroll-mt-6">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-8 text-xl font-semibold tracking-tight text-slate-950">{children}</h3>
+    <h3 id={headingId(textOf(children).replace(/\s+/g, " ").trim())} className="mt-8 scroll-mt-24 text-xl font-semibold tracking-tight text-slate-950 lg:scroll-mt-6">{children}</h3>
   ),
   p: ({ children }) => <p className="mt-4 leading-8 text-slate-700">{children}</p>,
   ul: ({ children }) => <ul className="mt-4 list-disc space-y-2 pl-6 text-slate-700">{children}</ul>,

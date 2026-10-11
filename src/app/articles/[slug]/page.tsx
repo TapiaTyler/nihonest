@@ -34,6 +34,9 @@ import { getJapaneseGeneralLocalAdvice, getJapaneseLocalGuidanceFields } from "@
 import { renderJapaneseArticleComponents } from "@/components/content/japanese-article-components";
 import { getAnnotatedDocumentsForArticle } from "@/lib/content/annotated-documents";
 import { LocalizedDocumentTitle } from "@/components/localization/localized-document-title";
+import { ArticleOutline } from "@/components/localization/article-outline";
+import { getEnglishArticleOutline } from "@/lib/content/article-outline";
+import { articleOutline } from "@/domain/article/article-outline";
 import { formatInterfaceMessage } from "@/domain/localization/interface-messages";
 
 export const dynamicParams = false;
@@ -133,6 +136,11 @@ export default async function ArticlePage({ params }: PageProps<"/articles/[slug
           />
           <ArticleHeaderStages journeyStageIds={metadata.journeyStageIds} />
         </header>
+
+        <ArticleOutline
+          english={getEnglishArticleOutline(metadata.slug)}
+          japanese={typeof japaneseTranslation?.fields.body === "string" ? articleOutline(japaneseTranslation.fields.body) : undefined}
+        />
 
         <div className="mt-8">
           <LocalizedArticleBody translation={japaneseTranslation} components={typeof japaneseTranslation?.fields.body === "string" ? renderJapaneseArticleComponents(japaneseTranslation.fields.body) : undefined}>
