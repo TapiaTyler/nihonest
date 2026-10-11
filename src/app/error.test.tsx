@@ -25,7 +25,7 @@ describe("error page", () => {
   it("is available in Japanese", async () => {
     localStorage.setItem(contentLocaleStorageKey, "ja");
     renderError();
-    expect(await screen.findByRole("heading", { name: "ページを読み込めませんでした。" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "ページを開けませんでした。" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "もう一度試す" })).toBeInTheDocument();
   });
 });
