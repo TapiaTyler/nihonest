@@ -42,6 +42,12 @@ export function ContentLocaleProvider({ children }: Readonly<{ children: ReactNo
   const locale = useLocaleSnapshot();
   const setLocale = useCallback((nextLocale: ContentLocalePreference) => writeContentLocale(nextLocale), []);
 
+  // The root layout renders `lang="en"`, so keep the document language in step with the selected language. Japanese
+  // line breaking and typography key off `:lang(ja)`, and screen readers choose their voice from it.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   // Follow the shared locale order and leave text-entry shortcuts alone.
   useEffect(() => {
     function handleLanguageShortcut(event: KeyboardEvent) {

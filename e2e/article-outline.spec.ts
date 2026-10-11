@@ -44,7 +44,7 @@ test.describe("outline button (phones)", () => {
     const button = page.getByRole("button", { name: "On this page" });
     await expect(button).toHaveCount(0);
 
-    await page.mouse.wheel(0, 1600);
+    await page.evaluate(() => window.scrollTo(0, 1600));
     await expect(button).toBeVisible();
     await button.click();
     const sheet = page.getByRole("dialog", { name: "On this page" });

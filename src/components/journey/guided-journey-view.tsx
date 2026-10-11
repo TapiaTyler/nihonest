@@ -85,7 +85,7 @@ export function GuidedJourneyView({
             <p className="eyebrow">{message("journey.outline")}</p>
             <h2 id="journey-outline-heading" className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{presentedRoute ? (locale === "ja" ? `${presentedRoute.title}の経路` : `${presentedRoute.title} route`) : message("journey.focusedPath")}</h2>
           </div>
-          {selectedRoute && <Link href={changeRouteHref} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("journey.changeRoute")}</Link>}
+          {selectedRoute && <Link href={changeRouteHref} scroll={false} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-teal-800 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">{message("journey.changeRoute")}</Link>}
         </div>
         {!selectedRoute && presentedJourney.routes.length > 0 && <p className="mt-3 text-sm leading-6 text-slate-600">{locale === "ja" ? "経路を選ぶと、比較部分がその経路に合うガイドに置き換わります。選ばなかった経路は後の手順には表示されません。" : "Choose a route to replace the comparison point with one relevant guide. Unselected alternatives will not appear as later steps."}</p>}
         <ol className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

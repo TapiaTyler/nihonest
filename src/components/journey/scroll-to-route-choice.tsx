@@ -6,7 +6,9 @@ import { useEffect } from "react";
 export const routeChoiceHash = "#choose-route";
 
 /**
- * Takes a visitor who followed "Change route" to the route choices. The browser's own hash scrolling only works once
+ * Takes a visitor who followed "Change route" to the route choices. The link passes `scroll={false}` so Next does not
+ * jump to the top or to the anchor first (the site's `data-scroll-behavior` makes it scroll instantly), which lets this
+ * scroll start from where the visitor is. The browser's own hash scrolling only works once
  * the target exists, and the personal journey renders after its saved route loads, so this scrolls on mount and moves
  * focus to the section heading so keyboard and screen-reader users land there too.
  */

@@ -78,6 +78,32 @@ html[data-reading-aid="romaji"] [data-reading-aid-separator] {
   color: oklch(0.43 0.09 180);
 }
 
+/* Japanese text, wherever the document or an element is marked lang="ja". Line breaks fall between phrases instead
+   of inside words (Chromium today; other browsers ignore it and break as before), headings balance and drop the
+   negative tracking tuned for Latin, and body copy gets the looser leading kana and kanji need. Elements marked
+   lang="en" inside a Japanese page are unaffected. */
+:lang(ja) {
+  word-break: auto-phrase;
+}
+
+h1:lang(ja),
+h2:lang(ja),
+h3:lang(ja) {
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+p:lang(ja),
+li:lang(ja),
+dd:lang(ja) {
+  line-height: 1.85;
+}
+
+.eyebrow:lang(ja) {
+  letter-spacing: 0.04em;
+}
+
 /* `ja-prose` is for short Japanese paragraphs on new surfaces: phrase-aware line breaks and Japanese-appropriate leading.
    Tight Latin display leading and negative tracking crowd kana and kanji, so Japanese hero text gets its own rhythm. */
 .hero-title:lang(ja),
