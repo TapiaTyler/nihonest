@@ -46,7 +46,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
   );
 
   return (
-    <section className="page-shell grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-32">
+    <section className="page-shell grid gap-12 py-14 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
       <div className="max-w-3xl" lang={locale}>
         <p className="eyebrow">{message("home.eyebrow")}</p>
         <h1 className="hero-title mt-5 text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-7xl">
