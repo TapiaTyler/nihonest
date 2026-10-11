@@ -59,7 +59,7 @@ export function HomeHero({ journeys, articles, articleTranslations = [], journey
           {!isReady ? (
             <>
               {/* Holds the button's space until saved preferences load, so a returning visitor never sees the generic button swap out. */}
-              <span className="h-12 w-60 max-w-full rounded-full bg-surface-strong" aria-hidden="true" />
+              <span className="h-12 w-60 max-w-full" aria-hidden="true" />
               <noscript>{findStartingPointLink}</noscript>
             </>
           ) : stage && stageLabel ? (

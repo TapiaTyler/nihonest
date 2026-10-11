@@ -186,8 +186,8 @@
     --info-line: var(--color-sky-800);
     --info-ink: var(--color-sky-100);
     --favorite-soft: var(--color-pink-950);
-    --favorite-line: var(--color-pink-800);
-    --favorite-line-strong: var(--color-pink-600);
+    --favorite-line: var(--color-pink-500);
+    --favorite-line-strong: var(--color-pink-400);
     --favorite-text: var(--color-pink-400);
     --favorite-focus: var(--color-pink-400);
     --eyebrow: var(--color-teal-300);
@@ -266,8 +266,8 @@
   --info-line: var(--color-sky-800);
   --info-ink: var(--color-sky-100);
   --favorite-soft: var(--color-pink-950);
-  --favorite-line: var(--color-pink-800);
-  --favorite-line-strong: var(--color-pink-600);
+  --favorite-line: var(--color-pink-500);
+  --favorite-line-strong: var(--color-pink-400);
   --favorite-text: var(--color-pink-400);
   --favorite-focus: var(--color-pink-400);
   --eyebrow: var(--color-teal-300);
