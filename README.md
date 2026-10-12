@@ -126,4 +126,4 @@ Keep changes within the agreed scope, preserve other contributors' work, and use
 
 ## License
 
-No project license has been selected yet. Official source materials and map assets retain their own attribution and reuse requirements.
+Nihonest is not offered under an open-source license. No additional permission to reuse project material is granted here. Third-party software, official source materials, map assets, and other third-party materials remain subject to their respective licenses, attribution, and reuse requirements. This statement does not claim exclusive rights over facts, public-domain material, or material that is not protected by copyright.
