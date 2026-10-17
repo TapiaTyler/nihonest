@@ -48,7 +48,7 @@ export function AnnotatedDocumentVersionContent({
     <>
       <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide">
         <span className={version.lifecycle === "current" ? "rounded-full bg-brand-softer px-3 py-1 text-brand-link" : "rounded-full bg-surface-strong px-3 py-1 text-ink-body"}>{message(documentLifecycleMessageIds[version.lifecycle])}</span>
-        <span className="rounded-full bg-caution-soft px-3 py-1 text-caution-text">{message(documentReviewMessageIds[version.reviewStatus])}</span>
+        {version.reviewStatus !== "verified" && <span className="rounded-full bg-caution-soft px-3 py-1 text-caution-text">{message(documentReviewMessageIds[version.reviewStatus])}</span>}
         {variantLabel && <span lang={content.lang} className="rounded-full bg-surface px-3 py-1 text-ink-muted">{variantLabel}</span>}
         <span lang={content.lang} className="rounded-full bg-surface px-3 py-1 text-ink-muted">{versionLabel}</span>
         {version.validFrom && <span className="rounded-full bg-surface px-3 py-1 text-ink-muted">{format("documents.validFrom", { date: date(version.validFrom) })}</span>}

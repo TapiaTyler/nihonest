@@ -42,8 +42,10 @@ const statusBadgeColors: Record<ResidenceStatus["status"], string> = {
   archived: "bg-surface-muted text-ink-body",
 };
 
+/** The editorial-status pill; reviewed statuses carry none. */
 export function LocalizedStatusBadge({ status }: Readonly<{ status: ResidenceStatus["status"] }>) {
   const { message } = useInterfaceMessages();
+  if (status === "verified") return null;
   return (
     <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusBadgeColors[status]}`}>
       {message(statusMessages[status])}

@@ -1458,8 +1458,9 @@ function articleView(article) {
   preview.className = "article-preview";
   const header = document.createElement("header");
   header.className = "preview-header";
-  header.append(el("span", metadata.status === "needs-review" ? "Editorial review" : metadata.status, "badge"),
-    el("h3", metadata.title), el("p", metadata.description, "preview-description"));
+  // Like the website, reviewed content shows no status pill.
+  if (metadata.status !== "verified") header.append(el("span", statusLabel(metadata.status), "badge"));
+  header.append(el("h3", metadata.title), el("p", metadata.description, "preview-description"));
   preview.append(header);
   let previewBody = renderArticleBlocks(article.blocks);
   preview.append(previewBody);
@@ -2247,8 +2248,7 @@ function structuredPreview(record, value, status) {
   preview.className = `article-preview structured-preview ${record.kind}-preview`;
   const header = document.createElement("header");
   header.className = "preview-header";
-  const badge = el("span", status === "needs-review" ? "Editorial review" : status, "badge");
-  header.append(badge);
+  if (status !== "verified") header.append(el("span", statusLabel(status), "badge"));
   if (record.kind === "faq") {
     header.append(el("p", "FAQ", "preview-eyebrow"), el("h3", value.question),
       el("p", value.summary, "preview-description"));
