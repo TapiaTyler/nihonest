@@ -920,7 +920,11 @@ function renderLocalGuidanceList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(selectedLocalGuidanceId === supplement.id));
-    button.append(el("strong", supplement.title), el("small", `${supplement.articleId} · ${localGuidanceTranslationLabel(supplement.translation)}`));
+    const meta = el("small", "", "row-meta");
+    const state = supplement.translation || "missing";
+    meta.append(el("span", `Japanese ${state}`, `chip translation-${state}`),
+      document.createTextNode(supplement.generator === "codex-drafted" ? "Codex draft awaiting a check" : ""));
+    button.append(el("strong", supplement.title), meta);
     button.addEventListener("click", () => selectLocalGuidance(supplement.id));
     item.append(button);
     localGuidanceList.append(item);
@@ -936,14 +940,28 @@ function localGuidanceGuideIdentity(guide) {
 function openLocalGuidanceMatrixCell(location, supplement) {
   if (localGuidanceUnsaved && !window.confirm("Discard unsaved municipality guidance changes?")) return;
   localGuidanceUnsaved = false;
+  // The chosen guide opens below; folding the matrix brings it into view.
+  document.querySelector(".local-guidance-matrix-disclosure")?.removeAttribute("open");
   localGuidanceLocation.value = location.id;
   localGuidanceLocation.dispatchEvent(new Event("change", { bubbles: true }));
   selectLocalGuidance(supplement.id);
   document.querySelector("#local-guidance-detail-heading")?.focus?.();
 }
 
+// A supplement needs attention when its Japanese is not current or a Codex draft still awaits Claude's check.
+function localGuidanceNeedsAttention(supplement) {
+  return (supplement.translation || "missing") !== "current" || supplement.generator === "codex-drafted";
+}
+
 function renderLocalGuidanceMatrix(guides) {
   if (!localGuidanceMatrix) return;
+  const issuesOnly = document.querySelector("#local-guidance-issues-only")?.checked;
+  const all = localGuidanceLocations.flatMap((location) => location.supplements);
+  const counts = { current: 0, stale: 0, missing: 0 };
+  for (const supplement of all) counts[supplement.translation || "missing"] = (counts[supplement.translation || "missing"] || 0) + 1;
+  const drafts = all.filter((supplement) => supplement.generator === "codex-drafted").length;
+  const summaryLine = document.querySelector("#local-guidance-matrix-summary");
+  if (summaryLine) summaryLine.textContent = `${all.length} ${all.length === 1 ? "supplement" : "supplements"} in ${localGuidanceLocations.length} ${localGuidanceLocations.length === 1 ? "location" : "locations"}: ${counts.current} current, ${counts.stale} stale, ${counts.missing} missing Japanese; ${drafts} Codex ${drafts === 1 ? "draft" : "drafts"} awaiting a check.`;
   const table = document.createElement("table");
   table.className = "local-guidance-matrix-table";
   const caption = document.createElement("caption");
@@ -966,7 +984,8 @@ function renderLocalGuidanceMatrix(guides) {
   thead.append(headerRow);
   table.append(thead);
   const tbody = document.createElement("tbody");
-  for (const location of localGuidanceLocations) {
+  const shownLocations = issuesOnly ? localGuidanceLocations.filter((location) => location.supplements.some(localGuidanceNeedsAttention)) : localGuidanceLocations;
+  for (const location of shownLocations) {
     const row = document.createElement("tr");
     const rowHeader = el("th", location.name);
     rowHeader.scope = "row";
@@ -979,12 +998,14 @@ function renderLocalGuidanceMatrix(guides) {
         cell.setAttribute("aria-label", "No municipality supplement");
       } else {
         const state = supplement.translation || "missing";
-        const button = el("button", `Available · ${state}`);
+        const draft = supplement.generator === "codex-drafted";
+        const button = el("button", `${({ current: "Current", stale: "Stale", missing: "Missing" })[state] || state}${draft ? " · Codex draft" : ""}`);
         button.type = "button";
-        button.className = "local-guidance-matrix-cell";
+        button.className = `local-guidance-matrix-cell matrix-${state}${draft ? " matrix-draft" : ""}`;
+        button.tabIndex = -1;
         const article = articles.find((record) => record.kind === "article" && record.id === guide.articleId);
         const guideTitle = article?.title || guide.id;
-        button.setAttribute("aria-label", `Open ${location.name} supplement for ${guideTitle}; Japanese artifact ${state}`);
+        button.setAttribute("aria-label", `Open ${location.name} supplement for ${guideTitle}; Japanese artifact ${state}${draft ? "; Codex draft awaiting Claude check" : ""}`);
         button.addEventListener("click", () => openLocalGuidanceMatrixCell(location, supplement));
         cell.append(button);
       }
@@ -993,6 +1014,32 @@ function renderLocalGuidanceMatrix(guides) {
     tbody.append(row);
   }
   table.append(tbody);
+  // One cell is in the tab order; arrow keys, Home, and End move between cells (a roving tab stop).
+  const cells = [...tbody.querySelectorAll(".local-guidance-matrix-cell")];
+  if (cells[0]) cells[0].tabIndex = 0;
+  tbody.addEventListener("keydown", (event) => {
+    const current = event.target.closest?.(".local-guidance-matrix-cell");
+    if (!current) return;
+    const cell = current.closest("td");
+    const row = cell.parentElement;
+    const rows = [...tbody.rows];
+    const column = [...row.cells].indexOf(cell);
+    const rowIndex = rows.indexOf(row);
+    const buttonAt = (r, c) => rows[r]?.cells[c]?.querySelector(".local-guidance-matrix-cell");
+    const scan = (r, c, dr, dc) => { for (let i = r + dr, j = c + dc; rows[i] && rows[i].cells[j]; i += dr, j += dc) { const found = buttonAt(i, j); if (found) return found; } return null; };
+    const target = event.key === "ArrowRight" ? scan(rowIndex, column, 0, 1) : event.key === "ArrowLeft" ? scan(rowIndex, column, 0, -1)
+      : event.key === "ArrowDown" ? scan(rowIndex, column, 1, 0) : event.key === "ArrowUp" ? scan(rowIndex, column, -1, 0)
+        : event.key === "Home" ? row.querySelector(".local-guidance-matrix-cell") : event.key === "End" ? [...row.querySelectorAll(".local-guidance-matrix-cell")].pop() : null;
+    if (!target) return;
+    event.preventDefault();
+    for (const button of cells) button.tabIndex = -1;
+    target.tabIndex = 0;
+    target.focus();
+  });
+  if (issuesOnly && !shownLocations.length) {
+    localGuidanceMatrix.replaceChildren(el("p", "Every location's guides have current Japanese and no unchecked Codex drafts.", "success"));
+    return;
+  }
   if (!localGuidanceLocations.length || !guideRefs.length) {
     localGuidanceMatrix.replaceChildren(table, el("p", "No location and guide coverage is currently registered.", "hint"));
   } else localGuidanceMatrix.replaceChildren(table);
@@ -1248,10 +1295,21 @@ function renderLocalGuidanceLocations() {
   const previous = localGuidanceLocation.value;
   const options = [el("option", "Choose a location")];
   options[0].value = "";
+  const groups = new Map();
   for (const location of localGuidanceLocations) {
-    const option = el("option", `${location.name} (${location.supplements.length} guides)`);
+    const option = el("option", `${location.name} (${location.supplements.length} guides${location.supplements.some(localGuidanceNeedsAttention) ? ", needs attention" : ""})`);
     option.value = location.id;
-    options.push(option);
+    const group = location.prefectureName || "";
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push(option);
+  }
+  // Locations are grouped by prefecture when the catalog names them; otherwise the list stays flat.
+  for (const [name, members] of groups) {
+    if (!name) { options.push(...members); continue; }
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = name;
+    optgroup.append(...members);
+    options.push(optgroup);
   }
   localGuidanceLocation.replaceChildren(...options);
   localGuidanceLocation.value = localGuidanceLocations.some((location) => location.id === previous) ? previous : "";
@@ -3239,6 +3297,7 @@ groupFilter.addEventListener("change", resetContentList);
 referenceSearch?.addEventListener("input", resetReferenceList);
 referenceKind?.addEventListener("change", resetReferenceList);
 localGuidanceSearch?.addEventListener("input", renderLocalGuidanceList);
+document.querySelector("#local-guidance-issues-only")?.addEventListener("change", () => renderLocalGuidanceMatrix(localGuidanceGuides));
 localGuidanceLocation?.addEventListener("change", () => {
   if (localGuidanceUnsaved && !window.confirm("Discard unsaved municipality guidance changes?")) {
     localGuidanceLocation.value = localGuidanceDetailRecord?.locationId || "";

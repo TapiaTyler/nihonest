@@ -18,7 +18,7 @@ A navigation bar links the pages. Each page, record, and municipality guide has 
 |---|---|
 | Overview | What needs attention in the loaded checkout: records in review or draft, stale or missing Japanese artifacts, unreadable files, the session's own changes, files dirty before the session, data modules changed outside the CMS, and recovery drafts. Each item links to the page that resolves it. |
 | Content | Articles, FAQs, residence statuses, and glossary terms, filtered by kind, category or topic, and status. Search covers titles, IDs, categories, and topics; a result that did not match on its title says why it matched. |
-| Municipality guidance | The location/guide coverage matrix and per-location guide lists; opens a guide's English editor. |
+| Municipality guidance | The location/guide coverage matrix (each cell shows its Japanese state and marks unchecked Codex drafts; a summary counts them, **Show only locations with …** hides rows that need nothing, and arrow keys move between cells with one tab stop) and per-location guide lists, with locations grouped by prefecture; opens a guide's English editor. |
 | Sources & references | Source impact (an official source's direct and derived dependents) and the inspect-only reference catalogs: official sources, guided journeys, article groups, and annotated document families. |
 | Translations | The Japanese translation handoff: stale and missing artifacts across supported kinds, with a plain-text download. |
 | Checks | Fixed, named validation commands (see [Checks and release gates](#checks-and-release-gates)). |

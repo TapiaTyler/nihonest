@@ -84,7 +84,9 @@
         <p class="page-intro">Municipality supplements by location. Edit supported English fields only; Japanese text and review state are read-only here.</p>
         <details class="local-guidance-matrix-disclosure">
           <summary>Coverage matrix by location and guide</summary>
-          <p class="hint">Each column is an article guide and each row is a registered location. Select an available cell to open its municipality supplement.</p>
+          <p class="hint">Each column is an article guide and each row is a registered location. Each cell shows its Japanese state; select one to open the supplement. Arrow keys move between cells.</p>
+          <p id="local-guidance-matrix-summary" class="matrix-summary" aria-live="polite"></p>
+          <label class="inline-check"><input type="checkbox" id="local-guidance-issues-only"> Show only locations with stale or missing Japanese, or Codex drafts awaiting a check</label>
           <div id="local-guidance-matrix" class="local-guidance-matrix-scroll" tabindex="0" aria-label="Scrollable municipality guidance coverage matrix">
             <p class="hint">Loading location and guide coverage…</p>
           </div>

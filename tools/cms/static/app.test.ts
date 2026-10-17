@@ -138,6 +138,14 @@ describe("CMS article detail", () => {
     expect(document.querySelectorAll("#local-guidance-matrix thead th")).toHaveLength(8);
     expect(document.querySelector("#local-guidance-matrix thead th:nth-child(2)")?.textContent).toBe("Sample article");
     expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(2);
+    // Locations group by prefecture when named; "issues only" keeps rows with stale, missing, or unchecked guides.
+    expect(document.querySelector("#local-guidance-matrix-summary")?.textContent).toContain("1 supplement in 2 locations: 0 current, 1 stale");
+    const issuesOnly = document.querySelector("#local-guidance-issues-only") as HTMLInputElement;
+    issuesOnly.click();
+    expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(1);
+    expect(document.querySelector("#local-guidance-matrix .local-guidance-matrix-cell")?.textContent).toBe("Stale · Codex draft");
+    issuesOnly.click();
+    expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(2);
     (document.querySelector(".local-guidance-matrix-disclosure > summary") as HTMLElement).click();
     const matrixCell = document.querySelector("#local-guidance-matrix .local-guidance-matrix-cell") as HTMLButtonElement;
     expect(matrixCell.getAttribute("aria-label")).toContain("Sample article; Japanese artifact stale");
