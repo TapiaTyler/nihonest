@@ -334,6 +334,18 @@ describe("CMS article detail", () => {
     expect(document.querySelector("#tab-review")?.textContent).toBe("Review & approve");
     expect(document.querySelector(".record-header h3")?.textContent).toBe("Sample article");
     expect(document.querySelector(".record-header .record-path")?.textContent).toBe("content/articles/sample-article.mdx");
+    // The filtered list is a queue: the header shows the position and steps to the next record.
+    expect(document.querySelector(".record-header .queue-position")?.textContent).toBe("1 of 2 in this list");
+    // Approval stays disabled until the confirmation is ticked.
+    const approveButton = document.querySelector("#panel-review .review-form button[type='submit']") as HTMLButtonElement;
+    const approveCheck = document.querySelector("#panel-review .approval-check input") as HTMLInputElement;
+    expect(approveButton.disabled).toBe(true);
+    approveCheck.checked = true;
+    approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(approveButton.disabled).toBe(false);
+    approveCheck.checked = false;
+    approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(document.querySelector("#panel-review .review-context")?.textContent).toContain("What you are approving");
     (document.querySelector("#tab-article") as HTMLButtonElement).click();
     const textarea = document.querySelector("#article-body-editor") as HTMLTextAreaElement;
     expect(textarea.hidden).toBe(true);
@@ -461,7 +473,10 @@ describe("CMS article detail", () => {
     await waitFor(() => expect(document.querySelector(".article-preview h2")?.textContent).toBe("Changed heading"));
     expect(document.querySelector("#cms-article-preview [role='status']")?.textContent).toContain("unsaved article body");
     expect((document.querySelector(".edit-actions button:nth-child(2)") as HTMLButtonElement).disabled).toBe(false);
-    (document.querySelector(".edit-actions button:nth-child(2)") as HTMLButtonElement).click();
+    expect(document.querySelector("#panel-article .save-state")?.textContent).toContain("Unsaved edits");
+    expect(document.querySelector(".record-header .unsaved-badge")).not.toBeNull();
+    // Ctrl+S saves the open editor.
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "s", ctrlKey: true, bubbles: true, cancelable: true }));
     await waitFor(() => expect(mutations).toHaveLength(1));
     expect(mutations[0].method).toBe("PUT");
     expect(JSON.parse(mutations[0].body).expectedRevision).toBe("revision");

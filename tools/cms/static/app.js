@@ -7,8 +7,11 @@ const search = document.querySelector("#search");
 const statusFilter = document.querySelector("#status-filter");
 const kindFilter = document.querySelector("#kind-filter");
 const groupFilter = document.querySelector("#group-filter");
+const sortOrder = document.querySelector("#sort-order");
 const websiteOrigin = "http://127.0.0.1:3000";
 let articles = [];
+// The content list as currently filtered and sorted; the review queue steps through it.
+let currentMatches = [];
 let selectedId = null;
 let selectedKind = "article";
 let sessionToken = null;
@@ -194,6 +197,7 @@ function recoveryPanel(record, loadDraft) {
   let authorized = false;
   let pendingWrite = false;
   let currentContent = () => null;
+  let savedListener = () => {};
   const revision = recordRevision(record);
   const sourceRevision = record.kind === "article" ? undefined : record.source.sourceRevision;
   const canLoad = record.kind === "article"
@@ -208,7 +212,7 @@ function recoveryPanel(record, loadDraft) {
     // With no draft the panel is a one-line note; a saved draft expands it with the comparison and actions.
     panel.classList.toggle("empty", !snapshot);
     if (!snapshot) {
-      panel.replaceChildren(el("p", "No saved recovery draft for this record. Unsaved changes are saved here automatically.", "hint"));
+      panel.replaceChildren(el("p", "No saved recovery draft for this record. While you edit, unsaved edits are kept as a local recovery draft until you save.", "hint"));
       return;
     }
     panel.replaceChildren(el("h3", "Local recovery draft"));
@@ -277,6 +281,7 @@ function recoveryPanel(record, loadDraft) {
         const saved = await mutate(route, "PUT", { ...payload, ...(snapshot ? { previousDraftRevision: snapshot.draftRevision } : {}) });
         snapshot = saved;
         persistedVersion = ownVersion;
+        savedListener(saved);
         if (!cleared) {
           render();
           refreshRecoveryList();
@@ -345,6 +350,7 @@ function recoveryPanel(record, loadDraft) {
     version: () => version,
     clearAfterSave,
     setCurrentContent: (getContent) => { currentContent = getContent; },
+    onSaved: (listener) => { savedListener = listener; },
     dispose: () => { clearTimeout(timer); cleared = true; version += 1; },
   };
 }
@@ -423,7 +429,7 @@ function attentionItem(text, page, action) {
   link.href = `#/${page}`;
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    action?.();
+    if (action?.() === "handled") return;
     setRoute(page);
     showPage(page, { focus: true });
   });
@@ -438,10 +444,18 @@ function renderOverview() {
   const items = [];
   const needsReview = articles.filter((item) => item.status === "needs-review").length;
   const drafts = articles.filter((item) => item.status === "draft").length;
-  if (needsReview) items.push(attentionItem(`${needsReview} records are in editorial review`, "content", () => {
-    kindFilter.value = ""; statusFilter.value = "needs-review"; groupFilter.value = ""; renderGroupFilter(); resetContentList();
-  }));
-  if (drafts) items.push(attentionItem(`${drafts} records are drafts`, "content", () => {
+  if (needsReview) {
+    items.push(attentionItem(`Start reviewing: ${needsReview} ${needsReview === 1 ? "record is" : "records are"} in editorial review, oldest review first`, "content", () => {
+      kindFilter.value = ""; statusFilter.value = "needs-review"; groupFilter.value = ""; search.value = "";
+      if (sortOrder) sortOrder.value = "oldest-review";
+      renderGroupFilter(); resetContentList();
+      const first = currentMatches[0];
+      if (!first) return undefined;
+      selectRecord(first.kind, first.id);
+      return "handled";
+    }));
+  }
+  if (drafts) items.push(attentionItem(`${drafts} ${drafts === 1 ? "record is a draft" : "records are drafts"}`, "content", () => {
     kindFilter.value = ""; statusFilter.value = "draft"; groupFilter.value = ""; renderGroupFilter(); resetContentList();
   }));
   const stale = lastHandoff ? lastHandoff.items.filter((item) => item.state === "stale").length : 0;
@@ -460,7 +474,7 @@ function renderOverview() {
     if (git.identity.dirtyAtStart.length) items.push(attentionItem(`${git.identity.dirtyAtStart.length} files already had uncommitted changes; the CMS will not write them`, "changes"));
     if (git.otherChanges.length) items.push(attentionItem(`${git.otherChanges.length} files changed outside the CMS during this session`, "changes"));
   }
-  if (recoveryDraftCount) items.push(attentionItem(`${recoveryDraftCount} unsaved recovery drafts`, "changes"));
+  if (recoveryDraftCount) items.push(attentionItem(`${recoveryDraftCount} unsaved recovery ${recoveryDraftCount === 1 ? "draft" : "drafts"}: open one to load or discard it`, "changes"));
   attention.replaceChildren(...(items.length ? items : [el("li", "Nothing needs attention in the loaded catalogs.")]));
   setNavCount("content", needsReview, "in editorial review");
   setNavCount("translations", stale + missing, "stale or missing");
@@ -495,6 +509,8 @@ function renderList() {
     (!selectedGroup || (article.groups || []).some((group) => `${article.kind}:${group}` === selectedGroup)) &&
     (!selectedStatus || article.status === selectedStatus) &&
     (!query || matchReason(article, query) !== null));
+  if (listComparators[sortOrder?.value]) matches.sort(listComparators[sortOrder.value]);
+  currentMatches = matches;
   list.replaceChildren();
   resultCount.textContent = `${matches.length} of ${articles.length} records`;
   const selectedIndex = matches.findIndex((article) => article.id === selectedId && article.kind === selectedKind);
@@ -504,7 +520,8 @@ function renderList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(article.id === selectedId && article.kind === selectedKind));
-    button.append(el("strong", article.title), el("small", `${article.kind.replaceAll("-", " ")} · ${article.status}${article.translation ? ` · Japanese: ${article.translation}` : ""}`));
+    button.append(el("strong", article.title), el("small", [kindLabel(article.kind), statusLabel(article.status),
+      article.translation ? `Japanese ${article.translation}` : "", article.lastReviewedAt ? `reviewed ${formatDate(article.lastReviewedAt)}` : ""].filter(Boolean).join(" · ")));
     const reason = query ? matchReason(article, query) : "";
     if (reason) button.append(el("small", reason, "match-reason"));
     button.addEventListener("click", () => selectRecord(article.kind, article.id));
@@ -512,6 +529,25 @@ function renderList() {
     list.append(item);
   }
   if (matches.length > shown.length) list.append(showMoreItem(matches.length - shown.length, () => { contentListLimit += listPageSize; renderList(); }));
+}
+
+const importanceRank = { critical: 0, important: 1, recommended: 2, informational: 3 };
+const byTitle = (a, b) => a.title.localeCompare(b.title, "en");
+// Records without a date sort first in date orders: a record never reviewed is the oldest review of all.
+const byDate = (key) => (a, b) => (a[key] || "").localeCompare(b[key] || "") || byTitle(a, b);
+const listComparators = {
+  title: byTitle,
+  "oldest-review": byDate("lastReviewedAt"),
+  "oldest-update": byDate("updatedAt"),
+  importance: (a, b) => (importanceRank[a.importance] ?? 4) - (importanceRank[b.importance] ?? 4) || byTitle(a, b),
+};
+
+// Dates in the data are ISO days (2026-10-17); the interface shows them as "17 Oct 2026".
+function formatDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+  if (!match) return value ? formatTime(value) : "not recorded";
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 }
 
 function renderGroupFilter() {
@@ -1076,7 +1112,8 @@ function renderLocalGuidanceDetail(record) {
   const saveRow = document.createElement("div");
   saveRow.className = "local-guidance-save-row";
   const save = el("button", "Save English changes");
-  save.type = "submit"; save.disabled = true;
+  save.type = "submit"; save.disabled = true; save.className = "primary";
+  save.setAttribute("aria-keyshortcuts", "Control+S");
   const saveStatus = el("span", "No unsaved English changes.");
   saveStatus.setAttribute("role", "status");
   saveRow.append(save, saveStatus);
@@ -1732,7 +1769,7 @@ function articleView(article) {
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     date.value = today > metadata.updatedAt ? today : metadata.updatedAt;
     date.min = metadata.updatedAt;
-    const message = el("p", "Changes are local to this browser until Save.", "hint");
+    const message = el("p", "Unsaved edits are kept as a local recovery draft. Save writes the article file.", "hint");
     message.setAttribute("role", "status");
     const diff = document.createElement("details");
     const diffBody = el("pre", "No body changes.");
@@ -1742,6 +1779,9 @@ function articleView(article) {
     generated.append(el("summary", "Generated MDX for save"), generatedBody);
     const save = el("button", "Save article body");
     save.type = "button";
+    save.className = "primary";
+    save.setAttribute("aria-keyshortcuts", "Control+S");
+    save.title = "Save article body (Ctrl+S)";
     save.disabled = true;
     const previewToggle = el("button", "Preview article");
     previewToggle.type = "button";
@@ -1752,7 +1792,8 @@ function articleView(article) {
     const actions = document.createElement("div");
     actions.className = "edit-actions";
     actions.append(previewToggle, save, cancel);
-    editor.append(modeBar, toolbar, linkForm, formattedHost, label, textarea, dateLabel, date, diff, generated, actions, message);
+    const bar = actionBar(actions, message);
+    editor.append(modeBar, toolbar, linkForm, formattedHost, label, textarea, dateLabel, date, diff, generated, bar.bar);
     wrapper.append(editor);
     function setEditorMode(next) {
       if (next === "source" && invalidFormattedBlock) {
@@ -1832,6 +1873,8 @@ function articleView(article) {
     function updateState() {
       const changed = textarea.value !== article.body;
       hasUnsavedChanges = changed;
+      markRecordUnsaved(changed);
+      bar.setState(changed ? "dirty" : "clean", changed ? "Unsaved edits" : "No unsaved edits");
       if (changed) recovery?.schedule();
       save.disabled = !changed || !validPreview || invalidFormattedBlock;
       diffBody.textContent = `${metadata.updatedAt === date.value ? "Update date unchanged." : `Update date: ${metadata.updatedAt} → ${date.value}`}\n\n${changeSummary(article.body, textarea.value)}`;
@@ -1845,6 +1888,7 @@ function articleView(article) {
       textarea.dispatchEvent(new Event("input", { bubbles: true }));
     });
     recovery.setCurrentContent(() => ({ body: textarea.value, updatedAt: date.value }));
+    recovery.onSaved((snapshot) => { if (hasUnsavedChanges) bar.setState("dirty", ["Unsaved edits", draftTime(snapshot) && `recovery draft kept ${draftTime(snapshot)}`].filter(Boolean).join(" · ")); });
     cancelEditorPreview = () => { clearTimeout(previewTimer); previewVersion += 1; recovery.dispose(); };
     editor.prepend(recovery.element);
     previewToggle.addEventListener("click", () => {
@@ -1887,12 +1931,14 @@ function articleView(article) {
     });
     date.addEventListener("change", updateState);
     cancel.addEventListener("click", () => {
+      if (hasUnsavedChanges && !window.confirm("Discard your unsaved edits to this article?")) return;
       clearTimeout(previewTimer);
       hasUnsavedChanges = false;
       selectArticle(metadata.id);
     });
     save.addEventListener("click", async () => {
       save.disabled = true;
+      bar.setState("saving", "Saving…");
       message.textContent = "Saving article body…";
       try {
         await recovery.flush();
@@ -1907,6 +1953,7 @@ function articleView(article) {
         message.textContent = error.message;
         message.className = "error";
         updateState();
+        bar.setState("error", "Not saved");
       }
     });
   } else {
@@ -2039,60 +2086,22 @@ function structuredEditorialControls(record) {
   section.append(statusLabel, status, note, statusButton, message);
   if (record.status !== "needs-review") return section;
 
-  const form = document.createElement("form");
-  form.className = "review-form";
-  form.append(el("h3", "Mark reviewed"),
-    el("p", "Review this complete record, linked content, and official sources. Record the validation you performed and explicitly approve the exact revision shown below. The CMS writes the verified state and an immutable approval record.", "hint"),
-    el("p", `Editorial revision to review: ${record.revision}`, "revision-label"));
-  function fieldInput(title, id, multiline = false) {
-    const help = id.includes("date") ? helpText.reviewDate : id.includes("change") ? helpText.changeNote
-      : id.includes("validation") ? helpText.validation : id.includes("source") ? helpText.sourceReviews : helpText.approvalNote;
-    const label = labeledField(title, id, help);
-    const input = document.createElement(multiline ? "textarea" : "input");
-    input.id = id;
-    input.required = true;
-    if (multiline) input.rows = 3;
-    form.append(label, input);
-    return input;
-  }
-  const date = fieldInput("Review date", "structured-review-date");
-  date.type = "date";
-  if (record.updatedAt) date.min = record.updatedAt;
-  const now = new Date();
-  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  date.value = date.max;
-  const change = fieldInput("What did you review or change?", "structured-change-note", true);
-  const validation = fieldInput("Validation performed (one check per line)", "structured-validation", true);
-  const sourceReviews = fieldInput("Resolved source review IDs (optional, one per line)", "structured-source-reviews", true);
-  sourceReviews.required = false;
-  const approval = fieldInput("Approval note", "structured-approval-note", true);
-  const { row: checkLabel, check } = approvalField("I reviewed and approve this exact record revision.");
-  const approve = el("button", "Mark reviewed and record approval");
-  approve.type = "submit";
-  const result = el("p", "", "hint");
-  result.setAttribute("role", "status");
-  form.append(checkLabel, approve, result);
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (hasUnsavedChanges) { result.textContent = "Save or discard content edits first."; result.className = "error"; return; }
-    approve.disabled = true;
-    result.textContent = "Recording the approved revision…";
-    try {
+  const { form, date } = approvalForm({
+    intro: "Read the saved record, its sources, and the checks beside this form, then approve this exact revision. The CMS writes the verified state and an immutable approval record.",
+    revision: record.revision,
+    ids: { date: "structured-review-date", change: "structured-change-note", validation: "structured-validation", sources: "structured-source-reviews", approval: "structured-approval-note" },
+    kindName: "record",
+    onSubmit: async (payload) => {
+      const next = nextInQueue();
       const saved = await mutate(`/api/records/${record.kind}/${encodeURIComponent(record.id)}/review`, "POST", {
-        expectedRevision: record.revision,
-        expectedSourceRevision: record.source.sourceRevision,
-        reviewedAt: date.value,
-        changeNote: change.value,
-        validationPerformed: validation.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        approvalNote: approval.value,
-        explicitHumanApproval: check.checked,
+        expectedRevision: record.revision, expectedSourceRevision: record.source.sourceRevision, ...payload,
       });
       await refresh();
       document.querySelector("#record-tab-review")?.click();
-      document.querySelector("#structured-editorial")?.append(el("p", `Approval recorded in ${saved.approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
-    } catch (error) { result.textContent = error.message; result.className = "error"; approve.disabled = false; }
+      approvalRecorded(document.querySelector("#structured-editorial"), saved.approvalRecord, next);
+    },
   });
+  if (record.updatedAt) date.min = record.updatedAt;
   section.append(form);
   return section;
 }
@@ -2194,6 +2203,9 @@ function structuredContentEditor(record) {
   actions.className = "edit-actions";
   const save = el("button", "Save content");
   save.type = "button";
+  save.className = "primary";
+  save.setAttribute("aria-keyshortcuts", "Control+S");
+  save.title = "Save content (Ctrl+S)";
   save.disabled = true;
   const discard = el("button", "Discard edits");
   discard.type = "button";
@@ -2213,10 +2225,11 @@ function structuredContentEditor(record) {
   websiteLink.target = "_blank";
   websiteLink.rel = "noopener noreferrer";
   previewPanel.append(previewStatus, previewNote, websiteLink, structuredPreview(record, record.value, record.status));
-  const message = el("p", "Changes are local to this browser until Save.", "hint");
+  const message = el("p", "Unsaved edits are kept as a local recovery draft. Save writes the source file.", "hint");
   message.setAttribute("role", "status");
   actions.append(save, discard, previewToggle);
-  section.append(diff, actions, message, previewPanel);
+  const bar = actionBar(actions, message);
+  section.append(diff, bar.bar, previewPanel);
   function changes() {
     const changed = {};
     for (const [key, { control, initial }] of fields) {
@@ -2229,6 +2242,8 @@ function structuredContentEditor(record) {
   function updateState() {
     const changed = changes();
     hasUnsavedChanges = Object.keys(changed).length > 0;
+    markRecordUnsaved(hasUnsavedChanges);
+    bar.setState(hasUnsavedChanges ? "dirty" : "clean", hasUnsavedChanges ? "Unsaved edits" : "No unsaved edits");
     if (hasUnsavedChanges) recovery?.schedule();
     save.disabled = !hasUnsavedChanges;
     diffBody.textContent = hasUnsavedChanges ? Object.entries(changed).map(([key, value]) =>
@@ -2254,6 +2269,7 @@ function structuredContentEditor(record) {
     updatedAt?.dispatchEvent(new Event("change", { bubbles: true }));
   });
   recovery.setCurrentContent(() => ({ fields: changes(), ...(updatedAt ? { updatedAt: updatedAt.value } : {}) }));
+  recovery.onSaved((snapshot) => { if (hasUnsavedChanges) bar.setState("dirty", ["Unsaved edits", draftTime(snapshot) && `recovery draft kept ${draftTime(snapshot)}`].filter(Boolean).join(" · ")); });
   cancelEditorPreview = () => recovery.dispose();
   section.prepend(recovery.element);
   previewToggle.addEventListener("click", () => {
@@ -2264,11 +2280,16 @@ function structuredContentEditor(record) {
   });
   for (const { control } of fields.values()) control.addEventListener("input", updateState);
   updatedAt?.addEventListener("change", updateState);
-  discard.addEventListener("click", () => { hasUnsavedChanges = false; selectRecord(record.kind, record.id); });
+  discard.addEventListener("click", () => {
+    if (hasUnsavedChanges && !window.confirm("Discard your unsaved edits to this record?")) return;
+    hasUnsavedChanges = false;
+    selectRecord(record.kind, record.id);
+  });
   save.addEventListener("click", async () => {
     const changed = changes();
     if (!Object.keys(changed).length) return;
     save.disabled = true;
+    bar.setState("saving", "Saving…");
     message.textContent = "Saving content…";
     try {
       await recovery.flush();
@@ -2282,7 +2303,7 @@ function structuredContentEditor(record) {
       hasUnsavedChanges = false;
       await recovery.clearAfterSave(savedVersion);
       await refresh();
-    } catch (error) { message.textContent = error.message; message.className = "error"; updateState(); }
+    } catch (error) { message.textContent = error.message; message.className = "error"; updateState(); bar.setState("error", "Not saved"); }
   });
   return section;
 }
@@ -2290,8 +2311,7 @@ function structuredContentEditor(record) {
 function renderStructuredRecord(record) {
   const wrapper = document.createElement("div");
   wrapper.className = "structured-record record-workspace";
-  const kindName = record.kind.replaceAll("-", " ");
-  const header = recordHeader({ kind: kindName[0].toUpperCase() + kindName.slice(1), title: record.title, status: record.status, translation: record.translation, path: record.source.path });
+  const header = recordHeader({ kind: kindLabel(record.kind), title: record.title, status: record.status, translation: record.translation, path: record.source.path, queue: { kind: record.kind, id: record.id } });
   if (record.kind === "faq" || record.kind === "glossary-term") {
     const duplicate = el("button", "Duplicate as new");
     duplicate.type = "button";
@@ -2340,7 +2360,11 @@ function renderStructuredRecord(record) {
   const editorial = structuredEditorialControls(record);
   editorial.id = "structured-editorial";
   const review = document.createElement("div");
-  review.append(el("p", "Change the editorial status, or approve this exact revision after reviewing the content, sources, and checks.", "hint"), editorial);
+  review.className = "review-layout";
+  const controls = document.createElement("div");
+  controls.className = "review-controls";
+  controls.append(editorial);
+  review.append(reviewContext({ content: structuredPreview(record, record.value, record.status), sources: record.sources }), controls);
   const fileDetails = document.createElement("div");
   fileDetails.append(file, full);
   wrapper.append(renderDetailTabs([
@@ -2389,61 +2413,21 @@ function editorialControls(article) {
   section.append(statusLabel, status, statusNote, statusButton, statusMessage);
 
   if (metadata.status !== "needs-review") return section;
-  const review = document.createElement("form");
-  review.className = "review-form";
-    review.append(el("h3", "Mark reviewed"),
-    el("p", "Review the complete article, metadata, sources, and relationships. Run the relevant validation and inspect the rendered article before approving this exact revision. This action writes the verified status, review date, and an immutable approval record to the local checkout.", "hint"),
-    el("p", `Editorial revision to review: ${record.editorialRevision || record.revision}`, "revision-label"));
-  function inputField(labelText, id, multiline = false) {
-    const help = id.includes("date") ? helpText.reviewDate : id.includes("change") ? helpText.changeNote
-      : id.includes("validation") ? helpText.validation : id.includes("source") ? helpText.sourceReviews : helpText.approvalNote;
-    const label = labeledField(labelText, id, help);
-    const input = document.createElement(multiline ? "textarea" : "input");
-    input.id = id;
-    input.required = true;
-    if (multiline) input.rows = 3;
-    review.append(label, input);
-    return input;
-  }
-  const date = inputField("Review date", "review-date");
-  date.type = "date";
-  date.min = metadata.updatedAt;
-  const now = new Date();
-  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  date.value = date.max;
-  const change = inputField("What did you review or change?", "review-change-note", true);
-  const validation = inputField("Validation performed (one check per line)", "review-validation", true);
-  const sourceReviews = inputField("Resolved source review IDs (optional, one per line)", "review-source-ids", true);
-  sourceReviews.required = false;
-  const approval = inputField("Approval note", "review-approval-note", true);
-  const { row: checkLabel, check } = approvalField("I reviewed and approve this exact article revision.");
-  const reviewButton = el("button", "Mark reviewed and record approval");
-  reviewButton.type = "submit";
-  const message = el("p", "", "hint");
-  message.setAttribute("role", "status");
-  review.append(checkLabel, reviewButton, message);
-  review.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (hasUnsavedChanges) { message.textContent = "Save or discard article body edits first."; message.className = "error"; return; }
-    reviewButton.disabled = true;
-    message.textContent = "Recording the approved revision…";
-    try {
-      const result = await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/review`, "POST", {
-        expectedRevision: record.revision,
-        reviewedAt: date.value,
-        changeNote: change.value,
-        validationPerformed: validation.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        approvalNote: approval.value,
-        explicitHumanApproval: check.checked,
-      });
+  const { form: review, date } = approvalForm({
+    intro: "Read the saved article, its sources, and the checks beside this form, then approve this exact revision. This writes the verified status, review date, and an immutable approval record to the local checkout.",
+    revision: record.editorialRevision || record.revision,
+    ids: { date: "review-date", change: "review-change-note", validation: "review-validation", sources: "review-source-ids", approval: "review-approval-note" },
+    kindName: "article",
+    onSubmit: async (payload) => {
+      const next = nextInQueue();
+      const result = await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/review`, "POST", { expectedRevision: record.revision, ...payload });
       noteGeneratedMetadata(result);
       await refresh();
       document.querySelector("#tab-review")?.click();
-      const refreshed = document.querySelector("#panel-review .editorial-controls");
-      refreshed?.append(el("p", `Approval recorded in ${result.approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
-    } catch (error) { message.textContent = error.message; message.className = "error"; reviewButton.disabled = false; }
+      approvalRecorded(document.querySelector("#panel-review .editorial-controls"), result.approvalRecord, next);
+    },
   });
+  date.min = metadata.updatedAt;
   section.append(review);
   return section;
 }
@@ -2462,6 +2446,8 @@ function renderDetailTabs(tabs, label, prefix = "") {
       button.tabIndex = active ? 0 : -1;
       panels[itemIndex].hidden = !active;
     });
+    // Panels refresh state that may have changed while hidden, such as unsaved edits made in another tab.
+    for (const form of panels[index].querySelectorAll("form")) form.dispatchEvent(new Event("panelshow"));
     if (focus) buttons[index].focus();
   }
   tabs.forEach(([key, title, content], index) => {
@@ -2501,8 +2487,259 @@ function statusLabel(status) {
   return ({ draft: "Draft", "needs-review": "Editorial review", verified: "Reviewed", archived: "Archived" })[status] || status;
 }
 
+function kindLabel(kind) {
+  return ({ article: "Article", faq: "FAQ", "residence-status": "Residence status", "glossary-term": "Glossary term" })[kind] || kind.replaceAll("-", " ");
+}
+
+// Revisions are 64-character hashes; the first 8 identify one in conversation, and the full value stays copyable.
+function shortRevision(revision) {
+  return revision && revision.length > 12 ? `${revision.slice(0, 8)}…` : revision || "unavailable";
+}
+
+// ---------- Review queue ----------
+// The filtered and sorted list doubles as a queue: Previous and Next (or K and J) step through it from a record.
+
+function queueNav(kind, id) {
+  const index = currentMatches.findIndex((item) => item.kind === kind && item.id === id);
+  if (index < 0 || currentMatches.length < 2) return null;
+  const nav = document.createElement("nav");
+  nav.className = "queue-nav";
+  nav.setAttribute("aria-label", "Records in the current list");
+  const previous = el("button", "Previous");
+  previous.type = "button";
+  previous.disabled = index === 0;
+  previous.setAttribute("aria-keyshortcuts", "K");
+  previous.title = "Previous record (K)";
+  previous.addEventListener("click", () => stepQueue(-1));
+  const next = el("button", "Next");
+  next.type = "button";
+  next.disabled = index === currentMatches.length - 1;
+  next.setAttribute("aria-keyshortcuts", "J");
+  next.title = "Next record (J)";
+  next.addEventListener("click", () => stepQueue(1));
+  nav.append(previous, el("span", `${index + 1} of ${currentMatches.length} in this list`, "queue-position"), next);
+  return nav;
+}
+
+function stepQueue(direction) {
+  const index = currentMatches.findIndex((item) => item.kind === selectedKind && item.id === selectedId);
+  const target = currentMatches[index + direction];
+  if (index >= 0 && target) selectRecord(target.kind, target.id);
+}
+
+// Shown in the record header while the editor holds edits that are not written to the file yet.
+function markRecordUnsaved(unsaved) {
+  const badges = detail.querySelector(".record-header .record-badges");
+  if (!badges) return;
+  let badge = badges.querySelector(".unsaved-badge");
+  if (unsaved && !badge) badges.append(el("span", "Unsaved edits", "badge unsaved-badge"));
+  else if (!unsaved) badge?.remove();
+}
+
+// The bar under every editor: what has happened to the edits, then the actions. It stays in view while the
+// editor scrolls, so the save state and Save are never off screen.
+function actionBar(actions, message) {
+  const bar = document.createElement("div");
+  bar.className = "action-bar";
+  const state = el("p", "No unsaved edits", "save-state");
+  state.dataset.state = "clean";
+  bar.append(state, actions, message);
+  return {
+    bar,
+    setState(kind, text) {
+      state.dataset.state = kind;
+      state.textContent = text;
+    },
+  };
+}
+
+function draftTime(snapshot) {
+  const date = new Date(snapshot?.capturedAt || "");
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
+// Checks from this CMS session that passed, newest first and one per check, for the approval form to offer.
+function passedChecksThisSession() {
+  if (!checkReport) return [];
+  const seen = new Set();
+  const passed = [];
+  for (const run of [...checkReport.history].reverse()) {
+    if (run.status !== "passed" || seen.has(run.id)) continue;
+    seen.add(run.id);
+    const definition = checkReport.definitions.find((item) => item.id === run.id);
+    passed.push({ id: run.id, label: definition?.label || run.id, command: definition?.command || run.id, at: run.startedAt });
+  }
+  return passed;
+}
+
+// The reading half of the review screen: the saved content, its sources, and the checks run this session.
+function reviewContext({ heading, content, sources }) {
+  const context = document.createElement("section");
+  context.className = "review-context";
+  context.setAttribute("aria-label", "What you are approving");
+  context.append(el("h3", "What you are approving"),
+    el("p", "The saved version below is the revision the approval covers. Unsaved edits are not included.", "hint"));
+  if (heading) context.append(heading);
+  context.append(content);
+  const sourceSection = document.createElement("section");
+  sourceSection.className = "review-sources";
+  sourceSection.append(el("h3", "Official sources"));
+  if (sources.length) {
+    const sourceItems = document.createElement("ul");
+    for (const source of sources) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = source.url || "#";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = source.title;
+      item.append(link, el("small", [source.organization, source.lastCheckedAt ? `link checked ${formatDate(source.lastCheckedAt)}` : "link check not recorded"].filter(Boolean).join(" · ")));
+      sourceItems.append(item);
+    }
+    sourceSection.append(sourceItems);
+  } else sourceSection.append(el("p", "No official sources declared.", "hint"));
+  const checks = document.createElement("section");
+  checks.className = "review-checks";
+  checks.append(el("h3", "Checks this session"));
+  const runs = checkReport ? [...checkReport.history].reverse() : [];
+  if (runs.length) {
+    const runItems = document.createElement("ul");
+    for (const run of runs.slice(0, 8)) {
+      const name = checkReport.definitions.find((item) => item.id === run.id)?.label || run.id;
+      runItems.append(el("li", `${name}: ${checkStateLabel(run.status)} · ${formatTime(run.startedAt)}`));
+    }
+    checks.append(runItems);
+  } else checks.append(el("p", "No checks have run in this CMS session.", "hint"));
+  context.append(sourceSection, checks);
+  return context;
+}
+
+function checkStateLabel(status) {
+  return ({ passed: "passed", warning: "review findings", failed: "failed", canceled: "canceled", running: "running" })[status] || status;
+}
+
+// One approval form for every kind. The button stays disabled until the confirmation is ticked and the editor
+// holds no unsaved edits; checks that passed this session can be selected instead of retyped.
+function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
+  const form = document.createElement("form");
+  form.className = "review-form";
+  const revisionLine = el("p", `Revision ${shortRevision(revision)}`, "revision-label");
+  revisionLine.title = revision || "";
+  const copy = el("button", "Copy full revision");
+  copy.type = "button";
+  copy.className = "quiet";
+  copy.addEventListener("click", async () => {
+    try {
+      await window.navigator.clipboard.writeText(revision);
+      copy.textContent = "Copied";
+    } catch { copy.textContent = "Copy failed; select the revision in Details"; }
+  });
+  revisionLine.append(" ", copy);
+  const unsavedNotice = el("p", "This record has unsaved edits in Edit. Save or discard them before approving; the approval covers the saved revision only.", "check-warning unsaved-notice");
+  form.append(el("h3", "Mark reviewed"), el("p", intro, "hint"), revisionLine, unsavedNotice);
+  function fieldInput(title, id, help, multiline = false) {
+    const label = labeledField(title, id, help);
+    const input = document.createElement(multiline ? "textarea" : "input");
+    input.id = id;
+    input.required = true;
+    if (multiline) input.rows = 3;
+    form.append(label, input);
+    return input;
+  }
+  const date = fieldInput("Review date", ids.date, helpText.reviewDate);
+  date.type = "date";
+  const now = new Date();
+  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  date.value = date.max;
+  const change = fieldInput("What did you review or change?", ids.change, helpText.changeNote, true);
+  const passed = passedChecksThisSession();
+  const chips = [];
+  if (passed.length) {
+    const group = document.createElement("fieldset");
+    group.className = "check-chips";
+    group.append(el("legend", "Checks that passed in this session"));
+    for (const run of passed) {
+      const label = document.createElement("label");
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = `${run.label} passed (${run.command}) at ${formatTime(run.at)}`;
+      label.append(box, ` ${run.label} · ${formatTime(run.at)}`);
+      group.append(label);
+      chips.push(box);
+    }
+    form.append(group);
+  }
+  const validation = fieldInput(passed.length ? "Other validation performed (one per line)" : "Validation performed (one check per line)",
+    ids.validation, helpText.validation, true);
+  if (!passed.length) {
+    const hint = el("p", "No checks have passed in this CMS session. List the checks you ran, or run them on the Checks page first.", "hint");
+    form.append(hint);
+  }
+  const syncValidationRequired = () => { validation.required = !chips.some((box) => box.checked); };
+  for (const box of chips) box.addEventListener("change", syncValidationRequired);
+  const sourceReviews = fieldInput("Resolved source review IDs (optional, one per line)", ids.sources, helpText.sourceReviews, true);
+  sourceReviews.required = false;
+  const approval = fieldInput("Approval note", ids.approval, helpText.approvalNote, true);
+  const { row: checkLabel, check } = approvalField(`I reviewed and approve this exact ${kindName} revision.`);
+  const button = el("button", "Mark reviewed and record approval");
+  button.type = "submit";
+  button.className = "primary";
+  const message = el("p", "", "hint");
+  message.setAttribute("role", "status");
+  form.append(checkLabel, button, message);
+  function sync() {
+    unsavedNotice.hidden = !hasUnsavedChanges;
+    button.disabled = !check.checked || hasUnsavedChanges;
+  }
+  check.addEventListener("change", sync);
+  form.addEventListener("panelshow", sync);
+  sync();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (hasUnsavedChanges) { message.textContent = "Save or discard the edits in Edit first."; message.className = "error"; return; }
+    if (!check.checked) { message.textContent = "Tick the confirmation to approve this revision."; message.className = "error"; return; }
+    button.disabled = true;
+    message.textContent = "Recording the approved revision…";
+    message.className = "hint";
+    try {
+      await onSubmit({
+        reviewedAt: date.value,
+        changeNote: change.value,
+        validationPerformed: [...chips.filter((box) => box.checked).map((box) => box.value),
+          ...validation.value.split("\n").map((item) => item.trim()).filter(Boolean)],
+        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
+        approvalNote: approval.value,
+        explicitHumanApproval: check.checked,
+      });
+    } catch (error) { message.textContent = error.message; message.className = "error"; sync(); }
+  });
+  return { form, date };
+}
+
+// The record after the current one in the list, captured before an approval refreshes the list (an approved
+// record can leave a filtered list, which would lose its position).
+function nextInQueue() {
+  const index = currentMatches.findIndex((item) => item.kind === selectedKind && item.id === selectedId);
+  return index >= 0 ? currentMatches[index + 1] || null : null;
+}
+
+// After an approval, the confirmation names the file and offers the next record from the list.
+function approvalRecorded(container, approvalRecord, next) {
+  const done = document.createElement("div");
+  done.className = "approval-done";
+  done.append(el("p", `Approval recorded in ${approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
+  if (next) {
+    const open = el("button", `Next: ${next.title}`);
+    open.type = "button";
+    open.className = "primary";
+    open.addEventListener("click", () => selectRecord(next.kind, next.id));
+    done.append(open);
+  }
+  container?.append(done);
+}
+
 // The same header for every record: what it is, its state, and where it lives, above the record's tabs.
-function recordHeader({ kind, title, status, translation, path, extra = [] }) {
+function recordHeader({ kind, title, status, translation, path, extra = [], queue = null }) {
   const header = document.createElement("header");
   header.className = "record-header";
   const badges = document.createElement("p");
@@ -2510,6 +2747,8 @@ function recordHeader({ kind, title, status, translation, path, extra = [] }) {
   if (status) badges.append(el("span", statusLabel(status), `badge status-${status}`));
   if (translation) badges.append(el("span", `Japanese: ${translation}`, `badge ${translation === "current" ? "current" : translation === "stale" ? "stale" : ""}`.trim()));
   for (const item of extra) badges.append(item);
+  const nav = queue ? queueNav(queue.kind, queue.id) : null;
+  if (nav) header.append(nav);
   header.append(el("p", kind, "eyebrow"), el("h3", title), badges);
   if (path) header.append(el("p", path, "record-path"));
   return header;
@@ -2520,8 +2759,18 @@ function renderTabs(article) {
   const workspace = document.createElement("div");
   workspace.className = "record-workspace";
   const review = document.createElement("div");
-  review.append(el("p", "Change the editorial status, or approve this exact revision after reviewing the content, sources, and checks.", "hint"), editorialControls(article));
-  workspace.append(recordHeader({ kind: "Article", title: metadata.title, status: metadata.status, translation: record.translation, path: record.path }),
+  review.className = "review-layout";
+  const controls = document.createElement("div");
+  controls.className = "review-controls";
+  controls.append(editorialControls(article));
+  const saved = document.createElement("article");
+  saved.className = "article-preview review-preview";
+  const savedHeader = document.createElement("header");
+  savedHeader.className = "preview-header";
+  savedHeader.append(el("h3", metadata.title), el("p", metadata.description, "preview-description"));
+  saved.append(savedHeader, renderArticleBlocks(article.blocks));
+  review.append(reviewContext({ content: saved, sources: article.sources }), controls);
+  workspace.append(recordHeader({ kind: "Article", title: metadata.title, status: metadata.status, translation: record.translation, path: record.path, queue: { kind: "article", id: metadata.id } }),
     renderDetailTabs([
       ["article", "Edit", articleView(article)],
       ["review", "Review & approve", review],
@@ -2905,6 +3154,7 @@ const resetContentList = () => { contentListLimit = listPageSize; renderList(); 
 const resetReferenceList = () => { referenceListLimit = listPageSize; renderReferenceList(); };
 search.addEventListener("input", resetContentList);
 statusFilter.addEventListener("change", resetContentList);
+sortOrder?.addEventListener("change", resetContentList);
 kindFilter.addEventListener("change", () => { groupFilter.value = ""; renderGroupFilter(); resetContentList(); });
 groupFilter.addEventListener("change", resetContentList);
 referenceSearch?.addEventListener("input", resetReferenceList);
@@ -3316,6 +3566,26 @@ document.querySelector("#refresh").addEventListener("click", refresh);
 for (const button of document.querySelectorAll("[data-create-kind]")) {
   button.addEventListener("click", () => openCreateForm(button.dataset.createKind));
 }
+// Keyboard: Ctrl+S (or Cmd+S) saves the open editor; J and K step through the content list from a record.
+// Letter keys are ignored while typing in a field or the formatted editor.
+document.addEventListener("keydown", (event) => {
+  const target = event.target;
+  const typing = target?.closest?.("input, textarea, select, [contenteditable='true']");
+  if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "s") {
+    const page = document.querySelector(`main > .page[data-page="${currentPage}"]`);
+    const save = [...(page?.querySelectorAll(".action-bar .primary, .local-guidance-save-row .primary") || [])]
+      .find((button) => !button.disabled && !button.closest("[hidden]"));
+    if (!save && !hasUnsavedChanges && !localGuidanceUnsaved) return;
+    event.preventDefault();
+    save?.click();
+    return;
+  }
+  if (typing || event.ctrlKey || event.metaKey || event.altKey || currentPage !== "content" || !selectedId) return;
+  if (event.key === "j" || event.key === "k") {
+    event.preventDefault();
+    stepQueue(event.key === "j" ? 1 : -1);
+  }
+});
 window.addEventListener("beforeunload", (event) => {
   if (!hasUnsavedChanges && !localGuidanceUnsaved) return;
   event.preventDefault();
