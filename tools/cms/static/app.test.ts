@@ -699,5 +699,16 @@ describe("CMS article detail", () => {
     paletteInput.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
     expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(false);
     await waitFor(() => expect(document.querySelector("#article-detail .record-header h3")?.textContent).toBe("Can I try this?"));
+    // The theme switch cycles System, Light, and Dark, and stores an explicit choice.
+    const themeToggle = document.querySelector("#theme-toggle") as HTMLButtonElement;
+    expect(themeToggle.textContent).toBe("Theme: System");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBe("light");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(window.localStorage.getItem("nihonest-cms:theme")).toBe("dark");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBeUndefined();
+    expect(window.localStorage.getItem("nihonest-cms:theme")).toBeNull();
   }, 30_000);
 });

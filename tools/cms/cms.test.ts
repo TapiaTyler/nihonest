@@ -63,6 +63,11 @@ describe("local CMS foundation", { timeout: 30_000 }, () => {
       expect(chevron.headers.get("content-type")).toContain("image/svg+xml");
       expect(chevron.headers.get("content-security-policy")).toContain("img-src 'self'");
       expect(await chevron.text()).toContain('d="m6 8 4 4 4-4"');
+      // The dark chevron and the pre-paint theme script are served from the CMS itself, as the policy requires.
+      expect((await fetch(`${base}/select-chevron-dark.svg`)).status).toBe(200);
+      const themeInit = await fetch(`${base}/theme-init.js`);
+      expect(themeInit.headers.get("content-type")).toContain("text/javascript");
+      expect(await themeInit.text()).toContain("nihonest-cms:theme");
       const structured = await fetch(`${base}/api/records`);
       expect(structured.status).toBe(200);
       const records = await structured.json();

@@ -3756,6 +3756,38 @@ for (const button of document.querySelectorAll("button[data-create-kind]")) {
     openCreateForm(button.dataset.createKind);
   });
 }
+// ---------- Theme ----------
+// System (follow the operating system), Light, or Dark; the choice is stored per browser and applied before paint
+// by theme-init.js.
+const themeToggle = document.querySelector("#theme-toggle");
+const themeOrder = ["system", "light", "dark"];
+const themeNames = { system: "System", light: "Light", dark: "Dark" };
+
+function currentTheme() {
+  const value = document.documentElement.dataset.theme;
+  return value === "light" || value === "dark" ? value : "system";
+}
+
+function renderThemeToggle() {
+  if (!themeToggle) return;
+  const theme = currentTheme();
+  const next = themeOrder[(themeOrder.indexOf(theme) + 1) % themeOrder.length];
+  themeToggle.textContent = `Theme: ${themeNames[theme]}`;
+  themeToggle.setAttribute("aria-label", `Theme: ${theme === "system" ? "follows the system" : themeNames[theme].toLowerCase()}. Switch to ${themeNames[next].toLowerCase()}`);
+}
+
+themeToggle?.addEventListener("click", () => {
+  const next = themeOrder[(themeOrder.indexOf(currentTheme()) + 1) % themeOrder.length];
+  if (next === "system") delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = next;
+  try {
+    if (next === "system") window.localStorage.removeItem("nihonest-cms:theme");
+    else window.localStorage.setItem("nihonest-cms:theme", next);
+  } catch { /* The choice then lasts only for this page. */ }
+  renderThemeToggle();
+});
+renderThemeToggle();
+
 // ---------- Go to (Ctrl+K) ----------
 // One searchable list of every page, record, municipality guide, reference record, and common action.
 

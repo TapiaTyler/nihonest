@@ -75,41 +75,50 @@ async function main() {
     const guide = guidance.locations.find((location) => location.supplements.length)?.supplements[0];
     const referenceKinds = [...new Set(references.records.map((record) => record.kind))];
 
-    for (const width of widths) {
-      await page.setViewportSize({ width, height: 900 });
-      await page.goto(base);
-      await page.waitForSelector("#article-list li", { state: "attached", timeout: 60_000 });
-      await page.addScriptTag({ path: axePath });
-      for (const name of ["overview", "content", "guidance", "sources", "translations", "checks", "changes", "activity"]) {
-        await visit(page, name, `main > .page[data-page='${name}']:not([hidden])`);
-        findings.push(...await audit(page, `${width}px ${name}`));
-      }
-      for (const route of recordRoutes) {
-        await visit(page, route, "#article-detail .record-header");
-        findings.push(...await audit(page, `${width}px ${route}`));
-      }
-      for (const route of ["content/new/article", "content/new/faq", "content/new/glossary-term", "sources/new/source"]) {
-        await visit(page, route, `main > .page[data-page='${route.split("/")[0]}'] .create-record .create-form`);
-        const kind = route.split("/").at(-1)!;
-        const heading = { article: "Create an article", faq: "Create a FAQ", "glossary-term": "Create a glossary term", source: "Create an official source" }[kind];
-        await page.waitForFunction(({ kind, heading }) => {
-          const workspace = [...document.querySelectorAll<HTMLElement>(".create-record")].find((element) => !element.closest("[hidden]"));
-          return workspace?.dataset.createKind === kind && workspace.querySelector("h3")?.textContent === heading;
-        }, { kind, heading }, { timeout: 15_000 });
-        findings.push(...await audit(page, `${width}px ${route}`));
-      }
-      if (guide) {
-        await visit(page, `guidance/${encodeURIComponent(guide.id)}`, "#local-guidance-detail .record-header");
-        findings.push(...await audit(page, `${width}px guidance/${guide.id}`));
-      }
-      await visit(page, "sources", "main > .page[data-page='sources']:not([hidden])");
-      for (const kind of referenceKinds) {
-        await page.selectOption("#reference-kind", kind);
-        await page.click("#reference-list button");
-        await page.waitForSelector("#reference-detail h4", { timeout: 15_000 });
-        findings.push(...await audit(page, `${width}px reference ${kind}`));
+    // Every page is audited in both themes; the dark theme redefines every colour role.
+    for (const scheme of ["light", "dark"] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      for (const width of widths) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(base);
+        await page.waitForSelector("#article-list li", { state: "attached", timeout: 60_000 });
+        await page.addScriptTag({ path: axePath });
+        for (const name of ["overview", "content", "guidance", "sources", "translations", "checks", "changes", "activity"]) {
+          await visit(page, name, `main > .page[data-page='${name}']:not([hidden])`);
+          findings.push(...await audit(page, `${scheme} ${width}px ${name}`));
+        }
+        await page.keyboard.press("Control+k");
+        await page.waitForSelector("#palette[open]");
+        findings.push(...await audit(page, `${scheme} ${width}px Go to palette`));
+        await page.keyboard.press("Escape");
+        for (const route of recordRoutes) {
+          await visit(page, route, "#article-detail .record-header");
+          findings.push(...await audit(page, `${scheme} ${width}px ${route}`));
+        }
+        for (const route of ["content/new/article", "content/new/faq", "content/new/glossary-term", "sources/new/source"]) {
+          await visit(page, route, `main > .page[data-page='${route.split("/")[0]}'] .create-record .create-form`);
+          const kind = route.split("/").at(-1)!;
+          const heading = { article: "Create an article", faq: "Create a FAQ", "glossary-term": "Create a glossary term", source: "Create an official source" }[kind];
+          await page.waitForFunction(({ kind, heading }) => {
+            const workspace = [...document.querySelectorAll<HTMLElement>(".create-record")].find((element) => !element.closest("[hidden]"));
+            return workspace?.dataset.createKind === kind && workspace.querySelector("h3")?.textContent === heading;
+          }, { kind, heading }, { timeout: 15_000 });
+          findings.push(...await audit(page, `${scheme} ${width}px ${route}`));
+        }
+        if (guide) {
+          await visit(page, `guidance/${encodeURIComponent(guide.id)}`, "#local-guidance-detail .record-header");
+          findings.push(...await audit(page, `${scheme} ${width}px guidance/${guide.id}`));
+        }
+        await visit(page, "sources", "main > .page[data-page='sources']:not([hidden])");
+        for (const kind of referenceKinds) {
+          await page.selectOption("#reference-kind", kind);
+          await page.click("#reference-list button");
+          await page.waitForSelector("#reference-detail h4", { timeout: 15_000 });
+          findings.push(...await audit(page, `${scheme} ${width}px reference ${kind}`));
+        }
       }
     }
+    await page.emulateMedia({ colorScheme: "light" });
     // Keyboard walkthrough of the core flow: skip link, page navigation, opening a record, and moving between tabs.
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(base);
@@ -148,7 +157,7 @@ async function main() {
     console.error(`\n${findings.length} accessibility violation(s).`);
     process.exitCode = 1;
   } else if (!keyboardProblems.length) {
-    console.log(`No axe violations on ${widths.length} widths across every page, a record of each editable kind, every creation form, a municipality guide, and each reference kind, with every tab opened. Keyboard walkthrough passed.`);
+    console.log(`No axe violations in light and dark themes on ${widths.length} widths, including the Go to palette, across every page, a record of each editable kind, every creation form, a municipality guide, and each reference kind, with every tab opened. Keyboard walkthrough passed.`);
   }
 }
 

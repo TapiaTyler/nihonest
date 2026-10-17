@@ -93,9 +93,13 @@ The **Checks** page runs only the named commands shown in its selector. Starting
 
 Run the focused checks with `npx vitest run tools/cms`, `npx tsc --noEmit`, and `npx eslint scripts/cms.ts scripts/cms-a11y.ts tools/cms`. The CMS tests include a source-level production boundary check. Before a release, stop the dev server (it shares `.next`), then run `npm run build` and `npm run cms:check-build`, which fails if any CMS code or endpoint marker appears in the production output.
 
+## Theme
+
+Colours are named roles in `static/app.css` (page, surface, ink, line, field, brand, caution, danger, and so on); rules use only the roles, so the dark theme is one set of redefined values. The theme follows the operating system; **Theme** in the header cycles System, Light, and Dark and stores an explicit choice in this browser, and `static/theme-init.js` applies it before the first paint (the Content Security Policy allows scripts only from the CMS itself). Interface text uses a short fixed scale; the article and record previews keep the website's own sizes.
+
 ## Accessibility
 
-`npm run cms:a11y` starts a private, read-only CMS instance on a spare loopback port and opens it in Chrome (the same browser channel as the Playwright end-to-end tests). It runs axe-core, including color contrast, on every page, a record of each editable kind, a municipality guide, and each reference kind, with every tab opened, at 1280px and 375px widths. It then walks the core flow by keyboard: skip link, page navigation, opening a record, arrow keys between tabs, and a visible focus outline. It exits non-zero on any violation. Run it after interface changes.
+`npm run cms:a11y` starts a private, read-only CMS instance on a spare loopback port and opens it in Chrome (the same browser channel as the Playwright end-to-end tests). It runs axe-core, including color contrast, in the light and dark themes on every page, the Go to palette, a record of each editable kind, a municipality guide, and each reference kind, with every tab opened, at 1280px and 375px widths. It then walks the core flow by keyboard: skip link, page navigation, opening a record, arrow keys between tabs, and a visible focus outline. It exits non-zero on any violation. Run it after interface changes.
 
 The interface provides a skip link, a labeled page navigation with `aria-current`, focus moved to the page heading on navigation, labeled fields with help disclosures, keyboard-operable tabs, text for every status (color is never the only cue), and stacked layouts at narrow widths. An automated pass does not replace a screen-reader walkthrough (for example NVDA with Chrome) of editing, previewing, and approving a record; do one before relying on the CMS for approvals with assistive technology.
 

@@ -26,6 +26,8 @@ const assets = new Map<string, readonly [string, string]>([
   ["/formatted-article.js", ["formatted-article.js", "text/javascript; charset=utf-8"]],
   ["/app.css", ["app.css", "text/css; charset=utf-8"]],
   ["/select-chevron.svg", ["select-chevron.svg", "image/svg+xml"]],
+  ["/select-chevron-dark.svg", ["select-chevron-dark.svg", "image/svg+xml"]],
+  ["/theme-init.js", ["theme-init.js", "text/javascript; charset=utf-8"]],
 ] as const);
 
 function sendJson(response: ServerResponse, status: number, value: unknown): void {
