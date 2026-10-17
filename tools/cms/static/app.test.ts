@@ -273,9 +273,9 @@ describe("CMS article detail", () => {
     expect(document.querySelector("[data-page-link='changes']")?.getAttribute("aria-current")).toBe("page");
     expect(document.querySelector("[data-page='content']")?.hasAttribute("hidden")).toBe(true);
     expect(document.querySelector("[data-count='changes']")?.textContent).toBe("1 changed by this session");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 files changed by this CMS session");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 files already had uncommitted changes");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 data modules changed outside the CMS after it started. Restart the CMS");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 file changed by this CMS session");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 file already had uncommitted changes");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 data module changed outside the CMS after it started. Restart the CMS");
     expect(document.querySelector("#data-freshness")?.textContent).toContain("Restart needed");
     expect(document.querySelector("#data-freshness")?.classList.contains("restart-needed")).toBe(true);
     const gitText = document.querySelector("#git-status")!.textContent!;
@@ -688,5 +688,16 @@ describe("CMS article detail", () => {
     (document.querySelector("#reference-detail .create-form") as HTMLFormElement).dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
     await waitFor(() => expect(document.querySelector("#reference-detail")?.textContent).toContain("Official source created"));
     expect(creations.find((item) => item.path === "/api/create/source")!.body.expectedSourceRevision).toBe("c".repeat(64));
+    // Ctrl+K opens Go to; typing narrows the list and Enter opens the highlighted match.
+    window.confirm = () => true;
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true, cancelable: true }));
+    const paletteInput = document.querySelector("#palette-input") as HTMLInputElement;
+    expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(true);
+    paletteInput.value = "try this";
+    paletteInput.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelector("#palette-results [aria-selected='true'] .palette-title")?.textContent).toBe("Can I try this?");
+    paletteInput.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+    expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(false);
+    await waitFor(() => expect(document.querySelector("#article-detail .record-header h3")?.textContent).toBe("Can I try this?"));
   }, 30_000);
 });

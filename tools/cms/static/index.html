@@ -13,6 +13,7 @@
     <header class="site-header">
       <p class="site-name">Nihonest <span>editorial workspace</span></p>
       <div class="header-actions">
+        <button type="button" id="open-palette" class="palette-trigger" aria-keyshortcuts="Control+K" aria-haspopup="dialog">Go to… <kbd>Ctrl K</kbd></button>
         <p class="mode" id="data-freshness">Loading…</p>
         <button type="button" id="refresh">Refresh</button>
       </div>
@@ -196,5 +197,13 @@
         </section>
       </section>
     </main>
+    <dialog id="palette" class="palette" aria-label="Go to a page, record, or action">
+      <form method="dialog" class="palette-form">
+        <label for="palette-input" class="visually-hidden">Go to a page, record, guide, or action</label>
+        <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Type a page, record, guide, or action" role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list">
+        <ul id="palette-results" class="palette-results" role="listbox" aria-label="Matches"></ul>
+        <p class="palette-hint hint">Enter opens · arrow keys move · Esc closes</p>
+      </form>
+    </dialog>
   </body>
 </html>

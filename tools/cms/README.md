@@ -12,7 +12,7 @@ Before editing, commit or set aside unrelated work, or start the CMS from a sepa
 
 ## Workspace pages
 
-A navigation bar links the pages. Each page, record, and municipality guide has its own address (`#/content/faq/<id>`, `#/guidance/<supplement-id>`), so bookmarks and the Back button work. Switching pages only hides the others, so unsaved edits survive; leaving or reloading the CMS with unsaved edits asks for confirmation.
+A navigation bar links the pages, and **Go to…** in the header (Ctrl+K or Cmd+K, or / outside a text field) opens a searchable list of every page, record, municipality guide, reference record, and common action (new records, Start reviewing, Refresh); type any words from a title, ID, location, or prefecture, then press Enter. Each page, record, and municipality guide has its own address (`#/content/faq/<id>`, `#/guidance/<supplement-id>`), so bookmarks and the Back button work. Switching pages only hides the others, so unsaved edits survive; leaving or reloading the CMS with unsaved edits asks for confirmation.
 
 | Page | Purpose |
 |---|---|

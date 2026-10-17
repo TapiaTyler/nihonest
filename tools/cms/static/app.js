@@ -456,6 +456,10 @@ function formatTime(value) {
   return date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+function plural(count, one, many) {
+  return `${count} ${count === 1 ? one : many}`;
+}
+
 // Today's times as "07:17"; other days with the date.
 function shortTime(value) {
   const date = new Date(value);
@@ -471,6 +475,15 @@ function setNavCount(name, count, meaning) {
   badge.replaceChildren(...(count ? [document.createTextNode(String(count)), el("span", ` ${meaning}`, "visually-hidden")] : []));
   badge.title = count ? `${count} ${meaning}` : "";
   badge.hidden = !count;
+}
+
+// The editorial-review queue, oldest review first, opened at its first record.
+function startReviewQueue() {
+  setContentFilters({ status: "needs-review", order: "oldest-review" });
+  const first = currentMatches[0];
+  if (!first) return false;
+  selectRecord(first.kind, first.id);
+  return true;
 }
 
 // Overview counts are shortcuts to the list or page they count.
@@ -516,30 +529,25 @@ function renderOverview() {
   const needsReview = articles.filter((item) => item.status === "needs-review").length;
   const drafts = articles.filter((item) => item.status === "draft").length;
   if (needsReview) {
-    items.push(attentionItem(`Start reviewing: ${needsReview} ${needsReview === 1 ? "record is" : "records are"} in editorial review, oldest review first`, "content", () => {
-      setContentFilters({ status: "needs-review", order: "oldest-review" });
-      const first = currentMatches[0];
-      if (!first) return undefined;
-      selectRecord(first.kind, first.id);
-      return "handled";
-    }));
+    items.push(attentionItem(`Start reviewing: ${needsReview} ${needsReview === 1 ? "record is" : "records are"} in editorial review, oldest review first`, "content",
+      () => (startReviewQueue() ? "handled" : undefined)));
   }
   if (drafts) items.push(attentionItem(`${drafts} ${drafts === 1 ? "record is a draft" : "records are drafts"}`, "content", () => setContentFilters({ status: "draft" })));
   const stale = lastHandoff ? lastHandoff.items.filter((item) => item.state === "stale").length : 0;
   const missing = lastHandoff ? lastHandoff.items.filter((item) => item.state === "missing").length : 0;
   if (stale || missing) items.push(attentionItem(`${stale} stale and ${missing} missing Japanese artifacts`, "translations"));
-  if (catalogFailureCount) items.push(attentionItem(`${catalogFailureCount} files could not be read (listed below)`, "overview"));
+  if (catalogFailureCount) items.push(attentionItem(`${plural(catalogFailureCount, "file", "files")} could not be read (listed below)`, "overview"));
   const git = lastGitReport;
   // Data modules are loaded when the CMS starts; an outside change to one needs a restart, not just Refresh.
   const moduleChanges = git ? git.otherChanges.filter((path) => /^src\/.+\.tsx?$/.test(path)) : [];
-  if (moduleChanges.length) items.push(attentionItem(`${moduleChanges.length} data modules changed outside the CMS after it started. Restart the CMS to load them`, "changes"));
+  if (moduleChanges.length) items.push(attentionItem(`${plural(moduleChanges.length, "data module", "data modules")} changed outside the CMS after it started. Restart the CMS to load ${moduleChanges.length === 1 ? "it" : "them"}`, "changes"));
   if (git) {
     if (git.currentBranch !== git.identity.branch || git.currentCommit !== git.identity.startCommit) {
       items.push(attentionItem("The branch or commit changed after the CMS started. Restart it before saving", "changes"));
     }
-    if (git.cmsChanges.length) items.push(attentionItem(`${git.cmsChanges.length} files changed by this CMS session; review their diffs before committing`, "changes"));
-    if (git.identity.dirtyAtStart.length) items.push(attentionItem(`${git.identity.dirtyAtStart.length} files already had uncommitted changes; the CMS will not write them`, "changes"));
-    if (git.otherChanges.length) items.push(attentionItem(`${git.otherChanges.length} files changed outside the CMS during this session`, "changes"));
+    if (git.cmsChanges.length) items.push(attentionItem(`${plural(git.cmsChanges.length, "file", "files")} changed by this CMS session; review the ${git.cmsChanges.length === 1 ? "diff" : "diffs"} before committing`, "changes"));
+    if (git.identity.dirtyAtStart.length) items.push(attentionItem(`${plural(git.identity.dirtyAtStart.length, "file", "files")} already had uncommitted changes; the CMS will not write ${git.identity.dirtyAtStart.length === 1 ? "it" : "them"}`, "changes"));
+    if (git.otherChanges.length) items.push(attentionItem(`${plural(git.otherChanges.length, "file", "files")} changed outside the CMS during this session`, "changes"));
   }
   if (recoveryDraftCount) items.push(attentionItem(`${recoveryDraftCount} unsaved recovery ${recoveryDraftCount === 1 ? "draft" : "drafts"}: open one to load or discard it`, "changes"));
   attention.replaceChildren(...(items.length ? items : [el("li", "Nothing needs attention in the loaded catalogs.")]));
@@ -551,7 +559,7 @@ function renderOverview() {
     const started = git ? shortTime(git.identity.startedAt) : null;
     freshness.classList.toggle("restart-needed", moduleChanges.length > 0);
     freshness.textContent = moduleChanges.length
-      ? `Restart needed: ${moduleChanges.length} data modules changed after ${started}`
+      ? `Restart needed: ${plural(moduleChanges.length, "data module", "data modules")} changed after ${started}`
       : [started ? `Started ${started}` : "", dataRefreshedAt ? `refreshed ${shortTime(dataRefreshedAt)}` : ""].filter(Boolean).join(" · ") || "Loading…";
     freshness.title = "Refresh rereads canonical files. Restart the CMS after changes made outside it to TypeScript data modules or translation registries.";
   }
@@ -3748,11 +3756,120 @@ for (const button of document.querySelectorAll("button[data-create-kind]")) {
     openCreateForm(button.dataset.createKind);
   });
 }
-// Keyboard: Ctrl+S (or Cmd+S) saves the open editor; J and K step through the content list from a record.
-// Letter keys are ignored while typing in a field or the formatted editor.
+// ---------- Go to (Ctrl+K) ----------
+// One searchable list of every page, record, municipality guide, reference record, and common action.
+
+const palette = document.querySelector("#palette");
+const paletteInput = document.querySelector("#palette-input");
+const paletteResults = document.querySelector("#palette-results");
+let paletteMatches = [];
+let paletteIndex = 0;
+
+function paletteEntries() {
+  const entries = [];
+  for (const [page, title] of Object.entries(pageTitles)) {
+    entries.push({ group: "Page", title, run: () => { setRoute(page); showPage(page, { focus: true }); } });
+  }
+  entries.push(
+    { group: "Action", title: "Start reviewing (oldest review first)", run: () => { if (!startReviewQueue()) { setRoute("content"); showPage("content", { focus: true }); } } },
+    { group: "Action", title: "New article", run: () => openCreateForm("article") },
+    { group: "Action", title: "New FAQ", run: () => openCreateForm("faq") },
+    { group: "Action", title: "New glossary term", run: () => openCreateForm("glossary-term") },
+    { group: "Action", title: "New official source", run: () => openCreateForm("source") },
+    { group: "Action", title: "Refresh data", run: () => refresh() },
+  );
+  for (const record of articles) {
+    entries.push({ group: kindLabel(record.kind), title: record.title, detail: `${statusLabel(record.status)} · ${record.id}`, keys: `${record.id} ${(record.groups || []).join(" ")}`, run: () => selectRecord(record.kind, record.id) });
+  }
+  for (const location of localGuidanceLocations) {
+    for (const supplement of location.supplements) {
+      entries.push({ group: "Municipality guide", title: supplement.title, detail: location.name, keys: `${supplement.id} ${location.name} ${location.prefectureName || ""}`, run: () => openLocalGuidanceById(supplement.id) });
+    }
+  }
+  for (const record of referenceRecords) {
+    entries.push({ group: referenceKindLabel(record.kind), title: record.title, detail: record.id, keys: record.id, run: () => { setRoute("sources"); selectReference(record.kind, record.id); } });
+  }
+  return entries;
+}
+
+// Every word must match; matches at the start of the title rank first, then pages and actions, then the rest.
+function renderPalette() {
+  const words = paletteInput.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  const all = paletteEntries();
+  const scored = [];
+  for (const entry of all) {
+    const haystack = `${entry.title} ${entry.group} ${entry.detail || ""} ${entry.keys || ""}`.toLocaleLowerCase();
+    if (!words.every((word) => haystack.includes(word))) continue;
+    const title = entry.title.toLocaleLowerCase();
+    const score = (words.length && title.startsWith(words[0]) ? 0 : 2) + (entry.group === "Page" || entry.group === "Action" ? 0 : 1);
+    scored.push([score, entry]);
+  }
+  scored.sort((a, b) => a[0] - b[0]);
+  paletteMatches = (words.length ? scored : scored.filter(([, entry]) => entry.group === "Page" || entry.group === "Action")).slice(0, 40).map(([, entry]) => entry);
+  paletteIndex = Math.min(paletteIndex, Math.max(paletteMatches.length - 1, 0));
+  paletteResults.replaceChildren(...paletteMatches.map((entry, index) => {
+    const item = document.createElement("li");
+    item.id = `palette-option-${index}`;
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", String(index === paletteIndex));
+    item.append(el("span", entry.title, "palette-title"), el("span", [entry.group, entry.detail].filter(Boolean).join(" · "), "palette-detail"));
+    item.addEventListener("mousedown", (event) => event.preventDefault());
+    item.addEventListener("click", () => runPalette(index));
+    return item;
+  }));
+  if (!paletteMatches.length) paletteResults.append(el("li", "No matches. Try a title, ID, location, or page name.", "palette-empty"));
+  paletteInput.setAttribute("aria-activedescendant", paletteMatches.length ? `palette-option-${paletteIndex}` : "");
+  paletteResults.querySelector("[aria-selected='true']")?.scrollIntoView?.({ block: "nearest" });
+}
+
+function openPalette() {
+  if (!palette || palette.open) return;
+  paletteInput.value = "";
+  paletteIndex = 0;
+  renderPalette();
+  palette.showModal?.();
+  if (!palette.showModal) palette.setAttribute("open", "");
+  paletteInput.focus();
+}
+
+function closePalette() {
+  if (palette?.close) palette.close();
+  else palette?.removeAttribute("open");
+}
+
+function runPalette(index) {
+  const entry = paletteMatches[index];
+  if (!entry) return;
+  closePalette();
+  entry.run();
+}
+
+paletteInput?.addEventListener("input", () => { paletteIndex = 0; renderPalette(); });
+paletteInput?.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    if (!paletteMatches.length) return;
+    paletteIndex = (paletteIndex + (event.key === "ArrowDown" ? 1 : -1) + paletteMatches.length) % paletteMatches.length;
+    renderPalette();
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    runPalette(paletteIndex);
+  }
+});
+// A click on the backdrop (outside the panel) closes the palette.
+palette?.addEventListener("click", (event) => { if (event.target === palette) closePalette(); });
+document.querySelector("#open-palette")?.addEventListener("click", openPalette);
+
+// Keyboard: Ctrl+K (or Cmd+K, or / outside fields) opens Go to; Ctrl+S (or Cmd+S) saves the open editor; J and K
+// step through the content list from a record. Letter keys are ignored while typing in a field or the formatted editor.
 document.addEventListener("keydown", (event) => {
   const target = event.target;
   const typing = target?.closest?.("input, textarea, select, [contenteditable='true']");
+  if (((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "k") || (event.key === "/" && !typing && !event.ctrlKey && !event.metaKey)) {
+    event.preventDefault();
+    openPalette();
+    return;
+  }
   if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "s") {
     const page = document.querySelector(`main > .page[data-page="${currentPage}"]`);
     const save = [...(page?.querySelectorAll(".action-bar .primary, .local-guidance-save-row .primary") || [])]
