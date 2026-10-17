@@ -218,7 +218,7 @@ function recoveryPanel(record, loadDraft) {
     panel.replaceChildren(el("h3", "Local recovery draft"));
     const matches = snapshot.expectedRecordRevision === revision &&
       (record.kind === "article" || snapshot.expectedSourceRevision === sourceRevision);
-    panel.append(el("p", `Saved ${snapshot.capturedAt || "locally"}. ${matches ? "Its base revision matches the current record." : "Its base revision is stale; review both versions and copy changes manually."}`, matches ? "hint" : "check-warning"));
+    panel.append(el("p", `Kept ${snapshot.capturedAt ? formatTime(snapshot.capturedAt) : "locally"}. ${matches ? "Its base revision matches the current record." : "Its base revision is stale; review both versions and copy changes manually."}`, matches ? "hint" : "check-warning"));
     if (!authorized) panel.append(el("p", "This saved draft is protected. Load it or discard it before the CMS can autosave newer edits for this record.", "hint"));
     const current = el("details", "");
     current.append(el("summary", "Current canonical source"), el("pre", JSON.stringify(record.kind === "article" ? { body: record.body, updatedAt: record.metadata.updatedAt } : record.value, null, 2)));
@@ -366,7 +366,8 @@ async function refreshRecoveryList() {
     const list = document.createElement("ul");
     for (const snapshot of snapshots) {
       const item = document.createElement("li");
-      const button = el("button", `${snapshot.kind}: ${snapshot.id} · saved ${snapshot.capturedAt || "locally"}`);
+      const known = articles.find((record) => record.kind === snapshot.kind && record.id === snapshot.id);
+      const button = el("button", `${kindLabel(snapshot.kind)}: ${known?.title || snapshot.id} · kept ${snapshot.capturedAt ? formatTime(snapshot.capturedAt) : "locally"}`, "link-button");
       button.type = "button";
       button.addEventListener("click", () => selectRecord(snapshot.kind, snapshot.id));
       item.append(button);
@@ -376,22 +377,62 @@ async function refreshRecoveryList() {
   } catch (error) { container.replaceChildren(el("p", error.message, "error")); }
 }
 
+const activityActions = {
+  session: "CMS session", draft: "Recovery draft kept", "article-body": "Article body saved", "article-status": "Article status changed",
+  "article-review": "Approval recorded", "record-content": "Content saved", "record-status": "Status changed",
+  "record-review": "Approval recorded", "local-guidance-content": "Municipality guidance saved", "record-create": "Record created",
+  "check-start": "Check started", "check-finish": "Check finished", "check-cancel": "Check canceled",
+};
+
+function activitySentence(event) {
+  const check = event.checkId ? checkReport?.definitions.find((item) => item.id === event.checkId)?.label || event.checkId : "";
+  if (event.kind === "session") return event.outcome === "started" ? "CMS session started" : `CMS session ${event.outcome}`;
+  if (event.kind === "check-finish") return `${check} ${({ succeeded: "passed", warning: "finished with review findings", failed: "failed", canceled: "was canceled" })[event.outcome] || event.outcome}`;
+  if (event.kind === "check-start") return `${check} started`;
+  if (event.kind === "check-cancel") return `${check} canceled`;
+  const action = activityActions[event.kind] || event.kind;
+  const outcome = ({ succeeded: "", failed: " (failed)", conflict: " (conflict: the file changed; reload it)", canceled: " (canceled)", warning: " (with warnings)", started: " (started)" })[event.outcome] ?? ` (${event.outcome})`;
+  return `${action}${outcome}`;
+}
+
 async function refreshActivity() {
   const container = document.querySelector("#activity-events");
   if (!container) return;
   try {
     const { events } = await json("/api/activity");
-    container.replaceChildren(...(events.length ? events.slice().reverse().slice(0, 100).map((event) => {
+    if (!events.length) { container.replaceChildren(el("p", "No activity recorded yet. Saves, approvals, checks, and recovery drafts appear here.", "hint")); return; }
+    const days = new Map();
+    let previous = null;
+    for (const event of events.slice().reverse().slice(0, 150)) {
+      const when = new Date(event.occurredAt || event.at);
+      const day = Number.isNaN(when.getTime()) ? "Unknown date" : when.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      if (!days.has(day)) { days.set(day, document.createElement("ol")); previous = null; }
+      const sentence = activitySentence(event);
+      // Repeated identical events (autosaved drafts, restarts) collapse into one line with a count.
+      if (previous && previous.sentence === sentence && previous.recordId === event.recordId) {
+        previous.count += 1;
+        previous.counter.textContent = ` ×${previous.count}`;
+        continue;
+      }
       const item = document.createElement("li");
-      const target = event.recordKind && event.recordId ? `${event.recordKind}: ${event.recordId}` : event.checkId ? `Check: ${event.checkId}` : "CMS";
-      const when = event.occurredAt || event.at;
       const time = document.createElement("time");
-      time.dateTime = when;
-      time.textContent = formatTime(when);
-      item.append(time, document.createTextNode(` · ${target} · ${event.kind} · ${event.outcome}${event.revision ? ` · ${event.revision}` : ""}`));
-      return item;
-    }) : [el("li", "No activity recorded yet.")]));
-  } catch (error) { container.replaceChildren(el("li", error.message, "error")); }
+      time.dateTime = event.occurredAt || event.at;
+      time.textContent = Number.isNaN(when.getTime()) ? "" : when.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+      item.append(time, document.createTextNode(` ${sentence}`));
+      if (event.recordKind && event.recordId) {
+        const known = articles.find((record) => record.kind === event.recordKind && record.id === event.recordId);
+        const open = el("button", known?.title || event.recordId, "link-button");
+        open.type = "button";
+        open.addEventListener("click", () => selectRecord(event.recordKind, event.recordId));
+        item.append(document.createTextNode(": "), open);
+      }
+      const counter = el("span", "", "activity-count");
+      item.append(counter);
+      days.get(day).append(item);
+      previous = { sentence, recordId: event.recordId, count: 1, counter };
+    }
+    container.replaceChildren(...[...days].flatMap(([day, list]) => [el("h3", day), list]));
+  } catch (error) { container.replaceChildren(el("p", error.message, "error")); }
 }
 
 // Long lists render a page at a time so the workspace stays responsive; counts always cover every match.
@@ -415,12 +456,42 @@ function formatTime(value) {
   return date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+// Today's times as "07:17"; other days with the date.
+function shortTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value || "");
+  const sameDay = date.toDateString() === new Date().toDateString();
+  return sameDay ? date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+    : date.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
 function setNavCount(name, count, meaning) {
   const badge = document.querySelector(`[data-count="${name}"]`);
   if (!badge) return;
   badge.replaceChildren(...(count ? [document.createTextNode(String(count)), el("span", ` ${meaning}`, "visually-hidden")] : []));
   badge.title = count ? `${count} ${meaning}` : "";
   badge.hidden = !count;
+}
+
+// Overview counts are shortcuts to the list or page they count.
+function summaryLink(text, page, action) {
+  const link = el("a", text, "summary-link");
+  link.href = `#/${page}`;
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    action?.();
+    setRoute(page);
+    showPage(page, { focus: page !== "overview" });
+  });
+  return link;
+}
+
+function setContentFilters({ kind = "", status = "", group = "", order = "" }) {
+  kindFilter.value = kind; statusFilter.value = status; search.value = "";
+  renderGroupFilter();
+  groupFilter.value = group;
+  if (sortOrder) sortOrder.value = order;
+  resetContentList();
 }
 
 function attentionItem(text, page, action) {
@@ -446,18 +517,14 @@ function renderOverview() {
   const drafts = articles.filter((item) => item.status === "draft").length;
   if (needsReview) {
     items.push(attentionItem(`Start reviewing: ${needsReview} ${needsReview === 1 ? "record is" : "records are"} in editorial review, oldest review first`, "content", () => {
-      kindFilter.value = ""; statusFilter.value = "needs-review"; groupFilter.value = ""; search.value = "";
-      if (sortOrder) sortOrder.value = "oldest-review";
-      renderGroupFilter(); resetContentList();
+      setContentFilters({ status: "needs-review", order: "oldest-review" });
       const first = currentMatches[0];
       if (!first) return undefined;
       selectRecord(first.kind, first.id);
       return "handled";
     }));
   }
-  if (drafts) items.push(attentionItem(`${drafts} ${drafts === 1 ? "record is a draft" : "records are drafts"}`, "content", () => {
-    kindFilter.value = ""; statusFilter.value = "draft"; groupFilter.value = ""; renderGroupFilter(); resetContentList();
-  }));
+  if (drafts) items.push(attentionItem(`${drafts} ${drafts === 1 ? "record is a draft" : "records are drafts"}`, "content", () => setContentFilters({ status: "draft" })));
   const stale = lastHandoff ? lastHandoff.items.filter((item) => item.state === "stale").length : 0;
   const missing = lastHandoff ? lastHandoff.items.filter((item) => item.state === "missing").length : 0;
   if (stale || missing) items.push(attentionItem(`${stale} stale and ${missing} missing Japanese artifacts`, "translations"));
@@ -481,11 +548,11 @@ function renderOverview() {
   setNavCount("changes", git ? git.cmsChanges.length : 0, "changed by this session");
   const freshness = document.querySelector("#data-freshness");
   if (freshness) {
-    const started = git ? formatTime(git.identity.startedAt) : null;
+    const started = git ? shortTime(git.identity.startedAt) : null;
     freshness.classList.toggle("restart-needed", moduleChanges.length > 0);
     freshness.textContent = moduleChanges.length
       ? `Restart needed: ${moduleChanges.length} data modules changed after ${started}`
-      : [started ? `Session started ${started}` : "", dataRefreshedAt ? `refreshed ${formatTime(dataRefreshedAt)}` : ""].filter(Boolean).join(" · ") || "Loading…";
+      : [started ? `Started ${started}` : "", dataRefreshedAt ? `refreshed ${shortTime(dataRefreshedAt)}` : ""].filter(Boolean).join(" · ") || "Loading…";
     freshness.title = "Refresh rereads canonical files. Restart the CMS after changes made outside it to TypeScript data modules or translation registries.";
   }
 }
@@ -520,8 +587,11 @@ function renderList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(article.id === selectedId && article.kind === selectedKind));
-    button.append(el("strong", article.title), el("small", [kindLabel(article.kind), statusLabel(article.status),
-      article.translation ? `Japanese ${article.translation}` : "", article.lastReviewedAt ? `reviewed ${formatDate(article.lastReviewedAt)}` : ""].filter(Boolean).join(" · ")));
+    const meta = el("small", "", "row-meta");
+    meta.append(el("span", statusLabel(article.status), `chip status-${article.status}`),
+      document.createTextNode([kindLabel(article.kind), article.translation ? `Japanese ${article.translation}` : "",
+        article.lastReviewedAt ? `reviewed ${formatDate(article.lastReviewedAt)}` : ""].filter(Boolean).join(" · ")));
+    button.append(el("strong", article.title), meta);
     const reason = query ? matchReason(article, query) : "";
     if (reason) button.append(el("small", reason, "match-reason"));
     button.addEventListener("click", () => selectRecord(article.kind, article.id));
@@ -2891,7 +2961,7 @@ function renderGit(report) {
   field(facts, "Branch", report.currentBranch === identity.branch ? identity.branch : `${report.currentBranch} (session started on ${identity.branch})`);
   field(facts, "Starting commit", identity.startCommit);
   if (report.currentCommit !== identity.startCommit) field(facts, "Current commit", report.currentCommit);
-  field(facts, "Session started", identity.startedAt);
+  field(facts, "Session started", formatTime(identity.startedAt));
   const parts = [facts];
   if (report.currentBranch !== identity.branch || report.currentCommit !== identity.startCommit) {
     parts.push(el("p", "The branch or commit changed after the CMS started. Restart the CMS before saving so its snapshot matches the checkout.", "error"));
@@ -2921,7 +2991,7 @@ function renderSelectedImpact() {
   if (!impactCatalog) return;
   const source = impactCatalog.sources.find((item) => item.id === impactSource.value);
   if (!source) {
-    impactResult.replaceChildren(el("p", "No matching source."));
+    impactResult.replaceChildren(el("p", "Choose a source to see the articles, FAQs, terms, and guidance that depend on it.", "hint"));
     return;
   }
   const heading = el("h3", source.title);
@@ -2936,7 +3006,7 @@ function renderSelectedImpact() {
   const kinds = [...new Set(source.dependents.map((dependent) => dependent.kind))];
   for (const kind of kinds) {
     const group = document.createElement("section");
-    group.append(el("h3", kind.replaceAll("-", " ")));
+    group.append(el("h3", kindLabel(kind)));
     const list = document.createElement("ul");
     for (const dependent of source.dependents.filter((item) => item.kind === kind)) {
       const item = document.createElement("li");
@@ -2971,11 +3041,14 @@ function renderImpactChoices() {
   if (impactCount) impactCount.textContent = matches.length > shown.length
     ? `${matches.length} of ${impactCatalog.sources.length} sources match; the first ${shown.length} are listed. Search to narrow the list.`
     : `${matches.length} of ${impactCatalog.sources.length} sources match.`;
-  impactSource.replaceChildren(...shown.map((source) => {
+  const placeholder = el("option", query ? `Choose one of ${matches.length} matching sources` : "Choose a source");
+  placeholder.value = "";
+  impactSource.replaceChildren(placeholder, ...shown.map((source) => {
     const option = el("option", `${source.title} (${source.id})`);
     option.value = source.id;
     return option;
   }));
+  if (query && matches.length === 1) impactSource.value = matches[0].id;
   if (matches.some((source) => source.id === selected)) impactSource.value = selected;
   renderSelectedImpact();
 }
@@ -3010,7 +3083,8 @@ async function refreshHandoff() {
       li.append(button, el("small", ` ${item.state} · ${item.path} · English revision ${item.sourceRevision}`));
       return li;
     }));
-    if (!handoff.items.length) handoffItems.append(el("li", "No stale or missing artifacts in the supported catalogs."));
+    if (!handoff.items.length) handoffItems.append(el("li", "Every Japanese artifact is current for the supported catalogs.", "success"));
+    document.querySelector("#handoff-download")?.toggleAttribute("hidden", !handoff.items.length);
   } catch (error) { handoffStatus.replaceChildren(el("p", error.message, "error")); }
 }
 
@@ -3045,7 +3119,12 @@ function renderChecks(report) {
   }
   if (report.definitions.some((definition) => definition.id === selectedId)) checkKind.value = selectedId;
   const definition = report.definitions.find((item) => item.id === checkKind.value);
-  checkCommand.textContent = definition ? `${definition.command} · ${definition.scope} check${definition.description ? ` · ${definition.description}` : ""}` : "No checks available.";
+  if (definition) {
+    const command = document.createElement("details");
+    command.className = "check-command-detail";
+    command.append(el("summary", "Command"), el("code", definition.command));
+    checkCommand.replaceChildren(el("p", `${definition.description || definition.label}. ${definition.scope === "focused" ? "Focused check: it covers only the named paths." : "Project check."}`), command);
+  } else checkCommand.replaceChildren(el("p", "No checks available."));
   const running = report.active?.status === "running";
   checkStart.disabled = running || !definition;
   checkCancel.hidden = !running;
@@ -3124,10 +3203,10 @@ async function refresh() {
     const [catalog, structured] = await Promise.all([json("/api/articles"), json("/api/records")]);
     articles = [...catalog.articles.map((item) => ({ ...item, kind: "article" })), ...structured.records];
     summary.replaceChildren(
-      el("span", `${articles.length} reviewable records`),
-      el("span", `${articles.filter((item) => item.status === "needs-review").length} need editorial review`),
-      el("span", `${articles.filter((item) => item.translation === "stale").length} stale Japanese translations`),
-      el("span", `${catalog.failures.length + structured.failures.length} catalog errors`),
+      summaryLink(`${articles.length} reviewable records`, "content", () => setContentFilters({})),
+      summaryLink(`${articles.filter((item) => item.status === "needs-review").length} need editorial review`, "content", () => setContentFilters({ status: "needs-review", order: "oldest-review" })),
+      summaryLink(`${articles.filter((item) => item.translation === "stale").length} stale Japanese translations`, "translations"),
+      summaryLink(`${catalog.failures.length + structured.failures.length} catalog errors`, "overview", () => document.querySelector("#errors-heading")?.scrollIntoView?.()),
     );
     const allFailures = [...catalog.failures, ...structured.failures];
     catalogFailureCount = allFailures.length;
@@ -3198,6 +3277,32 @@ function creationTextField(form, { key, label, help, value = "", multiline = fal
   return input;
 }
 
+// Taxonomy IDs read as words in the interface: "living-in-japan" becomes "Living in Japan".
+function humanize(value) {
+  const text = String(value).replaceAll("-", " ").replace(/\bjapan\b/g, "Japan").replace(/\bjapanese\b/g, "Japanese");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function slugifyId(text) {
+  return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+}
+
+// The ID follows the field it is derived from until the editor types an ID of their own.
+function linkDerivedId(idInput, from) {
+  let own = Boolean(idInput.value);
+  idInput.addEventListener("input", () => { own = idInput.value.trim() !== ""; });
+  from.addEventListener("input", () => { if (!own) idInput.value = slugifyId(from.value); });
+}
+
+// Optional relationships and search terms fold away so the required fields come first.
+function optionalGroup(form, title) {
+  const group = document.createElement("details");
+  group.className = "create-optional";
+  group.append(el("summary", title));
+  form.append(group);
+  return group;
+}
+
 function creationSelectField(form, { key, label, help, options, value }) {
   const id = `create-${key}`;
   const select = document.createElement("select");
@@ -3265,7 +3370,7 @@ function creationCheckboxes(form, { key, label, help, options, values = [] }) {
     box.type = "checkbox";
     box.value = option;
     box.checked = values.includes(option);
-    wrapper.append(box, document.createTextNode(` ${option.replaceAll("-", " ")}`));
+    wrapper.append(box, document.createTextNode(` ${humanize(option)}`));
     fieldset.append(wrapper);
   }
   form.append(fieldset);
@@ -3324,74 +3429,80 @@ async function openCreateForm(kind, prefill = null, options = {}) {
   form.noValidate = true;
   const statusOptions = [["needs-review", "Editorial review"], ["draft", "Draft"]];
   if (kind === "faq") {
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier: lowercase words separated by hyphens. Other records link to it, so choose it carefully." });
+    const question = creationTextField(form, { key: "question", label: "Question", required: true, value: value.question, help: "The question as a reader would ask it." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier: lowercase words separated by hyphens. It is filled from the question until you change it. Other records link to it, so choose it carefully." });
+    linkDerivedId(id, question);
     creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
-    creationTextField(form, { key: "question", label: "Question", required: true, value: value.question, help: "The question as a reader would ask it." });
     creationTextField(form, { key: "summary", label: "Answer summary", required: true, multiline: true, value: value.summary, help: "A short answer of up to 320 characters that points to the linked resources for details." });
     creationSelectField(form, { key: "primaryBrowseGroupId", label: "Browse group", value: value.primaryBrowseGroupId, options: choices.faqGroups.map(({ id, label }) => [id, label]), help: "The FAQ group this question belongs to. It also decides which module the entry is added to." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "needs-review", options: statusOptions, help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
-    form.append(el("p", "Link at least one related resource.", "hint"));
+    form.append(el("p", "Link at least one related resource: an article here, or a group, journey, term, status, or activity below.", "hint"));
     creationIdListField(form, { key: "relatedArticleIds", label: "Related articles", values: value.relatedArticleIds, known: choices.known.articles, help: "Article IDs this answer relies on." });
-    creationIdListField(form, { key: "relatedGroupIds", label: "Related article groups", values: value.relatedGroupIds, known: choices.known.groups, help: "Article group IDs." });
-    creationIdListField(form, { key: "relatedJourneyIds", label: "Related guided journeys", values: value.relatedJourneyIds, known: choices.known.journeys, help: "Guided journey IDs." });
-    creationIdListField(form, { key: "relatedGlossaryTermIds", label: "Related glossary terms", values: value.relatedGlossaryTermIds, known: choices.known.glossaryTerms, help: "Glossary term IDs." });
-    creationIdListField(form, { key: "relatedResidenceStatusIds", label: "Related residence statuses", values: value.relatedResidenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs." });
-    creationIdListField(form, { key: "relatedActivityIds", label: "Related activities", values: value.relatedActivityIds, known: choices.known.activities, help: "Activity cross-reference IDs." });
+    const more = optionalGroup(form, "Other related resources and search terms");
+    creationIdListField(more, { key: "relatedGroupIds", label: "Related article groups", values: value.relatedGroupIds, known: choices.known.groups, help: "Article group IDs." });
+    creationIdListField(more, { key: "relatedJourneyIds", label: "Related guided journeys", values: value.relatedJourneyIds, known: choices.known.journeys, help: "Guided journey IDs." });
+    creationIdListField(more, { key: "relatedGlossaryTermIds", label: "Related glossary terms", values: value.relatedGlossaryTermIds, known: choices.known.glossaryTerms, help: "Glossary term IDs." });
+    creationIdListField(more, { key: "relatedResidenceStatusIds", label: "Related residence statuses", values: value.relatedResidenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs." });
+    creationIdListField(more, { key: "relatedActivityIds", label: "Related activities", values: value.relatedActivityIds, known: choices.known.activities, help: "Activity cross-reference IDs." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
   } else if (kind === "article") {
     const article = choices.article;
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier and file name: lowercase words separated by hyphens. Other records link to it." });
+    const title = creationTextField(form, { key: "title", label: "Title", required: true, value: value.title, help: "The article's heading." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier and file name: lowercase words separated by hyphens. It is filled from the title until you change it. Other records link to it." });
+    linkDerivedId(id, title);
     creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
-    creationTextField(form, { key: "title", label: "Title", required: true, value: value.title, help: "The article's heading." });
     creationTextField(form, { key: "description", label: "Description", required: true, multiline: true, value: value.description, help: "A summary of up to 180 characters for lists and search results." });
-    creationSelectField(form, { key: "family", label: "Registry family", value: value.family || article.registryFamilies[0], options: article.registryFamilies.map((family) => [family, family.replaceAll("-", " ")]), help: "The article registry module the new article is registered in. It sets the article's place in the catalog order." });
+    creationSelectField(form, { key: "family", label: "Registry family", value: value.family || article.registryFamilies[0], options: article.registryFamilies.map((family) => [family, humanize(family)]), help: "The article registry module the new article is registered in. It sets the article's place in the catalog order." });
     creationCheckboxes(form, { key: "journeyStageIds", label: "Journey stages", values: value.journeyStageIds, options: article.journeyStages, help: "At least one: when readers need this article." });
     creationCheckboxes(form, { key: "topicIds", label: "Topics", values: value.topicIds, options: article.topics, help: "At least one topic." });
-    creationCheckboxes(form, { key: "audienceIds", label: "Audiences", values: value.audienceIds, options: article.audiences, help: "Readers the article is written for, if it is narrower than everyone." });
     creationCheckboxes(form, { key: "geographicScopes", label: "Geographic scope", values: value.geographicScopes || ["national"], options: article.geographicScopes, help: "At least one: whether the rules are national, prefectural, or municipal." });
-    creationSelectField(form, { key: "importance", label: "Importance", value: value.importance || "informational", options: article.importance.map((item) => [item, item]), help: "How much a reader's situation depends on this guidance." });
-    creationSelectField(form, { key: "contentType", label: "Content type", value: value.contentType || "guide", options: article.contentTypes.map((item) => [item, item.replaceAll("-", " ")]), help: "The kind of article." });
+    creationSelectField(form, { key: "importance", label: "Importance", value: value.importance || "informational", options: article.importance.map((item) => [item, humanize(item)]), help: "How much a reader's situation depends on this guidance." });
+    creationSelectField(form, { key: "contentType", label: "Content type", value: value.contentType || "guide", options: article.contentTypes.map((item) => [item, humanize(item)]), help: "The kind of article." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "draft", options: [["draft", "Draft"], ["needs-review", "Editorial review"]], help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
     creationIdListField(form, { key: "sourceIds", label: "Official sources", values: value.sourceIds, known: choices.known.sources, help: "Source IDs the article relies on. Create a missing source first from Sources & references." });
-    creationIdListField(form, { key: "termIds", label: "Glossary terms", values: value.termIds, known: choices.known.glossaryTerms, help: "Glossary term IDs the article uses." });
-    creationIdListField(form, { key: "residenceStatusIds", label: "Residence statuses", values: value.residenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs the article covers." });
+    const more = optionalGroup(form, "Audiences, terms, statuses, related articles, and search terms (optional)");
+    creationCheckboxes(more, { key: "audienceIds", label: "Audiences", values: value.audienceIds, options: article.audiences, help: "Readers the article is written for, if it is narrower than everyone." });
+    creationIdListField(more, { key: "termIds", label: "Glossary terms", values: value.termIds, known: choices.known.glossaryTerms, help: "Glossary term IDs the article uses." });
+    creationIdListField(more, { key: "residenceStatusIds", label: "Residence statuses", values: value.residenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs the article covers." });
     for (const type of article.relationshipTypes) {
       const label = { related: "Related articles", prerequisite: "Prerequisite articles", "next-step": "Next-step articles" }[type] || type;
-      const field = creationIdListField(form, { key: `relationships-${type}`, label, values: (value.relationships || []).filter((item) => item.type === type).map((item) => item.articleId), known: choices.known.articles, help: "Article IDs linked from this article." });
+      const field = creationIdListField(more, { key: `relationships-${type}`, label, values: (value.relationships || []).filter((item) => item.type === type).map((item) => item.articleId), known: choices.known.articles, help: "Article IDs linked from this article." });
       delete field.dataset.createList;
       field.dataset.relationshipType = type;
     }
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
     const body = creationTextField(form, { key: "body", label: "Body (MDX)", required: true, multiline: true, value: value.body || "## First section\n\nWrite the guide here, and cite the official sources listed above.", help: "The article body in the supported Markdown and component subset. Refine it later in the formatted editor." });
     body.rows = 10;
     body.classList.add("create-body");
   } else if (kind === "source") {
-    creationSelectField(form, { key: "family", label: "Source family", value: value.family || choices.sourceFamilies[0], options: choices.sourceFamilies.map((family) => [family, family.replaceAll("-", " ")]), help: "The subject module under src/data/sources the source is added to." });
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the organization and page: lowercase words separated by hyphens." });
+    creationSelectField(form, { key: "family", label: "Source family", value: value.family || choices.sourceFamilies[0], options: choices.sourceFamilies.map((family) => [family, humanize(family)]), help: "The subject module under src/data/sources the source is added to." });
     creationTextField(form, { key: "organization", label: "Organization", required: true, value: value.organization, help: "The public body that publishes the page." });
     creationTextField(form, { key: "title", label: "Page title", required: true, value: value.title, help: "The page or document title as published." });
     creationTextField(form, { key: "url", label: "URL", required: true, value: value.url, help: "The official https address." });
-    creationSelectField(form, { key: "authorityLevel", label: "Authority", value: value.authorityLevel || "national-government", options: choices.authorityLevels.map((item) => [item, item.replaceAll("-", " ")]), help: "The level of government or public institution that publishes it." });
+    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the organization and page: lowercase words separated by hyphens." });
+    creationSelectField(form, { key: "authorityLevel", label: "Authority", value: value.authorityLevel || "national-government", options: choices.authorityLevels.map((item) => [item, humanize(item)]), help: "The level of government or public institution that publishes it." });
     creationSelectField(form, { key: "language", label: "Language", value: value.language || "ja", options: choices.sourceLanguages.map((item) => [item, item === "ja" ? "Japanese" : "English"]), help: "The page's language." });
-    creationSelectField(form, { key: "checkMethod", label: "Link check method", value: value.checkMethod || "", options: [["", "Default (automated)"], ...choices.checkMethods.map((item) => [item, item])], help: "Use manual when automated reachability checks cannot load the page." });
+    creationSelectField(form, { key: "checkMethod", label: "Link check method", value: value.checkMethod || "", options: [["", "Default (automated)"], ...choices.checkMethods.map((item) => [item, humanize(item)])], help: "Use manual when automated reachability checks cannot load the page." });
   } else {
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the romanized term: lowercase words separated by hyphens." });
-    creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
     creationTextField(form, { key: "japanese", label: "Japanese term", required: true, value: value.japanese, help: "The term as written in Japanese." });
     creationTextField(form, { key: "kana", label: "Kana reading", value: value.kana, help: "The reading in hiragana or katakana." });
-    creationTextField(form, { key: "romaji", label: "Romaji", value: value.romaji, help: "The romanized reading, with macrons where used." });
+    const romaji = creationTextField(form, { key: "romaji", label: "Romaji", value: value.romaji, help: "The romanized reading, with macrons where used." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the romanized term: lowercase words separated by hyphens. It is filled from the romaji until you change it." });
+    linkDerivedId(id, romaji);
+    creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
     creationTextField(form, { key: "englishName", label: "English name", required: true, value: value.englishName, help: "The English name readers will see." });
     creationTextField(form, { key: "shortDefinition", label: "Short definition", required: true, multiline: true, value: value.shortDefinition, help: "One sentence defining the term." });
     creationTextField(form, { key: "detailedExplanation", label: "Detailed explanation", required: true, multiline: true, value: value.detailedExplanation, help: "What the term means in practice, and its limits." });
     creationTextField(form, { key: "commonContext", label: "Where it appears", required: true, multiline: true, value: value.commonContext, help: "Where readers are likely to meet the term." });
     creationCheckboxes(form, { key: "topicIds", label: "Topics", values: value.topicIds, options: choices.topics, help: "At least one. The primary topic decides which module the entry is added to." });
-    creationSelectField(form, { key: "primaryBrowseGroupId", label: "Primary topic", value: value.primaryBrowseGroupId || "", options: [["", "First selected topic"], ...choices.topics.map((topic) => [topic, topic.replaceAll("-", " ")])], help: "The topic the term is browsed under. It must also be selected above." });
+    creationSelectField(form, { key: "primaryBrowseGroupId", label: "Primary topic", value: value.primaryBrowseGroupId || "", options: [["", "First selected topic"], ...choices.topics.map((topic) => [topic, humanize(topic)])], help: "The topic the term is browsed under. It must also be selected above." });
     creationCheckboxes(form, { key: "journeyStageIds", label: "Journey stages", values: value.journeyStageIds, options: choices.journeyStages, help: "When readers are likely to need the term." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "needs-review", options: statusOptions, help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
     creationIdListField(form, { key: "relatedArticleIds", label: "Related articles", values: value.relatedArticleIds, known: choices.known.articles, help: "Article IDs that explain the term in context." });
-    creationIdListField(form, { key: "relatedTermIds", label: "Related glossary terms", values: value.relatedTermIds, known: choices.known.glossaryTerms, help: "Other glossary term IDs." });
     creationIdListField(form, { key: "sourceIds", label: "Official sources", values: value.sourceIds, known: choices.known.sources, help: "Official source IDs that support the definition." });
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
+    const more = optionalGroup(form, "Related terms and search terms (optional)");
+    creationIdListField(more, { key: "relatedTermIds", label: "Related glossary terms", values: value.relatedTermIds, known: choices.known.glossaryTerms, help: "Other glossary term IDs." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
   }
   const preview = document.createElement("section");
   preview.className = "create-preview";
@@ -3402,8 +3513,17 @@ async function openCreateForm(kind, prefill = null, options = {}) {
   previewButton.type = "button";
   const createButton = el("button", `Create ${creationKindLabels[kind]}`);
   createButton.type = "submit";
+  createButton.className = "primary";
   createButton.disabled = true;
-  actions.append(previewButton, createButton);
+  const cancelButton = el("button", "Cancel");
+  cancelButton.type = "button";
+  cancelButton.addEventListener("click", () => {
+    if (hasUnsavedChanges && !window.confirm(`Discard this new ${creationKindLabels[kind]}?`)) return;
+    hasUnsavedChanges = false;
+    container.replaceChildren(el("p", kind === "source" ? "Select a reference record to inspect its details." : "Select a record to edit its content, review it, or inspect its links, sources, and file details.", "empty-state"));
+    setRoute(page);
+  });
+  actions.append(previewButton, createButton, cancelButton);
   const status = el("p", "Preview the addition to see the exact file and text before creating.", "hint");
   status.setAttribute("role", "status");
   status.tabIndex = -1;
@@ -3563,8 +3683,11 @@ window.addEventListener("popstate", routeFromHash);
 window.addEventListener("hashchange", routeFromHash);
 
 document.querySelector("#refresh").addEventListener("click", refresh);
-for (const button of document.querySelectorAll("[data-create-kind]")) {
-  button.addEventListener("click", () => openCreateForm(button.dataset.createKind));
+for (const button of document.querySelectorAll("button[data-create-kind]")) {
+  button.addEventListener("click", () => {
+    button.closest("details")?.removeAttribute("open");
+    openCreateForm(button.dataset.createKind);
+  });
 }
 // Keyboard: Ctrl+S (or Cmd+S) saves the open editor; J and K step through the content list from a record.
 // Letter keys are ignored while typing in a field or the formatted editor.

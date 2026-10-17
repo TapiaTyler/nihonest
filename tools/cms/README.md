@@ -25,7 +25,7 @@ A navigation bar links the pages. Each page, record, and municipality guide has 
 | Changes | The Git session and per-file diffs, grouped into this session's edits, files dirty before it, and outside changes; and local recovery drafts. |
 | Activity | The local operation log, newest first. |
 
-Long lists show 200 entries at a time with a **Show more** control; counts always cover every match. The header shows when the session started and when data was last refreshed.
+Long lists show 200 entries at a time with a **Show more** control; counts always cover every match. Overview counts link to the list or page they count. Activity is grouped by day in plain sentences, collapses repeated events, and links each record. The Checks page describes the selected check and keeps its exact command under **Command**. Source impact starts with a choice rather than a preselected source. The header shows when the session started and when data was last refreshed.
 
 ## Records
 
@@ -45,7 +45,7 @@ Question-mark disclosures beside each editable, status, and review field explain
 
 ## Creating records
 
-**New article**, **New FAQ**, and **New glossary term** on the Content page, and **New official source** on the Sources & references page, open a creation form; **Duplicate as new** on an existing FAQ or glossary term opens the same form prefilled from it, with a new ID and no dates or review data. The form asks for a stable ID (a lowercase hyphenated identifier other records will link to), an optional slug (defaults to the ID), the English content, relationships, and an initial status of Draft or Editorial review. ID lists have a finder that suggests known IDs.
+**New record** on the Content page (Article, FAQ, or Glossary term), and **New official source** on the Sources & references page, open a creation form; **Duplicate as new** on an existing FAQ or glossary term opens the same form prefilled from it, with a new ID and no dates or review data. The form asks for the English content first, then a stable ID (a lowercase hyphenated identifier other records will link to, filled from the title, question, or romaji until you type your own), an optional slug (defaults to the ID), relationships, and an initial status of Draft or Editorial review. Optional relationships and search terms are folded under a disclosure, and **Cancel** closes the form. ID lists have a finder that suggests known IDs.
 
 **Preview addition** validates the record and shows the exact text and the file and line where it will be added. A FAQ is appended to its browse group's module (`src/data/faqs/<group>.ts`) as one `defineFaq` entry dated today; a glossary term is appended to its primary topic's module (`src/data/glossary/<topic>.ts`) as a direct `japaneseTermSchema.parse` entry. **Create** is available only for the previewed fields; changing any field requires a new preview. The server rechecks everything on Create: the domain schema, the same collection validators the site uses (unique IDs and slugs; every related article, group, journey, glossary term, residence status, activity, and source must exist; a FAQ must link at least one resource), that the module still matches the previewed revision, and that it was not dirty when the CMS started. It then appends the entry atomically without changing any existing text.
 

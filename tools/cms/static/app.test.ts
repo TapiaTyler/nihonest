@@ -126,7 +126,13 @@ describe("CMS article detail", () => {
     window.confirm = () => true;
     await waitFor(() => expect(document.querySelector("#article-list button")).not.toBeNull());
     await waitFor(() => expect(document.querySelector("#git-status .git-files")).not.toBeNull());
-    await waitFor(() => expect(document.querySelector("#impact-result")?.textContent).toContain("Official source"));
+    // Source impact starts with a choice rather than an arbitrary source.
+    await waitFor(() => expect((document.querySelector("#impact-source") as HTMLSelectElement).options.length).toBeGreaterThan(1));
+    expect(document.querySelector("#impact-result")?.textContent).toContain("Choose a source");
+    const impactPicker = document.querySelector("#impact-source") as HTMLSelectElement;
+    impactPicker.value = impactPicker.options[1].value;
+    impactPicker.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(document.querySelector("#impact-result")?.textContent).toContain("Official source");
     await waitFor(() => expect(document.querySelectorAll("#reference-list button")).toHaveLength(4));
     await waitFor(() => expect((document.querySelector("#local-guidance-location") as HTMLSelectElement).options.length).toBe(3));
     expect(document.querySelectorAll("#local-guidance-matrix thead th")).toHaveLength(8);
@@ -143,7 +149,9 @@ describe("CMS article detail", () => {
     expect(document.querySelector("#impact-result")?.textContent).toContain("sample-article");
     expect(document.querySelector("#handoff-status")?.textContent).toContain("1 stale and 0 missing");
     expect(document.querySelector("#handoff-items")?.textContent).toContain("Sample article");
-    await waitFor(() => expect(document.querySelector("#activity-events")?.textContent).toContain("sample-article"));
+    // Activity names the record and opens it; events are grouped by day in plain sentences.
+    await waitFor(() => expect(document.querySelector("#activity-events")?.textContent).toContain("Sample article"));
+    expect(document.querySelector("#activity-events h3")).not.toBeNull();
     expect(document.querySelector("#recovery-drafts")?.textContent).toContain("No recovery drafts");
     const referenceSearch = document.querySelector("#reference-search") as HTMLInputElement;
     referenceSearch.value = "journey";
