@@ -7,8 +7,11 @@ const search = document.querySelector("#search");
 const statusFilter = document.querySelector("#status-filter");
 const kindFilter = document.querySelector("#kind-filter");
 const groupFilter = document.querySelector("#group-filter");
+const sortOrder = document.querySelector("#sort-order");
 const websiteOrigin = "http://127.0.0.1:3000";
 let articles = [];
+// The content list as currently filtered and sorted; the review queue steps through it.
+let currentMatches = [];
 let selectedId = null;
 let selectedKind = "article";
 let sessionToken = null;
@@ -159,12 +162,20 @@ async function json(path) {
 }
 
 async function mutate(path, method, payload) {
-  if (!sessionToken) sessionToken = (await json("/api/session")).token;
-  const response = await fetch(path, {
-    method,
-    headers: { "Content-Type": "application/json", "X-CMS-Token": sessionToken },
-    body: JSON.stringify(payload),
-  });
+  const send = async () => {
+    if (!sessionToken) sessionToken = (await json("/api/session")).token;
+    return fetch(path, {
+      method,
+      headers: { "Content-Type": "application/json", "X-CMS-Token": sessionToken },
+      body: JSON.stringify(payload),
+    });
+  };
+  let response = await send();
+  // A restarted CMS issues a new session token; an open tab fetches it once and retries instead of failing.
+  if (response.status === 403) {
+    sessionToken = null;
+    response = await send();
+  }
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || `Request failed (${response.status}).`);
   return result;
@@ -194,6 +205,7 @@ function recoveryPanel(record, loadDraft) {
   let authorized = false;
   let pendingWrite = false;
   let currentContent = () => null;
+  let savedListener = () => {};
   const revision = recordRevision(record);
   const sourceRevision = record.kind === "article" ? undefined : record.source.sourceRevision;
   const canLoad = record.kind === "article"
@@ -208,13 +220,13 @@ function recoveryPanel(record, loadDraft) {
     // With no draft the panel is a one-line note; a saved draft expands it with the comparison and actions.
     panel.classList.toggle("empty", !snapshot);
     if (!snapshot) {
-      panel.replaceChildren(el("p", "No saved recovery draft for this record. Unsaved changes are saved here automatically.", "hint"));
+      panel.replaceChildren(el("p", "No saved recovery draft for this record. While you edit, unsaved edits are kept as a local recovery draft until you save.", "hint"));
       return;
     }
     panel.replaceChildren(el("h3", "Local recovery draft"));
     const matches = snapshot.expectedRecordRevision === revision &&
       (record.kind === "article" || snapshot.expectedSourceRevision === sourceRevision);
-    panel.append(el("p", `Saved ${snapshot.capturedAt || "locally"}. ${matches ? "Its base revision matches the current record." : "Its base revision is stale; review both versions and copy changes manually."}`, matches ? "hint" : "check-warning"));
+    panel.append(el("p", `Kept ${snapshot.capturedAt ? formatTime(snapshot.capturedAt) : "locally"}. ${matches ? "Its base revision matches the current record." : "Its base revision is stale; review both versions and copy changes manually."}`, matches ? "hint" : "check-warning"));
     if (!authorized) panel.append(el("p", "This saved draft is protected. Load it or discard it before the CMS can autosave newer edits for this record.", "hint"));
     const current = el("details", "");
     current.append(el("summary", "Current canonical source"), el("pre", JSON.stringify(record.kind === "article" ? { body: record.body, updatedAt: record.metadata.updatedAt } : record.value, null, 2)));
@@ -277,6 +289,7 @@ function recoveryPanel(record, loadDraft) {
         const saved = await mutate(route, "PUT", { ...payload, ...(snapshot ? { previousDraftRevision: snapshot.draftRevision } : {}) });
         snapshot = saved;
         persistedVersion = ownVersion;
+        savedListener(saved);
         if (!cleared) {
           render();
           refreshRecoveryList();
@@ -345,6 +358,7 @@ function recoveryPanel(record, loadDraft) {
     version: () => version,
     clearAfterSave,
     setCurrentContent: (getContent) => { currentContent = getContent; },
+    onSaved: (listener) => { savedListener = listener; },
     dispose: () => { clearTimeout(timer); cleared = true; version += 1; },
   };
 }
@@ -360,7 +374,8 @@ async function refreshRecoveryList() {
     const list = document.createElement("ul");
     for (const snapshot of snapshots) {
       const item = document.createElement("li");
-      const button = el("button", `${snapshot.kind}: ${snapshot.id} · saved ${snapshot.capturedAt || "locally"}`);
+      const known = articles.find((record) => record.kind === snapshot.kind && record.id === snapshot.id);
+      const button = el("button", `${kindLabel(snapshot.kind)}: ${known?.title || snapshot.id} · kept ${snapshot.capturedAt ? formatTime(snapshot.capturedAt) : "locally"}`, "link-button");
       button.type = "button";
       button.addEventListener("click", () => selectRecord(snapshot.kind, snapshot.id));
       item.append(button);
@@ -370,22 +385,62 @@ async function refreshRecoveryList() {
   } catch (error) { container.replaceChildren(el("p", error.message, "error")); }
 }
 
+const activityActions = {
+  session: "CMS session", draft: "Recovery draft kept", "article-body": "Article body saved", "article-status": "Article status changed",
+  "article-review": "Approval recorded", "record-content": "Content saved", "record-status": "Status changed",
+  "record-review": "Approval recorded", "local-guidance-content": "Municipality guidance saved", "record-create": "Record created",
+  "check-start": "Check started", "check-finish": "Check finished", "check-cancel": "Check canceled",
+};
+
+function activitySentence(event) {
+  const check = event.checkId ? checkReport?.definitions.find((item) => item.id === event.checkId)?.label || event.checkId : "";
+  if (event.kind === "session") return event.outcome === "started" ? "CMS session started" : `CMS session ${event.outcome}`;
+  if (event.kind === "check-finish") return `${check} ${({ succeeded: "passed", warning: "finished with review findings", failed: "failed", canceled: "was canceled" })[event.outcome] || event.outcome}`;
+  if (event.kind === "check-start") return `${check} started`;
+  if (event.kind === "check-cancel") return `${check} canceled`;
+  const action = activityActions[event.kind] || event.kind;
+  const outcome = ({ succeeded: "", failed: " (failed)", conflict: " (conflict: the file changed; reload it)", canceled: " (canceled)", warning: " (with warnings)", started: " (started)" })[event.outcome] ?? ` (${event.outcome})`;
+  return `${action}${outcome}`;
+}
+
 async function refreshActivity() {
   const container = document.querySelector("#activity-events");
   if (!container) return;
   try {
     const { events } = await json("/api/activity");
-    container.replaceChildren(...(events.length ? events.slice().reverse().slice(0, 100).map((event) => {
+    if (!events.length) { container.replaceChildren(el("p", "No activity recorded yet. Saves, approvals, checks, and recovery drafts appear here.", "hint")); return; }
+    const days = new Map();
+    let previous = null;
+    for (const event of events.slice().reverse().slice(0, 150)) {
+      const when = new Date(event.occurredAt || event.at);
+      const day = Number.isNaN(when.getTime()) ? "Unknown date" : when.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      if (!days.has(day)) { days.set(day, document.createElement("ol")); previous = null; }
+      const sentence = activitySentence(event);
+      // Repeated identical events (autosaved drafts, restarts) collapse into one line with a count.
+      if (previous && previous.sentence === sentence && previous.recordId === event.recordId) {
+        previous.count += 1;
+        previous.counter.textContent = ` ×${previous.count}`;
+        continue;
+      }
       const item = document.createElement("li");
-      const target = event.recordKind && event.recordId ? `${event.recordKind}: ${event.recordId}` : event.checkId ? `Check: ${event.checkId}` : "CMS";
-      const when = event.occurredAt || event.at;
       const time = document.createElement("time");
-      time.dateTime = when;
-      time.textContent = formatTime(when);
-      item.append(time, document.createTextNode(` · ${target} · ${event.kind} · ${event.outcome}${event.revision ? ` · ${event.revision}` : ""}`));
-      return item;
-    }) : [el("li", "No activity recorded yet.")]));
-  } catch (error) { container.replaceChildren(el("li", error.message, "error")); }
+      time.dateTime = event.occurredAt || event.at;
+      time.textContent = Number.isNaN(when.getTime()) ? "" : when.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+      item.append(time, document.createTextNode(` ${sentence}`));
+      if (event.recordKind && event.recordId) {
+        const known = articles.find((record) => record.kind === event.recordKind && record.id === event.recordId);
+        const open = el("button", known?.title || event.recordId, "link-button");
+        open.type = "button";
+        open.addEventListener("click", () => selectRecord(event.recordKind, event.recordId));
+        item.append(document.createTextNode(": "), open);
+      }
+      const counter = el("span", "", "activity-count");
+      item.append(counter);
+      days.get(day).append(item);
+      previous = { sentence, recordId: event.recordId, count: 1, counter };
+    }
+    container.replaceChildren(...[...days].flatMap(([day, list]) => [el("h3", day), list]));
+  } catch (error) { container.replaceChildren(el("p", error.message, "error")); }
 }
 
 // Long lists render a page at a time so the workspace stays responsive; counts always cover every match.
@@ -409,6 +464,19 @@ function formatTime(value) {
   return date.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+function plural(count, one, many) {
+  return `${count} ${count === 1 ? one : many}`;
+}
+
+// Today's times as "07:17"; other days with the date.
+function shortTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value || "");
+  const sameDay = date.toDateString() === new Date().toDateString();
+  return sameDay ? date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+    : date.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
 function setNavCount(name, count, meaning) {
   const badge = document.querySelector(`[data-count="${name}"]`);
   if (!badge) return;
@@ -417,13 +485,43 @@ function setNavCount(name, count, meaning) {
   badge.hidden = !count;
 }
 
+// The editorial-review queue, oldest review first, opened at its first record.
+function startReviewQueue() {
+  setContentFilters({ status: "needs-review", order: "oldest-review" });
+  const first = currentMatches[0];
+  if (!first) return false;
+  selectRecord(first.kind, first.id);
+  return true;
+}
+
+// Overview counts are shortcuts to the list or page they count.
+function summaryLink(text, page, action) {
+  const link = el("a", text, "summary-link");
+  link.href = `#/${page}`;
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    action?.();
+    setRoute(page);
+    showPage(page, { focus: page !== "overview" });
+  });
+  return link;
+}
+
+function setContentFilters({ kind = "", status = "", group = "", order = "" }) {
+  kindFilter.value = kind; statusFilter.value = status; search.value = "";
+  renderGroupFilter();
+  groupFilter.value = group;
+  if (sortOrder) sortOrder.value = order;
+  resetContentList();
+}
+
 function attentionItem(text, page, action) {
   const item = document.createElement("li");
   const link = el("a", text);
   link.href = `#/${page}`;
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    action?.();
+    if (action?.() === "handled") return;
     setRoute(page);
     showPage(page, { focus: true });
   });
@@ -438,40 +536,39 @@ function renderOverview() {
   const items = [];
   const needsReview = articles.filter((item) => item.status === "needs-review").length;
   const drafts = articles.filter((item) => item.status === "draft").length;
-  if (needsReview) items.push(attentionItem(`${needsReview} records are in editorial review`, "content", () => {
-    kindFilter.value = ""; statusFilter.value = "needs-review"; groupFilter.value = ""; renderGroupFilter(); resetContentList();
-  }));
-  if (drafts) items.push(attentionItem(`${drafts} records are drafts`, "content", () => {
-    kindFilter.value = ""; statusFilter.value = "draft"; groupFilter.value = ""; renderGroupFilter(); resetContentList();
-  }));
+  if (needsReview) {
+    items.push(attentionItem(`Start reviewing: ${needsReview} ${needsReview === 1 ? "record is" : "records are"} in editorial review, oldest review first`, "content",
+      () => (startReviewQueue() ? "handled" : undefined)));
+  }
+  if (drafts) items.push(attentionItem(`${drafts} ${drafts === 1 ? "record is a draft" : "records are drafts"}`, "content", () => setContentFilters({ status: "draft" })));
   const stale = lastHandoff ? lastHandoff.items.filter((item) => item.state === "stale").length : 0;
   const missing = lastHandoff ? lastHandoff.items.filter((item) => item.state === "missing").length : 0;
   if (stale || missing) items.push(attentionItem(`${stale} stale and ${missing} missing Japanese artifacts`, "translations"));
-  if (catalogFailureCount) items.push(attentionItem(`${catalogFailureCount} files could not be read (listed below)`, "overview"));
+  if (catalogFailureCount) items.push(attentionItem(`${plural(catalogFailureCount, "file", "files")} could not be read (listed below)`, "overview"));
   const git = lastGitReport;
   // Data modules are loaded when the CMS starts; an outside change to one needs a restart, not just Refresh.
   const moduleChanges = git ? git.otherChanges.filter((path) => /^src\/.+\.tsx?$/.test(path)) : [];
-  if (moduleChanges.length) items.push(attentionItem(`${moduleChanges.length} data modules changed outside the CMS after it started. Restart the CMS to load them`, "changes"));
+  if (moduleChanges.length) items.push(attentionItem(`${plural(moduleChanges.length, "data module", "data modules")} changed outside the CMS after it started. Restart the CMS to load ${moduleChanges.length === 1 ? "it" : "them"}`, "changes"));
   if (git) {
     if (git.currentBranch !== git.identity.branch || git.currentCommit !== git.identity.startCommit) {
       items.push(attentionItem("The branch or commit changed after the CMS started. Restart it before saving", "changes"));
     }
-    if (git.cmsChanges.length) items.push(attentionItem(`${git.cmsChanges.length} files changed by this CMS session; review their diffs before committing`, "changes"));
-    if (git.identity.dirtyAtStart.length) items.push(attentionItem(`${git.identity.dirtyAtStart.length} files already had uncommitted changes; the CMS will not write them`, "changes"));
-    if (git.otherChanges.length) items.push(attentionItem(`${git.otherChanges.length} files changed outside the CMS during this session`, "changes"));
+    if (git.cmsChanges.length) items.push(attentionItem(`${plural(git.cmsChanges.length, "file", "files")} changed by this CMS session; review the ${git.cmsChanges.length === 1 ? "diff" : "diffs"} before committing`, "changes"));
+    if (git.identity.dirtyAtStart.length) items.push(attentionItem(`${plural(git.identity.dirtyAtStart.length, "file", "files")} already had uncommitted changes; the CMS will not write ${git.identity.dirtyAtStart.length === 1 ? "it" : "them"}`, "changes"));
+    if (git.otherChanges.length) items.push(attentionItem(`${plural(git.otherChanges.length, "file", "files")} changed outside the CMS during this session`, "changes"));
   }
-  if (recoveryDraftCount) items.push(attentionItem(`${recoveryDraftCount} unsaved recovery drafts`, "changes"));
+  if (recoveryDraftCount) items.push(attentionItem(`${recoveryDraftCount} unsaved recovery ${recoveryDraftCount === 1 ? "draft" : "drafts"}: open one to load or discard it`, "changes"));
   attention.replaceChildren(...(items.length ? items : [el("li", "Nothing needs attention in the loaded catalogs.")]));
   setNavCount("content", needsReview, "in editorial review");
   setNavCount("translations", stale + missing, "stale or missing");
   setNavCount("changes", git ? git.cmsChanges.length : 0, "changed by this session");
   const freshness = document.querySelector("#data-freshness");
   if (freshness) {
-    const started = git ? formatTime(git.identity.startedAt) : null;
+    const started = git ? shortTime(git.identity.startedAt) : null;
     freshness.classList.toggle("restart-needed", moduleChanges.length > 0);
     freshness.textContent = moduleChanges.length
-      ? `Restart needed: ${moduleChanges.length} data modules changed after ${started}`
-      : [started ? `Session started ${started}` : "", dataRefreshedAt ? `refreshed ${formatTime(dataRefreshedAt)}` : ""].filter(Boolean).join(" · ") || "Loading…";
+      ? `Restart needed: ${plural(moduleChanges.length, "data module", "data modules")} changed after ${started}`
+      : [started ? `Started ${started}` : "", dataRefreshedAt ? `refreshed ${shortTime(dataRefreshedAt)}` : ""].filter(Boolean).join(" · ") || "Loading…";
     freshness.title = "Refresh rereads canonical files. Restart the CMS after changes made outside it to TypeScript data modules or translation registries.";
   }
 }
@@ -495,6 +592,8 @@ function renderList() {
     (!selectedGroup || (article.groups || []).some((group) => `${article.kind}:${group}` === selectedGroup)) &&
     (!selectedStatus || article.status === selectedStatus) &&
     (!query || matchReason(article, query) !== null));
+  if (listComparators[sortOrder?.value]) matches.sort(listComparators[sortOrder.value]);
+  currentMatches = matches;
   list.replaceChildren();
   resultCount.textContent = `${matches.length} of ${articles.length} records`;
   const selectedIndex = matches.findIndex((article) => article.id === selectedId && article.kind === selectedKind);
@@ -504,7 +603,11 @@ function renderList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(article.id === selectedId && article.kind === selectedKind));
-    button.append(el("strong", article.title), el("small", `${article.kind.replaceAll("-", " ")} · ${article.status}${article.translation ? ` · Japanese: ${article.translation}` : ""}`));
+    const meta = el("small", "", "row-meta");
+    meta.append(el("span", statusLabel(article.status), `chip status-${article.status}`),
+      document.createTextNode([kindLabel(article.kind), article.translation ? `Japanese ${article.translation}` : "",
+        article.lastReviewedAt ? `reviewed ${formatDate(article.lastReviewedAt)}` : ""].filter(Boolean).join(" · ")));
+    button.append(el("strong", article.title), meta);
     const reason = query ? matchReason(article, query) : "";
     if (reason) button.append(el("small", reason, "match-reason"));
     button.addEventListener("click", () => selectRecord(article.kind, article.id));
@@ -512,6 +615,25 @@ function renderList() {
     list.append(item);
   }
   if (matches.length > shown.length) list.append(showMoreItem(matches.length - shown.length, () => { contentListLimit += listPageSize; renderList(); }));
+}
+
+const importanceRank = { critical: 0, important: 1, recommended: 2, informational: 3 };
+const byTitle = (a, b) => a.title.localeCompare(b.title, "en");
+// Records without a date sort first in date orders: a record never reviewed is the oldest review of all.
+const byDate = (key) => (a, b) => (a[key] || "").localeCompare(b[key] || "") || byTitle(a, b);
+const listComparators = {
+  title: byTitle,
+  "oldest-review": byDate("lastReviewedAt"),
+  "oldest-update": byDate("updatedAt"),
+  importance: (a, b) => (importanceRank[a.importance] ?? 4) - (importanceRank[b.importance] ?? 4) || byTitle(a, b),
+};
+
+// Dates in the data are ISO days (2026-10-17); the interface shows them as "17 Oct 2026".
+function formatDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+  if (!match) return value ? formatTime(value) : "not recorded";
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 }
 
 function renderGroupFilter() {
@@ -814,7 +936,11 @@ function renderLocalGuidanceList() {
     const button = document.createElement("button");
     button.type = "button";
     button.setAttribute("aria-current", String(selectedLocalGuidanceId === supplement.id));
-    button.append(el("strong", supplement.title), el("small", `${supplement.articleId} · ${localGuidanceTranslationLabel(supplement.translation)}`));
+    const meta = el("small", "", "row-meta");
+    const state = supplement.translation || "missing";
+    meta.append(el("span", `Japanese ${state}`, `chip translation-${state}`),
+      document.createTextNode(supplement.generator === "codex-drafted" ? "Codex draft awaiting a check" : ""));
+    button.append(el("strong", supplement.title), meta);
     button.addEventListener("click", () => selectLocalGuidance(supplement.id));
     item.append(button);
     localGuidanceList.append(item);
@@ -830,14 +956,28 @@ function localGuidanceGuideIdentity(guide) {
 function openLocalGuidanceMatrixCell(location, supplement) {
   if (localGuidanceUnsaved && !window.confirm("Discard unsaved municipality guidance changes?")) return;
   localGuidanceUnsaved = false;
+  // The chosen guide opens below; folding the matrix brings it into view.
+  document.querySelector(".local-guidance-matrix-disclosure")?.removeAttribute("open");
   localGuidanceLocation.value = location.id;
   localGuidanceLocation.dispatchEvent(new Event("change", { bubbles: true }));
   selectLocalGuidance(supplement.id);
   document.querySelector("#local-guidance-detail-heading")?.focus?.();
 }
 
+// A supplement needs attention when its Japanese is not current or a Codex draft still awaits Claude's check.
+function localGuidanceNeedsAttention(supplement) {
+  return (supplement.translation || "missing") !== "current" || supplement.generator === "codex-drafted";
+}
+
 function renderLocalGuidanceMatrix(guides) {
   if (!localGuidanceMatrix) return;
+  const issuesOnly = document.querySelector("#local-guidance-issues-only")?.checked;
+  const all = localGuidanceLocations.flatMap((location) => location.supplements);
+  const counts = { current: 0, stale: 0, missing: 0 };
+  for (const supplement of all) counts[supplement.translation || "missing"] = (counts[supplement.translation || "missing"] || 0) + 1;
+  const drafts = all.filter((supplement) => supplement.generator === "codex-drafted").length;
+  const summaryLine = document.querySelector("#local-guidance-matrix-summary");
+  if (summaryLine) summaryLine.textContent = `${all.length} ${all.length === 1 ? "supplement" : "supplements"} in ${localGuidanceLocations.length} ${localGuidanceLocations.length === 1 ? "location" : "locations"}: ${counts.current} current, ${counts.stale} stale, ${counts.missing} missing Japanese; ${drafts} Codex ${drafts === 1 ? "draft" : "drafts"} awaiting a check.`;
   const table = document.createElement("table");
   table.className = "local-guidance-matrix-table";
   const caption = document.createElement("caption");
@@ -860,7 +1000,8 @@ function renderLocalGuidanceMatrix(guides) {
   thead.append(headerRow);
   table.append(thead);
   const tbody = document.createElement("tbody");
-  for (const location of localGuidanceLocations) {
+  const shownLocations = issuesOnly ? localGuidanceLocations.filter((location) => location.supplements.some(localGuidanceNeedsAttention)) : localGuidanceLocations;
+  for (const location of shownLocations) {
     const row = document.createElement("tr");
     const rowHeader = el("th", location.name);
     rowHeader.scope = "row";
@@ -873,12 +1014,14 @@ function renderLocalGuidanceMatrix(guides) {
         cell.setAttribute("aria-label", "No municipality supplement");
       } else {
         const state = supplement.translation || "missing";
-        const button = el("button", `Available · ${state}`);
+        const draft = supplement.generator === "codex-drafted";
+        const button = el("button", `${({ current: "Current", stale: "Stale", missing: "Missing" })[state] || state}${draft ? " · Codex draft" : ""}`);
         button.type = "button";
-        button.className = "local-guidance-matrix-cell";
+        button.className = `local-guidance-matrix-cell matrix-${state}${draft ? " matrix-draft" : ""}`;
+        button.tabIndex = -1;
         const article = articles.find((record) => record.kind === "article" && record.id === guide.articleId);
         const guideTitle = article?.title || guide.id;
-        button.setAttribute("aria-label", `Open ${location.name} supplement for ${guideTitle}; Japanese artifact ${state}`);
+        button.setAttribute("aria-label", `Open ${location.name} supplement for ${guideTitle}; Japanese artifact ${state}${draft ? "; Codex draft awaiting Claude check" : ""}`);
         button.addEventListener("click", () => openLocalGuidanceMatrixCell(location, supplement));
         cell.append(button);
       }
@@ -887,6 +1030,32 @@ function renderLocalGuidanceMatrix(guides) {
     tbody.append(row);
   }
   table.append(tbody);
+  // One cell is in the tab order; arrow keys, Home, and End move between cells (a roving tab stop).
+  const cells = [...tbody.querySelectorAll(".local-guidance-matrix-cell")];
+  if (cells[0]) cells[0].tabIndex = 0;
+  tbody.addEventListener("keydown", (event) => {
+    const current = event.target.closest?.(".local-guidance-matrix-cell");
+    if (!current) return;
+    const cell = current.closest("td");
+    const row = cell.parentElement;
+    const rows = [...tbody.rows];
+    const column = [...row.cells].indexOf(cell);
+    const rowIndex = rows.indexOf(row);
+    const buttonAt = (r, c) => rows[r]?.cells[c]?.querySelector(".local-guidance-matrix-cell");
+    const scan = (r, c, dr, dc) => { for (let i = r + dr, j = c + dc; rows[i] && rows[i].cells[j]; i += dr, j += dc) { const found = buttonAt(i, j); if (found) return found; } return null; };
+    const target = event.key === "ArrowRight" ? scan(rowIndex, column, 0, 1) : event.key === "ArrowLeft" ? scan(rowIndex, column, 0, -1)
+      : event.key === "ArrowDown" ? scan(rowIndex, column, 1, 0) : event.key === "ArrowUp" ? scan(rowIndex, column, -1, 0)
+        : event.key === "Home" ? row.querySelector(".local-guidance-matrix-cell") : event.key === "End" ? [...row.querySelectorAll(".local-guidance-matrix-cell")].pop() : null;
+    if (!target) return;
+    event.preventDefault();
+    for (const button of cells) button.tabIndex = -1;
+    target.tabIndex = 0;
+    target.focus();
+  });
+  if (issuesOnly && !shownLocations.length) {
+    localGuidanceMatrix.replaceChildren(el("p", "Every location's guides have current Japanese and no unchecked Codex drafts.", "success"));
+    return;
+  }
   if (!localGuidanceLocations.length || !guideRefs.length) {
     localGuidanceMatrix.replaceChildren(table, el("p", "No location and guide coverage is currently registered.", "hint"));
   } else localGuidanceMatrix.replaceChildren(table);
@@ -1076,10 +1245,11 @@ function renderLocalGuidanceDetail(record) {
   const saveRow = document.createElement("div");
   saveRow.className = "local-guidance-save-row";
   const save = el("button", "Save English changes");
-  save.type = "submit"; save.disabled = true;
+  save.type = "submit"; save.disabled = true; save.className = "primary";
+  save.setAttribute("aria-keyshortcuts", "Control+S");
   const saveStatus = el("span", "No unsaved English changes.");
   saveStatus.setAttribute("role", "status");
-  saveRow.append(save, saveStatus);
+  saveRow.append(save, saveStatus, relatedChecksPanel({ kind: "local-guidance-supplement", id: record.id, revision: record.revision }, { compact: true }));
   editor.append(saveRow);
   editor.addEventListener("input", () => updateLocalGuidanceSaveState(editor));
   editor.addEventListener("submit", async (event) => {
@@ -1096,6 +1266,7 @@ function renderLocalGuidanceDetail(record) {
       });
       localGuidanceUnsaved = false;
       saveStatus.textContent = result.changed ? "Saved. Reloading guide and translation state…" : "No canonical changes were needed.";
+      if (result.changed) checkAfterSave("local-guidance-supplement", record.id);
       await refreshLocalGuidance();
       await refreshHandoff();
     } catch (error) {
@@ -1116,6 +1287,7 @@ function renderLocalGuidanceDetail(record) {
     ["sources", "Sources & rechecks", related],
     ["details", "Details & checks", detailsPanel],
   ], "Guide sections", "guide"));
+  startChecksIfSaved({ kind: "local-guidance-supplement", id: record.id, revision: record.revision });
 }
 
 async function selectLocalGuidance(id, options = {}) {
@@ -1141,10 +1313,21 @@ function renderLocalGuidanceLocations() {
   const previous = localGuidanceLocation.value;
   const options = [el("option", "Choose a location")];
   options[0].value = "";
+  const groups = new Map();
   for (const location of localGuidanceLocations) {
-    const option = el("option", `${location.name} (${location.supplements.length} guides)`);
+    const option = el("option", `${location.name} (${location.supplements.length} guides${location.supplements.some(localGuidanceNeedsAttention) ? ", needs attention" : ""})`);
     option.value = location.id;
-    options.push(option);
+    const group = location.prefectureName || "";
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push(option);
+  }
+  // Locations are grouped by prefecture when the catalog names them; otherwise the list stays flat.
+  for (const [name, members] of groups) {
+    if (!name) { options.push(...members); continue; }
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = name;
+    optgroup.append(...members);
+    options.push(optgroup);
   }
   localGuidanceLocation.replaceChildren(...options);
   localGuidanceLocation.value = localGuidanceLocations.some((location) => location.id === previous) ? previous : "";
@@ -1285,8 +1468,9 @@ function articleView(article) {
   preview.className = "article-preview";
   const header = document.createElement("header");
   header.className = "preview-header";
-  header.append(el("span", metadata.status === "needs-review" ? "Editorial review" : metadata.status, "badge"),
-    el("h3", metadata.title), el("p", metadata.description, "preview-description"));
+  // Like the website, reviewed content shows no status pill.
+  if (metadata.status !== "verified") header.append(el("span", statusLabel(metadata.status), "badge"));
+  header.append(el("h3", metadata.title), el("p", metadata.description, "preview-description"));
   preview.append(header);
   let previewBody = renderArticleBlocks(article.blocks);
   preview.append(previewBody);
@@ -1732,7 +1916,7 @@ function articleView(article) {
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     date.value = today > metadata.updatedAt ? today : metadata.updatedAt;
     date.min = metadata.updatedAt;
-    const message = el("p", "Changes are local to this browser until Save.", "hint");
+    const message = el("p", "Unsaved edits are kept as a local recovery draft. Save writes the article file.", "hint");
     message.setAttribute("role", "status");
     const diff = document.createElement("details");
     const diffBody = el("pre", "No body changes.");
@@ -1742,6 +1926,9 @@ function articleView(article) {
     generated.append(el("summary", "Generated MDX for save"), generatedBody);
     const save = el("button", "Save article body");
     save.type = "button";
+    save.className = "primary";
+    save.setAttribute("aria-keyshortcuts", "Control+S");
+    save.title = "Save article body (Ctrl+S)";
     save.disabled = true;
     const previewToggle = el("button", "Preview article");
     previewToggle.type = "button";
@@ -1752,7 +1939,9 @@ function articleView(article) {
     const actions = document.createElement("div");
     actions.className = "edit-actions";
     actions.append(previewToggle, save, cancel);
-    editor.append(modeBar, toolbar, linkForm, formattedHost, label, textarea, dateLabel, date, diff, generated, actions, message);
+    const bar = actionBar(actions, message);
+    bar.bar.append(relatedChecksPanel({ kind: "article", id: metadata.id, revision: record.revision }, { compact: true }));
+    editor.append(modeBar, toolbar, linkForm, formattedHost, label, textarea, dateLabel, date, diff, generated, bar.bar);
     wrapper.append(editor);
     function setEditorMode(next) {
       if (next === "source" && invalidFormattedBlock) {
@@ -1832,6 +2021,8 @@ function articleView(article) {
     function updateState() {
       const changed = textarea.value !== article.body;
       hasUnsavedChanges = changed;
+      markRecordUnsaved(changed);
+      bar.setState(changed ? "dirty" : "clean", changed ? "Unsaved edits" : "No unsaved edits");
       if (changed) recovery?.schedule();
       save.disabled = !changed || !validPreview || invalidFormattedBlock;
       diffBody.textContent = `${metadata.updatedAt === date.value ? "Update date unchanged." : `Update date: ${metadata.updatedAt} → ${date.value}`}\n\n${changeSummary(article.body, textarea.value)}`;
@@ -1845,6 +2036,7 @@ function articleView(article) {
       textarea.dispatchEvent(new Event("input", { bubbles: true }));
     });
     recovery.setCurrentContent(() => ({ body: textarea.value, updatedAt: date.value }));
+    recovery.onSaved((snapshot) => { if (hasUnsavedChanges) bar.setState("dirty", ["Unsaved edits", draftTime(snapshot) && `recovery draft kept ${draftTime(snapshot)}`].filter(Boolean).join(" · ")); });
     cancelEditorPreview = () => { clearTimeout(previewTimer); previewVersion += 1; recovery.dispose(); };
     editor.prepend(recovery.element);
     previewToggle.addEventListener("click", () => {
@@ -1887,12 +2079,14 @@ function articleView(article) {
     });
     date.addEventListener("change", updateState);
     cancel.addEventListener("click", () => {
+      if (hasUnsavedChanges && !window.confirm("Discard your unsaved edits to this article?")) return;
       clearTimeout(previewTimer);
       hasUnsavedChanges = false;
       selectArticle(metadata.id);
     });
     save.addEventListener("click", async () => {
       save.disabled = true;
+      bar.setState("saving", "Saving…");
       message.textContent = "Saving article body…";
       try {
         await recovery.flush();
@@ -1902,11 +2096,13 @@ function articleView(article) {
         }));
         hasUnsavedChanges = false;
         await recovery.clearAfterSave(savedVersion);
+        checkAfterSave("article", metadata.id);
         await refresh();
       } catch (error) {
         message.textContent = error.message;
         message.className = "error";
         updateState();
+        bar.setState("error", "Not saved");
       }
     });
   } else {
@@ -2039,60 +2235,23 @@ function structuredEditorialControls(record) {
   section.append(statusLabel, status, note, statusButton, message);
   if (record.status !== "needs-review") return section;
 
-  const form = document.createElement("form");
-  form.className = "review-form";
-  form.append(el("h3", "Mark reviewed"),
-    el("p", "Review this complete record, linked content, and official sources. Record the validation you performed and explicitly approve the exact revision shown below. The CMS writes the verified state and an immutable approval record.", "hint"),
-    el("p", `Editorial revision to review: ${record.revision}`, "revision-label"));
-  function fieldInput(title, id, multiline = false) {
-    const help = id.includes("date") ? helpText.reviewDate : id.includes("change") ? helpText.changeNote
-      : id.includes("validation") ? helpText.validation : id.includes("source") ? helpText.sourceReviews : helpText.approvalNote;
-    const label = labeledField(title, id, help);
-    const input = document.createElement(multiline ? "textarea" : "input");
-    input.id = id;
-    input.required = true;
-    if (multiline) input.rows = 3;
-    form.append(label, input);
-    return input;
-  }
-  const date = fieldInput("Review date", "structured-review-date");
-  date.type = "date";
-  if (record.updatedAt) date.min = record.updatedAt;
-  const now = new Date();
-  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  date.value = date.max;
-  const change = fieldInput("What did you review or change?", "structured-change-note", true);
-  const validation = fieldInput("Validation performed (one check per line)", "structured-validation", true);
-  const sourceReviews = fieldInput("Resolved source review IDs (optional, one per line)", "structured-source-reviews", true);
-  sourceReviews.required = false;
-  const approval = fieldInput("Approval note", "structured-approval-note", true);
-  const { row: checkLabel, check } = approvalField("I reviewed and approve this exact record revision.");
-  const approve = el("button", "Mark reviewed and record approval");
-  approve.type = "submit";
-  const result = el("p", "", "hint");
-  result.setAttribute("role", "status");
-  form.append(checkLabel, approve, result);
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (hasUnsavedChanges) { result.textContent = "Save or discard content edits first."; result.className = "error"; return; }
-    approve.disabled = true;
-    result.textContent = "Recording the approved revision…";
-    try {
+  const { form, date } = approvalForm({
+    intro: "Read the saved record, its sources, and the checks beside this form, then approve this exact revision. The CMS writes the verified state and an immutable approval record.",
+    revision: record.revision,
+    ids: { date: "structured-review-date", change: "structured-change-note", validation: "structured-validation", sources: "structured-source-reviews", approval: "structured-approval-note" },
+    kindName: "record",
+    target: { kind: record.kind, id: record.id, revision: record.revision },
+    onSubmit: async (payload) => {
+      const next = nextInQueue();
       const saved = await mutate(`/api/records/${record.kind}/${encodeURIComponent(record.id)}/review`, "POST", {
-        expectedRevision: record.revision,
-        expectedSourceRevision: record.source.sourceRevision,
-        reviewedAt: date.value,
-        changeNote: change.value,
-        validationPerformed: validation.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        approvalNote: approval.value,
-        explicitHumanApproval: check.checked,
+        expectedRevision: record.revision, expectedSourceRevision: record.source.sourceRevision, ...payload,
       });
       await refresh();
       document.querySelector("#record-tab-review")?.click();
-      document.querySelector("#structured-editorial")?.append(el("p", `Approval recorded in ${saved.approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
-    } catch (error) { result.textContent = error.message; result.className = "error"; approve.disabled = false; }
+      approvalRecorded(document.querySelector("#structured-editorial"), saved.approvalRecord, next);
+    },
   });
+  if (record.updatedAt) date.min = record.updatedAt;
   section.append(form);
   return section;
 }
@@ -2102,8 +2261,7 @@ function structuredPreview(record, value, status) {
   preview.className = `article-preview structured-preview ${record.kind}-preview`;
   const header = document.createElement("header");
   header.className = "preview-header";
-  const badge = el("span", status === "needs-review" ? "Editorial review" : status, "badge");
-  header.append(badge);
+  if (status !== "verified") header.append(el("span", statusLabel(status), "badge"));
   if (record.kind === "faq") {
     header.append(el("p", "FAQ", "preview-eyebrow"), el("h3", value.question),
       el("p", value.summary, "preview-description"));
@@ -2194,6 +2352,9 @@ function structuredContentEditor(record) {
   actions.className = "edit-actions";
   const save = el("button", "Save content");
   save.type = "button";
+  save.className = "primary";
+  save.setAttribute("aria-keyshortcuts", "Control+S");
+  save.title = "Save content (Ctrl+S)";
   save.disabled = true;
   const discard = el("button", "Discard edits");
   discard.type = "button";
@@ -2213,10 +2374,12 @@ function structuredContentEditor(record) {
   websiteLink.target = "_blank";
   websiteLink.rel = "noopener noreferrer";
   previewPanel.append(previewStatus, previewNote, websiteLink, structuredPreview(record, record.value, record.status));
-  const message = el("p", "Changes are local to this browser until Save.", "hint");
+  const message = el("p", "Unsaved edits are kept as a local recovery draft. Save writes the source file.", "hint");
   message.setAttribute("role", "status");
   actions.append(save, discard, previewToggle);
-  section.append(diff, actions, message, previewPanel);
+  const bar = actionBar(actions, message);
+  bar.bar.append(relatedChecksPanel({ kind: record.kind, id: record.id, revision: record.revision }, { compact: true }));
+  section.append(diff, bar.bar, previewPanel);
   function changes() {
     const changed = {};
     for (const [key, { control, initial }] of fields) {
@@ -2229,6 +2392,8 @@ function structuredContentEditor(record) {
   function updateState() {
     const changed = changes();
     hasUnsavedChanges = Object.keys(changed).length > 0;
+    markRecordUnsaved(hasUnsavedChanges);
+    bar.setState(hasUnsavedChanges ? "dirty" : "clean", hasUnsavedChanges ? "Unsaved edits" : "No unsaved edits");
     if (hasUnsavedChanges) recovery?.schedule();
     save.disabled = !hasUnsavedChanges;
     diffBody.textContent = hasUnsavedChanges ? Object.entries(changed).map(([key, value]) =>
@@ -2254,6 +2419,7 @@ function structuredContentEditor(record) {
     updatedAt?.dispatchEvent(new Event("change", { bubbles: true }));
   });
   recovery.setCurrentContent(() => ({ fields: changes(), ...(updatedAt ? { updatedAt: updatedAt.value } : {}) }));
+  recovery.onSaved((snapshot) => { if (hasUnsavedChanges) bar.setState("dirty", ["Unsaved edits", draftTime(snapshot) && `recovery draft kept ${draftTime(snapshot)}`].filter(Boolean).join(" · ")); });
   cancelEditorPreview = () => recovery.dispose();
   section.prepend(recovery.element);
   previewToggle.addEventListener("click", () => {
@@ -2264,11 +2430,16 @@ function structuredContentEditor(record) {
   });
   for (const { control } of fields.values()) control.addEventListener("input", updateState);
   updatedAt?.addEventListener("change", updateState);
-  discard.addEventListener("click", () => { hasUnsavedChanges = false; selectRecord(record.kind, record.id); });
+  discard.addEventListener("click", () => {
+    if (hasUnsavedChanges && !window.confirm("Discard your unsaved edits to this record?")) return;
+    hasUnsavedChanges = false;
+    selectRecord(record.kind, record.id);
+  });
   save.addEventListener("click", async () => {
     const changed = changes();
     if (!Object.keys(changed).length) return;
     save.disabled = true;
+    bar.setState("saving", "Saving…");
     message.textContent = "Saving content…";
     try {
       await recovery.flush();
@@ -2281,8 +2452,9 @@ function structuredContentEditor(record) {
       });
       hasUnsavedChanges = false;
       await recovery.clearAfterSave(savedVersion);
+      checkAfterSave(record.kind, record.id);
       await refresh();
-    } catch (error) { message.textContent = error.message; message.className = "error"; updateState(); }
+    } catch (error) { message.textContent = error.message; message.className = "error"; updateState(); bar.setState("error", "Not saved"); }
   });
   return section;
 }
@@ -2290,8 +2462,7 @@ function structuredContentEditor(record) {
 function renderStructuredRecord(record) {
   const wrapper = document.createElement("div");
   wrapper.className = "structured-record record-workspace";
-  const kindName = record.kind.replaceAll("-", " ");
-  const header = recordHeader({ kind: kindName[0].toUpperCase() + kindName.slice(1), title: record.title, status: record.status, translation: record.translation, path: record.source.path });
+  const header = recordHeader({ kind: kindLabel(record.kind), title: record.title, status: record.status, translation: record.translation, path: record.source.path, queue: { kind: record.kind, id: record.id } });
   if (record.kind === "faq" || record.kind === "glossary-term") {
     const duplicate = el("button", "Duplicate as new");
     duplicate.type = "button";
@@ -2340,7 +2511,11 @@ function renderStructuredRecord(record) {
   const editorial = structuredEditorialControls(record);
   editorial.id = "structured-editorial";
   const review = document.createElement("div");
-  review.append(el("p", "Change the editorial status, or approve this exact revision after reviewing the content, sources, and checks.", "hint"), editorial);
+  review.className = "review-layout";
+  const controls = document.createElement("div");
+  controls.className = "review-controls";
+  controls.append(editorial);
+  review.append(reviewContext({ content: structuredPreview(record, record.value, record.status), sources: record.sources }), controls);
   const fileDetails = document.createElement("div");
   fileDetails.append(file, full);
   wrapper.append(renderDetailTabs([
@@ -2351,6 +2526,7 @@ function renderStructuredRecord(record) {
     ["file", "Details", fileDetails],
   ], "Record sections", "record"));
   detail.replaceChildren(wrapper);
+  startChecksIfSaved({ kind: record.kind, id: record.id, revision: record.revision });
 }
 
 function editorialControls(article) {
@@ -2389,61 +2565,22 @@ function editorialControls(article) {
   section.append(statusLabel, status, statusNote, statusButton, statusMessage);
 
   if (metadata.status !== "needs-review") return section;
-  const review = document.createElement("form");
-  review.className = "review-form";
-    review.append(el("h3", "Mark reviewed"),
-    el("p", "Review the complete article, metadata, sources, and relationships. Run the relevant validation and inspect the rendered article before approving this exact revision. This action writes the verified status, review date, and an immutable approval record to the local checkout.", "hint"),
-    el("p", `Editorial revision to review: ${record.editorialRevision || record.revision}`, "revision-label"));
-  function inputField(labelText, id, multiline = false) {
-    const help = id.includes("date") ? helpText.reviewDate : id.includes("change") ? helpText.changeNote
-      : id.includes("validation") ? helpText.validation : id.includes("source") ? helpText.sourceReviews : helpText.approvalNote;
-    const label = labeledField(labelText, id, help);
-    const input = document.createElement(multiline ? "textarea" : "input");
-    input.id = id;
-    input.required = true;
-    if (multiline) input.rows = 3;
-    review.append(label, input);
-    return input;
-  }
-  const date = inputField("Review date", "review-date");
-  date.type = "date";
-  date.min = metadata.updatedAt;
-  const now = new Date();
-  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  date.value = date.max;
-  const change = inputField("What did you review or change?", "review-change-note", true);
-  const validation = inputField("Validation performed (one check per line)", "review-validation", true);
-  const sourceReviews = inputField("Resolved source review IDs (optional, one per line)", "review-source-ids", true);
-  sourceReviews.required = false;
-  const approval = inputField("Approval note", "review-approval-note", true);
-  const { row: checkLabel, check } = approvalField("I reviewed and approve this exact article revision.");
-  const reviewButton = el("button", "Mark reviewed and record approval");
-  reviewButton.type = "submit";
-  const message = el("p", "", "hint");
-  message.setAttribute("role", "status");
-  review.append(checkLabel, reviewButton, message);
-  review.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (hasUnsavedChanges) { message.textContent = "Save or discard article body edits first."; message.className = "error"; return; }
-    reviewButton.disabled = true;
-    message.textContent = "Recording the approved revision…";
-    try {
-      const result = await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/review`, "POST", {
-        expectedRevision: record.revision,
-        reviewedAt: date.value,
-        changeNote: change.value,
-        validationPerformed: validation.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
-        approvalNote: approval.value,
-        explicitHumanApproval: check.checked,
-      });
+  const { form: review, date } = approvalForm({
+    intro: "Read the saved article, its sources, and the checks beside this form, then approve this exact revision. This writes the verified status, review date, and an immutable approval record to the local checkout.",
+    revision: record.editorialRevision || record.revision,
+    ids: { date: "review-date", change: "review-change-note", validation: "review-validation", sources: "review-source-ids", approval: "review-approval-note" },
+    kindName: "article",
+    target: { kind: "article", id: metadata.id, revision: record.revision },
+    onSubmit: async (payload) => {
+      const next = nextInQueue();
+      const result = await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/review`, "POST", { expectedRevision: record.revision, ...payload });
       noteGeneratedMetadata(result);
       await refresh();
       document.querySelector("#tab-review")?.click();
-      const refreshed = document.querySelector("#panel-review .editorial-controls");
-      refreshed?.append(el("p", `Approval recorded in ${result.approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
-    } catch (error) { message.textContent = error.message; message.className = "error"; reviewButton.disabled = false; }
+      approvalRecorded(document.querySelector("#panel-review .editorial-controls"), result.approvalRecord, next);
+    },
   });
+  date.min = metadata.updatedAt;
   section.append(review);
   return section;
 }
@@ -2462,6 +2599,8 @@ function renderDetailTabs(tabs, label, prefix = "") {
       button.tabIndex = active ? 0 : -1;
       panels[itemIndex].hidden = !active;
     });
+    // Panels refresh state that may have changed while hidden, such as unsaved edits made in another tab.
+    for (const form of panels[index].querySelectorAll("form")) form.dispatchEvent(new Event("panelshow"));
     if (focus) buttons[index].focus();
   }
   tabs.forEach(([key, title, content], index) => {
@@ -2501,8 +2640,446 @@ function statusLabel(status) {
   return ({ draft: "Draft", "needs-review": "Editorial review", verified: "Reviewed", archived: "Archived" })[status] || status;
 }
 
+function kindLabel(kind) {
+  return ({ article: "Article", faq: "FAQ", "residence-status": "Residence status", "glossary-term": "Glossary term" })[kind] || kind.replaceAll("-", " ");
+}
+
+// Revisions are 64-character hashes; the first 8 identify one in conversation, and the full value stays copyable.
+function shortRevision(revision) {
+  return revision && revision.length > 12 ? `${revision.slice(0, 8)}…` : revision || "unavailable";
+}
+
+
+// ---------- Automatic checks ----------
+// Every content kind has a fixed set of related checks on the server. The CMS runs them by itself on the saved
+// revision after a save and when Review & approve opens, explains the result in plain words, and keeps approval
+// locked until they pass. The server enforces the same rule.
+
+const relatedListeners = new Set();
+let pendingRelated = null;
+let relatedStartError = null;
+// Set by a save so the record's next render checks its new revision.
+let checkAfterRender = null;
+
+function targetKey(target) {
+  return `${target.kind}:${target.id}:${target.revision}`;
+}
+
+function checkRuns() {
+  if (!checkReport) return [];
+  return [...(checkReport.active ? [checkReport.active] : []), ...checkReport.history];
+}
+
+function relatedRunFor(target) {
+  return checkRuns().find((run) => run.target && targetKey(run.target) === targetKey(target));
+}
+
+function relatedChecksPassed(target) {
+  const run = relatedRunFor(target);
+  return Boolean(run && (run.status === "passed" || run.status === "warning"));
+}
+
+function notifyRelated() {
+  for (const listener of [...relatedListeners]) listener();
+}
+
+// Listeners belong to elements that are replaced when a record re-renders; a detached one removes itself.
+function watchRelated(element, listener) {
+  const wrapped = () => {
+    if (!element.isConnected && element.dataset.watched) { relatedListeners.delete(wrapped); return; }
+    element.dataset.watched = "true";
+    listener();
+  };
+  relatedListeners.add(wrapped);
+  wrapped();
+}
+
+async function runRelatedChecks(target, { force = false } = {}) {
+  const existing = relatedRunFor(target);
+  if (!force && existing && existing.status !== "canceled") return;
+  pendingRelated = target;
+  relatedStartError = null;
+  notifyRelated();
+  // Only one check runs at a time; a related run waits its turn rather than interrupting another.
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    if (!pendingRelated || targetKey(pendingRelated) !== targetKey(target)) return;
+    try {
+      const report = await mutate("/api/checks/start", "POST", { id: `related-${target.kind}`, target });
+      pendingRelated = null;
+      renderChecks(report);
+      scheduleCheckPoll(report);
+      refreshActivity();
+      return;
+    } catch (error) {
+      if (!/already running/i.test(error.message)) {
+        pendingRelated = null;
+        relatedStartError = error.message;
+        notifyRelated();
+        return;
+      }
+      await new Promise((resolveWait) => setTimeout(resolveWait, 1500));
+      await refreshChecks();
+    }
+  }
+  pendingRelated = null;
+  relatedStartError = "Another check kept the checker busy. Run these checks again when it finishes.";
+  notifyRelated();
+}
+
+function stripAnsi(text) {
+  return String(text || "").replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+// What went wrong in a failed step, in a few readable lines.
+function explainStep(step) {
+  const output = stripAnsi(step.output);
+  const findings = [...output.matchAll(/^\[[a-z-]+\] (.+)$/gm)].map((match) => match[1]);
+  if (findings.length) return findings.slice(0, 5);
+  const failedCount = /Tests\s+(\d+) failed/.exec(output)?.[1];
+  if (failedCount) {
+    const names = [...new Set([...output.matchAll(/^\s*(?:FAIL|×)\s+(.+?)\s*(?:\d+ms)?$/gm)]
+      .map((match) => match[1].split(" > ").slice(1).join(" › ") || match[1]))].slice(0, 4);
+    const reason = /^\s*((?:AssertionError|TypeError|Error|ReferenceError|SyntaxError)[^\n]*)/m.exec(output)?.[1];
+    return [`${plural(Number(failedCount), "automated test", "automated tests")} failed${names.length ? `: ${names.join("; ")}` : "."}`, ...(reason ? [reason.slice(0, 240)] : [])];
+  }
+  const lines = output.split("\n").map((line) => line.trim()).filter(Boolean);
+  return lines.slice(-3).map((line) => line.slice(0, 240));
+}
+
+function relatedDefinition(kind) {
+  return checkReport?.definitions.find((definition) => definition.id === `related-${kind}`);
+}
+
+const stepStateText = { passed: "Passed", warning: "Passed, with notes", failed: "Failed", running: "Running…", canceled: "Stopped", skipped: "Not run" };
+
+// The automatic-checks panel for one saved revision. `compact` is the one-line form under an editor.
+function relatedChecksPanel(target, { compact = false } = {}) {
+  const panel = document.createElement("section");
+  panel.className = `related-checks${compact ? " compact" : ""}`;
+  panel.setAttribute("aria-label", "Automatic checks");
+  const live = el("p", "", "related-headline");
+  live.setAttribute("role", "status");
+  const body = document.createElement("div");
+  panel.append(...(compact ? [] : [el("h3", "Automatic checks")]), live, body);
+  watchRelated(panel, () => {
+    const run = relatedRunFor(target);
+    const waiting = pendingRelated && targetKey(pendingRelated) === targetKey(target);
+    const definition = relatedDefinition(target.kind);
+    const names = definition ? definition.command.split(", ") : [];
+    const steps = run?.steps || [];
+    const failed = steps.filter((step) => step.status === "failed").length;
+    let state = "none";
+    let headline = "These checks have not run on the saved version yet.";
+    if (relatedStartError && !run) { state = "failed"; headline = `The checks could not start: ${relatedStartError}`; }
+    else if (waiting && (!run || run.status !== "running")) { state = "running"; headline = "Waiting for another check to finish, then checking the saved version…"; }
+    else if (run?.status === "running") { state = "running"; headline = `Checking the saved version (${Math.min(steps.length, names.length || steps.length)} of ${names.length || steps.length})…`; }
+    else if (run?.status === "passed") { state = "passed"; headline = `All ${plural(names.length || steps.length, "check", "checks")} passed for the saved version.`; }
+    else if (run?.status === "warning") { state = "warning"; headline = "The checks passed, with notes worth a look."; }
+    else if (run?.status === "failed") { state = "failed"; headline = `${failed || 1} of ${names.length || steps.length} checks failed. Approval stays locked until they pass.`; }
+    else if (run?.status === "canceled") { state = "none"; headline = "The checks were stopped before they finished."; }
+    panel.dataset.state = state;
+    live.textContent = compact ? `Saved version: ${headline.charAt(0).toLowerCase()}${headline.slice(1)}` : headline;
+    if (compact) { body.replaceChildren(); return; }
+    const list = document.createElement("ul");
+    list.className = "related-steps";
+    for (const name of names.length ? names : steps.map((step) => step.label)) {
+      const step = steps.find((item) => item.label === name);
+      const status = step?.status || (run && run.status !== "running" ? "skipped" : run ? "waiting" : "none");
+      const item = document.createElement("li");
+      item.dataset.state = status;
+      item.append(el("span", name, "related-step-name"), el("span", stepStateText[status] || (status === "waiting" ? "Waiting" : "Not run yet"), "related-step-state"));
+      if (step && (step.status === "failed" || step.status === "warning")) {
+        const why = document.createElement("ul");
+        why.className = "related-why";
+        for (const line of step.status === "warning" && run.warning ? [run.warning] : explainStep(step)) why.append(el("li", line));
+        item.append(why);
+      }
+      list.append(item);
+    }
+    const actions = document.createElement("div");
+    actions.className = "related-actions";
+    if (!run || run.status !== "running") {
+      const again = el("button", run ? "Run the checks again" : "Run the checks now");
+      again.type = "button";
+      again.addEventListener("click", () => runRelatedChecks(target, { force: true }));
+      actions.append(again);
+    }
+    const parts = [list, actions];
+    if (run?.output && run.status !== "running") {
+      const details = document.createElement("details");
+      details.className = "related-details";
+      details.append(el("summary", "Technical details"), el("pre", stripAnsi(run.output)));
+      parts.push(details);
+    }
+    body.replaceChildren(...parts);
+  });
+  return panel;
+}
+
+// After a save, a record's next render starts checks on its new revision.
+function checkAfterSave(kind, id) {
+  checkAfterRender = { kind, id };
+}
+
+function startChecksIfSaved(target) {
+  if (checkAfterRender && checkAfterRender.kind === target.kind && checkAfterRender.id === target.id) {
+    checkAfterRender = null;
+    runRelatedChecks(target);
+  }
+}
+
+// ---------- Review queue ----------
+// The filtered and sorted list doubles as a queue: Previous and Next (or K and J) step through it from a record.
+
+function queueNav(kind, id) {
+  const index = currentMatches.findIndex((item) => item.kind === kind && item.id === id);
+  if (index < 0 || currentMatches.length < 2) return null;
+  const nav = document.createElement("nav");
+  nav.className = "queue-nav";
+  nav.setAttribute("aria-label", "Records in the current list");
+  const previous = el("button", "Previous");
+  previous.type = "button";
+  previous.disabled = index === 0;
+  previous.setAttribute("aria-keyshortcuts", "K");
+  previous.title = "Previous record (K)";
+  previous.addEventListener("click", () => stepQueue(-1));
+  const next = el("button", "Next");
+  next.type = "button";
+  next.disabled = index === currentMatches.length - 1;
+  next.setAttribute("aria-keyshortcuts", "J");
+  next.title = "Next record (J)";
+  next.addEventListener("click", () => stepQueue(1));
+  nav.append(previous, el("span", `${index + 1} of ${currentMatches.length} in this list`, "queue-position"), next);
+  return nav;
+}
+
+function stepQueue(direction) {
+  const index = currentMatches.findIndex((item) => item.kind === selectedKind && item.id === selectedId);
+  const target = currentMatches[index + direction];
+  if (index >= 0 && target) selectRecord(target.kind, target.id);
+}
+
+// Shown in the record header while the editor holds edits that are not written to the file yet.
+function markRecordUnsaved(unsaved) {
+  const badges = detail.querySelector(".record-header .record-badges");
+  if (!badges) return;
+  let badge = badges.querySelector(".unsaved-badge");
+  if (unsaved && !badge) badges.append(el("span", "Unsaved edits", "badge unsaved-badge"));
+  else if (!unsaved) badge?.remove();
+}
+
+// The bar under every editor: what has happened to the edits, then the actions. It stays in view while the
+// editor scrolls, so the save state and Save are never off screen.
+function actionBar(actions, message) {
+  const bar = document.createElement("div");
+  bar.className = "action-bar";
+  const state = el("p", "No unsaved edits", "save-state");
+  state.dataset.state = "clean";
+  bar.append(state, actions, message);
+  return {
+    bar,
+    setState(kind, text) {
+      state.dataset.state = kind;
+      state.textContent = text;
+    },
+  };
+}
+
+function draftTime(snapshot) {
+  const date = new Date(snapshot?.capturedAt || "");
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
+// Checks from this CMS session that passed, newest first and one per check, for the approval form to offer.
+function passedChecksThisSession() {
+  if (!checkReport) return [];
+  const seen = new Set();
+  const passed = [];
+  for (const run of checkRuns()) {
+    if (run.status !== "passed" || run.target || seen.has(run.id)) continue;
+    seen.add(run.id);
+    const definition = checkReport.definitions.find((item) => item.id === run.id);
+    passed.push({ id: run.id, label: definition?.label || run.id, command: definition?.command || run.id, at: run.startedAt });
+  }
+  return passed;
+}
+
+// The reading half of the review screen: the saved content, its sources, and the checks run this session.
+function reviewContext({ heading, content, sources }) {
+  const context = document.createElement("section");
+  context.className = "review-context";
+  context.setAttribute("aria-label", "What you are approving");
+  context.append(el("h3", "What you are approving"),
+    el("p", "The saved version below is the revision the approval covers. Unsaved edits are not included.", "hint"));
+  if (heading) context.append(heading);
+  context.append(content);
+  const sourceSection = document.createElement("section");
+  sourceSection.className = "review-sources";
+  sourceSection.append(el("h3", "Official sources"));
+  if (sources.length) {
+    const sourceItems = document.createElement("ul");
+    for (const source of sources) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = source.url || "#";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = source.title;
+      item.append(link, el("small", [source.organization, source.lastCheckedAt ? `link checked ${formatDate(source.lastCheckedAt)}` : "link check not recorded"].filter(Boolean).join(" · ")));
+      sourceItems.append(item);
+    }
+    sourceSection.append(sourceItems);
+  } else sourceSection.append(el("p", "No official sources declared.", "hint"));
+  const checks = document.createElement("section");
+  checks.className = "review-checks";
+  checks.append(el("h3", "Other checks this session"));
+  const runs = checkRuns().filter((run) => !run.target);
+  if (runs.length) {
+    const runItems = document.createElement("ul");
+    for (const run of runs.slice(0, 8)) {
+      const name = checkReport.definitions.find((item) => item.id === run.id)?.label || run.id;
+      runItems.append(el("li", `${name}: ${checkStateLabel(run.status)} · ${formatTime(run.startedAt)}`));
+    }
+    checks.append(runItems);
+  } else checks.append(el("p", "No other checks have run in this CMS session.", "hint"));
+  context.append(sourceSection, checks);
+  return context;
+}
+
+function checkStateLabel(status) {
+  return ({ passed: "passed", warning: "review findings", failed: "failed", canceled: "canceled", running: "running" })[status] || status;
+}
+
+// One approval form for every kind. The button stays disabled until the confirmation is ticked and the editor
+// holds no unsaved edits; checks that passed this session can be selected instead of retyped.
+function approvalForm({ intro, revision, ids, kindName, target, onSubmit }) {
+  const form = document.createElement("form");
+  form.className = "review-form";
+  const revisionLine = el("p", `Revision ${shortRevision(revision)}`, "revision-label");
+  revisionLine.title = revision || "";
+  const copy = el("button", "Copy full revision");
+  copy.type = "button";
+  copy.className = "quiet";
+  copy.addEventListener("click", async () => {
+    try {
+      await window.navigator.clipboard.writeText(revision);
+      copy.textContent = "Copied";
+    } catch { copy.textContent = "Copy failed; select the revision in Details"; }
+  });
+  revisionLine.append(" ", copy);
+  const unsavedNotice = el("p", "This record has unsaved edits in Edit. Save or discard them before approving; the approval covers the saved revision only.", "check-warning unsaved-notice");
+  const checksPanel = relatedChecksPanel(target);
+  form.append(el("h3", "Mark reviewed"), el("p", intro, "hint"), revisionLine, unsavedNotice, checksPanel);
+  function fieldInput(title, id, help, multiline = false) {
+    const label = labeledField(title, id, help);
+    const input = document.createElement(multiline ? "textarea" : "input");
+    input.id = id;
+    input.required = true;
+    if (multiline) input.rows = 3;
+    form.append(label, input);
+    return input;
+  }
+  const date = fieldInput("Review date", ids.date, helpText.reviewDate);
+  date.type = "date";
+  const now = new Date();
+  date.max = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  date.value = date.max;
+  const change = fieldInput("What did you review or change?", ids.change, helpText.changeNote, true);
+  const passed = passedChecksThisSession();
+  const chips = [];
+  if (passed.length) {
+    const group = document.createElement("fieldset");
+    group.className = "check-chips";
+    group.append(el("legend", "Checks that passed in this session"));
+    for (const run of passed) {
+      const label = document.createElement("label");
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = `${run.label} passed (${run.command}) at ${formatTime(run.at)}`;
+      label.append(box, ` ${run.label} · ${formatTime(run.at)}`);
+      group.append(label);
+      chips.push(box);
+    }
+    form.append(group);
+  }
+  const validation = fieldInput("Other validation performed (one per line)",
+    ids.validation, helpText.validation, true);
+  form.append(el("p", "The automatic checks above are recorded for you. Add anything else you checked, such as comparing claims with the official sources.", "hint"));
+  const syncValidationRequired = () => { validation.required = !chips.some((box) => box.checked) && !relatedChecksPassed(target); };
+  for (const box of chips) box.addEventListener("change", syncValidationRequired);
+  const sourceReviews = fieldInput("Resolved source review IDs (optional, one per line)", ids.sources, helpText.sourceReviews, true);
+  sourceReviews.required = false;
+  const approval = fieldInput("Approval note", ids.approval, helpText.approvalNote, true);
+  const { row: checkLabel, check } = approvalField(`I reviewed and approve this exact ${kindName} revision.`);
+  const button = el("button", "Mark reviewed and record approval");
+  button.type = "submit";
+  button.className = "primary";
+  const message = el("p", "", "hint");
+  message.setAttribute("role", "status");
+  form.append(checkLabel, button, message);
+  function sync() {
+    unsavedNotice.hidden = !hasUnsavedChanges;
+    button.disabled = !check.checked || hasUnsavedChanges || !relatedChecksPassed(target);
+    syncValidationRequired();
+  }
+  check.addEventListener("change", sync);
+  // Opening Review & approve checks the saved revision if this session has not already.
+  form.addEventListener("panelshow", () => { sync(); runRelatedChecks(target); });
+  watchRelated(button, sync);
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (hasUnsavedChanges) { message.textContent = "Save or discard the edits in Edit first."; message.className = "error"; return; }
+    if (!check.checked) { message.textContent = "Tick the confirmation to approve this revision."; message.className = "error"; return; }
+    if (!relatedChecksPassed(target)) { message.textContent = "Wait for the automatic checks to pass before approving."; message.className = "error"; return; }
+    button.disabled = true;
+    message.textContent = "Recording the approved revision…";
+    message.className = "hint";
+    try {
+      await onSubmit({
+        reviewedAt: date.value,
+        changeNote: change.value,
+        validationPerformed: [relatedValidationLine(target, revision), ...chips.filter((box) => box.checked).map((box) => box.value),
+          ...validation.value.split("\n").map((item) => item.trim()).filter(Boolean)],
+        sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
+        approvalNote: approval.value,
+        explicitHumanApproval: check.checked,
+      });
+    } catch (error) { message.textContent = error.message; message.className = "error"; sync(); }
+  });
+  return { form, date };
+}
+
+// The approval record names the automatic checks that passed for the approved revision.
+function relatedValidationLine(target, revision) {
+  const run = relatedRunFor(target);
+  const names = (run?.steps || []).map((step) => step.label).join(", ");
+  return `Automatic CMS checks ${run?.status === "warning" ? "passed with notes" : "passed"} for revision ${shortRevision(revision)}: ${names}`;
+}
+
+// The record after the current one in the list, captured before an approval refreshes the list (an approved
+// record can leave a filtered list, which would lose its position).
+function nextInQueue() {
+  const index = currentMatches.findIndex((item) => item.kind === selectedKind && item.id === selectedId);
+  return index >= 0 ? currentMatches[index + 1] || null : null;
+}
+
+// After an approval, the confirmation names the file and offers the next record from the list.
+function approvalRecorded(container, approvalRecord, next) {
+  const done = document.createElement("div");
+  done.className = "approval-done";
+  done.append(el("p", `Approval recorded in ${approvalRecord}. Run npm run editorial:audit before committing.`, "success"));
+  if (next) {
+    const open = el("button", `Next: ${next.title}`);
+    open.type = "button";
+    open.className = "primary";
+    open.addEventListener("click", () => selectRecord(next.kind, next.id));
+    done.append(open);
+  }
+  container?.append(done);
+}
+
 // The same header for every record: what it is, its state, and where it lives, above the record's tabs.
-function recordHeader({ kind, title, status, translation, path, extra = [] }) {
+function recordHeader({ kind, title, status, translation, path, extra = [], queue = null }) {
   const header = document.createElement("header");
   header.className = "record-header";
   const badges = document.createElement("p");
@@ -2510,6 +3087,8 @@ function recordHeader({ kind, title, status, translation, path, extra = [] }) {
   if (status) badges.append(el("span", statusLabel(status), `badge status-${status}`));
   if (translation) badges.append(el("span", `Japanese: ${translation}`, `badge ${translation === "current" ? "current" : translation === "stale" ? "stale" : ""}`.trim()));
   for (const item of extra) badges.append(item);
+  const nav = queue ? queueNav(queue.kind, queue.id) : null;
+  if (nav) header.append(nav);
   header.append(el("p", kind, "eyebrow"), el("h3", title), badges);
   if (path) header.append(el("p", path, "record-path"));
   return header;
@@ -2520,8 +3099,18 @@ function renderTabs(article) {
   const workspace = document.createElement("div");
   workspace.className = "record-workspace";
   const review = document.createElement("div");
-  review.append(el("p", "Change the editorial status, or approve this exact revision after reviewing the content, sources, and checks.", "hint"), editorialControls(article));
-  workspace.append(recordHeader({ kind: "Article", title: metadata.title, status: metadata.status, translation: record.translation, path: record.path }),
+  review.className = "review-layout";
+  const controls = document.createElement("div");
+  controls.className = "review-controls";
+  controls.append(editorialControls(article));
+  const saved = document.createElement("article");
+  saved.className = "article-preview review-preview";
+  const savedHeader = document.createElement("header");
+  savedHeader.className = "preview-header";
+  savedHeader.append(el("h3", metadata.title), el("p", metadata.description, "preview-description"));
+  saved.append(savedHeader, renderArticleBlocks(article.blocks));
+  review.append(reviewContext({ content: saved, sources: article.sources }), controls);
+  workspace.append(recordHeader({ kind: "Article", title: metadata.title, status: metadata.status, translation: record.translation, path: record.path, queue: { kind: "article", id: metadata.id } }),
     renderDetailTabs([
       ["article", "Edit", articleView(article)],
       ["review", "Review & approve", review],
@@ -2530,6 +3119,7 @@ function renderTabs(article) {
       ["file", "Details", fileDetailsView(article)],
     ], "Article sections"));
   detail.replaceChildren(workspace);
+  startChecksIfSaved({ kind: "article", id: metadata.id, revision: record.revision });
 }
 
 async function selectArticle(id) {
@@ -2642,7 +3232,7 @@ function renderGit(report) {
   field(facts, "Branch", report.currentBranch === identity.branch ? identity.branch : `${report.currentBranch} (session started on ${identity.branch})`);
   field(facts, "Starting commit", identity.startCommit);
   if (report.currentCommit !== identity.startCommit) field(facts, "Current commit", report.currentCommit);
-  field(facts, "Session started", identity.startedAt);
+  field(facts, "Session started", formatTime(identity.startedAt));
   const parts = [facts];
   if (report.currentBranch !== identity.branch || report.currentCommit !== identity.startCommit) {
     parts.push(el("p", "The branch or commit changed after the CMS started. Restart the CMS before saving so its snapshot matches the checkout.", "error"));
@@ -2672,7 +3262,7 @@ function renderSelectedImpact() {
   if (!impactCatalog) return;
   const source = impactCatalog.sources.find((item) => item.id === impactSource.value);
   if (!source) {
-    impactResult.replaceChildren(el("p", "No matching source."));
+    impactResult.replaceChildren(el("p", "Choose a source to see the articles, FAQs, terms, and guidance that depend on it.", "hint"));
     return;
   }
   const heading = el("h3", source.title);
@@ -2687,7 +3277,7 @@ function renderSelectedImpact() {
   const kinds = [...new Set(source.dependents.map((dependent) => dependent.kind))];
   for (const kind of kinds) {
     const group = document.createElement("section");
-    group.append(el("h3", kind.replaceAll("-", " ")));
+    group.append(el("h3", kindLabel(kind)));
     const list = document.createElement("ul");
     for (const dependent of source.dependents.filter((item) => item.kind === kind)) {
       const item = document.createElement("li");
@@ -2722,11 +3312,14 @@ function renderImpactChoices() {
   if (impactCount) impactCount.textContent = matches.length > shown.length
     ? `${matches.length} of ${impactCatalog.sources.length} sources match; the first ${shown.length} are listed. Search to narrow the list.`
     : `${matches.length} of ${impactCatalog.sources.length} sources match.`;
-  impactSource.replaceChildren(...shown.map((source) => {
+  const placeholder = el("option", query ? `Choose one of ${matches.length} matching sources` : "Choose a source");
+  placeholder.value = "";
+  impactSource.replaceChildren(placeholder, ...shown.map((source) => {
     const option = el("option", `${source.title} (${source.id})`);
     option.value = source.id;
     return option;
   }));
+  if (query && matches.length === 1) impactSource.value = matches[0].id;
   if (matches.some((source) => source.id === selected)) impactSource.value = selected;
   renderSelectedImpact();
 }
@@ -2761,7 +3354,8 @@ async function refreshHandoff() {
       li.append(button, el("small", ` ${item.state} · ${item.path} · English revision ${item.sourceRevision}`));
       return li;
     }));
-    if (!handoff.items.length) handoffItems.append(el("li", "No stale or missing artifacts in the supported catalogs."));
+    if (!handoff.items.length) handoffItems.append(el("li", "Every Japanese artifact is current for the supported catalogs.", "success"));
+    document.querySelector("#handoff-download")?.toggleAttribute("hidden", !handoff.items.length);
   } catch (error) { handoffStatus.replaceChildren(el("p", error.message, "error")); }
 }
 
@@ -2784,11 +3378,13 @@ function checkDuration(milliseconds) {
 
 function renderChecks(report) {
   checkReport = report;
+  notifyRelated();
   const selectedId = checkKind.value;
   const currentIds = [...checkKind.options].map((option) => option.value).join("\0");
-  const incomingIds = report.definitions.map((definition) => definition.id).join("\0");
+  const listed = report.definitions.filter((definition) => !definition.automatic);
+  const incomingIds = listed.map((definition) => definition.id).join("\0");
   if (currentIds !== incomingIds) {
-    checkKind.replaceChildren(...report.definitions.map((definition) => {
+    checkKind.replaceChildren(...listed.map((definition) => {
       const option = el("option", definition.label);
       option.value = definition.id;
       return option;
@@ -2796,7 +3392,12 @@ function renderChecks(report) {
   }
   if (report.definitions.some((definition) => definition.id === selectedId)) checkKind.value = selectedId;
   const definition = report.definitions.find((item) => item.id === checkKind.value);
-  checkCommand.textContent = definition ? `${definition.command} · ${definition.scope} check${definition.description ? ` · ${definition.description}` : ""}` : "No checks available.";
+  if (definition) {
+    const command = document.createElement("details");
+    command.className = "check-command-detail";
+    command.append(el("summary", "Command"), el("code", definition.command));
+    checkCommand.replaceChildren(el("p", `${definition.description || definition.label}. ${definition.scope === "focused" ? "Focused check: it covers only the named paths." : "Project check."}`), command);
+  } else checkCommand.replaceChildren(el("p", "No checks available."));
   const running = report.active?.status === "running";
   checkStart.disabled = running || !definition;
   checkCancel.hidden = !running;
@@ -2875,10 +3476,10 @@ async function refresh() {
     const [catalog, structured] = await Promise.all([json("/api/articles"), json("/api/records")]);
     articles = [...catalog.articles.map((item) => ({ ...item, kind: "article" })), ...structured.records];
     summary.replaceChildren(
-      el("span", `${articles.length} reviewable records`),
-      el("span", `${articles.filter((item) => item.status === "needs-review").length} need editorial review`),
-      el("span", `${articles.filter((item) => item.translation === "stale").length} stale Japanese translations`),
-      el("span", `${catalog.failures.length + structured.failures.length} catalog errors`),
+      summaryLink(`${articles.length} reviewable records`, "content", () => setContentFilters({})),
+      summaryLink(`${articles.filter((item) => item.status === "needs-review").length} need editorial review`, "content", () => setContentFilters({ status: "needs-review", order: "oldest-review" })),
+      summaryLink(`${articles.filter((item) => item.translation === "stale").length} stale Japanese translations`, "translations"),
+      summaryLink(`${catalog.failures.length + structured.failures.length} catalog errors`, "overview", () => document.querySelector("#errors-heading")?.scrollIntoView?.()),
     );
     const allFailures = [...catalog.failures, ...structured.failures];
     catalogFailureCount = allFailures.length;
@@ -2905,11 +3506,13 @@ const resetContentList = () => { contentListLimit = listPageSize; renderList(); 
 const resetReferenceList = () => { referenceListLimit = listPageSize; renderReferenceList(); };
 search.addEventListener("input", resetContentList);
 statusFilter.addEventListener("change", resetContentList);
+sortOrder?.addEventListener("change", resetContentList);
 kindFilter.addEventListener("change", () => { groupFilter.value = ""; renderGroupFilter(); resetContentList(); });
 groupFilter.addEventListener("change", resetContentList);
 referenceSearch?.addEventListener("input", resetReferenceList);
 referenceKind?.addEventListener("change", resetReferenceList);
 localGuidanceSearch?.addEventListener("input", renderLocalGuidanceList);
+document.querySelector("#local-guidance-issues-only")?.addEventListener("change", () => renderLocalGuidanceMatrix(localGuidanceGuides));
 localGuidanceLocation?.addEventListener("change", () => {
   if (localGuidanceUnsaved && !window.confirm("Discard unsaved municipality guidance changes?")) {
     localGuidanceLocation.value = localGuidanceDetailRecord?.locationId || "";
@@ -2946,6 +3549,32 @@ function creationTextField(form, { key, label, help, value = "", multiline = fal
   input.required = required;
   form.append(labeledField(`${label}${required ? "" : " (optional)"}`, id, help), input);
   return input;
+}
+
+// Taxonomy IDs read as words in the interface: "living-in-japan" becomes "Living in Japan".
+function humanize(value) {
+  const text = String(value).replaceAll("-", " ").replace(/\bjapan\b/g, "Japan").replace(/\bjapanese\b/g, "Japanese");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function slugifyId(text) {
+  return text.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+}
+
+// The ID follows the field it is derived from until the editor types an ID of their own.
+function linkDerivedId(idInput, from) {
+  let own = Boolean(idInput.value);
+  idInput.addEventListener("input", () => { own = idInput.value.trim() !== ""; });
+  from.addEventListener("input", () => { if (!own) idInput.value = slugifyId(from.value); });
+}
+
+// Optional relationships and search terms fold away so the required fields come first.
+function optionalGroup(form, title) {
+  const group = document.createElement("details");
+  group.className = "create-optional";
+  group.append(el("summary", title));
+  form.append(group);
+  return group;
 }
 
 function creationSelectField(form, { key, label, help, options, value }) {
@@ -3015,7 +3644,7 @@ function creationCheckboxes(form, { key, label, help, options, values = [] }) {
     box.type = "checkbox";
     box.value = option;
     box.checked = values.includes(option);
-    wrapper.append(box, document.createTextNode(` ${option.replaceAll("-", " ")}`));
+    wrapper.append(box, document.createTextNode(` ${humanize(option)}`));
     fieldset.append(wrapper);
   }
   form.append(fieldset);
@@ -3074,74 +3703,80 @@ async function openCreateForm(kind, prefill = null, options = {}) {
   form.noValidate = true;
   const statusOptions = [["needs-review", "Editorial review"], ["draft", "Draft"]];
   if (kind === "faq") {
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier: lowercase words separated by hyphens. Other records link to it, so choose it carefully." });
+    const question = creationTextField(form, { key: "question", label: "Question", required: true, value: value.question, help: "The question as a reader would ask it." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier: lowercase words separated by hyphens. It is filled from the question until you change it. Other records link to it, so choose it carefully." });
+    linkDerivedId(id, question);
     creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
-    creationTextField(form, { key: "question", label: "Question", required: true, value: value.question, help: "The question as a reader would ask it." });
     creationTextField(form, { key: "summary", label: "Answer summary", required: true, multiline: true, value: value.summary, help: "A short answer of up to 320 characters that points to the linked resources for details." });
     creationSelectField(form, { key: "primaryBrowseGroupId", label: "Browse group", value: value.primaryBrowseGroupId, options: choices.faqGroups.map(({ id, label }) => [id, label]), help: "The FAQ group this question belongs to. It also decides which module the entry is added to." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "needs-review", options: statusOptions, help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
-    form.append(el("p", "Link at least one related resource.", "hint"));
+    form.append(el("p", "Link at least one related resource: an article here, or a group, journey, term, status, or activity below.", "hint"));
     creationIdListField(form, { key: "relatedArticleIds", label: "Related articles", values: value.relatedArticleIds, known: choices.known.articles, help: "Article IDs this answer relies on." });
-    creationIdListField(form, { key: "relatedGroupIds", label: "Related article groups", values: value.relatedGroupIds, known: choices.known.groups, help: "Article group IDs." });
-    creationIdListField(form, { key: "relatedJourneyIds", label: "Related guided journeys", values: value.relatedJourneyIds, known: choices.known.journeys, help: "Guided journey IDs." });
-    creationIdListField(form, { key: "relatedGlossaryTermIds", label: "Related glossary terms", values: value.relatedGlossaryTermIds, known: choices.known.glossaryTerms, help: "Glossary term IDs." });
-    creationIdListField(form, { key: "relatedResidenceStatusIds", label: "Related residence statuses", values: value.relatedResidenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs." });
-    creationIdListField(form, { key: "relatedActivityIds", label: "Related activities", values: value.relatedActivityIds, known: choices.known.activities, help: "Activity cross-reference IDs." });
+    const more = optionalGroup(form, "Other related resources and search terms");
+    creationIdListField(more, { key: "relatedGroupIds", label: "Related article groups", values: value.relatedGroupIds, known: choices.known.groups, help: "Article group IDs." });
+    creationIdListField(more, { key: "relatedJourneyIds", label: "Related guided journeys", values: value.relatedJourneyIds, known: choices.known.journeys, help: "Guided journey IDs." });
+    creationIdListField(more, { key: "relatedGlossaryTermIds", label: "Related glossary terms", values: value.relatedGlossaryTermIds, known: choices.known.glossaryTerms, help: "Glossary term IDs." });
+    creationIdListField(more, { key: "relatedResidenceStatusIds", label: "Related residence statuses", values: value.relatedResidenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs." });
+    creationIdListField(more, { key: "relatedActivityIds", label: "Related activities", values: value.relatedActivityIds, known: choices.known.activities, help: "Activity cross-reference IDs." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
   } else if (kind === "article") {
     const article = choices.article;
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier and file name: lowercase words separated by hyphens. Other records link to it." });
+    const title = creationTextField(form, { key: "title", label: "Title", required: true, value: value.title, help: "The article's heading." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier and file name: lowercase words separated by hyphens. It is filled from the title until you change it. Other records link to it." });
+    linkDerivedId(id, title);
     creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
-    creationTextField(form, { key: "title", label: "Title", required: true, value: value.title, help: "The article's heading." });
     creationTextField(form, { key: "description", label: "Description", required: true, multiline: true, value: value.description, help: "A summary of up to 180 characters for lists and search results." });
-    creationSelectField(form, { key: "family", label: "Registry family", value: value.family || article.registryFamilies[0], options: article.registryFamilies.map((family) => [family, family.replaceAll("-", " ")]), help: "The article registry module the new article is registered in. It sets the article's place in the catalog order." });
+    creationSelectField(form, { key: "family", label: "Registry family", value: value.family || article.registryFamilies[0], options: article.registryFamilies.map((family) => [family, humanize(family)]), help: "The article registry module the new article is registered in. It sets the article's place in the catalog order." });
     creationCheckboxes(form, { key: "journeyStageIds", label: "Journey stages", values: value.journeyStageIds, options: article.journeyStages, help: "At least one: when readers need this article." });
     creationCheckboxes(form, { key: "topicIds", label: "Topics", values: value.topicIds, options: article.topics, help: "At least one topic." });
-    creationCheckboxes(form, { key: "audienceIds", label: "Audiences", values: value.audienceIds, options: article.audiences, help: "Readers the article is written for, if it is narrower than everyone." });
     creationCheckboxes(form, { key: "geographicScopes", label: "Geographic scope", values: value.geographicScopes || ["national"], options: article.geographicScopes, help: "At least one: whether the rules are national, prefectural, or municipal." });
-    creationSelectField(form, { key: "importance", label: "Importance", value: value.importance || "informational", options: article.importance.map((item) => [item, item]), help: "How much a reader's situation depends on this guidance." });
-    creationSelectField(form, { key: "contentType", label: "Content type", value: value.contentType || "guide", options: article.contentTypes.map((item) => [item, item.replaceAll("-", " ")]), help: "The kind of article." });
+    creationSelectField(form, { key: "importance", label: "Importance", value: value.importance || "informational", options: article.importance.map((item) => [item, humanize(item)]), help: "How much a reader's situation depends on this guidance." });
+    creationSelectField(form, { key: "contentType", label: "Content type", value: value.contentType || "guide", options: article.contentTypes.map((item) => [item, humanize(item)]), help: "The kind of article." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "draft", options: [["draft", "Draft"], ["needs-review", "Editorial review"]], help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
     creationIdListField(form, { key: "sourceIds", label: "Official sources", values: value.sourceIds, known: choices.known.sources, help: "Source IDs the article relies on. Create a missing source first from Sources & references." });
-    creationIdListField(form, { key: "termIds", label: "Glossary terms", values: value.termIds, known: choices.known.glossaryTerms, help: "Glossary term IDs the article uses." });
-    creationIdListField(form, { key: "residenceStatusIds", label: "Residence statuses", values: value.residenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs the article covers." });
+    const more = optionalGroup(form, "Audiences, terms, statuses, related articles, and search terms (optional)");
+    creationCheckboxes(more, { key: "audienceIds", label: "Audiences", values: value.audienceIds, options: article.audiences, help: "Readers the article is written for, if it is narrower than everyone." });
+    creationIdListField(more, { key: "termIds", label: "Glossary terms", values: value.termIds, known: choices.known.glossaryTerms, help: "Glossary term IDs the article uses." });
+    creationIdListField(more, { key: "residenceStatusIds", label: "Residence statuses", values: value.residenceStatusIds, known: choices.known.residenceStatuses, help: "Residence status IDs the article covers." });
     for (const type of article.relationshipTypes) {
       const label = { related: "Related articles", prerequisite: "Prerequisite articles", "next-step": "Next-step articles" }[type] || type;
-      const field = creationIdListField(form, { key: `relationships-${type}`, label, values: (value.relationships || []).filter((item) => item.type === type).map((item) => item.articleId), known: choices.known.articles, help: "Article IDs linked from this article." });
+      const field = creationIdListField(more, { key: `relationships-${type}`, label, values: (value.relationships || []).filter((item) => item.type === type).map((item) => item.articleId), known: choices.known.articles, help: "Article IDs linked from this article." });
       delete field.dataset.createList;
       field.dataset.relationshipType = type;
     }
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
     const body = creationTextField(form, { key: "body", label: "Body (MDX)", required: true, multiline: true, value: value.body || "## First section\n\nWrite the guide here, and cite the official sources listed above.", help: "The article body in the supported Markdown and component subset. Refine it later in the formatted editor." });
     body.rows = 10;
     body.classList.add("create-body");
   } else if (kind === "source") {
-    creationSelectField(form, { key: "family", label: "Source family", value: value.family || choices.sourceFamilies[0], options: choices.sourceFamilies.map((family) => [family, family.replaceAll("-", " ")]), help: "The subject module under src/data/sources the source is added to." });
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the organization and page: lowercase words separated by hyphens." });
+    creationSelectField(form, { key: "family", label: "Source family", value: value.family || choices.sourceFamilies[0], options: choices.sourceFamilies.map((family) => [family, humanize(family)]), help: "The subject module under src/data/sources the source is added to." });
     creationTextField(form, { key: "organization", label: "Organization", required: true, value: value.organization, help: "The public body that publishes the page." });
     creationTextField(form, { key: "title", label: "Page title", required: true, value: value.title, help: "The page or document title as published." });
     creationTextField(form, { key: "url", label: "URL", required: true, value: value.url, help: "The official https address." });
-    creationSelectField(form, { key: "authorityLevel", label: "Authority", value: value.authorityLevel || "national-government", options: choices.authorityLevels.map((item) => [item, item.replaceAll("-", " ")]), help: "The level of government or public institution that publishes it." });
+    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the organization and page: lowercase words separated by hyphens." });
+    creationSelectField(form, { key: "authorityLevel", label: "Authority", value: value.authorityLevel || "national-government", options: choices.authorityLevels.map((item) => [item, humanize(item)]), help: "The level of government or public institution that publishes it." });
     creationSelectField(form, { key: "language", label: "Language", value: value.language || "ja", options: choices.sourceLanguages.map((item) => [item, item === "ja" ? "Japanese" : "English"]), help: "The page's language." });
-    creationSelectField(form, { key: "checkMethod", label: "Link check method", value: value.checkMethod || "", options: [["", "Default (automated)"], ...choices.checkMethods.map((item) => [item, item])], help: "Use manual when automated reachability checks cannot load the page." });
+    creationSelectField(form, { key: "checkMethod", label: "Link check method", value: value.checkMethod || "", options: [["", "Default (automated)"], ...choices.checkMethods.map((item) => [item, humanize(item)])], help: "Use manual when automated reachability checks cannot load the page." });
   } else {
-    creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the romanized term: lowercase words separated by hyphens." });
-    creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
     creationTextField(form, { key: "japanese", label: "Japanese term", required: true, value: value.japanese, help: "The term as written in Japanese." });
     creationTextField(form, { key: "kana", label: "Kana reading", value: value.kana, help: "The reading in hiragana or katakana." });
-    creationTextField(form, { key: "romaji", label: "Romaji", value: value.romaji, help: "The romanized reading, with macrons where used." });
+    const romaji = creationTextField(form, { key: "romaji", label: "Romaji", value: value.romaji, help: "The romanized reading, with macrons where used." });
+    const id = creationTextField(form, { key: "id", label: "ID", required: true, value: value.id, help: "A permanent identifier, usually the romanized term: lowercase words separated by hyphens. It is filled from the romaji until you change it." });
+    linkDerivedId(id, romaji);
+    creationTextField(form, { key: "slug", label: "Slug", value: value.slug, help: "The URL part. Leave empty to use the ID." });
     creationTextField(form, { key: "englishName", label: "English name", required: true, value: value.englishName, help: "The English name readers will see." });
     creationTextField(form, { key: "shortDefinition", label: "Short definition", required: true, multiline: true, value: value.shortDefinition, help: "One sentence defining the term." });
     creationTextField(form, { key: "detailedExplanation", label: "Detailed explanation", required: true, multiline: true, value: value.detailedExplanation, help: "What the term means in practice, and its limits." });
     creationTextField(form, { key: "commonContext", label: "Where it appears", required: true, multiline: true, value: value.commonContext, help: "Where readers are likely to meet the term." });
     creationCheckboxes(form, { key: "topicIds", label: "Topics", values: value.topicIds, options: choices.topics, help: "At least one. The primary topic decides which module the entry is added to." });
-    creationSelectField(form, { key: "primaryBrowseGroupId", label: "Primary topic", value: value.primaryBrowseGroupId || "", options: [["", "First selected topic"], ...choices.topics.map((topic) => [topic, topic.replaceAll("-", " ")])], help: "The topic the term is browsed under. It must also be selected above." });
+    creationSelectField(form, { key: "primaryBrowseGroupId", label: "Primary topic", value: value.primaryBrowseGroupId || "", options: [["", "First selected topic"], ...choices.topics.map((topic) => [topic, humanize(topic)])], help: "The topic the term is browsed under. It must also be selected above." });
     creationCheckboxes(form, { key: "journeyStageIds", label: "Journey stages", values: value.journeyStageIds, options: choices.journeyStages, help: "When readers are likely to need the term." });
     creationSelectField(form, { key: "status", label: "Initial status", value: value.status || "needs-review", options: statusOptions, help: "Draft for incomplete work; Editorial review when it is ready to be checked. Approval is a separate step." });
     creationIdListField(form, { key: "relatedArticleIds", label: "Related articles", values: value.relatedArticleIds, known: choices.known.articles, help: "Article IDs that explain the term in context." });
-    creationIdListField(form, { key: "relatedTermIds", label: "Related glossary terms", values: value.relatedTermIds, known: choices.known.glossaryTerms, help: "Other glossary term IDs." });
     creationIdListField(form, { key: "sourceIds", label: "Official sources", values: value.sourceIds, known: choices.known.sources, help: "Official source IDs that support the definition." });
-    creationIdListField(form, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
+    const more = optionalGroup(form, "Related terms and search terms (optional)");
+    creationIdListField(more, { key: "relatedTermIds", label: "Related glossary terms", values: value.relatedTermIds, known: choices.known.glossaryTerms, help: "Other glossary term IDs." });
+    creationIdListField(more, { key: "searchTerms", label: "Search terms", values: value.searchTerms, help: "Phrases readers might search for." });
   }
   const preview = document.createElement("section");
   preview.className = "create-preview";
@@ -3152,8 +3787,17 @@ async function openCreateForm(kind, prefill = null, options = {}) {
   previewButton.type = "button";
   const createButton = el("button", `Create ${creationKindLabels[kind]}`);
   createButton.type = "submit";
+  createButton.className = "primary";
   createButton.disabled = true;
-  actions.append(previewButton, createButton);
+  const cancelButton = el("button", "Cancel");
+  cancelButton.type = "button";
+  cancelButton.addEventListener("click", () => {
+    if (hasUnsavedChanges && !window.confirm(`Discard this new ${creationKindLabels[kind]}?`)) return;
+    hasUnsavedChanges = false;
+    container.replaceChildren(el("p", kind === "source" ? "Select a reference record to inspect its details." : "Select a record to edit its content, review it, or inspect its links, sources, and file details.", "empty-state"));
+    setRoute(page);
+  });
+  actions.append(previewButton, createButton, cancelButton);
   const status = el("p", "Preview the addition to see the exact file and text before creating.", "hint");
   status.setAttribute("role", "status");
   status.tabIndex = -1;
@@ -3313,9 +3957,173 @@ window.addEventListener("popstate", routeFromHash);
 window.addEventListener("hashchange", routeFromHash);
 
 document.querySelector("#refresh").addEventListener("click", refresh);
-for (const button of document.querySelectorAll("[data-create-kind]")) {
-  button.addEventListener("click", () => openCreateForm(button.dataset.createKind));
+for (const button of document.querySelectorAll("button[data-create-kind]")) {
+  button.addEventListener("click", () => {
+    button.closest("details")?.removeAttribute("open");
+    openCreateForm(button.dataset.createKind);
+  });
 }
+// ---------- Theme ----------
+// System (follow the operating system), Light, or Dark; the choice is stored per browser and applied before paint
+// by theme-init.js.
+const themeToggle = document.querySelector("#theme-toggle");
+const themeOrder = ["system", "light", "dark"];
+const themeNames = { system: "System", light: "Light", dark: "Dark" };
+
+function currentTheme() {
+  const value = document.documentElement.dataset.theme;
+  return value === "light" || value === "dark" ? value : "system";
+}
+
+function renderThemeToggle() {
+  if (!themeToggle) return;
+  const theme = currentTheme();
+  const next = themeOrder[(themeOrder.indexOf(theme) + 1) % themeOrder.length];
+  themeToggle.textContent = `Theme: ${themeNames[theme]}`;
+  themeToggle.setAttribute("aria-label", `Theme: ${theme === "system" ? "follows the system" : themeNames[theme].toLowerCase()}. Switch to ${themeNames[next].toLowerCase()}`);
+}
+
+themeToggle?.addEventListener("click", () => {
+  const next = themeOrder[(themeOrder.indexOf(currentTheme()) + 1) % themeOrder.length];
+  if (next === "system") delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = next;
+  try {
+    if (next === "system") window.localStorage.removeItem("nihonest-cms:theme");
+    else window.localStorage.setItem("nihonest-cms:theme", next);
+  } catch { /* The choice then lasts only for this page. */ }
+  renderThemeToggle();
+});
+renderThemeToggle();
+
+// ---------- Go to (Ctrl+K) ----------
+// One searchable list of every page, record, municipality guide, reference record, and common action.
+
+const palette = document.querySelector("#palette");
+const paletteInput = document.querySelector("#palette-input");
+const paletteResults = document.querySelector("#palette-results");
+let paletteMatches = [];
+let paletteIndex = 0;
+
+function paletteEntries() {
+  const entries = [];
+  for (const [page, title] of Object.entries(pageTitles)) {
+    entries.push({ group: "Page", title, run: () => { setRoute(page); showPage(page, { focus: true }); } });
+  }
+  entries.push(
+    { group: "Action", title: "Start reviewing (oldest review first)", run: () => { if (!startReviewQueue()) { setRoute("content"); showPage("content", { focus: true }); } } },
+    { group: "Action", title: "New article", run: () => openCreateForm("article") },
+    { group: "Action", title: "New FAQ", run: () => openCreateForm("faq") },
+    { group: "Action", title: "New glossary term", run: () => openCreateForm("glossary-term") },
+    { group: "Action", title: "New official source", run: () => openCreateForm("source") },
+    { group: "Action", title: "Refresh data", run: () => refresh() },
+  );
+  for (const record of articles) {
+    entries.push({ group: kindLabel(record.kind), title: record.title, detail: `${statusLabel(record.status)} · ${record.id}`, keys: `${record.id} ${(record.groups || []).join(" ")}`, run: () => selectRecord(record.kind, record.id) });
+  }
+  for (const location of localGuidanceLocations) {
+    for (const supplement of location.supplements) {
+      entries.push({ group: "Municipality guide", title: supplement.title, detail: location.name, keys: `${supplement.id} ${location.name} ${location.prefectureName || ""}`, run: () => openLocalGuidanceById(supplement.id) });
+    }
+  }
+  for (const record of referenceRecords) {
+    entries.push({ group: referenceKindLabel(record.kind), title: record.title, detail: record.id, keys: record.id, run: () => { setRoute("sources"); selectReference(record.kind, record.id); } });
+  }
+  return entries;
+}
+
+// Every word must match; matches at the start of the title rank first, then pages and actions, then the rest.
+function renderPalette() {
+  const words = paletteInput.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  const all = paletteEntries();
+  const scored = [];
+  for (const entry of all) {
+    const haystack = `${entry.title} ${entry.group} ${entry.detail || ""} ${entry.keys || ""}`.toLocaleLowerCase();
+    if (!words.every((word) => haystack.includes(word))) continue;
+    const title = entry.title.toLocaleLowerCase();
+    const score = (words.length && title.startsWith(words[0]) ? 0 : 2) + (entry.group === "Page" || entry.group === "Action" ? 0 : 1);
+    scored.push([score, entry]);
+  }
+  scored.sort((a, b) => a[0] - b[0]);
+  paletteMatches = (words.length ? scored : scored.filter(([, entry]) => entry.group === "Page" || entry.group === "Action")).slice(0, 40).map(([, entry]) => entry);
+  paletteIndex = Math.min(paletteIndex, Math.max(paletteMatches.length - 1, 0));
+  paletteResults.replaceChildren(...paletteMatches.map((entry, index) => {
+    const item = document.createElement("li");
+    item.id = `palette-option-${index}`;
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", String(index === paletteIndex));
+    item.append(el("span", entry.title, "palette-title"), el("span", [entry.group, entry.detail].filter(Boolean).join(" · "), "palette-detail"));
+    item.addEventListener("mousedown", (event) => event.preventDefault());
+    item.addEventListener("click", () => runPalette(index));
+    return item;
+  }));
+  if (!paletteMatches.length) paletteResults.append(el("li", "No matches. Try a title, ID, location, or page name.", "palette-empty"));
+  paletteInput.setAttribute("aria-activedescendant", paletteMatches.length ? `palette-option-${paletteIndex}` : "");
+  paletteResults.querySelector("[aria-selected='true']")?.scrollIntoView?.({ block: "nearest" });
+}
+
+function openPalette() {
+  if (!palette || palette.open) return;
+  paletteInput.value = "";
+  paletteIndex = 0;
+  renderPalette();
+  palette.showModal?.();
+  if (!palette.showModal) palette.setAttribute("open", "");
+  paletteInput.focus();
+}
+
+function closePalette() {
+  if (palette?.close) palette.close();
+  else palette?.removeAttribute("open");
+}
+
+function runPalette(index) {
+  const entry = paletteMatches[index];
+  if (!entry) return;
+  closePalette();
+  entry.run();
+}
+
+paletteInput?.addEventListener("input", () => { paletteIndex = 0; renderPalette(); });
+paletteInput?.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    if (!paletteMatches.length) return;
+    paletteIndex = (paletteIndex + (event.key === "ArrowDown" ? 1 : -1) + paletteMatches.length) % paletteMatches.length;
+    renderPalette();
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    runPalette(paletteIndex);
+  }
+});
+// A click on the backdrop (outside the panel) closes the palette.
+palette?.addEventListener("click", (event) => { if (event.target === palette) closePalette(); });
+document.querySelector("#open-palette")?.addEventListener("click", openPalette);
+
+// Keyboard: Ctrl+K (or Cmd+K, or / outside fields) opens Go to; Ctrl+S (or Cmd+S) saves the open editor; J and K
+// step through the content list from a record. Letter keys are ignored while typing in a field or the formatted editor.
+document.addEventListener("keydown", (event) => {
+  const target = event.target;
+  const typing = target?.closest?.("input, textarea, select, [contenteditable='true']");
+  if (((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "k") || (event.key === "/" && !typing && !event.ctrlKey && !event.metaKey)) {
+    event.preventDefault();
+    openPalette();
+    return;
+  }
+  if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "s") {
+    const page = document.querySelector(`main > .page[data-page="${currentPage}"]`);
+    const save = [...(page?.querySelectorAll(".action-bar .primary, .local-guidance-save-row .primary") || [])]
+      .find((button) => !button.disabled && !button.closest("[hidden]"));
+    if (!save && !hasUnsavedChanges && !localGuidanceUnsaved) return;
+    event.preventDefault();
+    save?.click();
+    return;
+  }
+  if (typing || event.ctrlKey || event.metaKey || event.altKey || currentPage !== "content" || !selectedId) return;
+  if (event.key === "j" || event.key === "k") {
+    event.preventDefault();
+    stepQueue(event.key === "j" ? 1 : -1);
+  }
+});
 window.addEventListener("beforeunload", (event) => {
   if (!hasUnsavedChanges && !localGuidanceUnsaved) return;
   event.preventDefault();

@@ -21,6 +21,7 @@ describe("readLocalGuidanceCatalog", () => {
       id: "jp-26100",
       name: "Kyoto City",
       prefectureId: "jp-26000",
+      prefectureName: "Kyoto",
     });
   });
 

@@ -15,6 +15,8 @@ export type ArticleSummary = Readonly<{
   title: string;
   status: ArticleMetadata["status"];
   updatedAt: string;
+  lastReviewedAt?: string;
+  importance: ArticleMetadata["importance"];
   sourceCount: number;
   translation: "current" | "stale" | "missing";
   path: string;
@@ -72,6 +74,8 @@ export async function readArticleCatalog(projectRoot: string): Promise<ArticleCa
           title: metadata.title,
           status: metadata.status,
           updatedAt: metadata.updatedAt,
+          lastReviewedAt: metadata.lastReviewedAt,
+          importance: metadata.importance,
           sourceCount: metadata.sourceIds.length,
           translation: !artifact ? "missing" : artifact.sourceRevision === revision ? "current" : "stale",
           path: relativePath,

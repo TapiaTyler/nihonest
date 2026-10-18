@@ -5,7 +5,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { join, resolve } from "node:path";
 import { readArticleCatalog } from "./catalog";
 import { CmsEditError, previewArticleBody, saveArticleBody, type BodyEdit } from "./article-writer";
-import { CheckRunError, createCheckRunner } from "./check-runs";
+import { CheckRunError, createCheckRunner, relatedCheckKinds, type CheckTarget, type RelatedCheckKind } from "./check-runs";
 import { approveArticleReview, changeArticleStatus, type ReviewApproval, type StatusChange } from "./editorial-writer";
 import { gitFileDiff, gitSessionReport, guardCmsWrite, startGitSession } from "./git-session";
 import { readStructuredCatalog, type StructuredKind } from "./structured-catalog";
@@ -26,6 +26,8 @@ const assets = new Map<string, readonly [string, string]>([
   ["/formatted-article.js", ["formatted-article.js", "text/javascript; charset=utf-8"]],
   ["/app.css", ["app.css", "text/css; charset=utf-8"]],
   ["/select-chevron.svg", ["select-chevron.svg", "image/svg+xml"]],
+  ["/select-chevron-dark.svg", ["select-chevron-dark.svg", "image/svg+xml"]],
+  ["/theme-init.js", ["theme-init.js", "text/javascript; charset=utf-8"]],
 ] as const);
 
 function sendJson(response: ServerResponse, status: number, value: unknown): void {
@@ -60,7 +62,13 @@ async function readJson(request: IncomingMessage): Promise<unknown> {
   }
 }
 
-export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<typeof createCheckRunner>) {
+export type CmsServerOptions = Readonly<{
+  /** Approvals require this session's related checks to have passed for the exact revision (on by default). */
+  requireRelatedChecks?: boolean;
+}>;
+
+export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<typeof createCheckRunner>, options: CmsServerOptions = {}) {
+  const requireRelatedChecks = options.requireRelatedChecks ?? true;
   const root = resolve(projectRoot);
   const staticDirectory = resolve(import.meta.dirname, "static");
   const sessionToken = randomBytes(32).toString("hex");
@@ -69,6 +77,22 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
   const checks = checkRunner ?? createCheckRunner(root, undefined, {
     onFinish: (run) => recordOperation("check-finish", run.status === "passed" ? "succeeded" : run.status === "canceled" ? "canceled" : run.status === "warning" ? "warning" : "failed", undefined, undefined, run.id),
   });
+  // A related-check run names the record and revision it validates; only known kinds and well-formed values pass.
+  function relatedTarget(value: unknown): CheckTarget {
+    const target = value as { kind?: unknown; id?: unknown; revision?: unknown } | null;
+    if (!target || typeof target !== "object" || Array.isArray(target) || Object.keys(target).some((key) => !["kind", "id", "revision"].includes(key))
+      || typeof target.kind !== "string" || !(relatedCheckKinds as readonly string[]).includes(target.kind)
+      || typeof target.id !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(target.id)
+      || typeof target.revision !== "string" || !/^[A-Za-z0-9-]{1,128}$/.test(target.revision)) {
+      throw new CmsEditError("Related checks need a record kind, ID, and revision.", 400);
+    }
+    return { kind: target.kind as RelatedCheckKind, id: target.id, revision: target.revision };
+  }
+  function requirePassedChecks(kind: RelatedCheckKind, id: string, revision: string) {
+    if (requireRelatedChecks && !checks.relatedPassed({ kind, id, revision })) {
+      throw new CmsEditError("This revision's checks have not passed in this CMS session. Wait for them to pass on the Review & approve tab, then approve.", 409);
+    }
+  }
   async function recordOperation(kind: Parameters<typeof recovery.appendActivity>[0]["kind"], outcome: Parameters<typeof recovery.appendActivity>[0]["outcome"], recordKind?: RecoveryRecordKind, recordId?: string, checkId?: string) {
     try { await recovery.appendActivity({ kind, outcome, ...(recordKind ? { recordKind } : {}), ...(recordId ? { recordId } : {}), ...(checkId ? { checkId } : {}) }); }
     catch (error) { console.error("CMS activity log could not be updated:", error); }
@@ -209,10 +233,11 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new CmsEditError("Invalid check request.", 400);
         const fields = Object.keys(payload);
         if (pathname === "/api/checks/start") {
-          if (fields.length !== 1 || fields[0] !== "id" || typeof (payload as { id?: unknown }).id !== "string") {
+          const { id, target } = payload as { id?: unknown; target?: unknown };
+          if (fields.some((field) => field !== "id" && field !== "target") || typeof id !== "string") {
             throw new CmsEditError("Choose one named check; commands and arguments cannot be supplied.", 400);
           }
-          const id = (payload as { id: string }).id;
+          const checkTarget = target === undefined ? undefined : relatedTarget(target);
           if (id === "local-guidance-verify") {
             const generated = ["docs/LOCAL-GUIDANCE-RECHECK.md", "docs/LOCAL-GUIDANCE-COVERAGE-PLAN.md"];
             for (const path of generated) await guardCmsWrite(root, resolve(root, path));
@@ -222,7 +247,7 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
               throw new CmsEditError("Local-guidance verification rewrites generated documents. Commit or set aside changes to its coverage and recheck documents, then restart the CMS before running it.", 423);
             }
           }
-          sendJson(response, 200, checks.start(id));
+          sendJson(response, 200, checks.start(id, checkTarget));
           await recordOperation("check-start", "started", undefined, undefined, id);
         } else {
           if (fields.length !== 0) throw new CmsEditError("Cancellation takes no command or arguments.", 400);
@@ -298,6 +323,7 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         } else if (reviewMatch) {
           const approval = payload as ReviewApproval;
           if (typeof approval.expectedRevision !== "string") throw new CmsEditError("Expected article revision.", 400);
+          requirePassedChecks("article", reviewMatch[1]!, approval.expectedRevision);
           sendJson(response, 200, await tracked("article-review", "article", reviewMatch[1]!, () => withArticleMetadata(approveArticleReview(root, reviewMatch[1]!, approval))));
         } else {
           const edit = payload as BodyEdit;
@@ -324,6 +350,7 @@ export function createCmsServer(projectRoot: string, checkRunner?: ReturnType<ty
         } else if (structuredContentMatch) {
           sendJson(response, 200, await tracked("record-content", structuredContentMatch[1] as StructuredKind, structuredContentMatch[2]!, () => saveStructuredContent(root, structuredContentMatch[1] as StructuredKind, structuredContentMatch[2]!, payload as Parameters<typeof saveStructuredContent>[3])));
         } else {
+          requirePassedChecks(structuredReviewMatch![1] as StructuredKind, structuredReviewMatch![2]!, edit.expectedRevision);
           sendJson(response, 200, await tracked("record-review", structuredReviewMatch![1] as StructuredKind, structuredReviewMatch![2]!, () => approveStructuredReview(root, structuredReviewMatch![1] as StructuredKind, structuredReviewMatch![2]!, payload as Parameters<typeof approveStructuredReview>[3])));
         }
         return;

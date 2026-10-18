@@ -259,6 +259,6 @@ export async function readStructuredCatalog(projectRoot: string) {
     }
     visit(file);
   }
-  return { records, failures, summaries: [...records.values()].map(({ kind, id, title, status, groups, revision, source, translation }) =>
-    ({ kind, id, title, status, groups, revision, path: source.path, translation })).sort((a, b) => a.title.localeCompare(b.title, "en")) };
+  return { records, failures, summaries: [...records.values()].map(({ kind, id, title, status, groups, revision, source, translation, lastReviewedAt, updatedAt }) =>
+    ({ kind, id, title, status, groups, revision, path: source.path, translation, lastReviewedAt, updatedAt })).sort((a, b) => a.title.localeCompare(b.title, "en")) };
 }

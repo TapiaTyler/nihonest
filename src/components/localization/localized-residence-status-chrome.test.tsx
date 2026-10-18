@@ -56,9 +56,11 @@ describe("localized residence-status chrome", () => {
     expect(screen.getByText("2026年9月6日")).toBeInTheDocument();
   });
 
-  it("shows the reviewed badge when a residence status is verified", () => {
-    render(<LocalizedStatusBadges category={status.category} status="verified" />);
-    expect(screen.getByText("Reviewed")).toBeInTheDocument();
+  it("shows no status pill once a residence status is verified, and marks one in editorial review", () => {
+    const { rerender } = render(<LocalizedStatusBadges category={status.category} status="verified" />);
+    expect(screen.queryByText("Reviewed")).not.toBeInTheDocument();
     expect(screen.queryByText("Draft")).not.toBeInTheDocument();
+    rerender(<LocalizedStatusBadges category={status.category} status="needs-review" />);
+    expect(screen.getByText("Editorial review")).toBeInTheDocument();
   });
 });

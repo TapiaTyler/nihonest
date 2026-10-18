@@ -13,9 +13,17 @@ export type CheckDefinition = Readonly<{
   command: string;
   scope: "focused" | "project";
   description: string;
+  /** Related-check sets run by the CMS itself after a save and before an approval; not offered in the Checks list. */
+  automatic?: boolean;
 }>;
 
-export type CheckCommand = Readonly<{ executable: string; args: readonly string[]; label: string }>;
+/** The record and exact revision a related-check run validated. */
+export type CheckTarget = Readonly<{ kind: RelatedCheckKind; id: string; revision: string }>;
+export const relatedCheckKinds = ["article", "faq", "glossary-term", "residence-status", "local-guidance-supplement"] as const;
+export type RelatedCheckKind = typeof relatedCheckKinds[number];
+
+/** `findings` marks a command whose successful exit can still report review findings (the glossary check). */
+export type CheckCommand = Readonly<{ executable: string; args: readonly string[]; label: string; findings?: "glossary" }>;
 type Command = CheckCommand;
 type InternalDefinition = CheckDefinition & Readonly<{ commands: readonly Command[] }>;
 
@@ -39,6 +47,7 @@ export type CheckRunSnapshot = Readonly<{
   outputTruncated: boolean;
   cancelRequested: boolean;
   warning?: string;
+  target?: CheckTarget;
   steps: readonly CheckStep[];
 }>;
 
@@ -72,10 +81,17 @@ function definitionsFor(root: string): readonly InternalDefinition[] {
     args: [...bootstrap, join(root, "scripts", name), ...args],
     label: name.replace(/\.ts$/, ""),
   });
-  const vitest = (paths: readonly string[]): Command => ({
+  const vitest = (paths: readonly string[], label = `Vitest: ${paths.join(", ")}`): Command => ({
     executable: node,
     args: [join(root, "node_modules", "vitest", "vitest.mjs"), "run", ...paths],
-    label: `Vitest: ${paths.join(", ")}`,
+    label,
+  });
+  const audit = { ...script("audit-editorial-state.ts"), label: "Editorial records" };
+  const glossary = { ...script("check-glossary-consistency.ts"), label: "Glossary wording", findings: "glossary" as const };
+  // Each content kind's related checks: the editorial ledger plus the tests that load and validate that kind.
+  const related = (kind: RelatedCheckKind, label: string, description: string, commands: readonly Command[]): InternalDefinition => ({
+    id: `related-${kind}`, label, scope: "focused", automatic: true, description,
+    command: commands.map((item) => item.label).join(", "), commands,
   });
   const checks: InternalDefinition[] = [
     {
@@ -86,7 +102,7 @@ function definitionsFor(root: string): readonly InternalDefinition[] {
     {
       id: "glossary-check", label: "Glossary consistency", command: "node --require ./tools/cms/tsx-bootstrap.cjs --import tsx scripts/check-glossary-consistency.ts",
       scope: "project", description: "Checks Japanese glossary links and settled translation wording.",
-      commands: [script("check-glossary-consistency.ts")],
+      commands: [{ ...script("check-glossary-consistency.ts"), findings: "glossary" }],
     },
     {
       id: "local-guidance-verify", label: "Local guidance verification", command: "node --require ./tools/cms/tsx-bootstrap.cjs --import tsx scripts/local-guidance.ts verify",
@@ -121,6 +137,16 @@ function definitionsFor(root: string): readonly InternalDefinition[] {
         script("check-cms-build-exclusion.ts"),
       ],
     },
+    related("article", "Article checks", "Checks the editorial records and loads and validates every article.",
+      [audit, vitest(["src/lib/content/articles.test.ts", "src/lib/editorial/editorial-catalog.test.ts"], "Article content")]),
+    related("faq", "FAQ checks", "Checks the editorial records and validates the FAQ catalog and its links.",
+      [audit, vitest(["src/data/faqs.test.ts", "src/data/faqs-registry.test.ts", "src/domain/faq/faq.test.ts"], "FAQ content")]),
+    related("glossary-term", "Glossary checks", "Checks the editorial records, validates the glossary, and reviews Japanese glossary wording.",
+      [audit, vitest(["src/data/glossary-additions.test.ts", "src/domain/glossary/glossary.test.ts"], "Glossary content"), glossary]),
+    related("residence-status", "Residence status checks", "Checks the editorial records and validates residence statuses and their guidance.",
+      [audit, vitest(["src/domain/residence-status/residence-status.test.ts", "src/data/structured-residence-status-guidance.test.ts"], "Residence status content")]),
+    related("local-guidance-supplement", "Municipality guidance checks", "Validates the municipality guidance data and its locations.",
+      [vitest(["src/data/local-guidance/locations.test.ts", "src/domain/geography/local-guidance.test.ts"], "Municipality guidance content")]),
   ];
   return checks;
 }
@@ -174,7 +200,7 @@ function startProcess(command: Command, cwd: string, onOutput: (chunk: string) =
 }
 
 type MutableStep = { label: string; status: CheckStep["status"]; exitCode?: number | null; durationMs: number; output: string; outputTruncated: boolean };
-type MutableRun = { id: string; status: CheckStatus; startedAt: string; startTime: number; endedAt?: string; durationMs: number; exitCode?: number | null; output: string; outputTruncated: boolean; steps: MutableStep[]; cancelRequested: boolean; warning?: string; kill?: () => void; done?: Promise<void> };
+type MutableRun = { id: string; status: CheckStatus; startedAt: string; startTime: number; endedAt?: string; durationMs: number; exitCode?: number | null; output: string; outputTruncated: boolean; steps: MutableStep[]; cancelRequested: boolean; warning?: string; target?: CheckTarget; kill?: () => void; done?: Promise<void> };
 
 function snapshot(run: MutableRun): CheckRunSnapshot {
   return {
@@ -188,6 +214,7 @@ function snapshot(run: MutableRun): CheckRunSnapshot {
     outputTruncated: run.outputTruncated,
     cancelRequested: run.cancelRequested,
     ...(run.warning ? { warning: run.warning } : {}),
+    ...(run.target ? { target: run.target } : {}),
     steps: run.steps.map((step) => ({ ...step })),
   };
 }
@@ -210,7 +237,7 @@ export function createCheckRunner(projectRoot: string, executor: CheckCommandExe
   };
 
   const report = (): CheckReport => ({
-    definitions: definitions.map(({ id, label, command, scope, description }) => ({ id, label, command, scope, description })),
+    definitions: definitions.map(({ id, label, command, scope, description, automatic }) => ({ id, label, command, scope, description, ...(automatic ? { automatic } : {}) })),
     ...(active ? { active: snapshot(active) } : {}),
     history: history.map((run) => ({ ...run, steps: run.steps.map((step) => ({ ...step })) })),
   });
@@ -286,23 +313,21 @@ export function createCheckRunner(projectRoot: string, executor: CheckCommandExe
       }
       step.status = "passed";
       run.exitCode = 0;
+      // The glossary check exits successfully even with findings; its summary line decides between passed and warning.
+      if (command.findings === "glossary") {
+        const findingsCount = /\b(\d+)\s+locations?\s+have findings\./i.exec(step.output)?.[1];
+        const locations = findingsCount === undefined ? undefined : Number(findingsCount);
+        if (!Number.isSafeInteger(locations) || locations === undefined) {
+          step.status = "warning";
+          run.warning = "The glossary check exited successfully, but its findings summary could not be parsed.";
+        } else if (locations > 0) {
+          step.status = "warning";
+          run.warning = `The glossary check reported ${locations} location${locations === 1 ? "" : "s"} with findings.`;
+        }
+        if (step.status === "warning") finalStatus = "warning";
+      }
     }
     if (run.cancelRequested) finalStatus = "canceled";
-    if (finalStatus === "passed" && definition.id === "glossary-check") {
-      const findingsCount = /\b(\d+)\s+locations?\s+have findings\./i.exec(run.output)?.[1];
-      const locations = findingsCount === undefined ? undefined : Number(findingsCount);
-      if (!Number.isSafeInteger(locations) || locations === undefined) {
-        finalStatus = "warning";
-        run.warning = "The glossary check exited successfully, but its findings summary could not be parsed.";
-      } else if (locations > 0) {
-        finalStatus = "warning";
-        run.warning = `The glossary check reported ${locations} location${locations === 1 ? "" : "s"} with findings.`;
-      }
-      if (finalStatus === "warning") {
-        const lastStep = run.steps.at(-1);
-        if (lastStep?.status === "passed") lastStep.status = "warning";
-      }
-    }
     if (finalStatus !== "passed") {
       for (const step of run.steps) {
         if (step.status === "running") step.status = finalStatus;
@@ -315,20 +340,27 @@ export function createCheckRunner(projectRoot: string, executor: CheckCommandExe
   return {
     definitions: report().definitions,
     report,
-    start(id: string): CheckReport {
+    start(id: string, target?: CheckTarget): CheckReport {
       if (disposed) throw new CheckRunError("The CMS is shutting down and cannot start another validation check.", 409);
       if (active?.status === "running") throw new CheckRunError("A validation check is already running.", 409);
       const definition = byId.get(id);
       if (!definition) throw new CheckRunError("Choose a validation check from the list.", 400);
+      if (target && definition.id !== `related-${target.kind}`) throw new CheckRunError("Related checks must match the record's kind.", 400);
       if (active) {
         history.unshift(snapshot(active));
         history.splice(maxHistory);
       }
       const now = Date.now();
-      active = { id, status: "running", startedAt: new Date(now).toISOString(), startTime: now, durationMs: 0, output: "", outputTruncated: false, steps: [], cancelRequested: false };
+      active = { id, status: "running", startedAt: new Date(now).toISOString(), startTime: now, durationMs: 0, output: "", outputTruncated: false, steps: [], cancelRequested: false, ...(target ? { target } : {}) };
       notify(observer.onStart, active);
       active.done = execute(active, definition);
       return report();
+    },
+    /** Whether this session's related checks passed (findings allowed) for the exact record revision. */
+    relatedPassed(target: CheckTarget): boolean {
+      const runs = [...(active ? [snapshot(active)] : []), ...history];
+      return runs.some((run) => run.target?.kind === target.kind && run.target.id === target.id && run.target.revision === target.revision
+        && (run.status === "passed" || run.status === "warning"));
     },
     cancel(): CheckReport {
       if (active?.status !== "running") throw new CheckRunError("There is no validation check running.", 409);

@@ -46,7 +46,8 @@ export function FaqResult({ entry, translation, headingLevel = 3, returnTo, vari
     "residence-status": message("faq.targetStatus"),
     activity: message("faq.targetActivity"),
   };
-  const statusBadge = <span className="rounded-full bg-caution-soft px-3 py-1 text-xs font-semibold uppercase tracking-wide text-caution-text">{statusLabel}</span>;
+  // Reviewed answers carry no pill; only answers still in progress are marked.
+  const statusBadge = entry.faq.status === "verified" ? null : <span className="rounded-full bg-caution-soft px-3 py-1 text-xs font-semibold uppercase tracking-wide text-caution-text">{statusLabel}</span>;
   const answer = (
     <>
       <p className="max-w-3xl leading-7 text-ink-muted">{summary}</p>

@@ -12,6 +12,7 @@ describe("repository editorial catalog", () => {
     expect(targets.some(({ kind }) => kind === "glossary-term")).toBe(true);
     expect(targets.some(({ kind }) => kind === "residence-status")).toBe(true);
     expect(targets.some(({ kind }) => kind === "faq")).toBe(true);
-    expect(auditEditorialState(targets, records, "2026-09-11")).toEqual([]);
+    // The same "today" as scripts/audit-editorial-state.ts, so approvals recorded today are not future-dated.
+    expect(auditEditorialState(targets, records, new Date().toISOString().slice(0, 10))).toEqual([]);
   });
 });

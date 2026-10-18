@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nihonest editorial workspace</title>
+    <meta name="color-scheme" content="light dark">
+    <script src="/theme-init.js"></script>
     <link rel="stylesheet" href="/app.css">
     <script src="/formatted-article.js" defer></script>
     <script src="/app.js" defer></script>
@@ -11,8 +13,10 @@
   <body>
     <a class="skip-link" href="#page-heading">Skip to page content</a>
     <header class="site-header">
-      <div class="site-title"><p class="eyebrow">Nihonest · local editorial workspace</p><p class="site-name">Editorial workspace</p></div>
+      <p class="site-name">Nihonest <span>editorial workspace</span></p>
       <div class="header-actions">
+        <button type="button" id="open-palette" class="palette-trigger" aria-keyshortcuts="Control+K" aria-haspopup="dialog">Go to… <kbd>Ctrl K</kbd></button>
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Theme: follows the system. Switch to light">Theme: System</button>
         <p class="mode" id="data-freshness">Loading…</p>
         <button type="button" id="refresh">Refresh</button>
       </div>
@@ -44,23 +48,32 @@
       </section>
 
       <section class="page" data-page="content" aria-labelledby="page-heading" hidden>
-        <p class="page-intro">Articles, FAQs, residence statuses, and glossary terms. Marking content reviewed requires your explicit approval of its exact revision.</p>
+        <div class="page-head">
+          <p class="page-intro">Articles, FAQs, residence statuses, and glossary terms. Marking content reviewed requires your explicit approval of its exact revision.</p>
+          <details class="new-menu">
+            <summary>New record</summary>
+            <div class="new-menu-list" role="group" aria-label="Create a record">
+              <button type="button" data-create-kind="article">Article</button>
+              <button type="button" data-create-kind="faq">FAQ</button>
+              <button type="button" data-create-kind="glossary-term">Glossary term</button>
+            </div>
+          </details>
+        </div>
         <div class="workspace">
           <section class="catalog" aria-labelledby="catalog-heading">
-            <h2 id="catalog-heading">Records</h2>
-            <div class="create-actions" role="group" aria-label="Create a record">
-              <button type="button" data-create-kind="article">New article</button>
-              <button type="button" data-create-kind="faq">New FAQ</button>
-              <button type="button" data-create-kind="glossary-term">New glossary term</button>
+            <h2 id="catalog-heading" class="visually-hidden">Records</h2>
+            <label for="search" class="visually-hidden">Search records</label>
+            <input id="search" type="search" autocomplete="off" placeholder="Search title, ID, category, or topic">
+            <div class="filter-grid">
+              <div><label for="kind-filter">Kind</label>
+              <select id="kind-filter"><option value="">All kinds</option><option value="article">Articles</option><option value="faq">FAQs</option><option value="residence-status">Residence statuses</option><option value="glossary-term">Glossary terms</option></select></div>
+              <div><label for="status-filter">Status</label>
+              <select id="status-filter"><option value="">All statuses</option><option value="draft">Draft</option><option value="needs-review">Editorial review</option><option value="verified">Reviewed</option><option value="archived">Archived</option></select></div>
+              <div><label for="group-filter">Category or topic</label>
+              <select id="group-filter"><option value="">All categories and topics</option></select></div>
+              <div><label for="sort-order">Order</label>
+              <select id="sort-order"><option value="">Catalog order</option><option value="title">Title</option><option value="oldest-review">Oldest review first</option><option value="oldest-update">Least recently updated</option><option value="importance">Most important first</option></select></div>
             </div>
-            <label for="search">Search title, ID, category, or topic</label>
-            <input id="search" type="search" autocomplete="off">
-            <label for="kind-filter">Content kind</label>
-            <select id="kind-filter"><option value="">All kinds</option><option value="article">Articles</option><option value="faq">FAQs</option><option value="residence-status">Residence statuses</option><option value="glossary-term">Glossary terms</option></select>
-            <label for="group-filter">Category or topic</label>
-            <select id="group-filter"><option value="">All categories and topics</option></select>
-            <label for="status-filter">Editorial status</label>
-            <select id="status-filter"><option value="">All statuses</option><option value="draft">Draft</option><option value="needs-review">Editorial review</option><option value="verified">Reviewed</option><option value="archived">Archived</option></select>
             <p id="result-count" class="hint" aria-live="polite"></p>
             <ul id="article-list" class="article-list"></ul>
           </section>
@@ -75,7 +88,9 @@
         <p class="page-intro">Municipality supplements by location. Edit supported English fields only; Japanese text and review state are read-only here.</p>
         <details class="local-guidance-matrix-disclosure">
           <summary>Coverage matrix by location and guide</summary>
-          <p class="hint">Each column is an article guide and each row is a registered location. Select an available cell to open its municipality supplement.</p>
+          <p class="hint">Each column is an article guide and each row is a registered location. Each cell shows its Japanese state; select one to open the supplement. Arrow keys move between cells.</p>
+          <p id="local-guidance-matrix-summary" class="matrix-summary" aria-live="polite"></p>
+          <label class="inline-check"><input type="checkbox" id="local-guidance-issues-only"> Show only locations with stale or missing Japanese, or Codex drafts awaiting a check</label>
           <div id="local-guidance-matrix" class="local-guidance-matrix-scroll" tabindex="0" aria-label="Scrollable municipality guidance coverage matrix">
             <p class="hint">Loading location and guide coverage…</p>
           </div>
@@ -105,7 +120,7 @@
           <p class="hint">Find an official source to see its direct and derived dependents in the repository source graph.</p>
           <div class="impact-controls">
             <div><label for="impact-search">Find a source</label>
-            <input id="impact-search" type="search" autocomplete="off" placeholder="Search title, organization, or source ID"></div>
+            <input id="impact-search" type="search" autocomplete="off" placeholder="Title, organization, or source ID"></div>
             <div><label for="impact-source">Official source</label>
             <select id="impact-source"></select></div>
           </div>
@@ -113,7 +128,7 @@
           <div id="impact-result" aria-live="polite"><p>Loading source impact…</p></div>
         </section>
         <section class="reference-workspace" aria-labelledby="reference-heading">
-          <div class="section-heading"><h2 id="reference-heading">Reference catalogs</h2><button type="button" data-create-kind="source">New official source</button></div>
+          <div class="section-heading"><h2 id="reference-heading">Reference catalogs</h2><button type="button" data-create-kind="source" class="primary">New official source</button></div>
           <div class="reference-grid">
             <section class="catalog reference-catalog" aria-labelledby="reference-catalog-heading">
               <h3 id="reference-catalog-heading">Reference records</h3>
@@ -142,7 +157,7 @@
         <section class="system" aria-labelledby="handoff-heading">
           <h2 id="handoff-heading">Japanese translation handoff</h2>
           <p class="hint">Stale and missing artifacts for the content kinds this CMS supports. This list does not edit or generate Japanese translations.</p>
-          <a id="handoff-download" href="/api/translation-handoff.txt" download="nihonest-translation-handoff.txt">Download plain-text handoff</a>
+          <a id="handoff-download" class="action-link" href="/api/translation-handoff.txt" download="nihonest-translation-handoff.txt">Download plain-text handoff</a>
           <div id="handoff-status" role="status"><p>Loading translation state…</p></div>
           <ul id="handoff-items" class="handoff-items"></ul>
         </section>
@@ -154,10 +169,10 @@
           <p class="hint">Choose a fixed check and start it explicitly. Each result covers only the named command; a focused pass does not mean the full site passed.</p>
           <div class="check-controls">
             <div><label for="check-kind">Check</label><select id="check-kind"></select></div>
-            <button type="button" id="check-start">Run check</button>
+            <button type="button" id="check-start" class="primary">Run check</button>
             <button type="button" id="check-cancel" hidden>Cancel run</button>
           </div>
-          <p id="check-command" class="hint"></p>
+          <div id="check-command" class="hint"></div>
           <p id="check-status" role="status">Loading checks…</p>
           <ol id="check-steps" class="check-steps"></ol>
           <pre id="check-output" tabindex="0">No check has run in this CMS session.</pre>
@@ -181,9 +196,17 @@
         <section class="system" aria-labelledby="activity-heading">
           <h2 id="activity-heading">Recent activity</h2>
           <p class="hint">Local CMS operations and check results, newest first. Git history and approval files remain the durable record.</p>
-          <ol id="activity-events" class="activity-list" aria-live="polite"><li>Loading activity…</li></ol>
+          <div id="activity-events" class="activity-days" aria-live="polite"><p>Loading activity…</p></div>
         </section>
       </section>
     </main>
+    <dialog id="palette" class="palette" aria-label="Go to a page, record, or action">
+      <form method="dialog" class="palette-form">
+        <label for="palette-input" class="visually-hidden">Go to a page, record, guide, or action</label>
+        <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Type a page, record, guide, or action" role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list">
+        <ul id="palette-results" class="palette-results" role="listbox" aria-label="Matches"></ul>
+        <p class="palette-hint hint">Enter opens · arrow keys move · Esc closes</p>
+      </form>
+    </dialog>
   </body>
 </html>

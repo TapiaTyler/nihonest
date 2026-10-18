@@ -6,6 +6,7 @@ import ts from "typescript";
 import { sources as officialSources } from "@/data/sources";
 import { japaneseLocalGuidanceLocationTranslations } from "@/data/translations/ja/local-guidance";
 import { localGuidanceArticleOrder, localGuidanceLocations } from "@/data/local-guidance";
+import { getAdministrativeGeography } from "@/data/geography";
 import { localGuidanceSupplementSchema, type LocalGuidanceRecheck, type LocalGuidanceSupplement } from "@/domain/geography/local-guidance";
 import { translationSourceFields } from "@/domain/translation/translation-source-fields";
 import { createTranslationSourceRevision } from "@/lib/translation/source-revision-core";
@@ -48,6 +49,8 @@ export type LocalGuidanceLocationSummary = Readonly<{
   id: string;
   name: string;
   prefectureId?: string;
+  /** English prefecture name from the administrative geography registry, for grouping locations. */
+  prefectureName?: string;
   supplements: readonly LocalGuidanceSupplementSummary[];
 }>;
 export type LocalGuidanceCatalogFailure = Readonly<{ path: string; error: string }>;
@@ -356,7 +359,8 @@ export async function readLocalGuidanceCatalog(root: string) {
         pathByRootAndSupplementId.set(`${absoluteRoot}:${value.id}`, registration.locationPath);
         summarySupplements.push({ id: value.id, articleId: value.articleId, title: value.title, translation: state, ...(translation ? { generator: translation.generator } : {}) });
       }
-      locations.push({ id: locationId, name: registered.geography.name, prefectureId: registration.prefectureId, supplements: summarySupplements });
+      const prefecture = getAdministrativeGeography(registration.prefectureId);
+      locations.push({ id: locationId, name: registered.geography.name, prefectureId: registration.prefectureId, prefectureName: prefecture?.names.en ?? prefecture?.names.ja, supplements: summarySupplements });
     } catch (error) {
       failures.push({ path: registration.locationPath, error: error instanceof Error ? error.message : String(error) });
     }

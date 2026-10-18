@@ -44,12 +44,12 @@ describe("ResidenceStatusExplorer", () => {
     expect(screen.getAllByText("View status and related guidance")).toHaveLength(3);
   });
 
-  it("shows the editorial status from each record", () => {
+  it("marks records still in progress and shows no status on reviewed ones", () => {
     const records = residenceStatuses.map((record) => record.id === "artist"
       ? { ...record, status: "verified" as const } : record);
     render(<ResidenceStatusExplorer residenceStatuses={records} />);
     fireEvent.click(screen.getByRole("button", { name: "Work" }));
-    expect(screen.getByRole("link", { name: "Artist" })).toHaveTextContent("Reviewed");
+    expect(screen.getByRole("link", { name: "Artist" })).not.toHaveTextContent("Reviewed");
     expect(screen.getByRole("link", { name: "Professor" })).toHaveTextContent("Draft");
   });
 

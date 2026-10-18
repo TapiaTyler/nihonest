@@ -64,9 +64,27 @@ describe("CMS article detail", () => {
     const checkDefinitions = [
       { id: "cms-tests", label: "CMS tests", command: "npx vitest run tools/cms", scope: "focused" },
       { id: "glossary-check", label: "Glossary consistency", command: "npm run localization:glossary:check", scope: "project" },
+      { id: "related-article", label: "Article checks", command: "Editorial records, Article content", scope: "focused", automatic: true },
+      { id: "related-faq", label: "FAQ checks", command: "Editorial records, FAQ content", scope: "focused", automatic: true },
+      { id: "related-local-guidance-supplement", label: "Municipality guidance checks", command: "Municipality guidance content", scope: "focused", automatic: true },
     ];
     let checkReport = { definitions: checkDefinitions, active: undefined as undefined | { id: string; status: string; startedAt: string; durationMs: number; output: string }, history: [] as Array<{ id: string; status: string; startedAt: string; durationMs: number; output: string }> };
     let checkStarts = 0;
+    // Related (automatic) runs echo their target; the first named check stays running so the test can cancel it.
+    let failRelated = false;
+    const auditFailure = ["[future-review-date] Approval record \"x\" has a future review date.", "Editorial audit found 1 blocking issue(s).", ""].join("\n");
+    const relatedStarts: string[] = [];
+    const startCheck = (body: { id: string; target?: { kind: string; id: string; revision: string } }) => {
+      if (body.target) {
+        relatedStarts.push(`${body.target.kind}:${body.target.id}`);
+        const failed = failRelated;
+        return { id: body.id, target: body.target, status: failed ? "failed" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 900,
+          output: failed ? auditFailure : "ok",
+          steps: failed ? [{ label: "Editorial records", status: "failed", durationMs: 400, output: auditFailure }]
+            : [{ label: "Editorial records", status: "passed", durationMs: 400, output: "" }, { label: body.id === "related-faq" ? "FAQ content" : body.id === "related-article" ? "Article content" : "Municipality guidance content", status: "passed", durationMs: 500, output: "" }] };
+      }
+      return { id: body.id, status: body.id === "glossary-check" ? "warning" : ++checkStarts === 1 ? "running" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1000, output: "3 locations have findings." };
+    };
     const creations: { path: string; body: Record<string, unknown> }[] = [];
     const creationOptions = { faqGroups: [{ id: "study", label: "Study in Japan" }], topics: ["banking"], journeyStages: ["planning"],
       sourceFamilies: ["daily-life-safety"], authorityLevels: ["national-government"], sourceLanguages: ["en", "ja"], checkMethods: ["automated", "manual"],
@@ -74,7 +92,18 @@ describe("CMS article detail", () => {
       article: { registryFamilies: ["transport-safety-and-daily-life"], journeyStages: ["planning"], topics: ["daily-life"], audiences: ["newcomer"],
         geographicScopes: ["national"], importance: ["informational"], contentTypes: ["guide"], relationshipTypes: ["related", "prerequisite", "next-step"] } };
     const createdFaq = { ...faq, id: "new-faq", title: "Can I create this?", value: { ...faq.value, id: "new-faq", question: "Can I create this?" } };
-    const fetch = async (path: string, options?: { method?: string; body?: string }) => ({
+    // The session token changes when the CMS restarts; a write with an old token is refused as the server would.
+    let currentToken = "test-token";
+    const staleWrites: string[] = [];
+    const fetch = async (path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
+      const token = options?.headers?.["X-CMS-Token"];
+      if (options?.method && token && token !== currentToken) {
+        staleWrites.push(path);
+        return { ok: false, status: 403, json: async () => ({ error: "This action requires the local CMS session." }) };
+      }
+      return fixtureFetch(path, options);
+    };
+    const fixtureFetch = async (path: string, options?: { method?: string; body?: string }) => ({
       ok: true,
        json: async () => path === "/api/local-guidance" ? { locations: [{ id: "jp-05201", name: "Akita City", prefectureId: "jp-05000", supplements: [localGuidanceSummary] }, { id: "jp-05202", name: "Noshiro City", prefectureId: "jp-05000", supplements: [] }], guides: ["sample-article", "health-insurance-guide", "waste-guide", "resident-tax-guide", "hazard-guide", "japanese-classes-guide", "pension-guide"], failures: [] }
         : path === "/api/local-guidance/akita-address-registration" ? localGuidanceDetail()
@@ -85,7 +114,7 @@ describe("CMS article detail", () => {
             : path.startsWith("/api/recovery/drafts/") && options?.method === "DELETE" ? (recoveryMutations.push({ path, method: options.method, body: options.body ?? "" }), savedDraft = null, { deleted: true })
               : path === "/api/activity" ? { events: [{ at: "2026-09-26T00:00:00.000Z", kind: "save", outcome: "success", recordKind: "article", recordId: "sample-article", revision: "revision" }] }
                 : path === "/api/checks" ? checkReport
-        : path === "/api/checks/start" ? (checkReport = { ...checkReport, active: { id: JSON.parse(options?.body ?? "{}").id, status: JSON.parse(options?.body ?? "{}").id === "glossary-check" ? "warning" : ++checkStarts === 1 ? "running" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1000, output: "3 locations have findings." } })
+        : path === "/api/checks/start" ? (checkReport = { ...checkReport, history: checkReport.active ? [checkReport.active, ...checkReport.history] : checkReport.history, active: startCheck(JSON.parse(options?.body ?? "{}")) })
           : path === "/api/checks/cancel" ? (checkReport = { ...checkReport, active: undefined, history: [{ id: "cms-tests", status: "canceled", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1500, output: "Canceled by operator" }] })
        : path === "/api/impact/sources" ? { sources: [{ id: "official-source", title: "Official source", organization: "Agency", url: "https://example.go.jp", dependents: [{ kind: "article", id: "sample-article", viaArticleIds: [] }] }], findings: [], coverageNote: "FAQs are not represented." }
             : path === "/api/reference" ? { records: referenceRecords }
@@ -102,7 +131,7 @@ describe("CMS article detail", () => {
         }
           : path === "/api/generated-metadata" ? generatedMetadataState
           : path === "/api/generated-metadata/refresh" ? (metadataRefreshes.push(options?.body ?? ""), generatedMetadataState = { status: "current" }, { refresh: { status: "updated" }, state: generatedMetadataState })
-          : path === "/api/session" ? { token: "test-token" }
+          : path === "/api/session" ? { token: currentToken }
             : path === "/api/create/options" ? creationOptions
             : path === "/api/create/faq/preview" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { kind: "faq", id: "new-faq", path: "src/data/faqs/study.ts", sourceRevision: "e".repeat(64), insertion: ',\n  defineFaq("study", { id: "new-faq" }),', line: 12, revision: "f".repeat(64) })
             : path === "/api/create/faq" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { created: true, kind: "faq", id: "new-faq", path: "src/data/faqs/study.ts" })
@@ -126,11 +155,25 @@ describe("CMS article detail", () => {
     window.confirm = () => true;
     await waitFor(() => expect(document.querySelector("#article-list button")).not.toBeNull());
     await waitFor(() => expect(document.querySelector("#git-status .git-files")).not.toBeNull());
-    await waitFor(() => expect(document.querySelector("#impact-result")?.textContent).toContain("Official source"));
+    // Source impact starts with a choice rather than an arbitrary source.
+    await waitFor(() => expect((document.querySelector("#impact-source") as HTMLSelectElement).options.length).toBeGreaterThan(1));
+    expect(document.querySelector("#impact-result")?.textContent).toContain("Choose a source");
+    const impactPicker = document.querySelector("#impact-source") as HTMLSelectElement;
+    impactPicker.value = impactPicker.options[1].value;
+    impactPicker.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(document.querySelector("#impact-result")?.textContent).toContain("Official source");
     await waitFor(() => expect(document.querySelectorAll("#reference-list button")).toHaveLength(4));
     await waitFor(() => expect((document.querySelector("#local-guidance-location") as HTMLSelectElement).options.length).toBe(3));
     expect(document.querySelectorAll("#local-guidance-matrix thead th")).toHaveLength(8);
     expect(document.querySelector("#local-guidance-matrix thead th:nth-child(2)")?.textContent).toBe("Sample article");
+    expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(2);
+    // Locations group by prefecture when named; "issues only" keeps rows with stale, missing, or unchecked guides.
+    expect(document.querySelector("#local-guidance-matrix-summary")?.textContent).toContain("1 supplement in 2 locations: 0 current, 1 stale");
+    const issuesOnly = document.querySelector("#local-guidance-issues-only") as HTMLInputElement;
+    issuesOnly.click();
+    expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(1);
+    expect(document.querySelector("#local-guidance-matrix .local-guidance-matrix-cell")?.textContent).toBe("Stale · Codex draft");
+    issuesOnly.click();
     expect(document.querySelectorAll("#local-guidance-matrix tbody tr")).toHaveLength(2);
     (document.querySelector(".local-guidance-matrix-disclosure > summary") as HTMLElement).click();
     const matrixCell = document.querySelector("#local-guidance-matrix .local-guidance-matrix-cell") as HTMLButtonElement;
@@ -143,7 +186,9 @@ describe("CMS article detail", () => {
     expect(document.querySelector("#impact-result")?.textContent).toContain("sample-article");
     expect(document.querySelector("#handoff-status")?.textContent).toContain("1 stale and 0 missing");
     expect(document.querySelector("#handoff-items")?.textContent).toContain("Sample article");
-    await waitFor(() => expect(document.querySelector("#activity-events")?.textContent).toContain("sample-article"));
+    // Activity names the record and opens it; events are grouped by day in plain sentences.
+    await waitFor(() => expect(document.querySelector("#activity-events")?.textContent).toContain("Sample article"));
+    expect(document.querySelector("#activity-events h3")).not.toBeNull();
     expect(document.querySelector("#recovery-drafts")?.textContent).toContain("No recovery drafts");
     const referenceSearch = document.querySelector("#reference-search") as HTMLInputElement;
     referenceSearch.value = "journey";
@@ -257,9 +302,9 @@ describe("CMS article detail", () => {
     expect(document.querySelector("[data-page-link='changes']")?.getAttribute("aria-current")).toBe("page");
     expect(document.querySelector("[data-page='content']")?.hasAttribute("hidden")).toBe(true);
     expect(document.querySelector("[data-count='changes']")?.textContent).toBe("1 changed by this session");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 files changed by this CMS session");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 files already had uncommitted changes");
-    expect(document.querySelector("#attention")?.textContent).toContain("1 data modules changed outside the CMS after it started. Restart the CMS");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 file changed by this CMS session");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 file already had uncommitted changes");
+    expect(document.querySelector("#attention")?.textContent).toContain("1 data module changed outside the CMS after it started. Restart the CMS");
     expect(document.querySelector("#data-freshness")?.textContent).toContain("Restart needed");
     expect(document.querySelector("#data-freshness")?.classList.contains("restart-needed")).toBe(true);
     const gitText = document.querySelector("#git-status")!.textContent!;
@@ -329,11 +374,36 @@ describe("CMS article detail", () => {
     approvalHelp.click();
     expect(approvalHelp.parentElement?.hasAttribute("open")).toBe(true);
     expect(approvalHelp.parentElement?.textContent).toContain("exact revision");
-    expect(document.querySelector("#panel-review .field-help summary[aria-label='Help for Validation performed (one check per line)']")).not.toBeNull();
+    // Checks that passed earlier in the session are offered, so the free-text field asks only for other validation.
+    expect(document.querySelector("#panel-review .field-help summary[aria-label='Help for Other validation performed (one per line)']")).not.toBeNull();
+    expect(document.querySelector("#panel-review .check-chips")?.textContent).toContain("CMS tests");
     expect(document.querySelector("#panel-file .editorial-controls")).toBeNull();
     expect(document.querySelector("#tab-review")?.textContent).toBe("Review & approve");
     expect(document.querySelector(".record-header h3")?.textContent).toBe("Sample article");
     expect(document.querySelector(".record-header .record-path")?.textContent).toBe("content/articles/sample-article.mdx");
+    // The filtered list is a queue: the header shows the position and steps to the next record.
+    expect(document.querySelector(".record-header .queue-position")?.textContent).toBe("1 of 2 in this list");
+    // Opening Review & approve runs the article's automatic checks; a failure is explained and keeps approval locked.
+    const approveButton = document.querySelector("#panel-review .review-form button[type='submit']") as HTMLButtonElement;
+    const approveCheck = document.querySelector("#panel-review .approval-check input") as HTMLInputElement;
+    failRelated = true;
+    (document.querySelector("#tab-linked") as HTMLButtonElement).click();
+    (document.querySelector("#tab-review") as HTMLButtonElement).click();
+    await waitFor(() => expect(document.querySelector("#panel-review .related-checks")?.getAttribute("data-state")).toBe("failed"));
+    expect(relatedStarts).toContain("article:sample-article");
+    expect(document.querySelector("#panel-review .related-headline")?.textContent).toBe("1 of 2 checks failed. Approval stays locked until they pass.");
+    expect(document.querySelector("#panel-review .related-why")?.textContent).toContain("has a future review date");
+    approveCheck.checked = true;
+    approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(approveButton.disabled).toBe(true);
+    failRelated = false;
+    (document.querySelector("#panel-review .related-actions button") as HTMLButtonElement).click();
+    await waitFor(() => expect(document.querySelector("#panel-review .related-checks")?.getAttribute("data-state")).toBe("passed"));
+    expect(document.querySelector("#panel-review .related-headline")?.textContent).toBe("All 2 checks passed for the saved version.");
+    expect(approveButton.disabled).toBe(false);
+    approveCheck.checked = false;
+    approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(document.querySelector("#panel-review .review-context")?.textContent).toContain("What you are approving");
     (document.querySelector("#tab-article") as HTMLButtonElement).click();
     const textarea = document.querySelector("#article-body-editor") as HTMLTextAreaElement;
     expect(textarea.hidden).toBe(true);
@@ -461,7 +531,10 @@ describe("CMS article detail", () => {
     await waitFor(() => expect(document.querySelector(".article-preview h2")?.textContent).toBe("Changed heading"));
     expect(document.querySelector("#cms-article-preview [role='status']")?.textContent).toContain("unsaved article body");
     expect((document.querySelector(".edit-actions button:nth-child(2)") as HTMLButtonElement).disabled).toBe(false);
-    (document.querySelector(".edit-actions button:nth-child(2)") as HTMLButtonElement).click();
+    expect(document.querySelector("#panel-article .save-state")?.textContent).toContain("Unsaved edits");
+    expect(document.querySelector(".record-header .unsaved-badge")).not.toBeNull();
+    // Ctrl+S saves the open editor.
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "s", ctrlKey: true, bubbles: true, cancelable: true }));
     await waitFor(() => expect(mutations).toHaveLength(1));
     expect(mutations[0].method).toBe("PUT");
     expect(JSON.parse(mutations[0].body).expectedRevision).toBe("revision");
@@ -486,6 +559,8 @@ describe("CMS article detail", () => {
     await waitFor(() => expect(mutations).toHaveLength(2));
     expect(mutations[1].path).toContain("/review");
     expect(JSON.parse(mutations[1].body).explicitHumanApproval).toBe(true);
+    // The approval record names the automatic checks that passed for the revision.
+    expect(JSON.parse(mutations[1].body).validationPerformed[0]).toBe("Automatic CMS checks passed for revision revision: Editorial records, Article content");
     const searchBox = document.querySelector("#search") as HTMLInputElement;
     searchBox.value = "sample-article";
     searchBox.dispatchEvent(new Event("input", { bubbles: true }));
@@ -657,5 +732,33 @@ describe("CMS article detail", () => {
     (document.querySelector("#reference-detail .create-form") as HTMLFormElement).dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
     await waitFor(() => expect(document.querySelector("#reference-detail")?.textContent).toContain("Official source created"));
     expect(creations.find((item) => item.path === "/api/create/source")!.body.expectedSourceRevision).toBe("c".repeat(64));
+    // Ctrl+K opens Go to; typing narrows the list and Enter opens the highlighted match.
+    window.confirm = () => true;
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true, cancelable: true }));
+    const paletteInput = document.querySelector("#palette-input") as HTMLInputElement;
+    expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(true);
+    paletteInput.value = "try this";
+    paletteInput.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(document.querySelector("#palette-results [aria-selected='true'] .palette-title")?.textContent).toBe("Can I try this?");
+    paletteInput.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+    expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(false);
+    await waitFor(() => expect(document.querySelector("#article-detail .record-header h3")?.textContent).toBe("Can I try this?"));
+    // After a CMS restart the open page fetches the new session token and retries the write once.
+    currentToken = "restarted-token";
+    const startsBefore = relatedStarts.length;
+    (document.querySelector("#record-panel-review .related-actions button, #panel-review .related-actions button") as HTMLButtonElement | null)?.click();
+    await waitFor(() => expect(relatedStarts.length).toBe(startsBefore + 1));
+    expect(staleWrites).toEqual(["/api/checks/start"]);
+    // The theme switch cycles System, Light, and Dark, and stores an explicit choice.
+    const themeToggle = document.querySelector("#theme-toggle") as HTMLButtonElement;
+    expect(themeToggle.textContent).toBe("Theme: System");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBe("light");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(window.localStorage.getItem("nihonest-cms:theme")).toBe("dark");
+    themeToggle.click();
+    expect(document.documentElement.dataset.theme).toBeUndefined();
+    expect(window.localStorage.getItem("nihonest-cms:theme")).toBeNull();
   }, 30_000);
 });
