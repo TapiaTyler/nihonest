@@ -46,7 +46,9 @@ describe("CMS validation check runner", () => {
       expect(report.definitions.map(({ id }) => id)).toEqual([
         "editorial-audit", "glossary-check", "local-guidance-verify", "cms-tests", "article-tests",
         "local-guidance-tests", "typecheck", "production-build",
+        "related-article", "related-faq", "related-glossary-term", "related-residence-status", "related-local-guidance-supplement",
       ]);
+      expect(report.definitions.filter(({ automatic }) => automatic).map(({ id }) => id)).toHaveLength(5);
       expect(report.definitions.find(({ id }) => id === "local-guidance-verify")).toMatchObject({
         scope: "project", description: expect.stringMatching(/generated coverage documents/i),
       });

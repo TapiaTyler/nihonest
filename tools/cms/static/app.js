@@ -1241,7 +1241,7 @@ function renderLocalGuidanceDetail(record) {
   save.setAttribute("aria-keyshortcuts", "Control+S");
   const saveStatus = el("span", "No unsaved English changes.");
   saveStatus.setAttribute("role", "status");
-  saveRow.append(save, saveStatus);
+  saveRow.append(save, saveStatus, relatedChecksPanel({ kind: "local-guidance-supplement", id: record.id, revision: record.revision }, { compact: true }));
   editor.append(saveRow);
   editor.addEventListener("input", () => updateLocalGuidanceSaveState(editor));
   editor.addEventListener("submit", async (event) => {
@@ -1258,6 +1258,7 @@ function renderLocalGuidanceDetail(record) {
       });
       localGuidanceUnsaved = false;
       saveStatus.textContent = result.changed ? "Saved. Reloading guide and translation state…" : "No canonical changes were needed.";
+      if (result.changed) checkAfterSave("local-guidance-supplement", record.id);
       await refreshLocalGuidance();
       await refreshHandoff();
     } catch (error) {
@@ -1278,6 +1279,7 @@ function renderLocalGuidanceDetail(record) {
     ["sources", "Sources & rechecks", related],
     ["details", "Details & checks", detailsPanel],
   ], "Guide sections", "guide"));
+  startChecksIfSaved({ kind: "local-guidance-supplement", id: record.id, revision: record.revision });
 }
 
 async function selectLocalGuidance(id, options = {}) {
@@ -1930,6 +1932,7 @@ function articleView(article) {
     actions.className = "edit-actions";
     actions.append(previewToggle, save, cancel);
     const bar = actionBar(actions, message);
+    bar.bar.append(relatedChecksPanel({ kind: "article", id: metadata.id, revision: record.revision }, { compact: true }));
     editor.append(modeBar, toolbar, linkForm, formattedHost, label, textarea, dateLabel, date, diff, generated, bar.bar);
     wrapper.append(editor);
     function setEditorMode(next) {
@@ -2085,6 +2088,7 @@ function articleView(article) {
         }));
         hasUnsavedChanges = false;
         await recovery.clearAfterSave(savedVersion);
+        checkAfterSave("article", metadata.id);
         await refresh();
       } catch (error) {
         message.textContent = error.message;
@@ -2228,6 +2232,7 @@ function structuredEditorialControls(record) {
     revision: record.revision,
     ids: { date: "structured-review-date", change: "structured-change-note", validation: "structured-validation", sources: "structured-source-reviews", approval: "structured-approval-note" },
     kindName: "record",
+    target: { kind: record.kind, id: record.id, revision: record.revision },
     onSubmit: async (payload) => {
       const next = nextInQueue();
       const saved = await mutate(`/api/records/${record.kind}/${encodeURIComponent(record.id)}/review`, "POST", {
@@ -2365,6 +2370,7 @@ function structuredContentEditor(record) {
   message.setAttribute("role", "status");
   actions.append(save, discard, previewToggle);
   const bar = actionBar(actions, message);
+  bar.bar.append(relatedChecksPanel({ kind: record.kind, id: record.id, revision: record.revision }, { compact: true }));
   section.append(diff, bar.bar, previewPanel);
   function changes() {
     const changed = {};
@@ -2438,6 +2444,7 @@ function structuredContentEditor(record) {
       });
       hasUnsavedChanges = false;
       await recovery.clearAfterSave(savedVersion);
+      checkAfterSave(record.kind, record.id);
       await refresh();
     } catch (error) { message.textContent = error.message; message.className = "error"; updateState(); bar.setState("error", "Not saved"); }
   });
@@ -2511,6 +2518,7 @@ function renderStructuredRecord(record) {
     ["file", "Details", fileDetails],
   ], "Record sections", "record"));
   detail.replaceChildren(wrapper);
+  startChecksIfSaved({ kind: record.kind, id: record.id, revision: record.revision });
 }
 
 function editorialControls(article) {
@@ -2554,6 +2562,7 @@ function editorialControls(article) {
     revision: record.editorialRevision || record.revision,
     ids: { date: "review-date", change: "review-change-note", validation: "review-validation", sources: "review-source-ids", approval: "review-approval-note" },
     kindName: "article",
+    target: { kind: "article", id: metadata.id, revision: record.revision },
     onSubmit: async (payload) => {
       const next = nextInQueue();
       const result = await mutate(`/api/articles/${encodeURIComponent(metadata.id)}/review`, "POST", { expectedRevision: record.revision, ...payload });
@@ -2632,6 +2641,185 @@ function shortRevision(revision) {
   return revision && revision.length > 12 ? `${revision.slice(0, 8)}…` : revision || "unavailable";
 }
 
+
+// ---------- Automatic checks ----------
+// Every content kind has a fixed set of related checks on the server. The CMS runs them by itself on the saved
+// revision after a save and when Review & approve opens, explains the result in plain words, and keeps approval
+// locked until they pass. The server enforces the same rule.
+
+const relatedListeners = new Set();
+let pendingRelated = null;
+let relatedStartError = null;
+// Set by a save so the record's next render checks its new revision.
+let checkAfterRender = null;
+
+function targetKey(target) {
+  return `${target.kind}:${target.id}:${target.revision}`;
+}
+
+function checkRuns() {
+  if (!checkReport) return [];
+  return [...(checkReport.active ? [checkReport.active] : []), ...checkReport.history];
+}
+
+function relatedRunFor(target) {
+  return checkRuns().find((run) => run.target && targetKey(run.target) === targetKey(target));
+}
+
+function relatedChecksPassed(target) {
+  const run = relatedRunFor(target);
+  return Boolean(run && (run.status === "passed" || run.status === "warning"));
+}
+
+function notifyRelated() {
+  for (const listener of [...relatedListeners]) listener();
+}
+
+// Listeners belong to elements that are replaced when a record re-renders; a detached one removes itself.
+function watchRelated(element, listener) {
+  const wrapped = () => {
+    if (!element.isConnected && element.dataset.watched) { relatedListeners.delete(wrapped); return; }
+    element.dataset.watched = "true";
+    listener();
+  };
+  relatedListeners.add(wrapped);
+  wrapped();
+}
+
+async function runRelatedChecks(target, { force = false } = {}) {
+  const existing = relatedRunFor(target);
+  if (!force && existing && existing.status !== "canceled") return;
+  pendingRelated = target;
+  relatedStartError = null;
+  notifyRelated();
+  // Only one check runs at a time; a related run waits its turn rather than interrupting another.
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    if (!pendingRelated || targetKey(pendingRelated) !== targetKey(target)) return;
+    try {
+      const report = await mutate("/api/checks/start", "POST", { id: `related-${target.kind}`, target });
+      pendingRelated = null;
+      renderChecks(report);
+      scheduleCheckPoll(report);
+      refreshActivity();
+      return;
+    } catch (error) {
+      if (!/already running/i.test(error.message)) {
+        pendingRelated = null;
+        relatedStartError = error.message;
+        notifyRelated();
+        return;
+      }
+      await new Promise((resolveWait) => setTimeout(resolveWait, 1500));
+      await refreshChecks();
+    }
+  }
+  pendingRelated = null;
+  relatedStartError = "Another check kept the checker busy. Run these checks again when it finishes.";
+  notifyRelated();
+}
+
+function stripAnsi(text) {
+  return String(text || "").replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+// What went wrong in a failed step, in a few readable lines.
+function explainStep(step) {
+  const output = stripAnsi(step.output);
+  const findings = [...output.matchAll(/^\[[a-z-]+\] (.+)$/gm)].map((match) => match[1]);
+  if (findings.length) return findings.slice(0, 5);
+  const failedCount = /Tests\s+(\d+) failed/.exec(output)?.[1];
+  if (failedCount) {
+    const names = [...new Set([...output.matchAll(/^\s*(?:FAIL|×)\s+(.+?)\s*(?:\d+ms)?$/gm)]
+      .map((match) => match[1].split(" > ").slice(1).join(" › ") || match[1]))].slice(0, 4);
+    const reason = /^\s*((?:AssertionError|TypeError|Error|ReferenceError|SyntaxError)[^\n]*)/m.exec(output)?.[1];
+    return [`${plural(Number(failedCount), "automated test", "automated tests")} failed${names.length ? `: ${names.join("; ")}` : "."}`, ...(reason ? [reason.slice(0, 240)] : [])];
+  }
+  const lines = output.split("\n").map((line) => line.trim()).filter(Boolean);
+  return lines.slice(-3).map((line) => line.slice(0, 240));
+}
+
+function relatedDefinition(kind) {
+  return checkReport?.definitions.find((definition) => definition.id === `related-${kind}`);
+}
+
+const stepStateText = { passed: "Passed", warning: "Passed, with notes", failed: "Failed", running: "Running…", canceled: "Stopped", skipped: "Not run" };
+
+// The automatic-checks panel for one saved revision. `compact` is the one-line form under an editor.
+function relatedChecksPanel(target, { compact = false } = {}) {
+  const panel = document.createElement("section");
+  panel.className = `related-checks${compact ? " compact" : ""}`;
+  panel.setAttribute("aria-label", "Automatic checks");
+  const live = el("p", "", "related-headline");
+  live.setAttribute("role", "status");
+  const body = document.createElement("div");
+  panel.append(...(compact ? [] : [el("h3", "Automatic checks")]), live, body);
+  watchRelated(panel, () => {
+    const run = relatedRunFor(target);
+    const waiting = pendingRelated && targetKey(pendingRelated) === targetKey(target);
+    const definition = relatedDefinition(target.kind);
+    const names = definition ? definition.command.split(", ") : [];
+    const steps = run?.steps || [];
+    const failed = steps.filter((step) => step.status === "failed").length;
+    let state = "none";
+    let headline = "These checks have not run on the saved version yet.";
+    if (relatedStartError && !run) { state = "failed"; headline = `The checks could not start: ${relatedStartError}`; }
+    else if (waiting && (!run || run.status !== "running")) { state = "running"; headline = "Waiting for another check to finish, then checking the saved version…"; }
+    else if (run?.status === "running") { state = "running"; headline = `Checking the saved version (${Math.min(steps.length, names.length || steps.length)} of ${names.length || steps.length})…`; }
+    else if (run?.status === "passed") { state = "passed"; headline = `All ${plural(names.length || steps.length, "check", "checks")} passed for the saved version.`; }
+    else if (run?.status === "warning") { state = "warning"; headline = "The checks passed, with notes worth a look."; }
+    else if (run?.status === "failed") { state = "failed"; headline = `${failed || 1} of ${names.length || steps.length} checks failed. Approval stays locked until they pass.`; }
+    else if (run?.status === "canceled") { state = "none"; headline = "The checks were stopped before they finished."; }
+    panel.dataset.state = state;
+    live.textContent = compact ? `Saved version: ${headline.charAt(0).toLowerCase()}${headline.slice(1)}` : headline;
+    if (compact) { body.replaceChildren(); return; }
+    const list = document.createElement("ul");
+    list.className = "related-steps";
+    for (const name of names.length ? names : steps.map((step) => step.label)) {
+      const step = steps.find((item) => item.label === name);
+      const status = step?.status || (run && run.status !== "running" ? "skipped" : run ? "waiting" : "none");
+      const item = document.createElement("li");
+      item.dataset.state = status;
+      item.append(el("span", name, "related-step-name"), el("span", stepStateText[status] || (status === "waiting" ? "Waiting" : "Not run yet"), "related-step-state"));
+      if (step && (step.status === "failed" || step.status === "warning")) {
+        const why = document.createElement("ul");
+        why.className = "related-why";
+        for (const line of step.status === "warning" && run.warning ? [run.warning] : explainStep(step)) why.append(el("li", line));
+        item.append(why);
+      }
+      list.append(item);
+    }
+    const actions = document.createElement("div");
+    actions.className = "related-actions";
+    if (!run || run.status !== "running") {
+      const again = el("button", run ? "Run the checks again" : "Run the checks now");
+      again.type = "button";
+      again.addEventListener("click", () => runRelatedChecks(target, { force: true }));
+      actions.append(again);
+    }
+    const parts = [list, actions];
+    if (run?.output && run.status !== "running") {
+      const details = document.createElement("details");
+      details.className = "related-details";
+      details.append(el("summary", "Technical details"), el("pre", stripAnsi(run.output)));
+      parts.push(details);
+    }
+    body.replaceChildren(...parts);
+  });
+  return panel;
+}
+
+// After a save, a record's next render starts checks on its new revision.
+function checkAfterSave(kind, id) {
+  checkAfterRender = { kind, id };
+}
+
+function startChecksIfSaved(target) {
+  if (checkAfterRender && checkAfterRender.kind === target.kind && checkAfterRender.id === target.id) {
+    checkAfterRender = null;
+    runRelatedChecks(target);
+  }
+}
+
 // ---------- Review queue ----------
 // The filtered and sorted list doubles as a queue: Previous and Next (or K and J) step through it from a record.
 
@@ -2699,8 +2887,8 @@ function passedChecksThisSession() {
   if (!checkReport) return [];
   const seen = new Set();
   const passed = [];
-  for (const run of [...checkReport.history].reverse()) {
-    if (run.status !== "passed" || seen.has(run.id)) continue;
+  for (const run of checkRuns()) {
+    if (run.status !== "passed" || run.target || seen.has(run.id)) continue;
     seen.add(run.id);
     const definition = checkReport.definitions.find((item) => item.id === run.id);
     passed.push({ id: run.id, label: definition?.label || run.id, command: definition?.command || run.id, at: run.startedAt });
@@ -2736,8 +2924,8 @@ function reviewContext({ heading, content, sources }) {
   } else sourceSection.append(el("p", "No official sources declared.", "hint"));
   const checks = document.createElement("section");
   checks.className = "review-checks";
-  checks.append(el("h3", "Checks this session"));
-  const runs = checkReport ? [...checkReport.history].reverse() : [];
+  checks.append(el("h3", "Other checks this session"));
+  const runs = checkRuns().filter((run) => !run.target);
   if (runs.length) {
     const runItems = document.createElement("ul");
     for (const run of runs.slice(0, 8)) {
@@ -2745,7 +2933,7 @@ function reviewContext({ heading, content, sources }) {
       runItems.append(el("li", `${name}: ${checkStateLabel(run.status)} · ${formatTime(run.startedAt)}`));
     }
     checks.append(runItems);
-  } else checks.append(el("p", "No checks have run in this CMS session.", "hint"));
+  } else checks.append(el("p", "No other checks have run in this CMS session.", "hint"));
   context.append(sourceSection, checks);
   return context;
 }
@@ -2756,7 +2944,7 @@ function checkStateLabel(status) {
 
 // One approval form for every kind. The button stays disabled until the confirmation is ticked and the editor
 // holds no unsaved edits; checks that passed this session can be selected instead of retyped.
-function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
+function approvalForm({ intro, revision, ids, kindName, target, onSubmit }) {
   const form = document.createElement("form");
   form.className = "review-form";
   const revisionLine = el("p", `Revision ${shortRevision(revision)}`, "revision-label");
@@ -2772,7 +2960,8 @@ function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
   });
   revisionLine.append(" ", copy);
   const unsavedNotice = el("p", "This record has unsaved edits in Edit. Save or discard them before approving; the approval covers the saved revision only.", "check-warning unsaved-notice");
-  form.append(el("h3", "Mark reviewed"), el("p", intro, "hint"), revisionLine, unsavedNotice);
+  const checksPanel = relatedChecksPanel(target);
+  form.append(el("h3", "Mark reviewed"), el("p", intro, "hint"), revisionLine, unsavedNotice, checksPanel);
   function fieldInput(title, id, help, multiline = false) {
     const label = labeledField(title, id, help);
     const input = document.createElement(multiline ? "textarea" : "input");
@@ -2805,13 +2994,10 @@ function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
     }
     form.append(group);
   }
-  const validation = fieldInput(passed.length ? "Other validation performed (one per line)" : "Validation performed (one check per line)",
+  const validation = fieldInput("Other validation performed (one per line)",
     ids.validation, helpText.validation, true);
-  if (!passed.length) {
-    const hint = el("p", "No checks have passed in this CMS session. List the checks you ran, or run them on the Checks page first.", "hint");
-    form.append(hint);
-  }
-  const syncValidationRequired = () => { validation.required = !chips.some((box) => box.checked); };
+  form.append(el("p", "The automatic checks above are recorded for you. Add anything else you checked, such as comparing claims with the official sources.", "hint"));
+  const syncValidationRequired = () => { validation.required = !chips.some((box) => box.checked) && !relatedChecksPassed(target); };
   for (const box of chips) box.addEventListener("change", syncValidationRequired);
   const sourceReviews = fieldInput("Resolved source review IDs (optional, one per line)", ids.sources, helpText.sourceReviews, true);
   sourceReviews.required = false;
@@ -2825,15 +3011,18 @@ function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
   form.append(checkLabel, button, message);
   function sync() {
     unsavedNotice.hidden = !hasUnsavedChanges;
-    button.disabled = !check.checked || hasUnsavedChanges;
+    button.disabled = !check.checked || hasUnsavedChanges || !relatedChecksPassed(target);
+    syncValidationRequired();
   }
   check.addEventListener("change", sync);
-  form.addEventListener("panelshow", sync);
-  sync();
+  // Opening Review & approve checks the saved revision if this session has not already.
+  form.addEventListener("panelshow", () => { sync(); runRelatedChecks(target); });
+  watchRelated(button, sync);
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (hasUnsavedChanges) { message.textContent = "Save or discard the edits in Edit first."; message.className = "error"; return; }
     if (!check.checked) { message.textContent = "Tick the confirmation to approve this revision."; message.className = "error"; return; }
+    if (!relatedChecksPassed(target)) { message.textContent = "Wait for the automatic checks to pass before approving."; message.className = "error"; return; }
     button.disabled = true;
     message.textContent = "Recording the approved revision…";
     message.className = "hint";
@@ -2841,7 +3030,7 @@ function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
       await onSubmit({
         reviewedAt: date.value,
         changeNote: change.value,
-        validationPerformed: [...chips.filter((box) => box.checked).map((box) => box.value),
+        validationPerformed: [relatedValidationLine(target, revision), ...chips.filter((box) => box.checked).map((box) => box.value),
           ...validation.value.split("\n").map((item) => item.trim()).filter(Boolean)],
         sourceReviewIds: sourceReviews.value.split("\n").map((item) => item.trim()).filter(Boolean),
         approvalNote: approval.value,
@@ -2850,6 +3039,13 @@ function approvalForm({ intro, revision, ids, kindName, onSubmit }) {
     } catch (error) { message.textContent = error.message; message.className = "error"; sync(); }
   });
   return { form, date };
+}
+
+// The approval record names the automatic checks that passed for the approved revision.
+function relatedValidationLine(target, revision) {
+  const run = relatedRunFor(target);
+  const names = (run?.steps || []).map((step) => step.label).join(", ");
+  return `Automatic CMS checks ${run?.status === "warning" ? "passed with notes" : "passed"} for revision ${shortRevision(revision)}: ${names}`;
 }
 
 // The record after the current one in the list, captured before an approval refreshes the list (an approved
@@ -2915,6 +3111,7 @@ function renderTabs(article) {
       ["file", "Details", fileDetailsView(article)],
     ], "Article sections"));
   detail.replaceChildren(workspace);
+  startChecksIfSaved({ kind: "article", id: metadata.id, revision: record.revision });
 }
 
 async function selectArticle(id) {
@@ -3173,11 +3370,13 @@ function checkDuration(milliseconds) {
 
 function renderChecks(report) {
   checkReport = report;
+  notifyRelated();
   const selectedId = checkKind.value;
   const currentIds = [...checkKind.options].map((option) => option.value).join("\0");
-  const incomingIds = report.definitions.map((definition) => definition.id).join("\0");
+  const listed = report.definitions.filter((definition) => !definition.automatic);
+  const incomingIds = listed.map((definition) => definition.id).join("\0");
   if (currentIds !== incomingIds) {
-    checkKind.replaceChildren(...report.definitions.map((definition) => {
+    checkKind.replaceChildren(...listed.map((definition) => {
       const option = el("option", definition.label);
       option.value = definition.id;
       return option;

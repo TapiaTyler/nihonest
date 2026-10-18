@@ -64,9 +64,27 @@ describe("CMS article detail", () => {
     const checkDefinitions = [
       { id: "cms-tests", label: "CMS tests", command: "npx vitest run tools/cms", scope: "focused" },
       { id: "glossary-check", label: "Glossary consistency", command: "npm run localization:glossary:check", scope: "project" },
+      { id: "related-article", label: "Article checks", command: "Editorial records, Article content", scope: "focused", automatic: true },
+      { id: "related-faq", label: "FAQ checks", command: "Editorial records, FAQ content", scope: "focused", automatic: true },
+      { id: "related-local-guidance-supplement", label: "Municipality guidance checks", command: "Municipality guidance content", scope: "focused", automatic: true },
     ];
     let checkReport = { definitions: checkDefinitions, active: undefined as undefined | { id: string; status: string; startedAt: string; durationMs: number; output: string }, history: [] as Array<{ id: string; status: string; startedAt: string; durationMs: number; output: string }> };
     let checkStarts = 0;
+    // Related (automatic) runs echo their target; the first named check stays running so the test can cancel it.
+    let failRelated = false;
+    const auditFailure = ["[future-review-date] Approval record \"x\" has a future review date.", "Editorial audit found 1 blocking issue(s).", ""].join("\n");
+    const relatedStarts: string[] = [];
+    const startCheck = (body: { id: string; target?: { kind: string; id: string; revision: string } }) => {
+      if (body.target) {
+        relatedStarts.push(`${body.target.kind}:${body.target.id}`);
+        const failed = failRelated;
+        return { id: body.id, target: body.target, status: failed ? "failed" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 900,
+          output: failed ? auditFailure : "ok",
+          steps: failed ? [{ label: "Editorial records", status: "failed", durationMs: 400, output: auditFailure }]
+            : [{ label: "Editorial records", status: "passed", durationMs: 400, output: "" }, { label: body.id === "related-faq" ? "FAQ content" : body.id === "related-article" ? "Article content" : "Municipality guidance content", status: "passed", durationMs: 500, output: "" }] };
+      }
+      return { id: body.id, status: body.id === "glossary-check" ? "warning" : ++checkStarts === 1 ? "running" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1000, output: "3 locations have findings." };
+    };
     const creations: { path: string; body: Record<string, unknown> }[] = [];
     const creationOptions = { faqGroups: [{ id: "study", label: "Study in Japan" }], topics: ["banking"], journeyStages: ["planning"],
       sourceFamilies: ["daily-life-safety"], authorityLevels: ["national-government"], sourceLanguages: ["en", "ja"], checkMethods: ["automated", "manual"],
@@ -85,7 +103,7 @@ describe("CMS article detail", () => {
             : path.startsWith("/api/recovery/drafts/") && options?.method === "DELETE" ? (recoveryMutations.push({ path, method: options.method, body: options.body ?? "" }), savedDraft = null, { deleted: true })
               : path === "/api/activity" ? { events: [{ at: "2026-09-26T00:00:00.000Z", kind: "save", outcome: "success", recordKind: "article", recordId: "sample-article", revision: "revision" }] }
                 : path === "/api/checks" ? checkReport
-        : path === "/api/checks/start" ? (checkReport = { ...checkReport, active: { id: JSON.parse(options?.body ?? "{}").id, status: JSON.parse(options?.body ?? "{}").id === "glossary-check" ? "warning" : ++checkStarts === 1 ? "running" : "passed", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1000, output: "3 locations have findings." } })
+        : path === "/api/checks/start" ? (checkReport = { ...checkReport, history: checkReport.active ? [checkReport.active, ...checkReport.history] : checkReport.history, active: startCheck(JSON.parse(options?.body ?? "{}")) })
           : path === "/api/checks/cancel" ? (checkReport = { ...checkReport, active: undefined, history: [{ id: "cms-tests", status: "canceled", startedAt: "2026-09-26T00:00:00.000Z", durationMs: 1500, output: "Canceled by operator" }] })
        : path === "/api/impact/sources" ? { sources: [{ id: "official-source", title: "Official source", organization: "Agency", url: "https://example.go.jp", dependents: [{ kind: "article", id: "sample-article", viaArticleIds: [] }] }], findings: [], coverageNote: "FAQs are not represented." }
             : path === "/api/reference" ? { records: referenceRecords }
@@ -345,19 +363,32 @@ describe("CMS article detail", () => {
     approvalHelp.click();
     expect(approvalHelp.parentElement?.hasAttribute("open")).toBe(true);
     expect(approvalHelp.parentElement?.textContent).toContain("exact revision");
-    expect(document.querySelector("#panel-review .field-help summary[aria-label='Help for Validation performed (one check per line)']")).not.toBeNull();
+    // Checks that passed earlier in the session are offered, so the free-text field asks only for other validation.
+    expect(document.querySelector("#panel-review .field-help summary[aria-label='Help for Other validation performed (one per line)']")).not.toBeNull();
+    expect(document.querySelector("#panel-review .check-chips")?.textContent).toContain("CMS tests");
     expect(document.querySelector("#panel-file .editorial-controls")).toBeNull();
     expect(document.querySelector("#tab-review")?.textContent).toBe("Review & approve");
     expect(document.querySelector(".record-header h3")?.textContent).toBe("Sample article");
     expect(document.querySelector(".record-header .record-path")?.textContent).toBe("content/articles/sample-article.mdx");
     // The filtered list is a queue: the header shows the position and steps to the next record.
     expect(document.querySelector(".record-header .queue-position")?.textContent).toBe("1 of 2 in this list");
-    // Approval stays disabled until the confirmation is ticked.
+    // Opening Review & approve runs the article's automatic checks; a failure is explained and keeps approval locked.
     const approveButton = document.querySelector("#panel-review .review-form button[type='submit']") as HTMLButtonElement;
     const approveCheck = document.querySelector("#panel-review .approval-check input") as HTMLInputElement;
-    expect(approveButton.disabled).toBe(true);
+    failRelated = true;
+    (document.querySelector("#tab-linked") as HTMLButtonElement).click();
+    (document.querySelector("#tab-review") as HTMLButtonElement).click();
+    await waitFor(() => expect(document.querySelector("#panel-review .related-checks")?.getAttribute("data-state")).toBe("failed"));
+    expect(relatedStarts).toContain("article:sample-article");
+    expect(document.querySelector("#panel-review .related-headline")?.textContent).toBe("1 of 2 checks failed. Approval stays locked until they pass.");
+    expect(document.querySelector("#panel-review .related-why")?.textContent).toContain("has a future review date");
     approveCheck.checked = true;
     approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(approveButton.disabled).toBe(true);
+    failRelated = false;
+    (document.querySelector("#panel-review .related-actions button") as HTMLButtonElement).click();
+    await waitFor(() => expect(document.querySelector("#panel-review .related-checks")?.getAttribute("data-state")).toBe("passed"));
+    expect(document.querySelector("#panel-review .related-headline")?.textContent).toBe("All 2 checks passed for the saved version.");
     expect(approveButton.disabled).toBe(false);
     approveCheck.checked = false;
     approveCheck.dispatchEvent(new Event("change", { bubbles: true }));
@@ -517,6 +548,8 @@ describe("CMS article detail", () => {
     await waitFor(() => expect(mutations).toHaveLength(2));
     expect(mutations[1].path).toContain("/review");
     expect(JSON.parse(mutations[1].body).explicitHumanApproval).toBe(true);
+    // The approval record names the automatic checks that passed for the revision.
+    expect(JSON.parse(mutations[1].body).validationPerformed[0]).toBe("Automatic CMS checks passed for revision revision: Editorial records, Article content");
     const searchBox = document.querySelector("#search") as HTMLInputElement;
     searchBox.value = "sample-article";
     searchBox.dispatchEvent(new Event("input", { bubbles: true }));

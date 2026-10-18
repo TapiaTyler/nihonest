@@ -389,7 +389,9 @@ describe("local CMS foundation", { timeout: 30_000 }, () => {
         ["config", "core.autocrlf", "false"], ["add", "."], ["commit", "-q", "-m", "fixture"]]) {
         execFileSync("git", args, { cwd: fixtureRoot, stdio: "ignore" });
       }
-      const fixtureServer = createCmsServer(fixtureRoot);
+      // Related checks pass immediately here; the approval gate still requires a passed run for the exact revision.
+      const relatedRunner = createCheckRunner(fixtureRoot, () => ({ result: Promise.resolve({ exitCode: 0 }), kill: () => undefined }));
+      const fixtureServer = createCmsServer(fixtureRoot, relatedRunner);
       fixtureServer.listen(0, "127.0.0.1");
       await once(fixtureServer, "listening");
       try {
@@ -406,6 +408,15 @@ describe("local CMS foundation", { timeout: 30_000 }, () => {
           expect(changed.generatedMetadata).toMatchObject({ status: "failed" });
           revision = changed.revision;
         }
+        const approval = { reviewedAt: "2026-09-26", changeNote: "Checked the fixture.", approvalNote: "Approved for the test.",
+          validationPerformed: ["Focused CMS test passed."], sourceReviewIds: [], explicitHumanApproval: true };
+        const unchecked = await send(`/api/articles/${id}/review`, "POST", { expectedRevision: revision, ...approval });
+        expect(unchecked.error).toMatch(/checks have not passed/);
+        const badTarget = await fetch(`${base}/api/checks/start`, { method: "POST", headers: { "Content-Type": "application/json", Origin: base, "X-CMS-Token": token },
+          body: JSON.stringify({ id: "related-faq", target: { kind: "article", id, revision } }) });
+        expect(badTarget.status).toBe(400);
+        await send("/api/checks/start", "POST", { id: "related-article", target: { kind: "article", id, revision } });
+        await new Promise<void>((resolveDone) => setTimeout(resolveDone, 20));
         const approved = await send(`/api/articles/${id}/review`, "POST", {
           expectedRevision: revision, reviewedAt: "2026-09-26", changeNote: "Checked the fixture.", approvalNote: "Approved for the test.",
           validationPerformed: ["Focused CMS test passed."], sourceReviewIds: [], explicitHumanApproval: true,
