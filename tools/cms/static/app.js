@@ -162,12 +162,20 @@ async function json(path) {
 }
 
 async function mutate(path, method, payload) {
-  if (!sessionToken) sessionToken = (await json("/api/session")).token;
-  const response = await fetch(path, {
-    method,
-    headers: { "Content-Type": "application/json", "X-CMS-Token": sessionToken },
-    body: JSON.stringify(payload),
-  });
+  const send = async () => {
+    if (!sessionToken) sessionToken = (await json("/api/session")).token;
+    return fetch(path, {
+      method,
+      headers: { "Content-Type": "application/json", "X-CMS-Token": sessionToken },
+      body: JSON.stringify(payload),
+    });
+  };
+  let response = await send();
+  // A restarted CMS issues a new session token; an open tab fetches it once and retries instead of failing.
+  if (response.status === 403) {
+    sessionToken = null;
+    response = await send();
+  }
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || `Request failed (${response.status}).`);
   return result;

@@ -92,7 +92,18 @@ describe("CMS article detail", () => {
       article: { registryFamilies: ["transport-safety-and-daily-life"], journeyStages: ["planning"], topics: ["daily-life"], audiences: ["newcomer"],
         geographicScopes: ["national"], importance: ["informational"], contentTypes: ["guide"], relationshipTypes: ["related", "prerequisite", "next-step"] } };
     const createdFaq = { ...faq, id: "new-faq", title: "Can I create this?", value: { ...faq.value, id: "new-faq", question: "Can I create this?" } };
-    const fetch = async (path: string, options?: { method?: string; body?: string }) => ({
+    // The session token changes when the CMS restarts; a write with an old token is refused as the server would.
+    let currentToken = "test-token";
+    const staleWrites: string[] = [];
+    const fetch = async (path: string, options?: { method?: string; body?: string; headers?: Record<string, string> }) => {
+      const token = options?.headers?.["X-CMS-Token"];
+      if (options?.method && token && token !== currentToken) {
+        staleWrites.push(path);
+        return { ok: false, status: 403, json: async () => ({ error: "This action requires the local CMS session." }) };
+      }
+      return fixtureFetch(path, options);
+    };
+    const fixtureFetch = async (path: string, options?: { method?: string; body?: string }) => ({
       ok: true,
        json: async () => path === "/api/local-guidance" ? { locations: [{ id: "jp-05201", name: "Akita City", prefectureId: "jp-05000", supplements: [localGuidanceSummary] }, { id: "jp-05202", name: "Noshiro City", prefectureId: "jp-05000", supplements: [] }], guides: ["sample-article", "health-insurance-guide", "waste-guide", "resident-tax-guide", "hazard-guide", "japanese-classes-guide", "pension-guide"], failures: [] }
         : path === "/api/local-guidance/akita-address-registration" ? localGuidanceDetail()
@@ -120,7 +131,7 @@ describe("CMS article detail", () => {
         }
           : path === "/api/generated-metadata" ? generatedMetadataState
           : path === "/api/generated-metadata/refresh" ? (metadataRefreshes.push(options?.body ?? ""), generatedMetadataState = { status: "current" }, { refresh: { status: "updated" }, state: generatedMetadataState })
-          : path === "/api/session" ? { token: "test-token" }
+          : path === "/api/session" ? { token: currentToken }
             : path === "/api/create/options" ? creationOptions
             : path === "/api/create/faq/preview" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { kind: "faq", id: "new-faq", path: "src/data/faqs/study.ts", sourceRevision: "e".repeat(64), insertion: ',\n  defineFaq("study", { id: "new-faq" }),', line: 12, revision: "f".repeat(64) })
             : path === "/api/create/faq" ? (creations.push({ path, body: JSON.parse(options?.body ?? "{}") }), { created: true, kind: "faq", id: "new-faq", path: "src/data/faqs/study.ts" })
@@ -732,6 +743,12 @@ describe("CMS article detail", () => {
     paletteInput.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
     expect(document.querySelector("#palette")?.hasAttribute("open")).toBe(false);
     await waitFor(() => expect(document.querySelector("#article-detail .record-header h3")?.textContent).toBe("Can I try this?"));
+    // After a CMS restart the open page fetches the new session token and retries the write once.
+    currentToken = "restarted-token";
+    const startsBefore = relatedStarts.length;
+    (document.querySelector("#record-panel-review .related-actions button, #panel-review .related-actions button") as HTMLButtonElement | null)?.click();
+    await waitFor(() => expect(relatedStarts.length).toBe(startsBefore + 1));
+    expect(staleWrites).toEqual(["/api/checks/start"]);
     // The theme switch cycles System, Light, and Dark, and stores an explicit choice.
     const themeToggle = document.querySelector("#theme-toggle") as HTMLButtonElement;
     expect(themeToggle.textContent).toBe("Theme: System");
