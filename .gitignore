@@ -34,3 +34,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local design-critique history written by the impeccable skill (not project content)
+.impeccable/
